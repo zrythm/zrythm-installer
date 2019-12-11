@@ -1,4 +1,6 @@
 #!/bin/sh
+#
+# Copyright (C) 2019 Alexandros Theodotou
 
 zrythm_ver="0.7.093"
 architecture="amd64"
@@ -17,7 +19,7 @@ ubuntu_19_04_str="Ubuntu 19.04"
 ubuntu_19_10_str="Ubuntu 19.10"
 lsb_release_cmd=lsb_release
 
-if ! type "$lsb_release_cmd" > /dev/null; then
+if type "$lsb_release_cmd" > /dev/null; then
   echo "found lsb_release"
   if $(lsb_release -a | grep -q "$ubuntu_19_04_str"); then
     echo "found $ubuntu_19_04_str"
@@ -71,24 +73,34 @@ fi
 
 # ---- Install ----
 
-if [ $is_ubuntu == 0 -a $is_debian == 0 -a \
-  $is_arch == 0 -a $is_fedora == 0 ]; then
+if [ $is_ubuntu = 0 -a $is_debian = 0 -a \
+  $is_arch = 0 -a $is_fedora = 0 ]; then
   zenity --error --text="Could not detect your distro. \
 Please contact the Zrythm developers for assistance."
   exit 1
 fi
 
-ask_for_root_pw_text="Please enter your root password in the terminal to continue"
+ask_for_root_pw_text="Please enter your root password in the terminal to continue (if asked)"
 if zenity --question --text="Proceed with the installation of Zrythm?"; then
-  if [ $is_ubuntu == 1 ]; then
+  if [ $is_ubuntu = 1 ]; then
     zenity --info --text="$ask_for_root_pw_text"
-    sudo /bin/sh -c "dpkg -i \"bin/ubuntu/zrythm-${zrythm_ver}-1_${distro_ver}.${ubuntu_lts}_${architecture}.deb\""
-  elif [ $is_debian == 1 ]; then
+    sudo /bin/sh -c \
+      "apt update && \
+      dpkg -i \"bin/ubuntu/zrythm-${zrythm_ver}-1_${distro_ver}.${ubuntu_lts}_${architecture}.deb\" || \
+      apt install -f -y" && \
+      zenity --info --text="Install successful!"
+  elif [ $is_debian = 1 ]; then
     zenity --info --text="$ask_for_root_pw_text"
-    sudo /bin/sh -c "dpkg -i \"bin/debian/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\""
-  elif [ $is_fedora == 1 ]; then
+    sudo /bin/sh -c \
+      "apt update && \
+      dpkg -i \"bin/debian/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
+      apt install -f -y" && \
+    zenity --info --text="Install successful!"
+  elif [ $is_fedora = 1 ]; then
     zenity --info --text="$ask_for_root_pw_text"
-    sudo /bin/sh -c "dnf -y install \"bin/fedora/zrythm-${zrythm_ver}-3_${distro_ver}_${architecture}.rpm\""
+    sudo /bin/sh -c \
+      "dnf -y install \"bin/fedora/zrythm-${zrythm_ver}-3_${distro_ver}_${architecture}.rpm\"" && \
+      zenity --info --text="Install successful!"
   fi
 else
   exit 0
