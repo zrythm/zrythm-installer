@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2019 Alexandros Theodotou
 
-zrythm_ver="0.7.093"
+zrythm_ver="0.7.186"
 architecture="amd64"
 
 distro_ver=0

@@ -1,6 +1,6 @@
 Thank you for supporting development!
 
-This is Zrythm v0.7.093.
+This is Zrythm v0.7.186.
 
 To install Zrythm, open a terminal and
 navigate to this directory, then run
@@ -8,3 +8,9 @@ the following command and follow the
 instructions:
 
   ./installer.sh
+
+If you prefer to install the packages
+manually, you can find them inside `bin`.
+
+If you experience any problems, please
+email alex@zrythm.org
