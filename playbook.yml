@@ -13,7 +13,8 @@
         'help2man', 'python3-sphinx', 'qtbase5-dev',
         'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
         'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
-        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev']
+        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
+        'vim' ]
         update_cache: yes
         state: present
 
@@ -36,7 +37,8 @@
         'help2man', 'python3-sphinx', 'qtbase5-dev',
         'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
         'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
-        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev']
+        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
+        'vim' ]
         update_cache: yes
         state: present
 
@@ -49,3 +51,60 @@
 
     - name: Deploy artifacts
       fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/debian10/zrythm_{{ version }}-1_amd64.deb flat=yes
+
+- hosts: manjaro-kde
+  tasks:
+    - name: Copy file from master
+      copy: src=. dest=/tmp/zrythm-installer
+
+    - name: Ensure dependencies are installed
+      become: yes
+      pacman:
+        name: ['gtk3', 'lilv', 'libx11', 'jack', 'libsndfile',
+        'libyaml', 'libsamplerate', 'alsa-lib', 'fftw',
+        'suil', 'python', 'gettext', 'sed', 'meson', 'ninja',
+        'help2man', 'python-sphinx', 'ladspa', 'lv2',
+        'vim', 'meson' ]
+        update_cache: yes
+        state: present
+
+    - name: Make Arch build
+      shell: cd /tmp/zrythm-installer && make clean && make arch
+      register: results
+
+    - name: show results
+      debug: msg={{ results.stdout_lines }}
+
+    - name: Deploy artifacts
+      fetch: src=/tmp/zrythm-installer/build/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz dest=./artifacts/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz flat=yes
+
+- hosts: fedora31
+  tasks:
+    - name: Copy file from master
+      copy: src=. dest=/tmp/zrythm-installer
+
+    - name: Ensure dependencies are installed
+      become: yes
+      dnf:
+        name: ['gcc-c++', 'gcc', 'pkgconfig',
+        'gtk3-devel', 'python3', 'lilv-devel',
+        'lv2-devel', 'libsndfile-devel',
+        'libyaml-devel', 'libsamplerate-devel',
+        'gettext', 'sed', 'alsa-lib-devel',
+        'ladspa-devel', 'fftw-devel',
+        'portaudio-devel', 'help2man',
+        'vim', 'meson', 'rpm-build',
+        'jack-audio-connection-kit-devel',
+        'libX11-devel', 'qt5-devel', 'make' ]
+        update_cache: yes
+        state: present
+
+    - name: Make Fedora
+      shell: cd /tmp/zrythm-installer && make clean && make fedora31
+      register: results
+
+    - name: show results
+      debug: msg={{ results.stdout_lines }}
+
+    - name: Deploy artifacts
+      fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-{{ version }}-1.fc31.x86_64.rpm dest=./artifacts/fedora31/zrythm-{{ version }}-1.fc31.x86_64.rpm flat=yes

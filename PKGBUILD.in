@@ -1,6 +1,6 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
 pkgname=zrythm
-pkgver=0.7.093
+pkgver=@VERSION@
 pkgrel=1
 pkgdesc='a highly automated and intuitive digital audio workstation'
 arch=('x86_64' 'i686')
@@ -16,10 +16,10 @@ makedepends=(
 optdepends=('portaudio: portaudio backend'
             'qt5-base: for embedding qt5 plugin UIs')
 conflicts=( 'zrythm-git' )
-source=( "https://git.zrythm.org/zrythm/${pkgname}/-/archive/v$pkgver/${pkgname}-v$pkgver.tar.gz" )
-md5sums=( '15669072123f18d10def90557727dd28' )
+source=( "https://www.zrythm.org/releases/zrythm-$pkgver.tar.xz" )
+sha256sums=('4d516fa8bf4c7051e00bd6d4256ea88cbb7e9390bd117cafb20aab1996e2f81d')
 
-_rootdir="${pkgname}-v${pkgver}"
+_rootdir="${pkgname}-${pkgver}"
 
 build() {
   cd $_rootdir
