@@ -1,8 +1,8 @@
 ---
 
-- hosts: ubuntu1904
+- hosts: ubuntu1810
   tasks:
-    - name: Copy file from master to ubuntu1904
+    - name: Copy file from master
       copy: src=. dest=/tmp/zrythm-installer
 
     - name: Ensure dependencies are installed
@@ -14,15 +14,65 @@
         'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
         'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
         'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
-        'vim' ]
+        'vim', 'devscripts',
+        'debhelper' ]
         update_cache: yes
         state: present
 
-    - name: Make Ubuntu 19.04 build
+    - name: Make build
+      shell: cd /tmp/zrythm-installer && make clean && make ubuntu1810
+
+    - name: Deploy artifacts
+      fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/ubuntu1810/zrythm_{{ version }}-1_amd64.deb flat=yes
+
+- hosts: ubuntu1904
+  tasks:
+    - name: Copy file from master
+      copy: src=. dest=/tmp/zrythm-installer
+
+    - name: Ensure dependencies are installed
+      become: yes
+      apt:
+        name: ['libgtk-3-dev', 'libjack-jackd2-dev',
+        'liblilv-dev', 'libsndfile1-dev', 'ninja-build',
+        'help2man', 'python3-sphinx', 'qtbase5-dev',
+        'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
+        'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
+        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
+        'vim', 'devscripts',
+        'debhelper' ]
+        update_cache: yes
+        state: present
+
+    - name: Make build
       shell: cd /tmp/zrythm-installer && make clean && make ubuntu1904
 
     - name: Deploy artifacts
       fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/ubuntu1904/zrythm_{{ version }}-1_amd64.deb flat=yes
+
+- hosts: ubuntu1910
+  tasks:
+    - name: Copy file from master
+      copy: src=. dest=/tmp/zrythm-installer
+
+    - name: Ensure dependencies are installed
+      become: yes
+      apt:
+        name: ['libgtk-3-dev', 'libjack-jackd2-dev',
+        'liblilv-dev', 'libsndfile1-dev', 'ninja-build',
+        'help2man', 'python3-sphinx', 'qtbase5-dev',
+        'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
+        'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
+        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
+        'vim', 'devscripts', 'debhelper' ]
+        update_cache: yes
+        state: present
+
+    - name: Make build
+      shell: cd /tmp/zrythm-installer && make clean && make ubuntu1910
+
+    - name: Deploy artifacts
+      fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/ubuntu1910/zrythm_{{ version }}-1_amd64.deb flat=yes
 
 - hosts: debian10
   tasks:
@@ -38,7 +88,8 @@
         'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
         'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
         'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
-        'vim' ]
+        'vim', 'devscripts',
+        'debhelper' ]
         update_cache: yes
         state: present
 

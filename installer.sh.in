@@ -1,0 +1,133 @@
+#!/bin/bash
+#
+# Copyright (C) 2019 Alexandros Theodotou
+
+zrythm_ver="@VERSION@"
+architecture="amd64"
+
+distro_ver=0
+os_release_file=
+
+if [ -e /etc/os-release ]; then
+  . /etc/os-release
+elif [ -e /usr/lib/os-release ]; then
+  . /usr/lib/os-release
+fi
+
+# ---- Detect debian based systems ----
+is_ubuntu=0
+is_debian=0
+# LTS is version x.04
+ubuntu_lts="04"
+
+debian_10_str="Debian GNU/Linux 10"
+ubuntu_18_10_str="Ubuntu 18.10"
+ubuntu_19_04_str="Ubuntu 19.04"
+ubuntu_19_10_str="Ubuntu 19.10"
+
+zenity_width=360
+
+if [[ "$ID" = *"debian"* ]]; then
+  if [[ "$VERSION_ID" = *"10"* ]]; then
+    echo "found $debian_10_str"
+    is_debian=1
+    distro_ver=10
+  fi
+fi
+
+if [[ "$ID" = *"ubuntu"* ]]; then
+  if [[ "$VERSION_ID" = *"18.10"* ]]; then
+    echo "found $ubuntu_18_10_str"
+    is_ubuntu=1
+    distro_ver=18
+    ubuntu_lts="10"
+  elif [[ "$VERSION_ID" = *"19.04"* ]]; then
+    echo "found $ubuntu_19_04_str"
+    is_ubuntu=1
+    distro_ver=19
+    ubuntu_lts="04"
+  elif [[ "$VERSION_ID" = *"19.10"* ]]; then
+    echo "found $ubuntu_19_10_str"
+    is_ubuntu=1
+    distro_ver=19
+    ubuntu_lts="10"
+  fi
+fi
+
+# ---- Detect arch systems ----
+
+arch_str="Arch GNU/Linux"
+is_arch=0
+
+if [[ "$ID" = "arch" ]]; then
+  echo "found $arch_str"
+  architecture="x86_64"
+  is_arch=1
+elif [[ "$ID_LIKE" = *"arch"* ]]; then
+  echo "found $arch_str"
+  architecture="x86_64"
+  is_arch=1
+fi
+
+# ---- Detect fedora/opensuse ----
+
+is_fedora=0
+is_opensuse=0
+fedora_30_str="Fedora 30"
+fedora_31_str="Fedora 31"
+
+if [[ "$ID" = "fedora" ]]; then
+  architecture="x86_64"
+  if [[ "$VERSION_ID" = *"31"* ]]; then
+    echo "found $fedora_31_str"
+    is_fedora=1
+    distro_ver=31
+  elif [[ "$VERSION_ID" = *"30"* ]]; then
+    echo "found $fedora_30_str"
+    is_fedora=1
+    distro_ver=30
+  fi
+elif [[ "$ID" = "opensuse-tumbleweed" ]]; then
+  is_opensuse=1
+  architecture="x86_64"
+fi
+
+# ---- Install ----
+
+if [ $is_ubuntu = 0 -a $is_debian = 0 -a \
+  $is_arch = 0 -a $is_fedora = 0 ]; then
+  zenity --error --text="Could not detect your distro or your distro is not supported yet. \
+Please contact the Zrythm developers for assistance." --width $zenity_width
+  exit 1
+fi
+
+ask_for_root_pw_text="Please enter your root password in the terminal to continue (if asked)"
+if zenity --question --text="Proceed with the installation of Zrythm?" --width $zenity_width; then
+  if [ $is_ubuntu = 1 ]; then
+    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width;
+    sudo /bin/sh -c \
+      "apt update && \
+      dpkg -i \"bin/ubuntu/zrythm-${zrythm_ver}-1_${distro_ver}.${ubuntu_lts}_${architecture}.deb\" || \
+      apt install -f -y" && \
+      zenity --info --text="Install successful!" --width $zenity_width
+  elif [ $is_debian = 1 ]; then
+    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
+    sudo /bin/sh -c \
+      "apt update && \
+      dpkg -i \"bin/debian/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
+      apt install -f -y" && \
+    zenity --info --text="Install successful!" --width $zenity_width
+  elif [ $is_fedora = 1 ]; then
+    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
+    sudo /bin/sh -c \
+      "dnf -y install \"bin/fedora/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.rpm\"" && \
+      zenity --info --text="Install successful!" --width $zenity_width
+  elif [ $is_arch = 1 ]; then
+    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
+    sudo /bin/sh -c \
+      "pacman -U --noconfirm \"bin/arch/zrythm-${zrythm_ver}-1_${architecture}.pkg.tar.xz\"" && \
+      zenity --info --text="Install successful!" --width $zenity_width
+  fi
+else
+  exit 0
+fi

@@ -90,10 +90,8 @@ DESTDIR="%{buildroot}/" ninja -C build install
 %{_datadir}/%{name}
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
-%{_libdir}/**/*
-#%{_includedir}/audec/audec.h
-#%{_exec_prefix}/lib64/libaudec.a
-%{_exec_prefix}/lib64/lv2/**
+%{_includedir}/audec/audec.h
+%{_exec_prefix}/lib64
 
 %post
 %if ! 0%{?suse_version}
