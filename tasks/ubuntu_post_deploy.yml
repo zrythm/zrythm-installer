@@ -1,0 +1,11 @@
+---
+
+#- name: Remove latest lv2 and suil
+  #include_tasks: "{{ playbook_dir }}/tasks/remove_latest_suil_lilv.yml"
+
+#- name: Reinstall lilv and suil
+  #become: yes
+  #apt:
+    #name: [ 'libsuil-0-0', 'liblilv-0-0' ]
+    #update_cache: yes
+    #state: present

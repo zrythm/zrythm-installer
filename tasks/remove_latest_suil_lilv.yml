@@ -1,0 +1,17 @@
+---
+
+- name: Remove latest lv2 and suil
+  shell: |
+    cd /home/ansible/suil-0.10.6
+    sudo python3 ./waf uninstall
+    cd /home/ansible/lv2-1.16.0
+    sudo python3 ./waf uninstall
+    cd /home/ansible/lilv-0.24.6
+    sudo python3 ./waf uninstall
+    cd /home/ansible/serd-0.30.2
+    sudo python3 ./waf uninstall
+    cd /home/ansible/sratom-0.6.4
+    sudo python3 ./waf uninstall
+    cd /home/ansible/sord-0.16.4
+    sudo python3 ./waf uninstall
+

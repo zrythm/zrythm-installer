@@ -1,0 +1,16 @@
+---
+
+- name: Copy package definitions from master
+  copy:
+    src: "{{ item }}"
+    dest: /tmp/zrythm-installer/
+  with_fileglob:
+    - "{{ playbook_dir }}/*"
+
+- name: Copy tarballs from master
+  copy:
+    src: "{{ item }}"
+    dest: /tmp/zrythm-installer/build/
+  with_fileglob:
+    - "{{ playbook_dir }}/build/zrythm-{{ version }}.tar.xz*"
+    - "{{ playbook_dir }}/build/meson-0.52.1.tar.gz"

@@ -1,0 +1,29 @@
+---
+
+- name: Copy file from master
+  include_tasks: "{{ playbook_dir }}/tasks/copy_from_master.yml"
+
+- name: Ensure dependencies are installed
+  become: yes
+  apt:
+    name: ['libgtk-3-dev', 'libjack-jackd2-dev',
+    'libsndfile1-dev', 'ninja-build', 'lv2-dev',
+    'liblilv-dev',
+    'help2man', 'python3-sphinx', 'qtbase5-dev',
+    'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
+    'ladspa-sdk', 'libfftw3-dev',
+    'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
+    'vim', 'devscripts', 'librubberband-dev',
+    'debhelper' ]
+    update_cache: yes
+    state: present
+
+#- name: Remove packaged lv2, lilv and suil
+  #become: yes
+  #apt:
+    #name: [ 'lv2-dev', 'libsuil-dev', 'liblilv-dev' ]
+    #update_cache: yes
+    #state: absent
+
+#- name: Install latest lv2 and suil
+  #include_tasks: "{{ playbook_dir }}/tasks/install_latest_suil_lilv.yml"

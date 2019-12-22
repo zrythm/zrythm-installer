@@ -8,22 +8,21 @@ url="https://www.zrythm.org"
 license=('AGPL3')
 depends=('gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
   'libyaml' 'libsamplerate' 'alsa-lib' 'fftw'
-  'suil')
+  'qt5-base' 'rubberband')
 makedepends=(
   'python' 'gettext' 'sed'
   'meson' 'ninja' 'help2man' 'python-sphinx'
   'ladspa' 'lv2')
-optdepends=('portaudio: portaudio backend'
-            'qt5-base: for embedding qt5 plugin UIs')
+optdepends=('portaudio: portaudio backend')
 conflicts=( 'zrythm-git' )
 source=( "https://www.zrythm.org/releases/zrythm-$pkgver.tar.xz" )
-sha256sums=('4d516fa8bf4c7051e00bd6d4256ea88cbb7e9390bd117cafb20aab1996e2f81d')
+sha256sums=('139fab34168b2945a3a42a93e04a53649dcad2895ec47fd5e280a815d2d699fd')
 
 _rootdir="${pkgname}-${pkgver}"
 
 build() {
   cd $_rootdir
-  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release
+  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_qt5=true
   ninja -C build
 }
 

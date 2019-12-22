@@ -2,129 +2,90 @@
 
 - hosts: ubuntu1810
   tasks:
-    - name: Copy file from master
-      copy: src=. dest=/tmp/zrythm-installer
-
-    - name: Ensure dependencies are installed
-      become: yes
-      apt:
-        name: ['libgtk-3-dev', 'libjack-jackd2-dev',
-        'liblilv-dev', 'libsndfile1-dev', 'ninja-build',
-        'help2man', 'python3-sphinx', 'qtbase5-dev',
-        'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
-        'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
-        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
-        'vim', 'devscripts',
-        'debhelper' ]
-        update_cache: yes
-        state: present
+    - name: Prepare
+      include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
 
     - name: Make build
-      shell: cd /tmp/zrythm-installer && make clean && make ubuntu1810
+      shell: |
+        cd /tmp/zrythm-installer
+        make clean
+        make ubuntu1810
 
     - name: Deploy artifacts
       fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/ubuntu1810/zrythm_{{ version }}-1_amd64.deb flat=yes
 
+    #- name: Post deploy
+      #include_tasks: tasks/ubuntu_post_deploy.yml
+
 - hosts: ubuntu1904
   tasks:
-    - name: Copy file from master
-      copy: src=. dest=/tmp/zrythm-installer
-
-    - name: Ensure dependencies are installed
-      become: yes
-      apt:
-        name: ['libgtk-3-dev', 'libjack-jackd2-dev',
-        'liblilv-dev', 'libsndfile1-dev', 'ninja-build',
-        'help2man', 'python3-sphinx', 'qtbase5-dev',
-        'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
-        'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
-        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
-        'vim', 'devscripts',
-        'debhelper' ]
-        update_cache: yes
-        state: present
+    - name: Prepare
+      include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
 
     - name: Make build
-      shell: cd /tmp/zrythm-installer && make clean && make ubuntu1904
+      shell: |
+        cd /tmp/zrythm-installer
+        make clean
+        make ubuntu1904
 
     - name: Deploy artifacts
       fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/ubuntu1904/zrythm_{{ version }}-1_amd64.deb flat=yes
 
+    #- name: Post deploy
+      #include_tasks: tasks/ubuntu_post_deploy.yml
+
 - hosts: ubuntu1910
   tasks:
-    - name: Copy file from master
-      copy: src=. dest=/tmp/zrythm-installer
-
-    - name: Ensure dependencies are installed
-      become: yes
-      apt:
-        name: ['libgtk-3-dev', 'libjack-jackd2-dev',
-        'liblilv-dev', 'libsndfile1-dev', 'ninja-build',
-        'help2man', 'python3-sphinx', 'qtbase5-dev',
-        'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
-        'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
-        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
-        'vim', 'devscripts', 'debhelper' ]
-        update_cache: yes
-        state: present
+    - name: Prepare
+      include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
 
     - name: Make build
-      shell: cd /tmp/zrythm-installer && make clean && make ubuntu1910
+      shell: |
+        cd /tmp/zrythm-installer
+        make clean
+        make ubuntu1910
 
     - name: Deploy artifacts
       fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/ubuntu1910/zrythm_{{ version }}-1_amd64.deb flat=yes
 
+    #- name: Post deploy
+      #include_tasks: tasks/ubuntu_post_deploy.yml
+
 - hosts: debian10
   tasks:
-    - name: Copy file from master to debian10
-      copy: src=. dest=/tmp/zrythm-installer
+    - name: Prepare
+      include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
 
-    - name: Ensure dependencies are installed
-      become: yes
-      apt:
-        name: ['libgtk-3-dev', 'libjack-jackd2-dev',
-        'liblilv-dev', 'libsndfile1-dev', 'ninja-build',
-        'help2man', 'python3-sphinx', 'qtbase5-dev',
-        'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
-        'ladspa-sdk', 'libfftw3-dev', 'lv2-dev',
-        'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
-        'vim', 'devscripts',
-        'debhelper' ]
-        update_cache: yes
-        state: present
-
-    - name: Make Debian 10 build
-      shell: cd /tmp/zrythm-installer && make clean && make debian10
-      register: results
-
-    - name: show results
-      debug: msg={{ results.stdout_lines }}
+    - name: Make build
+      shell: |
+        cd /tmp/zrythm-installer
+        make clean
+        make debian10
 
     - name: Deploy artifacts
       fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/debian10/zrythm_{{ version }}-1_amd64.deb flat=yes
 
-- hosts: manjaro-kde
+    #- name: Post deploy
+      #include_tasks: tasks/ubuntu_post_deploy.yml
+
+- hosts: archlinux
   tasks:
     - name: Copy file from master
-      copy: src=. dest=/tmp/zrythm-installer
+      include_tasks: "{{ playbook_dir }}/tasks/copy_from_master.yml"
 
     - name: Ensure dependencies are installed
       become: yes
       pacman:
         name: ['gtk3', 'lilv', 'libx11', 'jack', 'libsndfile',
         'libyaml', 'libsamplerate', 'alsa-lib', 'fftw',
-        'suil', 'python', 'gettext', 'sed', 'meson', 'ninja',
+        'python', 'gettext', 'sed', 'meson', 'ninja',
         'help2man', 'python-sphinx', 'ladspa', 'lv2',
-        'vim', 'meson' ]
+        'vim', 'meson', 'rubberband', 'qt5-base' ]
         update_cache: yes
         state: present
 
     - name: Make Arch build
       shell: cd /tmp/zrythm-installer && make clean && make arch
-      register: results
-
-    - name: show results
-      debug: msg={{ results.stdout_lines }}
 
     - name: Deploy artifacts
       fetch: src=/tmp/zrythm-installer/build/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz dest=./artifacts/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz flat=yes
@@ -132,30 +93,111 @@
 - hosts: fedora31
   tasks:
     - name: Copy file from master
-      copy: src=. dest=/tmp/zrythm-installer
+      include_tasks: "{{ playbook_dir }}/tasks/copy_from_master.yml"
 
     - name: Ensure dependencies are installed
       become: yes
       dnf:
         name: ['gcc-c++', 'gcc', 'pkgconfig',
-        'gtk3-devel', 'python3', 'lilv-devel',
-        'lv2-devel', 'libsndfile-devel',
+        'gtk3-devel', 'python3',
+        'libsndfile-devel', 'lv2-devel',
+        'lilv-devel',
         'libyaml-devel', 'libsamplerate-devel',
         'gettext', 'sed', 'alsa-lib-devel',
         'ladspa-devel', 'fftw-devel',
         'portaudio-devel', 'help2man',
         'vim', 'meson', 'rpm-build',
         'jack-audio-connection-kit-devel',
-        'libX11-devel', 'qt5-devel', 'make' ]
+        'libX11-devel', 'qt5-devel', 'make',
+        'rubberband-devel' ]
         update_cache: yes
         state: present
 
-    - name: Make Fedora
-      shell: cd /tmp/zrythm-installer && make clean && make fedora31
-      register: results
+    #- name: Remove packaged lv2, lilv and suil
+      #become: yes
+      #dnf:
+        #name: [ 'lv2-devel', 'suil-devel', 'lilv-devel' ]
+        #update_cache: yes
+        #state: absent
 
-    - name: show results
-      debug: msg={{ results.stdout_lines }}
+    #- name: Install latest lv2 and suil
+      #include_tasks: "{{ playbook_dir }}/tasks/install_latest_suil_lilv.yml"
+
+    - name: Make
+      shell: cd /tmp/zrythm-installer && make clean && make fedora31
+      environment:
+        PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
 
     - name: Deploy artifacts
       fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-{{ version }}-1.fc31.x86_64.rpm dest=./artifacts/fedora31/zrythm-{{ version }}-1.fc31.x86_64.rpm flat=yes
+
+    #- name: Remove latest lv2 and suil
+      #include_tasks: "{{ playbook_dir }}/tasks/remove_latest_suil_lilv.yml"
+
+    #- name: Reinstall lilv and suil
+      #become: yes
+      #dnf:
+        #name: [ 'lv2', 'suil', 'lilv' ]
+        #update_cache: yes
+        #state: present
+
+# NOTE: for opensuse first add this repository:
+# https://software.opensuse.org//download.html?project=home:rncbc&package=lilv
+# also make sure to disable the CD repository:
+# https://kerneltalks.com/troubleshooting/failed-to-mount-cd-error-in-zypper/
+# Also remember to run `rpmdev-setuptree`
+- hosts: opensuse-tumbleweed
+  tasks:
+    - name: Copy file from master
+      include_tasks: "{{ playbook_dir }}/tasks/copy_from_master.yml"
+
+    - name: Ensure dependencies are installed
+      become: yes
+      zypper:
+        name: ['gcc-c++', 'gcc', 'pkgconfig',
+        'gtk3-devel', 'python3',
+        'libsndfile-devel',
+        'libyaml-devel', 'libsamplerate-devel',
+        'gettext', 'sed', 'alsa-lib-devel',
+        'ladspa-devel', 'fftw-devel',
+        'portaudio-devel', 'help2man',
+        'vim', 'meson', 'rpm-build', 'git',
+        'lv2', 'liblilv-devel',
+        'rpmdevtools', 'update-desktop-files',
+        'fftw3-threads-devel',
+        'jack-audio-connection-kit-devel',
+        'libX11-devel', 'make',
+        'librubberband-devel' ]
+        update_cache: yes
+        state: present
+
+    #- name: Remove packaged lv2, lilv and suil
+      #become: yes
+      #zypper:
+        #name: [ 'lv2-devel', 'suil-devel', 'lilv-devel' ]
+        #update_cache: yes
+        #state: absent
+
+    #- name: Install latest lv2 and suil
+      #include_tasks: "{{ playbook_dir }}/tasks/install_latest_suil_lilv.yml"
+
+    - name: Make
+      shell: |
+        cd /tmp/zrythm-installer
+        make clean
+        make opensuse-tumbleweed
+      environment:
+        PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+
+    - name: Deploy artifacts
+      fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-{{ version }}-1.x86_64.rpm dest=./artifacts/opensuse-tumbleweed/zrythm-{{ version }}-1.opensuse-tumbleweed.x86_64.rpm flat=yes
+
+    #- name: Remove latest lv2 and suil
+      #include_tasks: "{{ playbook_dir }}/tasks/remove_latest_suil_lilv.yml"
+
+    #- name: Reinstall lilv and suil
+      #become: yes
+      #zypper:
+        #name: [ 'lv2', 'libsuil-0-0', 'liblilv-0-0' ]
+        #update_cache: yes
+        #state: present

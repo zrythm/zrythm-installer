@@ -6,7 +6,7 @@
 override_dh_auto_configure:
 	mkdir -p debian/build
 	pwd
-	cd debian/build && ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dmanpage=true -Dbuildtype=release
+	cd debian/build && ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dinstall_dseg_font=false -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true
 
 override_dh_auto_build:
 	cd debian/build && ninja -v

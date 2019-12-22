@@ -73,6 +73,7 @@ fi
 
 is_fedora=0
 is_opensuse=0
+is_tumbleweed=0
 fedora_30_str="Fedora 30"
 fedora_31_str="Fedora 31"
 
@@ -89,13 +90,14 @@ if [[ "$ID" = "fedora" ]]; then
   fi
 elif [[ "$ID" = "opensuse-tumbleweed" ]]; then
   is_opensuse=1
+  is_tumbleweed=1
   architecture="x86_64"
 fi
 
 # ---- Install ----
 
 if [ $is_ubuntu = 0 -a $is_debian = 0 -a \
-  $is_arch = 0 -a $is_fedora = 0 ]; then
+  $is_arch = 0 -a $is_fedora = 0 -a $is_tumbleweed = 0 ]; then
   zenity --error --text="Could not detect your distro or your distro is not supported yet. \
 Please contact the Zrythm developers for assistance." --width $zenity_width
   exit 1
@@ -121,6 +123,11 @@ if zenity --question --text="Proceed with the installation of Zrythm?" --width $
     zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
     sudo /bin/sh -c \
       "dnf -y install \"bin/fedora/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.rpm\"" && \
+      zenity --info --text="Install successful!" --width $zenity_width
+  elif [ $is_tumbleweed = 1 ]; then
+    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
+    sudo /bin/sh -c \
+      "zypper -in install --allow-unsigned-rpm \"bin/opensuse/zrythm-${zrythm_ver}-1_tumbleweed_${architecture}.rpm\"" && \
       zenity --info --text="Install successful!" --width $zenity_width
   elif [ $is_arch = 1 ]; then
     zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
