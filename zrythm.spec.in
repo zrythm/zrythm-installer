@@ -28,6 +28,7 @@ BuildRequires: meson
 BuildRequires: help2man
 Requires: ladspa
 Requires: lv2
+Requires: xdg-utils
 %if 0%{?suse_version}
 BuildRequires: jack-devel libX11-devel update-desktop-files
 BuildRequires: fftw3-threads-devel librubberband-devel
