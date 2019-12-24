@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.7.270
+ZRYTHM_VERSION=0.7.295
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_VERSION).orig.tar.xz
@@ -48,13 +48,10 @@ endef
 
 # pushes the installer in each vm after it's made
 .PHONY: installer-in-vms
-installer-in-vms: installer-in-debian installer-in-ubuntu1810 installer-in-ubuntu1904 installer-in-ubuntu1910 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
+installer-in-vms: installer-in-debian installer-in-ubuntu1904 installer-in-ubuntu1910 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
 
 installer-in-debian: zrythm_installer.zip
 	$(call copy_installer_to_vm,debian10)
-
-installer-in-ubuntu1810: zrythm_installer.zip
-	$(call copy_installer_to_vm,ubuntu1810)
 
 installer-in-ubuntu1904: zrythm_installer.zip
 	$(call copy_installer_to_vm,ubuntu1904)
@@ -85,8 +82,6 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 	mkdir -p bin/opensuse
 	cp artifacts/debian10/$(DEBIAN_PKG_FILE) \
 		bin/debian/zrythm-$(ZRYTHM_VERSION)-1_10_amd64.deb
-	cp artifacts/ubuntu1810/$(DEBIAN_PKG_FILE) \
-		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_18.10_amd64.deb
 	cp artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) \
 		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.04_amd64.deb
 	cp artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) \
@@ -106,13 +101,10 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 # runs the ansible playbook to produce artifacts
 # for each distro
 .PHONY: artifacts
-artifacts: artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/ubuntu1810/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) artifacts/arch/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
+artifacts: artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) artifacts/arch/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
 
 artifacts/debian10/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,debian10)
-
-artifacts/ubuntu1810/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,ubuntu1810)
 
 artifacts/ubuntu1904/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,ubuntu1904)
@@ -133,9 +125,6 @@ artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE): zrythm.spec.in $(
 # debian VM
 .PHONY: debian10
 debian10: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
-
-.PHONY: ubuntu1810
-ubuntu1810: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
 # Ubuntu 19.04 target to be used by ansible inside the
 # ubuntu VM
@@ -213,7 +202,9 @@ $(BUILD_DIR)/$(ZRYTHM_TARBALL):
 	mkdir -p $(BUILD_DIR)
 	wget $(ZRYTHM_TARBALL_URL) -O $@
 	wget $(ZRYTHM_TARBALL_URL).$(SUM_EXT) -O $(BUILD_DIR)/$(ZRYTHM_TARBALL_SUM)
+	wget $(ZRYTHM_TARBALL_URL).asc -O $(BUILD_DIR)/$(ZRYTHM_TARBALL).asc
 	cd $(BUILD_DIR) && $(CALC_SUM) $(ZRYTHM_TARBALL_SUM)
+	cd $(BUILD_DIR) && gpg --verify $(ZRYTHM_TARBALL).asc $(ZRYTHM_TARBALL)
 
 .PHONY: clean
 clean:
