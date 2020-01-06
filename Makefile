@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.7.295
+ZRYTHM_VERSION=0.7.345
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_VERSION).orig.tar.xz
@@ -11,6 +11,11 @@ BUILD_DEBIAN10_DIR=$(BUILD_DIR)/debian10
 MESON_DIR=meson-0.52.1
 MESON_TARBALL=$(MESON_DIR).tar.gz
 BUILD_ARCH_DIR=$(BUILD_DIR)/arch
+BUILD_WINDOWS_DIR=$(BUILD_DIR)/windows10
+WIN_CHROOT_DIR=/tmp/zrythm-root
+# This is the directory to rsync into
+MINGW_SRC_DIR=../../msys64/home/alex/zrythm-build
+WINDOWS_ZRYTHM_PKG_TAR_XZ=
 RPMBUILD_ROOT=/home/ansible/rpmbuild
 BUILD_FEDORA31_DIR=$(BUILD_DIR)/fedora31
 BUILD_OPENSUSE_TUMBLEWEED_DIR=$(BUILD_DIR)/opensuse-tumbleweed
@@ -18,6 +23,7 @@ ARCH_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1-x86_64.pkg.tar.xz
 DEBIAN_PKG_FILE=zrythm_$(ZRYTHM_VERSION)-1_amd64.deb
 FEDORA31_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.fc31.x86_64.rpm
 OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
+WINDOWS_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.exe
 ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini playbook.yml --extra-vars "version=$(ZRYTHM_VERSION)" -v
 
 define start_vm
@@ -80,6 +86,8 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 	mkdir -p bin/arch
 	mkdir -p bin/fedora
 	mkdir -p bin/opensuse
+	cp artifacts/debian9/$(DEBIAN_PKG_FILE) \
+		bin/debian/zrythm-$(ZRYTHM_VERSION)-1_9_amd64.deb
 	cp artifacts/debian10/$(DEBIAN_PKG_FILE) \
 		bin/debian/zrythm-$(ZRYTHM_VERSION)-1_10_amd64.deb
 	cp artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) \
@@ -103,6 +111,9 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 .PHONY: artifacts
 artifacts: artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) artifacts/arch/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
 
+artifacts/debian9/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
+	$(call run_build_in_vm,debian9)
+
 artifacts/debian10/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,debian10)
 
@@ -120,6 +131,19 @@ artifacts/fedora31/$(FEDORA31_PKG_FILE): zrythm.spec.in $(BUILD_DIR)/$(ZRYTHM_TA
 
 artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE): zrythm.spec.in $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,opensuse-tumbleweed)
+
+artifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in $(BUILD_DIR)/$(ZRYTHM_TARBALL)
+	$(call start_vm,windows10)
+	echo "Copying files, enter password (alex) to continue"
+	rsync -r ./* alex@192.168.100.247:$(MINGW_SRC_DIR)/
+	echo "Go into the VM and run make windows10 in the zrythm-build directory. When the installer is built, press y to continue" && \
+		read -d "y"
+	scp alex@193.168.100.247:$(MINGW_SRC_DIR)/build/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
+	cp $(BUILD_DIR)/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
+	$(call stop_vm,windows10)
+
+.PHONY: debian9
+debian10: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
 # Debian 10 target to be used by ansible inside the
 # debian VM
@@ -161,6 +185,49 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
 	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
+
+.PHONY: windows10
+windows10: $(BUILD_DIR)/$(WINDOWS_INSTALLER)
+
+$(BUILD_WINDOWS_DIR)/mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.xz: PKGBUILD-w10.in
+	rm -rf $(BUILD_WINDOWS_DIR)
+	mkdir -p $(BUILD_WINDOWS_DIR)/src
+	cp PKGBUILD-w10.in $(BUILD_WINDOWS_DIR)/PKGBUILD
+	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_WINDOWS_DIR)/
+	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_WINDOWS_DIR)/PKGBUILD
+	cd $(BUILD_WINDOWS_DIR) && makepkg-mingw -f
+
+$(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe: $(BUILD_WINDOWS_DIR)/mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.xz
+	# create chroot
+	mkdir -p $(WIN_CHROOT_DIR)
+	mkdir -p $(WIN_CHROOT_DIR)/var/lib/pacman
+	mkdir -p $(WIN_CHROOT_DIR)/var/log
+	mkdir -p $(WIN_CHROOT_DIR)/tmp
+	pacman -Syu --root $(WIN_CHROOT_DIR)
+	pacman -S filesystem bash pacman --noconfirm --needed --root $(WIN_CHROOT_DIR)
+	# install package in chroot
+	pacman -U $(BUILD_WINDOWS_DIR)/mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.xz --noconfirm --needed --root $(WIN_CHROOT_DIR)
+	ls $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe
+	# compile glib schemas
+	glib-compile-schemas.exe $(WIN_CHROOT_DIR)/mingw64/share/glib-2.0/schemas
+
+$(BUILD_DIR)/$(WINDOWS_INSTALLER): $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe FORCE
+	# create sources distribution
+	-rm $(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
+	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist
+	pacman -Si $(shell pacman -Q --root $(WIN_CHROOT_DIR) | grep mingw | grep -v zrythm | cut -d" " -f1) > $(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
+	# copy other files
+	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/AUTHORS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/COPYING* $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/README.md $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/CONTRIBUTING.md $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/THANKS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
+	# create installer
+	tools/gen_windows_installer.sh $(WIN_CHROOT_DIR)/mingw64 $(ZRYTHM_VERSION) $(BUILD_WINDOWS_DIR)/installer $(shell pwd)/tools/nsis
+	cp $(BUILD_WINDOWS_DIR)/installer/dist/Install_v$(ZRYTHM_VERSION).exe $(BUILD_DIR)/$(WINDOWS_INSTALLER)
 
 .PHONY: fedora31
 fedora31: $(BUILD_DIR)/$(FEDORA31_PKG_FILE)
@@ -206,8 +273,19 @@ $(BUILD_DIR)/$(ZRYTHM_TARBALL):
 	cd $(BUILD_DIR) && $(CALC_SUM) $(ZRYTHM_TARBALL_SUM)
 	cd $(BUILD_DIR) && gpg --verify $(ZRYTHM_TARBALL).asc $(ZRYTHM_TARBALL)
 
+# call this if cleaning the chroot environment is needed
+.PHONY: clean-windows10-chroot
+clean-windows10-chroot:
+	rm -rf $(WIN_CHROOT_DIR)
+
+# to be called inside the VM
+.PHONY: clean-windows-dir
+clean-windows-dir:
+	rm -rf $(BUILD_WINDOWS_DIR)
+
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DEBIAN10_DIR)
 	rm -rf $(BUILD_ARCH_DIR)
 	rm -rf $(BUILD_FEDORA31_DIR)
+	rm -rf $(BUILD_DIR)/$(ZRYTHM_TARBALL)
