@@ -1,3 +1,6 @@
+# Create installer
+Run make -j4
+
 # Note for windows
 Can use the following to spawn an MSYS2 shell from the
 windows shell

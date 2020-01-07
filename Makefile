@@ -54,10 +54,16 @@ endef
 
 # pushes the installer in each vm after it's made
 .PHONY: installer-in-vms
-installer-in-vms: installer-in-debian installer-in-ubuntu1904 installer-in-ubuntu1910 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
+installer-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1904 installer-in-ubuntu1910 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
 
-installer-in-debian: zrythm_installer.zip
+installer-in-debian9: zrythm_installer.zip
+	$(call copy_installer_to_vm,debian9)
+
+installer-in-debian10: zrythm_installer.zip
 	$(call copy_installer_to_vm,debian10)
+
+installer-in-linuxmint193: zrythm_installer.zip
+	$(call copy_installer_to_vm,linuxmint193)
 
 installer-in-ubuntu1904: zrythm_installer.zip
 	$(call copy_installer_to_vm,ubuntu1904)
@@ -83,6 +89,7 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 	- mv bin bin.bak
 	mkdir -p bin/debian
 	mkdir -p bin/ubuntu
+	mkdir -p bin/linuxmint
 	mkdir -p bin/arch
 	mkdir -p bin/fedora
 	mkdir -p bin/opensuse
@@ -90,6 +97,8 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 		bin/debian/zrythm-$(ZRYTHM_VERSION)-1_9_amd64.deb
 	cp artifacts/debian10/$(DEBIAN_PKG_FILE) \
 		bin/debian/zrythm-$(ZRYTHM_VERSION)-1_10_amd64.deb
+	cp artifacts/linuxmint193/$(DEBIAN_PKG_FILE) \
+		bin/linuxmint/zrythm-$(ZRYTHM_VERSION)-1_19.3_amd64.deb
 	cp artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) \
 		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.04_amd64.deb
 	cp artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) \
@@ -109,13 +118,16 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 # runs the ansible playbook to produce artifacts
 # for each distro
 .PHONY: artifacts
-artifacts: artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) artifacts/arch/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
+artifacts: artifacts/debian9/$(DEBIAN_PKG_FILE) artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/linuxmint193/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) artifacts/arch/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
 
 artifacts/debian9/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,debian9)
 
 artifacts/debian10/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,debian10)
+
+artifacts/linuxmint193/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
+	$(call run_build_in_vm,linuxmint193)
 
 artifacts/ubuntu1904/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,ubuntu1904)
@@ -143,12 +155,15 @@ artifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in $(BUILD_DIR)/$(ZRYTHM_
 	$(call stop_vm,windows10)
 
 .PHONY: debian9
-debian10: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+debian9: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
 # Debian 10 target to be used by ansible inside the
 # debian VM
 .PHONY: debian10
 debian10: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+
+.PHONY: linuxmint193
+linuxmint193: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
 # Ubuntu 19.04 target to be used by ansible inside the
 # ubuntu VM
@@ -170,6 +185,14 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.contro
 	cp debian.control $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
 	cp debian.copyright $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/copyright
 	cp debian.rules $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
+	if [ "$$(hostname)" = "debian9" ] || [ "$$(hostname)" = "linuxmint193" ] ; then \
+			sed -i -e 's/-Denable_ffmpeg=true/-Denable_ffmpeg=false/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
+			sed -i -e 's/ninja test/echo test/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
+		fi
+	if [ "$$(hostname)" = "debian9" ]; then \
+			sed -i -e 's/fonts-dseg, //' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
+			sed -i -e 's/-Dinstall_dseg_font=false/-Dinstall_dseg_font=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
+		fi
 	echo "3.0 (quilt)" > $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/source/format
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
 
@@ -183,6 +206,7 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in
 	rm -rf $(BUILD_ARCH_DIR)
 	mkdir -p $(BUILD_ARCH_DIR)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
+	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_ARCH_DIR)/
 	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 
@@ -283,9 +307,12 @@ clean-windows10-chroot:
 clean-windows-dir:
 	rm -rf $(BUILD_WINDOWS_DIR)
 
+.PHONY: clean-tarball
+clean-tarball:
+	rm -rf $(BUILD_DIR)/$(ZRYTHM_TARBALL)
+
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DEBIAN10_DIR)
 	rm -rf $(BUILD_ARCH_DIR)
 	rm -rf $(BUILD_FEDORA31_DIR)
-	rm -rf $(BUILD_DIR)/$(ZRYTHM_TARBALL)

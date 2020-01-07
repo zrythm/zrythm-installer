@@ -16,7 +16,7 @@ makedepends=(
 optdepends=('portaudio: portaudio backend')
 conflicts=( 'zrythm-git' )
 source=( "https://www.zrythm.org/releases/zrythm-$pkgver.tar.xz" )
-sha256sums=('f384271ed1a402475712cad03a44297149a6e39b2689db4555dd1d458fc00263')
+sha256sums=('SKIP')
 
 _rootdir="${pkgname}-${pkgver}"
 

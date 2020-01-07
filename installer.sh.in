@@ -17,21 +17,33 @@ fi
 # ---- Detect debian based systems ----
 is_ubuntu=0
 is_debian=0
+is_mint=0
 # LTS is version x.04
 ubuntu_lts="04"
 
 debian_10_str="Debian GNU/Linux 10"
+debian_9_str="Debian GNU/Linux 9"
+mint_19_3_str="LinuxMint 19.3"
 ubuntu_18_10_str="Ubuntu 18.10"
 ubuntu_19_04_str="Ubuntu 19.04"
 ubuntu_19_10_str="Ubuntu 19.10"
 
 zenity_width=360
+have_zenity=0
+command -v zenity
+if [ $? -eq 0 ]; then
+  have_zenity=1
+fi
 
 if [[ "$ID" = *"debian"* ]]; then
   if [[ "$VERSION_ID" = *"10"* ]]; then
     echo "found $debian_10_str"
     is_debian=1
     distro_ver=10
+  elif [[ "$VERSION_ID" = *"9"* ]]; then
+    echo "found $debian_9_str"
+    is_debian=1
+    distro_ver=9
   fi
 fi
 
@@ -51,6 +63,14 @@ if [[ "$ID" = *"ubuntu"* ]]; then
     is_ubuntu=1
     distro_ver=19
     ubuntu_lts="10"
+  fi
+fi
+
+if [[ "$ID" = *"linuxmint"* ]]; then
+  if [[ "$VERSION_ID" = *"19.3"* ]]; then
+    echo "found $mint_19_3_str"
+    is_mint=1
+    distro_ver=19.3
   fi
 fi
 
@@ -96,44 +116,92 @@ fi
 
 # ---- Install ----
 
-if [ $is_ubuntu = 0 -a $is_debian = 0 -a \
+show_error()
+{
+  if [ $have_zenity -ne 0 ]; then
+    zenity --error --text="$1" --width $zenity_width
+  else
+    echo "$1"
+  fi
+}
+
+show_info()
+{
+  if [ $have_zenity -ne 0 ]; then
+    zenity --info --text="$1" --width $zenity_width
+  else
+    echo "$1"
+  fi
+}
+
+if [ $is_ubuntu = 0 -a $is_debian = 0 -a $is_mint = 0 -a \
   $is_arch = 0 -a $is_fedora = 0 -a $is_tumbleweed = 0 ]; then
-  zenity --error --text="Could not detect your distro or your distro is not supported yet. \
-Please contact the Zrythm developers for assistance." --width $zenity_width
+  show_error "Could not detect your distro or your distro is not supported yet. Please contact the Zrythm developers for assistance."
   exit 1
 fi
 
-ask_for_root_pw_text="Please enter your root password in the terminal to continue (if asked)"
-if zenity --question --text="Proceed with the installation of Zrythm?" --width $zenity_width; then
+ask_for_root_pw()
+{
+  ask_for_root_pw_text="Please enter your root password in the terminal to continue (if asked)"
+  show_info "$ask_for_root_pw_text"
+}
+
+print_install_success()
+{
+  show_info "Install successful!"
+}
+
+proceed=0
+proceed_txt="Proceed with the installation of Zrythm?"
+if [ $have_zenity -ne 0 ]; then
+  zenity --question --text="$proceed_txt" --width $zenity_width
+  if [ $? -eq 0 ]; then
+    proceed=1
+  fi
+else
+  read -p "$proceed_txt (type Y or y): " -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    proceed=1
+  fi
+fi
+
+if [ $proceed -ne 0 ]; then
   if [ $is_ubuntu = 1 ]; then
-    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width;
+    ask_for_root_pw;
     sudo /bin/sh -c \
       "apt update && \
       dpkg -i \"bin/ubuntu/zrythm-${zrythm_ver}-1_${distro_ver}.${ubuntu_lts}_${architecture}.deb\" || \
       apt install -f -y" && \
-      zenity --info --text="Install successful!" --width $zenity_width
+      print_install_success
+  elif [ $is_mint = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "apt update && \
+      dpkg -i \"bin/linuxmint/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
+      apt install -f -y" && \
+      print_install_success
   elif [ $is_debian = 1 ]; then
-    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
+    ask_for_root_pw;
     sudo /bin/sh -c \
       "apt update && \
       dpkg -i \"bin/debian/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
       apt install -f -y" && \
-    zenity --info --text="Install successful!" --width $zenity_width
+      print_install_success
   elif [ $is_fedora = 1 ]; then
-    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
+    ask_for_root_pw;
     sudo /bin/sh -c \
       "dnf -y install \"bin/fedora/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.rpm\"" && \
-      zenity --info --text="Install successful!" --width $zenity_width
+      print_install_success
   elif [ $is_tumbleweed = 1 ]; then
-    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
+    ask_for_root_pw;
     sudo /bin/sh -c \
       "zypper -in install --allow-unsigned-rpm \"bin/opensuse/zrythm-${zrythm_ver}-1_tumbleweed_${architecture}.rpm\"" && \
-      zenity --info --text="Install successful!" --width $zenity_width
+      print_install_success
   elif [ $is_arch = 1 ]; then
-    zenity --info --text="$ask_for_root_pw_text" --width $zenity_width
+    ask_for_root_pw;
     sudo /bin/sh -c \
       "pacman -U --noconfirm \"bin/arch/zrythm-${zrythm_ver}-1_${architecture}.pkg.tar.xz\"" && \
-      zenity --info --text="Install successful!" --width $zenity_width
+      print_install_success
   fi
 else
   exit 0

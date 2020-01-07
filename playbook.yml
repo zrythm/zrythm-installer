@@ -1,5 +1,27 @@
 ---
 
+- hosts: linuxmint193
+  tasks:
+    - name: Prepare
+      include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
+
+    - name: Install build essential
+      become: yes
+      apt:
+        name: ['build-essential']
+
+    - name: Make build
+      shell: |
+        cd /tmp/zrythm-installer
+        make clean
+        make linuxmint193
+
+    - name: Deploy artifacts
+      fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/linuxmint193/zrythm_{{ version }}-1_amd64.deb flat=yes
+
+    #- name: Post deploy
+      #include_tasks: tasks/ubuntu_post_deploy.yml
+
 - hosts: ubuntu1810
   tasks:
     - name: Prepare
@@ -50,6 +72,20 @@
 
     #- name: Post deploy
       #include_tasks: tasks/ubuntu_post_deploy.yml
+      #
+- hosts: debian9
+  tasks:
+    - name: Prepare
+      include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
+
+    - name: Make build
+      shell: |
+        cd /tmp/zrythm-installer
+        make clean
+        make debian9
+
+    - name: Deploy artifacts
+      fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/debian9/zrythm_{{ version }}-1_amd64.deb flat=yes
 
 - hosts: debian10
   tasks:
