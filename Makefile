@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.7.345
+ZRYTHM_VERSION=0.7.383
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_VERSION).orig.tar.xz
@@ -8,7 +8,8 @@ CALC_SUM=sha256sum --check
 ZRYTHM_TARBALL_URL=https://www.zrythm.org/releases/$(ZRYTHM_TARBALL)
 BUILD_DIR=build
 BUILD_DEBIAN10_DIR=$(BUILD_DIR)/debian10
-MESON_DIR=meson-0.52.1
+MESON_VERSION=0.53.0
+MESON_DIR=meson-$(MESON_VERSION)
 MESON_TARBALL=$(MESON_DIR).tar.gz
 BUILD_ARCH_DIR=$(BUILD_DIR)/arch
 BUILD_WINDOWS_DIR=$(BUILD_DIR)/windows10
@@ -25,6 +26,8 @@ FEDORA31_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.fc31.x86_64.rpm
 OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 WINDOWS_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.exe
 ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini playbook.yml --extra-vars "version=$(ZRYTHM_VERSION)" -v
+WINDOWS_IP=192.168.100.178
+MINGW_ZRYTHM_PKG_TAR=mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
@@ -54,7 +57,7 @@ endef
 
 # pushes the installer in each vm after it's made
 .PHONY: installer-in-vms
-installer-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1904 installer-in-ubuntu1910 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
+installer-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1904 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
 
 installer-in-debian9: zrythm_installer.zip
 	$(call copy_installer_to_vm,debian9)
@@ -68,8 +71,8 @@ installer-in-linuxmint193: zrythm_installer.zip
 installer-in-ubuntu1904: zrythm_installer.zip
 	$(call copy_installer_to_vm,ubuntu1904)
 
-installer-in-ubuntu1910: zrythm_installer.zip
-	$(call copy_installer_to_vm,ubuntu1910)
+installer-in-ubuntu1804: zrythm_installer.zip
+	$(call copy_installer_to_vm,ubuntu1804)
 
 installer-in-archlinux: zrythm_installer.zip
 	$(call copy_installer_to_vm,archlinux)
@@ -101,8 +104,8 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 		bin/linuxmint/zrythm-$(ZRYTHM_VERSION)-1_19.3_amd64.deb
 	cp artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) \
 		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.04_amd64.deb
-	cp artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) \
-		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.10_amd64.deb
+	cp artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) \
+		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_18.04_amd64.deb
 	cp artifacts/arch/$(ARCH_PKG_FILE) \
 		bin/arch/zrythm-$(ZRYTHM_VERSION)-1_x86_64.pkg.tar.xz
 	cp artifacts/fedora31/$(FEDORA31_PKG_FILE) \
@@ -118,7 +121,7 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 # runs the ansible playbook to produce artifacts
 # for each distro
 .PHONY: artifacts
-artifacts: artifacts/debian9/$(DEBIAN_PKG_FILE) artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/linuxmint193/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) artifacts/arch/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
+artifacts: artifacts/debian9/$(DEBIAN_PKG_FILE) artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/linuxmint193/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) artifacts/arch/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
 
 artifacts/debian9/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,debian9)
@@ -132,8 +135,8 @@ artifacts/linuxmint193/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat deb
 artifacts/ubuntu1904/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,ubuntu1904)
 
-artifacts/ubuntu1910/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,ubuntu1910)
+artifacts/ubuntu1804/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
+	$(call run_build_in_vm,ubuntu1804)
 
 artifacts/arch/$(ARCH_PKG_FILE): PKGBUILD.in $(BUILD_DIR)/$(ZRYTHM_TARBALL)
 	$(call run_build_in_vm,archlinux)
@@ -146,12 +149,13 @@ artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE): zrythm.spec.in $(
 
 artifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in $(BUILD_DIR)/$(ZRYTHM_TARBALL)
 	$(call start_vm,windows10)
+	echo "Make sure that the default openssh shell is bash.exe"
 	echo "Copying files, enter password (alex) to continue"
-	rsync -r ./* alex@192.168.100.247:$(MINGW_SRC_DIR)/
+	rsync -r ./* alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/
 	echo "Go into the VM and run make windows10 in the zrythm-build directory. When the installer is built, press y to continue" && \
 		read -d "y"
-	scp alex@193.168.100.247:$(MINGW_SRC_DIR)/build/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
-	cp $(BUILD_DIR)/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
+	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
+	#cp $(BUILD_DIR)/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
 	$(call stop_vm,windows10)
 
 .PHONY: debian9
@@ -170,8 +174,8 @@ linuxmint193: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 .PHONY: ubuntu1904
 ubuntu1904: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
-.PHONY: ubuntu1910
-ubuntu1910: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+.PHONY: ubuntu1804
+ubuntu1804: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
 $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	rm -rf $(BUILD_DEBIAN10_DIR)
@@ -197,7 +201,7 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.contro
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
 
 $(BUILD_DIR)/$(MESON_TARBALL):
-	wget https://github.com/mesonbuild/meson/releases/download/0.52.1/$(MESON_TARBALL) -O $@
+	wget https://github.com/mesonbuild/meson/releases/download/$(MESON_VERSION)/$(MESON_TARBALL) -O $@
 
 .PHONY: arch
 arch: $(BUILD_DIR)/$(ARCH_PKG_FILE)
@@ -213,7 +217,7 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in
 .PHONY: windows10
 windows10: $(BUILD_DIR)/$(WINDOWS_INSTALLER)
 
-$(BUILD_WINDOWS_DIR)/mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.xz: PKGBUILD-w10.in
+$(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR): PKGBUILD-w10.in
 	rm -rf $(BUILD_WINDOWS_DIR)
 	mkdir -p $(BUILD_WINDOWS_DIR)/src
 	cp PKGBUILD-w10.in $(BUILD_WINDOWS_DIR)/PKGBUILD
@@ -221,7 +225,7 @@ $(BUILD_WINDOWS_DIR)/mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.xz:
 	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_WINDOWS_DIR)/PKGBUILD
 	cd $(BUILD_WINDOWS_DIR) && makepkg-mingw -f
 
-$(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe: $(BUILD_WINDOWS_DIR)/mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.xz
+$(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe: $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR)
 	# create chroot
 	mkdir -p $(WIN_CHROOT_DIR)
 	mkdir -p $(WIN_CHROOT_DIR)/var/lib/pacman
@@ -230,7 +234,7 @@ $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe: $(BUILD_WINDOWS_DIR)/mingw-w64-x86_64-
 	pacman -Syu --root $(WIN_CHROOT_DIR)
 	pacman -S filesystem bash pacman --noconfirm --needed --root $(WIN_CHROOT_DIR)
 	# install package in chroot
-	pacman -U $(BUILD_WINDOWS_DIR)/mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.xz --noconfirm --needed --root $(WIN_CHROOT_DIR)
+	pacman -U $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) --noconfirm --needed --root $(WIN_CHROOT_DIR)
 	ls $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe
 	# compile glib schemas
 	glib-compile-schemas.exe $(WIN_CHROOT_DIR)/mingw64/share/glib-2.0/schemas

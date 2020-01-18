@@ -14,6 +14,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-adwaita-icon-theme"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
          "${MINGW_PACKAGE_PREFIX}-dlfcn"
          "${MINGW_PACKAGE_PREFIX}-fftw"
+         "${MINGW_PACKAGE_PREFIX}-SDL2"
          "${MINGW_PACKAGE_PREFIX}-libyaml")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-gettext"
@@ -39,6 +40,7 @@ build() {
   ${MINGW_PREFIX}/bin/meson \
     --buildtype=debugoptimized \
     -Denable_plugins=false \
+    -Denable_sdl=true \
     -Dwindows_release=true \
     --buildtype=release \
     "../${_realname}-${pkgver}"

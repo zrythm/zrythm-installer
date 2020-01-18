@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2019 Alexandros Theodotou
+# Copyright (C) 2019-2020 Alexandros Theodotou
 
 zrythm_ver="@VERSION@"
 architecture="amd64"
@@ -24,6 +24,7 @@ ubuntu_lts="04"
 debian_10_str="Debian GNU/Linux 10"
 debian_9_str="Debian GNU/Linux 9"
 mint_19_3_str="LinuxMint 19.3"
+ubuntu_18_04="Ubuntu 18.04"
 ubuntu_18_10_str="Ubuntu 18.10"
 ubuntu_19_04_str="Ubuntu 19.04"
 ubuntu_19_10_str="Ubuntu 19.10"
@@ -33,6 +34,14 @@ have_zenity=0
 command -v zenity
 if [ $? -eq 0 ]; then
   have_zenity=1
+fi
+
+if [[ "$ID" = *"linuxmint"* ]]; then
+  if [[ "$VERSION_ID" = *"19.3"* ]]; then
+    echo "found $mint_19_3_str"
+    is_mint=1
+    distro_ver=19.3
+  fi
 fi
 
 if [[ "$ID" = *"debian"* ]]; then
@@ -48,7 +57,12 @@ if [[ "$ID" = *"debian"* ]]; then
 fi
 
 if [[ "$ID" = *"ubuntu"* ]]; then
-  if [[ "$VERSION_ID" = *"18.10"* ]]; then
+  if [[ "$VERSION_ID" = *"18.04"* ]]; then
+    echo "found $ubuntu_18_04_str"
+    is_ubuntu=1
+    distro_ver=18
+    ubuntu_lts="04"
+  elif [[ "$VERSION_ID" = *"18.10"* ]]; then
     echo "found $ubuntu_18_10_str"
     is_ubuntu=1
     distro_ver=18
@@ -64,13 +78,12 @@ if [[ "$ID" = *"ubuntu"* ]]; then
     distro_ver=19
     ubuntu_lts="10"
   fi
-fi
-
-if [[ "$ID" = *"linuxmint"* ]]; then
-  if [[ "$VERSION_ID" = *"19.3"* ]]; then
-    echo "found $mint_19_3_str"
-    is_mint=1
-    distro_ver=19.3
+elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
+  if [[ "$UBUNTU_CODENAME" = *"bionic"* ]]; then
+    echo "found $ubuntu_18_04_str"
+    is_ubuntu=1
+    distro_ver=18
+    ubuntu_lts="04"
   fi
 fi
 
@@ -152,7 +165,7 @@ print_install_success()
 }
 
 proceed=0
-proceed_txt="Proceed with the installation of Zrythm?"
+proceed_txt="Proceed with the installation of Zrythm v$zrythm_ver?"
 if [ $have_zenity -ne 0 ]; then
   zenity --question --text="$proceed_txt" --width $zenity_width
   if [ $? -eq 0 ]; then

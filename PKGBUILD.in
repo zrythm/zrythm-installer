@@ -8,7 +8,7 @@ url="https://www.zrythm.org"
 license=('AGPL3')
 depends=('gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
   'libyaml' 'libsamplerate' 'alsa-lib' 'fftw'
-  'qt5-base' 'rubberband' 'xdg-utils')
+  'rubberband' 'xdg-utils' 'sdl2')
 makedepends=(
   'python' 'gettext' 'sed'
   'meson' 'ninja' 'help2man' 'python-sphinx'
@@ -22,7 +22,7 @@ _rootdir="${pkgname}-${pkgver}"
 
 build() {
   cd $_rootdir
-  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_qt5=true
+  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true
   ninja -C build
 }
 

@@ -26,9 +26,11 @@ BuildRequires: fftw-devel
 BuildRequires: portaudio-devel
 BuildRequires: meson
 BuildRequires: help2man
+BuildRequires: SDL2-devel
 Requires: ladspa
 Requires: lv2
 Requires: xdg-utils
+Requires: SDL2
 %if 0%{?suse_version}
 BuildRequires: jack-devel libX11-devel update-desktop-files
 BuildRequires: fftw3-threads-devel librubberband-devel
@@ -76,13 +78,13 @@ and is designed to be intuitive to use.
 %build
 rm -rf build
 %if 0%{?suse_version}
-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release
+meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
 %endif
 %if 0%{?fedora}
-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release
+meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
 %endif
 %if 0%{?mageia}
-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release
+meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
 %endif
 ninja -C build
 
@@ -98,7 +100,7 @@ DESTDIR="%{buildroot}/" ninja -C build install
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/fonts/%{name}
 %{_datadir}/glib-2.0/schemas/*.xml
-%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
+%{_datadir}/icons/hicolor/scalable/apps/z_frame_8.svg
 %{_datadir}/%{name}
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml

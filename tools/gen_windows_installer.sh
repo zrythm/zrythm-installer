@@ -222,11 +222,7 @@ cat >> $NSISFILE << EOF
 !addplugindir "nsis\Plugins"
 !include MUI2.nsh
 !include FileAssociation.nsh
-!include FontName.nsh
-!include FontRegAdv.nsh
 !include WinVer.nsh
-
-!define FontBackup Software\\${PRODUCT_NAME}\\${PRODUCT_ID}\\FontBackup
 
 Name "${PROGRAM_NAME}"
 OutFile "${OUTFILE}"
@@ -239,7 +235,7 @@ EOF
 
 cat >> $NSISFILE << EOF
 !define MUI_FINISHPAGE_TITLE "Welcome to Zrythm"
-!define MUI_FINISHPAGE_TEXT "Thank you for installing Zrythm.\$\\r\$\\nIf you would like to join the discussion, Zrythm has an IRC chatroom and a Matrix chatroom.\$\\r\$\\n\$\\r\$\\nPlease visit the website below to find out more."
+!define MUI_FINISHPAGE_TEXT "Thank you for installing Zrythm.\$\\r\$\\nIf you would like to join the discussion, Zrythm has an IRC, Matrix and Discord chatroom.\$\\r\$\\n\$\\r\$\\nPlease visit the website below to find out more."
 !define MUI_FINISHPAGE_LINK "Zrythm website"
 !define MUI_FINISHPAGE_LINK_LOCATION "https://www.zrythm.org/"
 #this would run as admin - see http://forums.winamp.com/showthread.php?t=353366
@@ -288,8 +284,6 @@ Section "${PROGRAM_NAME} v${PROGRAM_VERSION} (required)" SecMainProg
   SetOutPath \$INSTDIR
 SectionEnd
 
-Section "WASAPI sound driver" SecWASAPI
-SectionEnd
 EOF
 
 cat >> $NSISFILE << EOF
@@ -303,14 +297,12 @@ cat >> $NSISFILE << EOF
   CreateShortCut "\$SMPROGRAMS\\${PRODUCT_ID}${SFX}\\Uninstall.lnk" "\$INSTDIR\\uninstall.exe" "" "\$INSTDIR\\uninstall.exe" 0
 SectionEnd
 LangString DESC_SecMainProg \${LANG_ENGLISH} "${PROGRAM_NAME} v${PROGRAM_VERSION}\$\\r\$\\n${ZRYTHMDATE}"
-LangString DESC_SecWASAPI \${LANG_ENGLISH} "WASAPI Audio Driver\$\\r\$\\nOnly works on Vista or later."
 EOF
 
 cat >> $NSISFILE << EOF
 LangString DESC_SecMenu \${LANG_ENGLISH} "Create Start-Menu Shortcuts (recommended)."
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT \${SecMainProg} \$(DESC_SecMainProg)
-!insertmacro MUI_DESCRIPTION_TEXT \${SecWASAPI} \$(DESC_SecWASAPI)
 EOF
 
 cat >> $NSISFILE << EOF
@@ -378,12 +370,6 @@ Function .onInit
       IDOK done
 
   done:
-
-  \${If} \${AtMostWinXP}
-    SectionSetFlags \${SecWASAPI} \${SF_RO}
-  \${Else}
-    SectionSetFlags \${SecWASAPI} 0
-  \${EndIf}
 
 FunctionEnd
 

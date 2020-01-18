@@ -22,6 +22,20 @@
     #- name: Post deploy
       #include_tasks: tasks/ubuntu_post_deploy.yml
 
+- hosts: ubuntu1804
+  tasks:
+    - name: Prepare
+      include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
+
+    - name: Make build
+      shell: |
+        cd /tmp/zrythm-installer
+        make clean
+        make ubuntu1804
+
+    - name: Deploy artifacts
+      fetch: src=/tmp/zrythm-installer/build/debian10/zrythm_{{ version }}-1_amd64.deb dest=./artifacts/ubuntu1804/zrythm_{{ version }}-1_amd64.deb flat=yes
+
 - hosts: ubuntu1810
   tasks:
     - name: Prepare
@@ -116,6 +130,7 @@
         'libyaml', 'libsamplerate', 'alsa-lib', 'fftw',
         'python', 'gettext', 'sed', 'meson', 'ninja',
         'help2man', 'python-sphinx', 'ladspa', 'lv2',
+        'sdl2',
         'vim', 'meson', 'rubberband', 'qt5-base' ]
         update_cache: yes
         state: present
@@ -124,7 +139,7 @@
       shell: cd /tmp/zrythm-installer && make clean && make arch
 
     - name: Deploy artifacts
-      fetch: src=/tmp/zrythm-installer/build/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz dest=./artifacts/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz flat=yes
+      fetch: src=/tmp/zrythm-installer/build/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.zst dest=./artifacts/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.zst flat=yes
 
 - hosts: fedora31
   tasks:
@@ -143,6 +158,7 @@
         'ladspa-devel', 'fftw-devel',
         'portaudio-devel', 'help2man',
         'vim', 'meson', 'rpm-build',
+        'SDL2-devel',
         'jack-audio-connection-kit-devel',
         'libX11-devel', 'qt5-devel', 'make',
         'rubberband-devel' ]
@@ -201,6 +217,7 @@
         'lv2', 'liblilv-devel',
         'rpmdevtools', 'update-desktop-files',
         'fftw3-threads-devel',
+        'SDL2-devel',
         'jack-audio-connection-kit-devel',
         'libX11-devel', 'make',
         'librubberband-devel' ]
