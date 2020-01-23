@@ -128,6 +128,8 @@ cp -R $MINGW_PREFIX/etc/gtk-3.0 $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
 echo "packaging Adwaita icons"
 mkdir -p "$DIST_SHAREDIR/icons"
 cp -R "$MINGW_PREFIX/share/icons/Adwaita" "$DIST_SHAREDIR/icons/"
+#echo "packaging breeze icons"
+#cp -R "$MINGW_PREFIX/bin/data/icons/breeze-dark" "$DIST_SHAREDIR/icons/"
 echo "packaging existing hicolor icons"
 cp -R "$MINGW_PREFIX/share/icons/hicolor" "$DIST_SHAREDIR/icons/"
 # ******************************
@@ -170,6 +172,8 @@ cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders.cache" \
 echo "packaging zrythm.exe"
 cp "$MINGW_PREFIX/bin/zrythm.exe" "$DIST_BINDIR/"
 cp "$MINGW_PREFIX/bin/zrythm_vst_check.exe" "$DIST_BINDIR/"
+$BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm.exe" --set-icon  "$DIST_DIR/zrythm.ico"
+$BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm_vst_check.exe" --set-icon  "$DIST_DIR/zrythm.ico"
 # ******************************
 
 # ******************************

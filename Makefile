@@ -28,6 +28,9 @@ WINDOWS_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.exe
 ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini playbook.yml --extra-vars "version=$(ZRYTHM_VERSION)" -v
 WINDOWS_IP=192.168.100.178
 MINGW_ZRYTHM_PKG_TAR=mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
+RCEDIT64_EXE=rcedit-x64.exe
+RCEDIT64_VER=1.1.1
+RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
@@ -147,7 +150,7 @@ artifacts/fedora31/$(FEDORA31_PKG_FILE): zrythm.spec.in $(BUILD_DIR)/$(ZRYTHM_TA
 artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE): zrythm.spec.in $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 	$(call run_build_in_vm,opensuse-tumbleweed)
 
-artifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in $(BUILD_DIR)/$(ZRYTHM_TARBALL)
+artifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/$(RCEDIT64_EXE)
 	$(call start_vm,windows10)
 	echo "Make sure that the default openssh shell is bash.exe"
 	echo "Copying files, enter password (alex) to continue"
@@ -253,6 +256,7 @@ $(BUILD_DIR)/$(WINDOWS_INSTALLER): $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe FORC
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
+	cp $(BUILD_DIR)/$(RCEDIT64_EXE) $(BUILD_WINDOWS_DIR)/installer/
 	# create installer
 	tools/gen_windows_installer.sh $(WIN_CHROOT_DIR)/mingw64 $(ZRYTHM_VERSION) $(BUILD_WINDOWS_DIR)/installer $(shell pwd)/tools/nsis
 	cp $(BUILD_WINDOWS_DIR)/installer/dist/Install_v$(ZRYTHM_VERSION).exe $(BUILD_DIR)/$(WINDOWS_INSTALLER)
@@ -300,6 +304,9 @@ $(BUILD_DIR)/$(ZRYTHM_TARBALL):
 	wget $(ZRYTHM_TARBALL_URL).asc -O $(BUILD_DIR)/$(ZRYTHM_TARBALL).asc
 	cd $(BUILD_DIR) && $(CALC_SUM) $(ZRYTHM_TARBALL_SUM)
 	cd $(BUILD_DIR) && gpg --verify $(ZRYTHM_TARBALL).asc $(ZRYTHM_TARBALL)
+
+$(BUILD_DIR)/$(RCEDIT64_EXE):
+	wget $(RCEDIT64_URL) -O $@
 
 # call this if cleaning the chroot environment is needed
 .PHONY: clean-windows10-chroot
