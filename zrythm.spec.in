@@ -100,7 +100,7 @@ DESTDIR="%{buildroot}/" ninja -C build install
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/fonts/%{name}
 %{_datadir}/glib-2.0/schemas/*.xml
-%{_datadir}/icons/hicolor/scalable/apps/z_frame_8.svg
+%{_datadir}/icons/hicolor/scalable/apps/zrythm.svg
 %{_datadir}/%{name}
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml

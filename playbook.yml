@@ -139,7 +139,7 @@
       shell: cd /tmp/zrythm-installer && make clean && make arch
 
     - name: Deploy artifacts
-      fetch: src=/tmp/zrythm-installer/build/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.zst dest=./artifacts/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.zst flat=yes
+      fetch: src=/tmp/zrythm-installer/build/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz dest=./artifacts/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz flat=yes
 
 - hosts: fedora31
   tasks:
