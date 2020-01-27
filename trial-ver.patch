@@ -1,0 +1,59 @@
+diff --git a/PKGBUILD-w10.in b/PKGBUILD-w10.in
+index 950dfa0..1086f5d 100644
+--- a/PKGBUILD-w10.in
++++ b/PKGBUILD-w10.in
+@@ -42,6 +42,7 @@ build() {
+     -Denable_plugins=false \
+     -Denable_sdl=true \
+     -Dwindows_release=true \
++    -Dtrial_ver=true \
+     --buildtype=release \
+     "../${_realname}-${pkgver}"
+ 
+diff --git a/PKGBUILD.in b/PKGBUILD.in
+index 38201fa..71211f8 100644
+--- a/PKGBUILD.in
++++ b/PKGBUILD.in
+@@ -22,7 +22,7 @@ _rootdir="${pkgname}-${pkgver}"
+ 
+ build() {
+   cd $_rootdir
+-  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true
++  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true -Dtrial_ver=true
+   ninja -C build
+ }
+ 
+diff --git a/debian.rules b/debian.rules
+index 67d30be..92f6aa0 100644
+--- a/debian.rules
++++ b/debian.rules
+@@ -6,7 +6,7 @@
+ override_dh_auto_configure:
+ 	mkdir -p debian/build
+ 	pwd
+-	cd debian/build && ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dinstall_dseg_font=false -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true
++	cd debian/build && ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dinstall_dseg_font=false -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true -Dtrial_ver=true
+ 
+ override_dh_auto_build:
+ 	cd debian/build && ninja -v
+diff --git a/zrythm.spec.in b/zrythm.spec.in
+index 6a3b3f7..23b86ee 100644
+--- a/zrythm.spec.in
++++ b/zrythm.spec.in
+@@ -78,13 +78,13 @@ and is designed to be intuitive to use.
+ %build
+ rm -rf build
+ %if 0%{?suse_version}
+-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
++meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial_ver=true
+ %endif
+ %if 0%{?fedora}
+-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
++meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial_ver=true
+ %endif
+ %if 0%{?mageia}
+-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
++meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial_ver=true
+ %endif
+ ninja -C build
+ 
