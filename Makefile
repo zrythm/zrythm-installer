@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.7.425
+ZRYTHM_VERSION=0.7.474
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_VERSION).orig.tar.xz
@@ -37,7 +37,7 @@ define start_vm
 	sudo virsh resume $(1); \
 	elif ! sudo virsh list | grep -q "$(1)" ; then \
 		sudo virsh start $(1); \
-		sleep 18; \
+		sleep 21; \
 	fi
 endef
 

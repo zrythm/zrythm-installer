@@ -183,7 +183,7 @@ if [ $proceed -ne 0 ]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
       "apt update && \
-      dpkg -i \"bin/ubuntu/zrythm-${zrythm_ver}-1_${distro_ver}.${ubuntu_lts}_${architecture}.deb\" || \
+      dpkg -i \"bin/ubuntu/zrythm-${zrythm_ver}-1_${distro_ver}.04_${architecture}.deb\" || \
       apt install -f -y" && \
       print_install_success
   elif [ $is_mint = 1 ]; then
