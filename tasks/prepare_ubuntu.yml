@@ -13,8 +13,8 @@
     'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
     'ladspa-sdk', 'libfftw3-dev',
     'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
-    'vim', 'devscripts', 'librubberband-dev',
-    'debhelper' ]
+    'vim', 'devscripts', 'librubberband-dev', 'zip',
+    'librsvg2-dev', 'debhelper' ]
     update_cache: yes
     state: present
 

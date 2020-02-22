@@ -1,0 +1,8 @@
+---
+
+- name: Zip ZLFO
+  shell: |
+    cd /tmp/zrythm-installer/build && zip -r ZLFO.lv2.zip ZLFO.lv2
+
+- name: Deploy ZLFO
+  fetch: src=/tmp/zrythm-installer/build/ZLFO.lv2.zip dest=./artifacts/{{ inventory_hostname }}/ZLFO.lv2.zip flat=yes

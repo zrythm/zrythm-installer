@@ -30,7 +30,7 @@ source=(https://www.zrythm.org/releases/zrythm-${pkgver}.tar.xz)
 sha256sums=('SKIP')
 
 prepare() {
-  cd "${srcdir}"/${_realname}-${pkgver}
+  cd "${srcdir}"/zrythm-${pkgver}
 }
 
 build() {
@@ -38,12 +38,11 @@ build() {
   mkdir -p build-${MINGW_CHOST} && cd build-${MINGW_CHOST}
 
   ${MINGW_PREFIX}/bin/meson \
-    --buildtype=debugoptimized \
     -Denable_plugins=false \
     -Denable_sdl=true \
     -Dwindows_release=true \
     --buildtype=release \
-    "../${_realname}-${pkgver}"
+    "../zrythm-${pkgver}"
 
   ninja
 }
@@ -52,5 +51,5 @@ package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   DESTDIR="${pkgdir}${MINGW_PREFIX}" ninja install
 
-  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+  install -Dm644 "${srcdir}/zrythm-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/zrythm/COPYING"
 }

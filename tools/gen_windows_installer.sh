@@ -22,13 +22,15 @@
 # $2 zrythm version
 # $3 build dir, this is the staging directory to use
 # to stage files to - the root of the installer is in $3/dist
-# $4 path to nsis dir
+# $4 path to inno installer definition
+# $5 App name
 
-PROGRAM_VERSION="$2"
+ZRYTHM_VERSION="$2"
 
-NSIS_DIR=$4
+INNO_ISS=$4
 BUILD_DIR=$3
 MINGW_PREFIX=$1
+APP_NAME=$5
 DIST_DIR=$BUILD_DIR/dist # root of the distribution
 DIST_BINDIR=$DIST_DIR/bin
 DIST_LIBDIR=$DIST_DIR/lib
@@ -176,11 +178,14 @@ $BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm.exe" --set-icon  "$DIST_DIR/zryth
 $BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm_vst_check.exe" --set-icon  "$DIST_DIR/zrythm.ico"
 # ******************************
 
-# ******************************
-#echo "packaging licenses"
-#cp $MINGW_PREFIX/share/licenses/zrythm/COPYING "$DIST_DIR/COPYING"
-# ******************************
+cp "$INNO_ISS" "$DIST_DIR"/
+cd $DIST_DIR
+/c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe "//DAppName=$APP_NAME" "//DAppVersion=$ZRYTHM_VERSION" \
+  installer.iss
 
+exit 0
+
+# ----------- IGNORE BELOW ------------
 # ******************************
 # original taken from ardour/tools/x-win/package.sh
 # no license header, but ardour itself is GPLv2+

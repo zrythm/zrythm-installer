@@ -82,18 +82,18 @@ ninja -C build
 
 %install
 DESTDIR="%{buildroot}/" ninja -C build install
-%find_lang %{name}
+%find_lang zrythm
 
-%files -f %{name}.lang
+%files -f zrythm.lang
 %license COPYING
 %doc README.md CONTRIBUTING.md INSTALL.md CHANGELOG.md
 %{_bindir}/zrythm
 %{_bindir}/zrythm_vst_check
-%{_datadir}/applications/%{name}.desktop
-%{_datadir}/fonts/%{name}
+%{_datadir}/applications/zrythm.desktop
+%{_datadir}/fonts/zrythm
 %{_datadir}/glib-2.0/schemas/*.xml
 %{_datadir}/icons/hicolor/scalable/apps/zrythm.svg
-%{_datadir}/%{name}
+%{_datadir}/zrythm
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
 #%{_exec_prefix}/lib64/**/*

@@ -1,0 +1,13 @@
+---
+
+- name: Prepare
+  include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
+
+- name: Make build
+  shell: |
+    cd /tmp/zrythm-installer
+    make clean
+    make {{ inventory_hostname }}
+
+- name: Deploy artifacts
+  include_tasks: "{{ playbook_dir }}/tasks/ubuntu_deploy.yml"

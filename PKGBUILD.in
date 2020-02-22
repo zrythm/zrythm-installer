@@ -18,7 +18,7 @@ conflicts=( 'zrythm-git' )
 source=( "https://www.zrythm.org/releases/zrythm-$pkgver.tar.xz" )
 sha256sums=('SKIP')
 
-_rootdir="${pkgname}-${pkgver}"
+_rootdir="zrythm-${pkgver}"
 
 build() {
   cd $_rootdir
@@ -34,6 +34,6 @@ check() {
 package() {
   cd $_rootdir
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
-    -t "${pkgdir}/usr/share/doc/${pkgname}/"
+    -t "${pkgdir}/usr/share/doc/zrythm/"
   DESTDIR="${pkgdir}/" ninja -C build install
 }

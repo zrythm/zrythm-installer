@@ -2,7 +2,9 @@
 #
 # Copyright (C) 2019-2020 Alexandros Theodotou
 
+zrythm="@ZRYTHM@"
 zrythm_ver="@VERSION@"
+zlfo_ver="@ZLFO_VERSION@"
 architecture="amd64"
 
 distro_ver=0
@@ -183,37 +185,85 @@ if [ $proceed -ne 0 ]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
       "apt update && \
-      dpkg -i \"bin/ubuntu/zrythm-${zrythm_ver}-1_${distro_ver}.04_${architecture}.deb\" || \
+      dpkg -i \"bin/ubuntu/${zrythm}-${zrythm_ver}-1_${distro_ver}.${ubuntu_lts}_${architecture}.deb\" || \
       apt install -f -y" && \
       print_install_success
   elif [ $is_mint = 1 ]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
       "apt update && \
-      dpkg -i \"bin/linuxmint/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
+      dpkg -i \"bin/linuxmint/${zrythm}-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
       apt install -f -y" && \
       print_install_success
   elif [ $is_debian = 1 ]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
       "apt update && \
-      dpkg -i \"bin/debian/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
+      dpkg -i \"bin/debian/${zrythm}-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
       apt install -f -y" && \
       print_install_success
   elif [ $is_fedora = 1 ]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
-      "dnf -y install \"bin/fedora/zrythm-${zrythm_ver}-1_${distro_ver}_${architecture}.rpm\"" && \
+      "dnf -y install \"bin/fedora/${zrythm}-${zrythm_ver}-1_${distro_ver}_${architecture}.rpm\"" && \
       print_install_success
   elif [ $is_tumbleweed = 1 ]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
-      "zypper -in install --allow-unsigned-rpm \"bin/opensuse/zrythm-${zrythm_ver}-1_tumbleweed_${architecture}.rpm\"" && \
+      "zypper -in install --allow-unsigned-rpm \"bin/opensuse/${zrythm}-${zrythm_ver}-1_tumbleweed_${architecture}.rpm\"" && \
       print_install_success
   elif [ $is_arch = 1 ]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
-      "pacman -U --noconfirm \"bin/arch/zrythm-${zrythm_ver}-1_${architecture}.pkg.tar.xz\"" && \
+      "pacman -U --noconfirm \"bin/arch/${zrythm}-${zrythm_ver}-1_${architecture}.pkg.tar.xz\"" && \
+      print_install_success
+  fi
+fi
+
+proceed=0
+proceed_txt="Proceed with the installation of ZLFO v$zlfo_ver?"
+if [ $have_zenity -ne 0 ]; then
+  zenity --question --text="$proceed_txt" --width $zenity_width
+  if [ $? -eq 0 ]; then
+    proceed=1
+  fi
+else
+  read -p "$proceed_txt (type Y or y): " -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    proceed=1
+  fi
+fi
+
+if [ $proceed -ne 0 ]; then
+  if [ $is_ubuntu = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/ubuntu/ZLFO.lv2-${distro_ver}.${ubuntu_lts}\" /usr/lib/lv2/ZLFO.lv2" && \
+      print_install_success
+  elif [ $is_mint = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/linuxmint/ZLFO.lv2-${distro_ver}\" /usr/lib/lv2/ZLFO.lv2" && \
+      print_install_success
+  elif [ $is_debian = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/debian/ZLFO.lv2-${distro_ver}\" /usr/lib/lv2/ZLFO.lv2" && \
+      print_install_success
+  elif [ $is_fedora = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/fedora/ZLFO.lv2-${distro_ver}\" /usr/lib64/lv2/ZLFO.lv2" && \
+      print_install_success
+  elif [ $is_tumbleweed = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/opensuse/ZLFO.lv2-tumbleweed\" /usr/lib64/lv2/ZLFO.lv2" && \
+      print_install_success
+  elif [ $is_arch = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/arch/ZLFO.lv2-arch\" /usr/lib/lv2/ZLFO.lv2" && \
       print_install_success
   fi
 else
