@@ -136,10 +136,10 @@
         state: present
 
     - name: Make Arch build
-      shell: cd /tmp/zrythm-installer && make clean && make arch
+      shell: cd /tmp/zrythm-installer && make clean && make archlinux
 
     - name: Deploy artifacts
-      fetch: src=/tmp/zrythm-installer/build/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz dest=./artifacts/arch/zrythm-{{ version }}-1-x86_64.pkg.tar.xz flat=yes
+      fetch: src=/tmp/zrythm-installer/build/archlinux/zrythm-{{ version }}-1-x86_64.pkg.tar.xz dest=./artifacts/archlinux/zrythm-{{ version }}-1-x86_64.pkg.tar.xz flat=yes
 
 - hosts: fedora31
   tasks:

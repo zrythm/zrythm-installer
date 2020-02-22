@@ -3,3 +3,7 @@ bin.bak
 zrythm_installer.zip
 build
 artifacts
+debian.rules
+zrythm*.exe
+zrythm*.zip
+zrythm_installer

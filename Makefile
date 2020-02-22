@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.7.474
+ZRYTHM_VERSION=0.7.572
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_VERSION).orig.tar.xz
@@ -11,7 +11,7 @@ BUILD_DEBIAN10_DIR=$(BUILD_DIR)/debian10
 MESON_VERSION=0.53.0
 MESON_DIR=meson-$(MESON_VERSION)
 MESON_TARBALL=$(MESON_DIR).tar.gz
-BUILD_ARCH_DIR=$(BUILD_DIR)/arch
+BUILD_ARCH_DIR=$(BUILD_DIR)/archlinux
 BUILD_WINDOWS_DIR=$(BUILD_DIR)/windows10
 WIN_CHROOT_DIR=/tmp/zrythm-root
 # This is the directory to rsync into
@@ -31,13 +31,15 @@ MINGW_ZRYTHM_PKG_TAR=mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
 RCEDIT64_EXE=rcedit-x64.exe
 RCEDIT64_VER=1.1.1
 RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
+UNIX_INSTALLER_ZIP=zrythm_installer.zip
+UNIX_TRIAL_INSTALLER_ZIP=zrythm_trial_installer.zip
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
 	sudo virsh resume $(1); \
 	elif ! sudo virsh list | grep -q "$(1)" ; then \
 		sudo virsh start $(1); \
-		sleep 21; \
+		sleep 25; \
 	fi
 endef
 
@@ -52,45 +54,17 @@ define run_build_in_vm
 endef
 
 # copy the installer to the vm for testing
+# argument 1: filename of the zipfile
 define copy_installer_to_vm
 	$(call start_vm,$(1))
-	ansible -i ./ansible-conf.ini -m copy -a "src=zrythm_installer.zip dest=~/" $(1)
+	ansible -i ./ansible-conf.ini -m copy -a "src=$(2) dest=~/" $(1)
 	$(call stop_vm,$(1))
 endef
 
-# pushes the installer in each vm after it's made
-.PHONY: installer-in-vms
-installer-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1904 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
-
-installer-in-debian9: zrythm_installer.zip
-	$(call copy_installer_to_vm,debian9)
-
-installer-in-debian10: zrythm_installer.zip
-	$(call copy_installer_to_vm,debian10)
-
-installer-in-linuxmint193: zrythm_installer.zip
-	$(call copy_installer_to_vm,linuxmint193)
-
-installer-in-ubuntu1904: zrythm_installer.zip
-	$(call copy_installer_to_vm,ubuntu1904)
-
-installer-in-ubuntu1804: zrythm_installer.zip
-	$(call copy_installer_to_vm,ubuntu1804)
-
-installer-in-archlinux: zrythm_installer.zip
-	$(call copy_installer_to_vm,archlinux)
-
-installer-in-fedora31: zrythm_installer.zip
-	$(call copy_installer_to_vm,fedora31)
-
-installer-in-opensuse-tumbleweed: zrythm_installer.zip
-	$(call copy_installer_to_vm,opensuse-tumbleweed)
-
-.PHONY: FORCE
-FORCE:
-
-# runs everything and produces the installer zip
-zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in FORCE
+# creates the unix installer
+# argument 1: filename of the zipfile
+# argument 2: `trial` if trial, otherwise empty
+define gen_unix_installer
 	rm -rf bin.bak
 	- mv bin bin.bak
 	mkdir -p bin/debian
@@ -99,58 +73,98 @@ zrythm_installer.zip: artifacts tools/gen_installer.sh README.in installer.sh.in
 	mkdir -p bin/arch
 	mkdir -p bin/fedora
 	mkdir -p bin/opensuse
-	cp artifacts/debian9/$(DEBIAN_PKG_FILE) \
+	cp $(2)artifacts/debian9/$(DEBIAN_PKG_FILE) \
 		bin/debian/zrythm-$(ZRYTHM_VERSION)-1_9_amd64.deb
-	cp artifacts/debian10/$(DEBIAN_PKG_FILE) \
+	cp $(2)artifacts/debian10/$(DEBIAN_PKG_FILE) \
 		bin/debian/zrythm-$(ZRYTHM_VERSION)-1_10_amd64.deb
-	cp artifacts/linuxmint193/$(DEBIAN_PKG_FILE) \
+	cp $(2)artifacts/linuxmint193/$(DEBIAN_PKG_FILE) \
 		bin/linuxmint/zrythm-$(ZRYTHM_VERSION)-1_19.3_amd64.deb
-	cp artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) \
+	cp $(2)artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) \
 		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.04_amd64.deb
-	cp artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) \
+	cp $(2)artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) \
+		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.10_amd64.deb
+	cp $(2)artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) \
 		bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_18.04_amd64.deb
-	cp artifacts/arch/$(ARCH_PKG_FILE) \
+	cp $(2)artifacts/archlinux/$(ARCH_PKG_FILE) \
 		bin/arch/zrythm-$(ZRYTHM_VERSION)-1_x86_64.pkg.tar.xz
-	cp artifacts/fedora31/$(FEDORA31_PKG_FILE) \
+	cp $(2)artifacts/fedora31/$(FEDORA31_PKG_FILE) \
 		bin/fedora/zrythm-$(ZRYTHM_VERSION)-1_31_x86_64.rpm
-	cp artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE) \
+	cp $(2)artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE) \
 		bin/opensuse/zrythm-$(ZRYTHM_VERSION)-1_tumbleweed_x86_64.rpm
-	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < README.in > README
+	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < README$(2).in > README
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < installer.sh.in > installer.sh
 	chmod +x installer.sh
-	tools/gen_installer.sh $(ZRYTHM_VERSION)
+	tools/gen_installer.sh $(ZRYTHM_VERSION) $(1)
 	rm README installer.sh
+endef
 
-# runs the ansible playbook to produce artifacts
-# for each distro
-.PHONY: artifacts
-artifacts: artifacts/debian9/$(DEBIAN_PKG_FILE) artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/linuxmint193/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) artifacts/arch/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
+# creates a top target
+# argument 1: `trial` if trial, otherwise empty
+define create_top_target
+.PHONY: installer-in-vms$(1)
+installer-in-vms$(1): installer-in-debian9$(1) installer-in-debian10$(1) installer-in-linuxmint193$(1) installer-in-ubuntu1910$(1) installer-in-ubuntu1904$(1) installer-in-ubuntu1804$(1) installer-in-archlinux$(1) installer-in-fedora31$(1) installer-in-opensuse-tumbleweed$(1)
+endef
 
-artifacts/debian9/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,debian9)
+# creates the installer-in-x targets
+# argument 1: `trial` if trial, otherwise empty
+# argument 2: the installer filename
+define create_installer_targets
+installer-in-debian9$(1): $(2)
+	$(call copy_installer_to_vm,debian9,$(2))
+installer-in-debian10$(1): $(2)
+	$(call copy_installer_to_vm,debian10,$(2))
+installer-in-linuxmint193$(1): $(2)
+	$(call copy_installer_to_vm,linuxmint193,$(2))
+installer-in-ubuntu1910$(1): $(2)
+	$(call copy_installer_to_vm,ubuntu1910,$(2))
+installer-in-ubuntu1904$(1): $(2)
+	$(call copy_installer_to_vm,ubuntu1904,$(2))
+installer-in-ubuntu1804$(1): $(2)
+	$(call copy_installer_to_vm,ubuntu1804,$(2))
+installer-in-archlinux$(1): $(2)
+	$(call copy_installer_to_vm,archlinux,$(2))
+installer-in-fedora31$(1): $(2)
+	$(call copy_installer_to_vm,fedora31,$(2))
+installer-in-opensuse-tumbleweed$(1): $(2)
+	$(call copy_installer_to_vm,opensuse-tumbleweed,$(2))
+endef
 
-artifacts/debian10/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,debian10)
+# creates the artifacts for unix
+# argument 1: the installer zip filename
+# argument 2: `trial` if trial, otherwise empty
+define create_installer_zip_target
+${1}: unix-artifacts$(2) tools/gen_installer.sh README$(2).in installer.sh.in FORCE
+	$(call gen_unix_installer,$(1),$(2))
+endef
 
-artifacts/linuxmint193/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,linuxmint193)
+# creates a generic artifact target
+# arg 1: the VM name
+# arg 2: the package filename
+# arg 3: the extra dependencies
+# arg 4: the command to execute before calling the VM
+# arg 5: the command to execute after calling the VM
+# arg 6: the command to execute before calling the VM for the trial
+# arg 7: the command to execute after calling the VM for the trial
+define generic_artifact_target
+artifacts/$(1)/$(2): $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py $(3)
+	$(4)
+	$$(call run_build_in_vm,$(1))
+	$(5)
 
-artifacts/ubuntu1904/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,ubuntu1904)
+trialartifacts/$(1)/$(2): $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py $(3)
+	$(6)
+	$$(call run_build_in_vm,$(1))
+	$(7)
+endef
 
-artifacts/ubuntu1804/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,ubuntu1804)
+# creates the debian artifact targets
+# arg 1: the VM name
+define debian_artifact_target
+$(call generic_artifact_target,$(1),$(DEBIAN_PKG_FILE),debian.changelog.in debian.compat debian.control debian.copyright debian.rules.in,cp debian.rules.in debian.rules,- rm debian.rules,cp debian.rules.in debian.rules && sed -i -e '9s/$$/ -Dtrial_ver=true/' debian.rules,- rm debian.rules)
+endef
 
-artifacts/arch/$(ARCH_PKG_FILE): PKGBUILD.in $(BUILD_DIR)/$(ZRYTHM_TARBALL)
-	$(call run_build_in_vm,archlinux)
-
-artifacts/fedora31/$(FEDORA31_PKG_FILE): zrythm.spec.in $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,fedora31)
-
-artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE): zrythm.spec.in $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
-	$(call run_build_in_vm,opensuse-tumbleweed)
-
-artifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/$(RCEDIT64_EXE)
+# procedure to run on the host (not inside windows)
+define windows_host_procedure
 	$(call start_vm,windows10)
 	echo "Make sure that the default openssh shell is bash.exe"
 	echo "Copying files, enter password (alex) to continue"
@@ -158,8 +172,61 @@ artifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in $(BUILD_DIR)/$(ZRYTHM_
 	echo "Go into the VM and run make windows10 in the zrythm-build directory. When the installer is built, press y to continue" && \
 		read -d "y"
 	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
-	#cp $(BUILD_DIR)/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
 	$(call stop_vm,windows10)
+endef
+
+# creates the windows artifact target
+# arg 1: `trial` if trial
+define windows_artifact_target
+artifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in.in $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/$(RCEDIT64_EXE)
+	cp PKGBUILD-w10.in.in PKGBUILD-w10.in
+	$$(call windows_host_procedure)
+	- rm PKGBUILD-w10.in
+
+trialartifacts/windows10/$(WINDOWS_INSTALLER): PKGBUILD-w10.in.in $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/$(RCEDIT64_EXE)
+	cp PKGBUILD-w10.in.in PKGBUILD-w10.in
+	sed -i -e '44s/\\/-Dtrial_ver=true \\/' PKGBUILD-w10.in
+	$$(call windows_host_procedure)
+	- rm PKGBUILD-w10.in
+endef
+
+.PHONY: all
+all: installer-in-vms
+
+.PHONY: trial
+trial: installer-in-vmstrial
+
+$(eval $(call create_top_target,))
+$(eval $(call create_top_target,trial))
+
+.PHONY: FORCE
+FORCE:
+
+# runs everything and produces the installer zip
+$(eval $(call create_installer_zip_target,$(UNIX_INSTALLER_ZIP),))
+$(eval $(call create_installer_zip_target,$(UNIX_TRIAL_INSTALLER_ZIP),trial))
+
+$(eval $(call create_installer_targets,,$(UNIX_INSTALLER_ZIP)))
+$(eval $(call create_installer_targets,trial,$(UNIX_TRIAL_INSTALLER_ZIP)))
+
+# runs the ansible playbook to produce artifacts
+# for each distro
+.PHONY: unix-artifacts
+unix-artifacts: artifacts/debian9/$(DEBIAN_PKG_FILE) artifacts/debian10/$(DEBIAN_PKG_FILE) artifacts/linuxmint193/$(DEBIAN_PKG_FILE) artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) artifacts/archlinux/$(ARCH_PKG_FILE) artifacts/fedora31/$(FEDORA31_PKG_FILE) artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
+
+.PHONY: trialunix-artifacts
+trialunix-artifacts: trialartifacts/debian9/$(DEBIAN_PKG_FILE) trialartifacts/debian10/$(DEBIAN_PKG_FILE) trialartifacts/linuxmint193/$(DEBIAN_PKG_FILE) trialartifacts/ubuntu1904/$(DEBIAN_PKG_FILE) trialartifacts/ubuntu1910/$(DEBIAN_PKG_FILE) trialartifacts/ubuntu1804/$(DEBIAN_PKG_FILE) trialartifacts/archlinux/$(ARCH_PKG_FILE) trialartifacts/fedora31/$(FEDORA31_PKG_FILE) trialartifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
+
+$(eval $(call debian_artifact_target,debian9))
+$(eval $(call debian_artifact_target,debian10))
+$(eval $(call debian_artifact_target,linuxmint193))
+$(eval $(call debian_artifact_target,ubuntu1904))
+$(eval $(call debian_artifact_target,ubuntu1910))
+$(eval $(call debian_artifact_target,ubuntu1804))
+$(eval $(call generic_artifact_target,archlinux,$(ARCH_PKG_FILE),PKGBUILD.in.in,cp PKGBUILD.in.in PKGBUILD.in,- rm PKGBUILD.in,cp PKGBUILD.in.in PKGBUILD.in && sed -i -e '25s/$$/ -Dtrial_ver=true/' PKGBUILD.in,- rm PKGBUILD.in))
+$(eval $(call generic_artifact_target,fedora31,$(FEDORA31_PKG_FILE),zrythm.spec.in.in,cp zrythm.spec.in.in zrythm.spec.in,- rm zrythm.spec.in,cp zrythm.spec.in.in zrythm.spec.in && sed -i -e '80s/$$/ -Dtrial_ver=true/' zrythm.spec.in,- rm zrythm.spec.in))
+$(eval $(call generic_artifact_target,opensuse-tumbleweed,$(OPENSUSE_TUMBLEWEED_PKG_FILE),zrythm.spec.in.in,cp zrythm.spec.in.in zrythm.spec.in,- rm zrythm.spec.in,cp zrythm.spec.in.in zrythm.spec.in && sed -i -e '80s/$$/ -Dtrial_ver=true/' zrythm.spec.in,- rm zrythm.spec.in))
+$(eval $(call windows_artifact_target))
 
 .PHONY: debian9
 debian9: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
@@ -176,6 +243,9 @@ linuxmint193: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 # ubuntu VM
 .PHONY: ubuntu1904
 ubuntu1904: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+
+.PHONY: ubuntu1910
+ubuntu1910: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
 .PHONY: ubuntu1804
 ubuntu1804: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
@@ -206,8 +276,8 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.contro
 $(BUILD_DIR)/$(MESON_TARBALL):
 	wget https://github.com/mesonbuild/meson/releases/download/$(MESON_VERSION)/$(MESON_TARBALL) -O $@
 
-.PHONY: arch
-arch: $(BUILD_DIR)/$(ARCH_PKG_FILE)
+.PHONY: archlinux
+archlinux: $(BUILD_DIR)/$(ARCH_PKG_FILE)
 
 $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in
 	rm -rf $(BUILD_ARCH_DIR)
