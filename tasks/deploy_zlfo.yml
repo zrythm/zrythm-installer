@@ -1,8 +1,12 @@
 ---
 
-- name: Zip ZLFO
+- name: Zip plugins
   shell: |
     cd /tmp/zrythm-installer/build && zip -r ZLFO.lv2.zip ZLFO.lv2
+    cd /tmp/zrythm-installer/build && zip -r ZChordz.lv2.zip ZChordz.lv2
 
 - name: Deploy ZLFO
   fetch: src=/tmp/zrythm-installer/build/ZLFO.lv2.zip dest=./artifacts/{{ inventory_hostname }}/ZLFO.lv2.zip flat=yes
+
+- name: Deploy ZChordz
+  fetch: src=/tmp/zrythm-installer/build/ZChordz.lv2.zip dest=./artifacts/{{ inventory_hostname }}/ZChordz.lv2.zip flat=yes

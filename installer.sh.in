@@ -5,6 +5,7 @@
 zrythm="@ZRYTHM@"
 zrythm_ver="@VERSION@"
 zlfo_ver="@ZLFO_VERSION@"
+zchordz_ver="@ZCHORDZ_VERSION@"
 architecture="amd64"
 
 distro_ver=0
@@ -266,6 +267,52 @@ if [ $proceed -ne 0 ]; then
       "cp -R \"bin/arch/ZLFO.lv2-arch\" /usr/lib/lv2/ZLFO.lv2" && \
       print_install_success
   fi
+fi
+
+proceed=0
+proceed_txt="Proceed with the installation of ZChordz v$zchordz_ver?"
+if [ $have_zenity -ne 0 ]; then
+  zenity --question --text="$proceed_txt" --width $zenity_width
+  if [ $? -eq 0 ]; then
+    proceed=1
+  fi
 else
-  exit 0
+  read -p "$proceed_txt (type Y or y): " -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    proceed=1
+  fi
+fi
+
+if [ $proceed -ne 0 ]; then
+  if [ $is_ubuntu = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/ubuntu/ZChordz.lv2-${distro_ver}.${ubuntu_lts}\" /usr/lib/lv2/ZChordz.lv2" && \
+      print_install_success
+  elif [ $is_mint = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/linuxmint/ZChordz.lv2-${distro_ver}\" /usr/lib/lv2/ZChordz.lv2" && \
+      print_install_success
+  elif [ $is_debian = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/debian/ZChordz.lv2-${distro_ver}\" /usr/lib/lv2/ZChordz.lv2" && \
+      print_install_success
+  elif [ $is_fedora = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/fedora/ZChordz.lv2-${distro_ver}\" /usr/lib64/lv2/ZChordz.lv2" && \
+      print_install_success
+  elif [ $is_tumbleweed = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/opensuse/ZChordz.lv2-tumbleweed\" /usr/lib64/lv2/ZChordz.lv2" && \
+      print_install_success
+  elif [ $is_arch = 1 ]; then
+    ask_for_root_pw;
+    sudo /bin/sh -c \
+      "cp -R \"bin/arch/ZChordz.lv2-arch\" /usr/lib/lv2/ZChordz.lv2" && \
+      print_install_success
+  fi
 fi

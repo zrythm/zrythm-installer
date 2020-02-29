@@ -84,6 +84,9 @@ Source: "share\fonts\zrythm\DSEG14-Classic-MINI\DSEG14ClassicMini-Italic.ttf"; \
 Source: "ZLFO.lv2\*"; DestDir: "{commoncf}\LV2\ZLFO.lv2"; \
   Flags: ignoreversion recursesubdirs; \
   Components: plugins
+Source: "ZChordz.lv2\*"; DestDir: "{commoncf}\LV2\ZChordz.lv2"; \
+  Flags: ignoreversion recursesubdirs; \
+  Components: plugins
 
 [Messages]
 
