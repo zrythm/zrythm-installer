@@ -7,3 +7,4 @@ debian.rules
 zrythm*.exe
 zrythm*.zip
 zrythm_installer
+.DS_Store

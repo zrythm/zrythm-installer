@@ -24,6 +24,7 @@ MESON_DIR=meson-$(MESON_VERSION)
 MESON_TARBALL=$(MESON_DIR).tar.gz
 BUILD_ARCH_DIR=$(BUILD_DIR)/archlinux
 BUILD_WINDOWS_DIR=$(BUILD_DIR)/windows10
+BUILD_OSX_DIR=$(BUILD_DIR)/osx
 WIN_CHROOT_DIR=/tmp/zrythm-root
 WIN_TRIAL_CHROOT_DIR=/tmp/zrythm-trial-root
 # This is the directory to rsync into
@@ -52,6 +53,9 @@ RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VE
 UNIX_INSTALLER_ZIP=zrythm_installer.zip
 UNIX_TRIAL_INSTALLER_ZIP=zrythm_trial_installer.zip
 COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZLFO_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
+OSX_INSTALL_PREFIX=/tmp/zrythm-osx
+OSX_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.dmg
+OSX_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_VERSION)-setup.dmg
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
@@ -255,6 +259,25 @@ artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INS
 	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
 	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_TRIAL_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER)
 	$(call stop_vm,windows10)
+
+$(OSX_INSTALL_PREFIX)/bin/zrythm: $(BUILD_DIR)/$(ZRYTHM_TARBALL)
+	-rm -rf $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
+	-rm -rf $(OSX_INSTALL_PREFIX)
+	mkdir -p $(BUILD_OSX_DIR)
+	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
+	cd $(BUILD_OSX_DIR) && tar xf $(ZRYTHM_TARBALL) && \
+		cd zrythm-$(ZRYTHM_VERSION) && \
+		meson build -Denable_sdl=true -Denable_rtaudio=true \
+		  -Denable_rtmidi=true -Denable_ffmpeg=true \
+			--prefix=$(OSX_INSTALL_PREFIX) && \
+		ninja -C build && ninja -C build install
+
+# this must be run on macos
+artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_osx_installer.sh $(OSX_INSTALL_PREFIX)/bin/zrythm
+	tools/gen_osx_installer.sh $(ZRYTHM_VERSION) \
+		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_VERSION) \
+		$(OSX_INSTALL_PREFIX) artifacts/osx/$(OSX_INSTALLER) \
+		tools/osx /usr/local
 
 .PHONY: debian9
 debian9: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
