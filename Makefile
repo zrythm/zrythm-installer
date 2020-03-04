@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.001
+ZRYTHM_VERSION=0.8.038
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZLFO_VERSION=0.1.2
@@ -50,8 +50,8 @@ MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-x86_64-zrythm-trial-$(ZRYTHM_VERSION)-2-any
 RCEDIT64_EXE=rcedit-x64.exe
 RCEDIT64_VER=1.1.1
 RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
-UNIX_INSTALLER_ZIP=zrythm_installer.zip
-UNIX_TRIAL_INSTALLER_ZIP=zrythm_trial_installer.zip
+UNIX_INSTALLER_ZIP=zrythm-$(ZRYTHM_VERSION)-installer.zip
+UNIX_TRIAL_INSTALLER_ZIP=zrythm-trial-$(ZRYTHM_VERSION)-installer.zip
 COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZLFO_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 OSX_INSTALL_PREFIX=/tmp/zrythm-osx
 OSX_INSTALL_TRIAL_PREFIX=/tmp/zrythm-trial-osx
