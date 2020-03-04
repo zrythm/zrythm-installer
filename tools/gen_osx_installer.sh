@@ -18,6 +18,8 @@
 # 4: path to copy finished installer to
 # 5: osx data dir (tools/osx)
 # 6: normal prefix (where other programs are installed)
+# 7: App name Zrythm or Zrythm (Trial)
+# 8: App name Zrythm or Zrythm-trial
 
 set -e
 
@@ -27,12 +29,14 @@ ZRYTHM_INSTALL_PREFIX=$3
 FINAL_DMG_PATH=$4
 OSX_SOURCE_DATA_DIR=$5
 NORMAL_PREFIX=$6
+APP_NAME_W_SPACES=$7
+APP_NAME_NO_SPACES=$8
 WORK_ROOT=/tmp/zrythm-dmg
 
 rm -rf $WORK_ROOT
 
 # setup directory structure
-APPDIR=$WORK_ROOT/Zrythm.app
+APPDIR=$WORK_ROOT/$APP_NAME_NO_SPACES.app
 Contents=$APPDIR/Contents
 Resources=$Contents/Resources
 Bin=$Resources/bin
@@ -121,7 +125,7 @@ echo "copying fonts"
 cp -R $ZRYTHM_SRC_DIR/data/fonts "$Share/"
 cp -R $NORMAL_PREFIX/etc/fonts "$Etc/"
 sed -i -e \
-  's|<dir>~/.fonts</dir>|<dir prefix="relative">../../share/fonts</dir>|' $Etc/fonts/fonts.conf
+  's|<dir>~/.fonts</dir>|<dir prefix="relative">../share/fonts</dir>|' $Etc/fonts/fonts.conf
 
 SCHEMAS_DIR="glib-2.0/schemas"
 mkdir -p $Share/$SCHEMAS_DIR
@@ -171,12 +175,18 @@ while [ true ] ; do
     fi
 done
 
+# add license, readme, third party info
+cp $ZRYTHM_SRC_DIR/README.md $Resources/
+cp $ZRYTHM_SRC_DIR/COPYING* $Resources/
+brew list --versions -1 -v > $Resources/THIRDPARTY_INFO.txt
+
 # make dmg
 echo "making dmg from .app"
 rm -f $FINAL_DMG_PATH
 mkdir -p $(dirname "$FINAL_DMG_PATH")
 sed "s|@APP_PATH@|$APPDIR|" < \
   $OSX_SOURCE_DATA_DIR/appdmg.json.in > $WORK_ROOT/appdmg.json
+sed -i -e "s|@APPNAME@|$APP_NAME_W_SPACES|" $WORK_ROOT/appdmg.json
 sed -i -e "s|@ICNS_PATH@|$Resources/zrythm.icns|" \
   $WORK_ROOT/appdmg.json
 cat $WORK_ROOT/appdmg.json

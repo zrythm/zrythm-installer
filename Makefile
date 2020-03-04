@@ -54,6 +54,7 @@ UNIX_INSTALLER_ZIP=zrythm_installer.zip
 UNIX_TRIAL_INSTALLER_ZIP=zrythm_trial_installer.zip
 COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZLFO_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 OSX_INSTALL_PREFIX=/tmp/zrythm-osx
+OSX_INSTALL_TRIAL_PREFIX=/tmp/zrythm-trial-osx
 OSX_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.dmg
 OSX_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_VERSION)-setup.dmg
 
@@ -260,26 +261,41 @@ artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INS
 	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_TRIAL_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER)
 	$(call stop_vm,windows10)
 
-$(OSX_INSTALL_PREFIX)/bin/zrythm: $(BUILD_DIR)/$(ZRYTHM_TARBALL)
-	-rm -rf $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
-	-rm -rf $(OSX_INSTALL_PREFIX)
-	mkdir -p $(BUILD_OSX_DIR)
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
+# arg 1: prefix
+# arg 2: trial version true/false
+define make_osx
 	cd $(BUILD_OSX_DIR) && tar xf $(ZRYTHM_TARBALL) && \
 		cd zrythm-$(ZRYTHM_VERSION) && \
 		rm -rf build && \
 		meson build -Denable_sdl=true -Denable_rtaudio=true \
 		  -Denable_rtmidi=true -Denable_ffmpeg=true \
-			-Dmac_release=true \
-			--prefix=$(OSX_INSTALL_PREFIX) && \
+			-Dmac_release=true -Dtrial_ver=$(2) \
+			--prefix=$(1) && \
 		ninja -C build && ninja -C build install
+endef
+
+$(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUILD_DIR)/$(ZRYTHM_TARBALL)
+	-rm -rf $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
+	-rm -rf $(OSX_INSTALL_PREFIX)
+	mkdir -p $(BUILD_OSX_DIR)
+	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
+	$(call make_osx,$(OSX_INSTALL_TRIAL_PREFIX),true)
+	$(call make_osx,$(OSX_INSTALL_PREFIX),false)
 
 # this must be run on macos
-artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_osx_installer.sh $(OSX_INSTALL_PREFIX)/bin/zrythm tools/osx/startup_script.sh
+artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_osx_installer.sh $(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm tools/osx/startup_script.sh tools/osx/appdmg.json.in
 	tools/gen_osx_installer.sh $(ZRYTHM_VERSION) \
 		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_VERSION) \
-		$(OSX_INSTALL_PREFIX) artifacts/osx/$(OSX_INSTALLER) \
-		tools/osx /usr/local
+		$(OSX_INSTALL_PREFIX) \
+		artifacts/osx/$(OSX_INSTALLER) \
+		$$(pwd)/tools/osx /usr/local \
+		Zrythm Zrythm
+	tools/gen_osx_installer.sh $(ZRYTHM_VERSION) \
+		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_VERSION) \
+		$(OSX_INSTALL_TRIAL_PREFIX) \
+		artifacts/osx/$(OSX_TRIAL_INSTALLER) \
+		$$(pwd)/tools/osx /usr/local \
+		"Zrythm (Trial)" Zrythm-trial
 
 .PHONY: debian9
 debian9: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)

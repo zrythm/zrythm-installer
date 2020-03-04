@@ -1,8 +1,10 @@
 {
-  "title": "Zrythm",
+  "title": "@APPNAME@",
   "icon": "@ICNS_PATH@",
   "contents": [
-    { "x": 448, "y": 344, "type": "link", "path": "/Applications" },
-    { "x": 192, "y": 344, "type": "file", "path": "@APP_PATH@" }
+    { "x": 192, "y": 144, "type": "file", "path": "@APP_PATH@/Contents/Resources/share/fonts/DSEG14-Classic-MINI/DSEG14ClassicMini-Italic.ttf" },
+    { "x": 448, "y": 144, "type": "file", "path": "@APP_PATH@/Contents/Resources/share/fonts/DSEG14-Classic-MINI/DSEG-LICENSE.txt" },
+    { "x": 192, "y": 344, "type": "file", "path": "@APP_PATH@" },
+    { "x": 448, "y": 344, "type": "link", "path": "/Applications" }
   ]
 }
