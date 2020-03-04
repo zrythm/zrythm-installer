@@ -267,13 +267,15 @@ $(OSX_INSTALL_PREFIX)/bin/zrythm: $(BUILD_DIR)/$(ZRYTHM_TARBALL)
 	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
 	cd $(BUILD_OSX_DIR) && tar xf $(ZRYTHM_TARBALL) && \
 		cd zrythm-$(ZRYTHM_VERSION) && \
+		rm -rf build && \
 		meson build -Denable_sdl=true -Denable_rtaudio=true \
 		  -Denable_rtmidi=true -Denable_ffmpeg=true \
+			-Dmac_release=true \
 			--prefix=$(OSX_INSTALL_PREFIX) && \
 		ninja -C build && ninja -C build install
 
 # this must be run on macos
-artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_osx_installer.sh $(OSX_INSTALL_PREFIX)/bin/zrythm
+artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_osx_installer.sh $(OSX_INSTALL_PREFIX)/bin/zrythm tools/osx/startup_script.sh
 	tools/gen_osx_installer.sh $(ZRYTHM_VERSION) \
 		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_VERSION) \
 		$(OSX_INSTALL_PREFIX) artifacts/osx/$(OSX_INSTALLER) \

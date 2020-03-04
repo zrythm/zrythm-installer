@@ -74,10 +74,6 @@ cp $OSX_SOURCE_DATA_DIR/zrythm.icns $Resources/
 
 set +e # things below are not error-free (optional files etc) :(
 
-#
-# Copy stuff that may be dynamically loaded
-#
-
 # etc gtk
 cp -RL $NORMAL_PREFIX/etc/gtk-3.0 $Etc/
 
@@ -94,12 +90,11 @@ cp -RL $NORMAL_PREFIX/lib/$GDK_PIXBUF_DIR/* $Lib/$GDK_PIXBUF_DIR/
 echo "copying languages"
 languages="fr de it es ja"
 for lang in $languages; do
+  SRC_DIR=$NORMAL_PREFIX/share/locale/$lang/LC_MESSAGES
   CUR_DIR="$Locale/$lang/LC_MESSAGES"
   mkdir -p $CUR_DIR
-  cp $NORMAL_PREFIX/share/locale/$lang/zrythm.mo "$CUR_DIR/"
-  cp $NORMAL_PREFIX/share/locale/$lang/LC_MESSAGES/gtk30.mo \
-    $NORMAL_PREFIX/share/locale/$lang/LC_MESSAGES/gtk30-properties.mo \
-    $CUR_DIR/
+  cp $SRC_DIR/zrythm.mo "$CUR_DIR/"
+  cp $SRC_DIR/gtk30.mo $SRC_DIR/gtk30-properties.mo $CUR_DIR/
 done
 
 echo "copying Adwaita icons"
@@ -124,6 +119,9 @@ cp -RL "$NORMAL_PREFIX/share/themes" "$Share/"
 
 echo "copying fonts"
 cp -R $ZRYTHM_SRC_DIR/data/fonts "$Share/"
+cp -R $NORMAL_PREFIX/etc/fonts "$Etc/"
+sed -i -e \
+  's|<dir>~/.fonts</dir>|<dir prefix="relative">../../share/fonts</dir>|' $Etc/fonts/fonts.conf
 
 SCHEMAS_DIR="glib-2.0/schemas"
 mkdir -p $Share/$SCHEMAS_DIR

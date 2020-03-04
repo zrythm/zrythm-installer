@@ -58,5 +58,7 @@
 	<string>gtk3-launcher.sh</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+  <key>ATSApplicationFontsPath</key>
+  <string>share/fonts</string>
 </dict>
 </plist>
