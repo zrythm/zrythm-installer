@@ -22,7 +22,11 @@ _rootdir="zrythm-${pkgver}"
 
 build() {
   cd $_rootdir
-  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true
+  meson build --prefix=/usr -Denable_tests=true \
+    -Duser_manual=true -Dmanpage=true \
+    -Dbuildtype=release -Denable_ffmpeg=true \
+    -Denable_sdl=true -Denable_rtaudio=true \
+    -Denable_rtmidi=true
   ninja -C build
 }
 

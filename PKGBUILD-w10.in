@@ -40,6 +40,8 @@ build() {
   ${MINGW_PREFIX}/bin/meson \
     -Denable_plugins=false \
     -Denable_sdl=true \
+    -Denable_rtaudio=true \
+    -Denable_rtmidi=true \
     -Dwindows_release=true \
     --buildtype=release \
     "../zrythm-${pkgver}"

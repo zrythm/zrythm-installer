@@ -77,7 +77,7 @@ and is designed to be intuitive to use.
 
 %build
 rm -rf build
-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
+meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Denable_rtaudio=true -Denable_rtmidi=true
 ninja -C build
 
 %install
