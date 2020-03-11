@@ -6,7 +6,6 @@ Build-Depends: debhelper (>=9),
                libjack-jackd2-dev | libjack-dev,
                libsndfile1-dev (>= 1.0.25),
                ninja-build,
-               sed,
                help2man,
                python3-sphinx,
                libasound2-dev,
@@ -29,7 +28,6 @@ Homepage: https://www.zrythm.org/
 
 Package: zrythm
 Architecture: any
-Priority: optional
 Depends: ${shlibs:Depends}, 
          ${misc:Depends},
          fonts-dseg, xdg-utils

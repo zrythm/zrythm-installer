@@ -175,6 +175,53 @@ while [ true ] ; do
     fi
 done
 
+# fix binary/library paths
+executables="$(ls $Bin)"
+for exe in $executables; do
+  echo "processing executable $exe"
+  EXE=$Bin/$exe
+  changes=""
+  for lib in `otool -L $EXE | egrep "($NORMAL_PREFIX|$ZRYTHM_INSTALL_PREFIX|/opt/|/local/)" | awk '{print $1}' | grep -v 'libjack\.'` ; do
+    base=`basename $lib`
+    changes="$changes -change $lib @executable_path/../lib/$base"
+  done
+  if test "x$changes" != "x" ; then
+      install_name_tool $changes $EXE
+  fi
+done
+
+# now do the same for all the libraries we include
+echo "Fixing up library names ..."
+for libdir in $Lib ; do
+  libbase=`basename $libdir`
+  for dylib in $libdir/*.dylib $libdir/*.so ; do
+    # skip symlinks
+    if test -L $dylib ; then
+      continue
+    fi
+    # change all the dependencies
+    changes=""
+    for lib in `otool -L $dylib | egrep "($NORMAL_PREFIX|$ZRYTHM_INSTALL_PREFIX|/opt/|/local/)" | awk '{print $1}' | grep -v 'libjack\.'` ; do
+      base=`basename $lib`
+      if echo $lib | grep -s libbase; then
+        changes="$changes -change $lib @executable_path/../$libbase/$base"
+      else
+        changes="$changes -change $lib @executable_path/../lib/$base"
+      fi
+    done
+    if test "x$changes" != x ; then
+      if  install_name_tool $changes $dylib ; then
+        :
+      else
+        exit 1
+      fi
+    fi
+    # now the change what the library thinks its own name is
+    base=`basename $dylib`
+    install_name_tool -id @executable_path/../$libbase/$base $dylib
+  done
+done
+
 # add license, readme, third party info
 cp $ZRYTHM_SRC_DIR/README.md $Resources/
 cp $ZRYTHM_SRC_DIR/COPYING* $Resources/
