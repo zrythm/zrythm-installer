@@ -1,0 +1,106 @@
+<?xml version="1.0"?> <!--*- mode: xml -*-->
+<app-bundle>
+  <meta>
+    <prefix name="default">/usr/local/opt/gtk+3</prefix>
+    <prefix name="atk">/usr/local/opt/atk</prefix>
+    <prefix name="cairo">/usr/local/opt/cairo</prefix>
+    <prefix name="fftw">/usr/local/opt/fftw</prefix>
+    <prefix name="flac">/usr/local/opt/flac</prefix>
+    <prefix name="fontconfig">/usr/local/opt/fontconfig</prefix>
+    <prefix name="freetype">/usr/local/opt/freetype</prefix>
+    <prefix name="fribidi">/usr/local/opt/fribidi</prefix>
+    <prefix name="gcc">/usr/local/opt/gcc</prefix>
+    <prefix name="gdk-pixbuf">/usr/local/opt/gdk-pixbuf</prefix>
+    <prefix name="gettext">/usr/local/opt/gettext</prefix>
+    <prefix name="glib">/usr/local/opt/glib</prefix>
+    <prefix name="graphite2">/usr/local/opt/graphite2</prefix>
+    <prefix name="harfbuzz">/usr/local/opt/harfbuzz</prefix>
+    <prefix name="jpeg">/usr/local/opt/jpeg</prefix>
+    <prefix name="libcroco">/usr/local/opt/libcroco</prefix>
+    <prefix name="libepoxy">/usr/local/opt/libepoxy</prefix>
+    <prefix name="libffi">/usr/local/opt/libffi</prefix>
+    <prefix name="libogg">/usr/local/opt/libogg</prefix>
+    <prefix name="libpng">/usr/local/opt/libpng</prefix>
+    <prefix name="librsvg">/usr/local/opt/librsvg</prefix>
+    <prefix name="libsamplerate">/usr/local/opt/libsamplerate</prefix>
+    <prefix name="libsndfile">/usr/local/opt/libsndfile</prefix>
+    <prefix name="libtiff">/usr/local/opt/libtiff</prefix>
+    <prefix name="libvorbis">/usr/local/opt/libvorbis</prefix>
+    <prefix name="libyaml">/usr/local/opt/libyaml</prefix>
+    <prefix name="lilv">/usr/local/opt/lilv</prefix>
+    <prefix name="pango">/usr/local/opt/pango</prefix>
+    <prefix name="pcre">/usr/local/opt/pcre</prefix>
+    <prefix name="pixman">/usr/local/opt/pixman</prefix>
+    <prefix name="rubberband">/usr/local/opt/rubberband</prefix>
+    <prefix name="sdl2">/usr/local/opt/sdl2</prefix>
+    <prefix name="serd">/usr/local/opt/serd</prefix>
+    <prefix name="sord">/usr/local/opt/sord</prefix>
+    <prefix name="sratom">/usr/local/opt/sratom</prefix>
+
+    <!-- The project directory is the default location of the created
+         app. If you leave out the path, the current directory is
+         used. Note the usage of an environment variable here again.
+    -->
+    <destination overwrite="yes">@BUNDLE_DEST@</destination>
+
+    <run-install-name-tool/>
+
+    <!-- Optionally specify a launcher script to use. Builtin script is used if not specified.  -->
+    <launcher-script>@OSX_DATA_DIR@/launcher.sh</launcher-script>
+
+    <gtk>gtk+-3.0</gtk>
+  </meta>
+
+  <plist>@BUFFER@/Contents/Info.plist</plist>
+
+  <!-- The executable for the application -->
+  <main-binary dest="${bundle}/bin">@ZRYTHM_PREFIX@/bin/zrythm</main-binary>
+
+  <!-- Modules for GTK+ (image loaders, etc) -->
+  <binary>${prefix}/lib/gtk-3.0</binary>
+
+<!-- Starting with 2.24, gdk-pixbuf installs into its own directory. -->
+  <binary>
+    ${prefix:gdk-pixbuf}/lib/gdk-pixbuf-2.0/2.10.0/loaders/*.so
+  </binary>
+
+  <!-- Translation filenames, one for each program or library that you
+       want to copy in to the bundle. The "dest" attribute is
+       optional, as usual. Bundler will find all translations of that
+       library/program under the indicated directory and copy them.-->
+  <translations name="gtk30">
+    ${prefix}/share/locale
+  </translations>
+
+  <data dest="${bundle}/Contents/Resources/share">
+    @ZRYTHM_PREFIX@/share
+  </data>
+
+  <!-- Copy in the themes data. You may want to trim this to save space
+       in your bundle. -->
+  <data dest="${bundle}/Contents/Resources/share/themes">
+    @BUFFER@/Contents/Resources/share/themes
+  </data>
+
+  <data dest="${bundle}/Contents/Resources/share/icons">
+    @BUFFER@/Contents/Resources/share/icons
+  </data>
+  <data dest="${bundle}/Contents/Resources/share/glib-2.0/schemas">
+    @BUFFER@/Contents/Resources/share/glib-2.0/schemas
+  </data>
+
+  <data dest="${bundle}/Contents/Resources">
+    @OSX_DATA_DIR@/zrythm.icns
+  </data>
+
+  <data dest="${bundle}/Contents/Resources">
+    @BUFFER@/Contents/Resources/README.md
+  </data>
+  <data dest="${bundle}/Contents/Resources">
+    @BUFFER@/Contents/Resources/COPYING
+  </data>
+  <data dest="${bundle}/Contents/Resources">
+    @BUFFER@/Contents/Resources/THIRDPARTY_INFO.txt
+  </data>
+
+</app-bundle>

@@ -68,7 +68,7 @@ echo "copying plists"
 sed "s/@VERSION@/$ZRYTHM_VERSION/" < \
   $OSX_SOURCE_DATA_DIR/Info.plist.in > $Contents/Info.plist
 
-cp $OSX_SOURCE_DATA_DIR/startup_script.sh $Contents/MacOS/Zrythm
+cp $OSX_SOURCE_DATA_DIR/launcher.sh $Contents/MacOS/Zrythm
 chmod 775 $Contents/MacOS/Zrythm
 MAIN_EXECUTABLE=zrythm  ## used in startup_script
 
@@ -76,7 +76,7 @@ echo "Copying zrythm executable ...."
 cp $ZRYTHM_INSTALL_PREFIX/bin/zrythm $Bin/
 cp $OSX_SOURCE_DATA_DIR/zrythm.icns $Resources/
 
-set +e # things below are not error-free (optional files etc) :(
+set +e # things below are not error-free (optional files etc)
 
 # etc gtk
 cp -RL $NORMAL_PREFIX/etc/gtk-3.0 $Etc/
@@ -129,7 +129,7 @@ sed -i -e \
 
 SCHEMAS_DIR="glib-2.0/schemas"
 mkdir -p $Share/$SCHEMAS_DIR
-cp $NORMAL_PREFIX/share/$SCHEMAS_DIR/org.zrythm*.xml \
+cp $ZRYTHM_SRC_DIR/data/org.zrythm*.xml \
   "$Share/$SCHEMAS_DIR/"
 cp $NORMAL_PREFIX/share/$SCHEMAS_DIR/org.gtk.*.xml \
   "$Share/$SCHEMAS_DIR/"
@@ -194,7 +194,7 @@ done
 echo "Fixing up library names ..."
 for libdir in $Lib ; do
   libbase=`basename $libdir`
-  for dylib in $libdir/*.dylib $libdir/*.so ; do
+  for dylib in $(find $libdir -name '*.dylib' -o -name '*.so') ; do
     # skip symlinks
     if test -L $dylib ; then
       continue
@@ -210,17 +210,23 @@ for libdir in $Lib ; do
       fi
     done
     if test "x$changes" != x ; then
+      echo "processing $dylib"
+      chmod +w $dylib
       if  install_name_tool $changes $dylib ; then
         :
       else
         exit 1
       fi
+      echo "done processing $dylib: $changes"
     fi
     # now the change what the library thinks its own name is
     base=`basename $dylib`
     install_name_tool -id @executable_path/../$libbase/$base $dylib
   done
 done
+
+# change pixbuf loader paths
+sed -i -e "s|/usr/local|@executable_path/..|" $Lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
 # add license, readme, third party info
 cp $ZRYTHM_SRC_DIR/README.md $Resources/

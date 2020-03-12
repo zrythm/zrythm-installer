@@ -10,3 +10,5 @@ zrythm_installer
 .DS_Store
 *.asc
 *.md5
+tools/osx/zrythm.bundle
+tools/osx/Info.plist

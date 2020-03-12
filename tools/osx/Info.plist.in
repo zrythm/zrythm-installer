@@ -55,7 +55,7 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>10.4</string>
 	<key>GtkOSXLaunchScriptFile</key>
-	<string>gtk3-launcher.sh</string>
+	<string>launcher.sh</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
   <key>ATSApplicationFontsPath</key>

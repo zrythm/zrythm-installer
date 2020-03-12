@@ -283,7 +283,7 @@ $(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUIL
 	$(call make_osx,$(OSX_INSTALL_PREFIX),false)
 
 # this must be run on macos
-artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_osx_installer.sh $(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm tools/osx/startup_script.sh tools/osx/appdmg.json.in
+artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_osx_installer.sh $(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm tools/osx/launcher.sh tools/osx/appdmg.json.in
 	tools/gen_osx_installer.sh $(ZRYTHM_VERSION) \
 		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_VERSION) \
 		$(OSX_INSTALL_PREFIX) \
