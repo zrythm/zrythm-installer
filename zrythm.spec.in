@@ -96,6 +96,7 @@ DESTDIR="%{buildroot}/" ninja -C build install
 %{_datadir}/zrythm
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
+%{_sysconfdir}/bash_completion.d/zrythm
 #%{_exec_prefix}/lib64/**/*
 
 %post

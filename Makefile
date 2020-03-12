@@ -366,7 +366,7 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE) $(BUILD_DIR)/$(DEBIAN_TRIAL_PKG_FILE)&: debian.c
 	sed -i -e '17s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
 	sed -i -e '1s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
 	sed -i -e '1s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
-	sed -i -e '30s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
+	sed -i -e '29s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
 	# make plugins
 	$(call make_zlfo)
@@ -388,7 +388,7 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make trial
 	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD
-	sed -i -e '25s/$$/ -Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
+	sed -i -e '29s/$$/ -Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make plugins
 	$(call make_zlfo)
