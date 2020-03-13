@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	mkdir -p debian/build
+	cd debian/build && ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dinstall_dseg_font=false -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true -Denable_rtaudio=true -Denable_rtmidi=true
+
+override_dh_auto_build:
+	cd debian/build && ninja -v
+
+override_dh_auto_test:
+	echo test # cd debian/build && ninja test
+
+override_dh_auto_install:
+	cd debian/build && DESTDIR=${CURDIR}/debian/zrythm ninja install
