@@ -178,6 +178,7 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 	cp -Rf artifacts/opensuse-tumbleweed/ZChordz.lv2 \
 		bin/opensuse/ZChordz.lv2-tumbleweed
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < README$(2).in > README
+	sed -i -e 's/@_AT_@/@/' README
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < installer.sh.in > installer.sh
 	sed -i -e 's/@ZLFO_VERSION@/$(ZLFO_VERSION)/' installer.sh
 	sed -i -e 's/@ZCHORDZ_VERSION@/$(ZCHORDZ_VERSION)/' installer.sh
