@@ -9,7 +9,10 @@
 # 3. Uses appdmg (brew install npm, npm install -g appdmg)
 # 4. need to install librsvg and then reinstall gdk-pixbuf
 #   in brew to get svg support (or copy the pixbuf loader from
-#   the Cellar of libtsvg to the Cellar of gdk-pixbuf)
+#   the Cellar of libtsvg to the Cellar of gdk-pixbuf) OR just install adwaitta-icon-theme which
+# installs both
+# 5. do a `brew remove adwaita-icon-theme gtk+3 librsvg yelp-tools gdk-pixbuf` when done to check
+# if it loads without these
 
 # args:
 # 1: version
@@ -76,7 +79,7 @@ echo "Copying zrythm executable ...."
 cp $ZRYTHM_INSTALL_PREFIX/bin/zrythm $Bin/
 cp $OSX_SOURCE_DATA_DIR/zrythm.icns $Resources/
 
-set +e # things below are not error-free (optional files etc)
+set +e
 
 # etc gtk
 cp -RL $NORMAL_PREFIX/etc/gtk-3.0 $Etc/
@@ -89,6 +92,7 @@ echo "copying gdk pixbuf loaders"
 GDK_PIXBUF_DIR=gdk-pixbuf-2.0/2.10.0
 mkdir -p $Lib/$GDK_PIXBUF_DIR
 cp -RL $NORMAL_PREFIX/lib/$GDK_PIXBUF_DIR/* $Lib/$GDK_PIXBUF_DIR/
+cp -RL $NORMAL_PREFIX/lib/librsvg*.dylib $Lib/
 
 # localization
 echo "copying languages"
@@ -226,12 +230,16 @@ for libdir in $Lib ; do
 done
 
 # change pixbuf loader paths
-sed -i -e "s|/usr/local|@executable_path/..|" $Lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+sed -i -e "s|/usr/local|@executable_path/..|" $Lib/$GDK_PIXBUF_DIR/loaders.cache
 
 # add license, readme, third party info
 cp $ZRYTHM_SRC_DIR/README.md $Resources/
 cp $ZRYTHM_SRC_DIR/COPYING* $Resources/
 brew list --versions -1 -v > $Resources/THIRDPARTY_INFO.txt
+
+# remove unnecessary files
+rm -f $Lib/$GDK_PIXBUF_DIR/loaders/*.a
+rm $Lib/$GDK_PIXBUF_DIR/loaders.cache-e
 
 # make dmg
 echo "making dmg from .app"

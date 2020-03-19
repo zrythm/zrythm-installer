@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.113
+ZRYTHM_VERSION=0.8.155
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZLFO_VERSION=0.1.2
@@ -57,6 +57,7 @@ OSX_INSTALL_PREFIX=/tmp/zrythm-osx
 OSX_INSTALL_TRIAL_PREFIX=/tmp/zrythm-trial-osx
 OSX_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.dmg
 OSX_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_VERSION)-setup.dmg
+APPIMAGE_APPDIR=/tmp/appimage/AppDir
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
@@ -364,10 +365,9 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE) $(BUILD_DIR)/$(DEBIAN_TRIAL_PKG_FILE)&: debian.c
 	# make trial
 	$(call prepare_debian)
 	sed -i -e '8s/$$/ -Dtrial_ver=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
-	sed -i -e '17s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
+	sed -i -e 's|debian/zrythm |debian/zrythm-trial |' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
 	sed -i -e '1s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
-	sed -i -e '1s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
-	sed -i -e '29s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
+	sed -i -e 's/: zrythm/: zrythm-trial/g' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
 	# make plugins
 	$(call make_zlfo)
@@ -496,6 +496,24 @@ endef
 
 $(eval $(call make_rpm_target,$(FEDORA31_PKG_FILE),$(BUILD_FEDORA31_DIR)))
 $(eval $(call make_rpm_target,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(BUILD_OPENSUSE_TUMBLEWEED_DIR)))
+
+artifacts/Zrythm.AppImage: $(BUILD_DIR)/$(ZRYTHM_TARBALL)
+	rm -rf $(APPIMAGE_APPDIR)
+	rm -rf /tmp/zrythm-appimg
+	mkdir -p $(APPIMAGE_APPDIR)
+	mkdir -p /tmp/zrythm-appimg
+	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) /tmp/zrythm-appimg/
+	cd /tmp/zrythm-appimg && tar xf $(ZRYTHM_TARBALL) && \
+		cd zrythm-$(ZRYTHM_VERSION) && \
+		meson build -Denable_sdl=true -Denable_rtaudio=true \
+		  -Denable_rtmidi=true -Denable_ffmpeg=true \
+			-Dtrial_ver=false --prefix=/usr && \
+		ninja -C build && DESTDIR=$(APPIMAGE_APPDIR) ninja -C build install && \
+		wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
+		wget -c "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" && \
+		chmod +x linuxdeploy-plugin-gtk.sh && \
+		chmod +x linuxdeploy-x86_64.AppImage && \
+		./linuxdeploy-x86_64.AppImage --appdir $(APPIMAGE_APPDIR) --plugin gtk --output appimage --icon $(APPIMAGE_APPDIR)/usr/share/icons/hicolor/scalable/apps/zrythm.svg --desktop-file $(APPIMAGE_APPDIR)/usr/share/applications/zrythm.desktop
 
 # target to fetch latest version of git, used whenever
 # the meson version is too old
