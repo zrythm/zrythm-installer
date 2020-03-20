@@ -88,6 +88,7 @@ DESTDIR="%{buildroot}/" ninja -C build install
 %license COPYING
 %doc README.md CONTRIBUTING.md INSTALL.md CHANGELOG.md
 %{_bindir}/zrythm
+%{_bindir}/zrythm_launch
 %{_bindir}/zrythm_vst_check
 %{_datadir}/applications/zrythm.desktop
 %{_datadir}/fonts/zrythm

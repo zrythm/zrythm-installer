@@ -9,5 +9,12 @@
     make clean
     make {{ inventory_hostname }}
 
+- name: Make AppImage
+  shell: |
+    cd /tmp/zrythm-installer
+    make build/Zrythm-{{ version }}-x86_64.AppImage
+    make build/Zrythm-trial-{{ version }}-x86_64.AppImage
+  when: inventory_hostname == 'debian9'
+
 - name: Deploy artifacts
   include_tasks: "{{ playbook_dir }}/tasks/ubuntu_deploy.yml"

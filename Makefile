@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.155
+ZRYTHM_VERSION=0.8.156
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZLFO_VERSION=0.1.2
@@ -178,6 +178,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 		bin/fedora/ZChordz.lv2-31
 	cp -Rf artifacts/opensuse-tumbleweed/ZChordz.lv2 \
 		bin/opensuse/ZChordz.lv2-tumbleweed
+	cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage \
+		Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < README$(2).in > README
 	sed -i -e 's/@_AT_@/@/' README
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < installer.sh.in > installer.sh
@@ -186,7 +188,7 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 	sed -i -e 's/@ZRYTHM@/zrythm$(2)/' installer.sh
 	chmod +x installer.sh
 	tools/gen_installer.sh $(ZRYTHM_VERSION) $(1)
-	rm README installer.sh
+	rm README installer.sh *.AppImage
 endef
 
 # creates a generic artifact target
@@ -272,6 +274,7 @@ define make_osx
 		meson build -Denable_sdl=true -Denable_rtaudio=true \
 		  -Denable_rtmidi=true -Denable_ffmpeg=true \
 			-Dmac_release=true -Dtrial_ver=$(2) \
+			-Denable_jack=false \
 			--prefix=$(1) && \
 		ninja -C build && ninja -C build install
 endef
@@ -379,6 +382,39 @@ $(BUILD_DIR)/$(MESON_TARBALL):
 .PHONY: archlinux
 archlinux: $(BUILD_DIR)/$(ARCH_PKG_FILE)
 
+# create AppImage target
+# arg 1: '-trial' if trial
+# arg 2: 'true' if trial, 'false' if not
+define make_appimg_target
+$(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
+	rm -rf $(APPIMAGE_APPDIR)
+	rm -rf /tmp/zrythm$(1)-appimg
+	mkdir -p $(APPIMAGE_APPDIR)
+	mkdir -p /tmp/zrythm$(1)-appimg
+	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) /tmp/zrythm$(1)-appimg/
+	BUILD_DIR_PATH=$$$$(pwd)/$(BUILD_DIR) && \
+	MESON_PATH=$$$$BUILD_DIR_PATH/meson && \
+		echo "meson path is $$$$MESON_PATH" && \
+		cd /tmp/zrythm$(1)-appimg && tar xf $(ZRYTHM_TARBALL) && \
+		cd zrythm-$(ZRYTHM_VERSION) && \
+		$$$$MESON_PATH/meson.py build -Denable_sdl=true -Denable_rtaudio=true \
+		  -Denable_rtmidi=true -Denable_ffmpeg=true \
+			-Dtrial_ver=$(2) --prefix=/usr && \
+		ninja -C build && DESTDIR=$(APPIMAGE_APPDIR) ninja -C build install && \
+		wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
+		wget -c "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" && \
+		chmod +x linuxdeploy-plugin-gtk.sh && \
+		chmod +x linuxdeploy-x86_64.AppImage && \
+		rm -f $(APPIMAGE_APPDIR)/usr/share/glib-2.0/schemas/gschemas.compiled && \
+		sed -i -e 's/Exec=.*zrythm_launch/Exec=zrythm_launch/' $(APPIMAGE_APPDIR)/usr/share/applications/zrythm.desktop && \
+		sed -i -e 's|/usr|$$$$(dirname "$$$$0")/usr|' $(APPIMAGE_APPDIR)/usr/bin/zrythm_launch && \
+		./linuxdeploy-x86_64.AppImage --appdir $(APPIMAGE_APPDIR) --plugin gtk --output appimage --icon-file=$(APPIMAGE_APPDIR)/usr/share/icons/hicolor/scalable/apps/zrythm.svg --desktop-file $(APPIMAGE_APPDIR)/usr/share/applications/zrythm.desktop && \
+	cp Zrythm-x86_64.AppImage $$$$BUILD_DIR_PATH/Zrythm$(1)-$(ZRYTHM_VERSION)-x86_64.AppImage
+endef
+
+$(eval $(call make_appimg_target,,false))
+$(eval $(call make_appimg_target,-trial,true))
+
 $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	rm -rf $(BUILD_ARCH_DIR)
 	mkdir -p $(BUILD_ARCH_DIR)
@@ -394,6 +430,7 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	# make plugins
 	$(call make_zlfo)
 	$(call make_zchordz)
+	# make appimage
 
 .PHONY: windows10
 windows10: $(BUILD_DIR)/$(WINDOWS_INSTALLER)
@@ -496,24 +533,6 @@ endef
 
 $(eval $(call make_rpm_target,$(FEDORA31_PKG_FILE),$(BUILD_FEDORA31_DIR)))
 $(eval $(call make_rpm_target,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(BUILD_OPENSUSE_TUMBLEWEED_DIR)))
-
-artifacts/Zrythm.AppImage: $(BUILD_DIR)/$(ZRYTHM_TARBALL)
-	rm -rf $(APPIMAGE_APPDIR)
-	rm -rf /tmp/zrythm-appimg
-	mkdir -p $(APPIMAGE_APPDIR)
-	mkdir -p /tmp/zrythm-appimg
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) /tmp/zrythm-appimg/
-	cd /tmp/zrythm-appimg && tar xf $(ZRYTHM_TARBALL) && \
-		cd zrythm-$(ZRYTHM_VERSION) && \
-		meson build -Denable_sdl=true -Denable_rtaudio=true \
-		  -Denable_rtmidi=true -Denable_ffmpeg=true \
-			-Dtrial_ver=false --prefix=/usr && \
-		ninja -C build && DESTDIR=$(APPIMAGE_APPDIR) ninja -C build install && \
-		wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
-		wget -c "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" && \
-		chmod +x linuxdeploy-plugin-gtk.sh && \
-		chmod +x linuxdeploy-x86_64.AppImage && \
-		./linuxdeploy-x86_64.AppImage --appdir $(APPIMAGE_APPDIR) --plugin gtk --output appimage --icon $(APPIMAGE_APPDIR)/usr/share/icons/hicolor/scalable/apps/zrythm.svg --desktop-file $(APPIMAGE_APPDIR)/usr/share/applications/zrythm.desktop
 
 # target to fetch latest version of git, used whenever
 # the meson version is too old
