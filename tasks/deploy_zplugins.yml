@@ -1,0 +1,8 @@
+---
+
+- name: Zip plugins
+  shell: |
+    cd /tmp/zrythm-installer/build && zip -r zplugins.zip Z*.lv2
+
+- name: Deploy plugins
+  fetch: src=/tmp/zrythm-installer/build/zplugins.zip dest=./artifacts/{{ inventory_hostname }}/zplugins.zip flat=yes

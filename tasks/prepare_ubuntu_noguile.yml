@@ -1,0 +1,19 @@
+---
+
+- name: Copy file from master
+  include_tasks: "{{ playbook_dir }}/tasks/copy_from_master.yml"
+
+- name: Ensure dependencies are installed
+  become: yes
+  apt:
+    name: ['libgtk-3-dev', 'libjack-jackd2-dev',
+    'libsndfile1-dev', 'ninja-build', 'lv2-dev',
+    'liblilv-dev', 'libsdl2-dev',
+    'help2man', 'python3-sphinx', 'qtbase5-dev',
+    'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
+    'ladspa-sdk', 'libfftw3-dev', 'guile-2.0',
+    'libsamplerate0-dev', 'libavformat-dev', 'libyaml-dev',
+    'vim', 'devscripts', 'librubberband-dev', 'zip',
+    'librsvg2-dev', 'debhelper', 'libchromaprint-dev' ]
+    update_cache: yes
+    state: present

@@ -1,16 +1,11 @@
-ZRYTHM_VERSION=0.8.156
+ZRYTHM_VERSION=0.8.200
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
-ZLFO_VERSION=0.1.2
-ZLFO_TARBALL=ZLFO-$(ZLFO_VERSION).tar.gz
-ZLFO_TARBALL_URL=https://git.zrythm.org/cgit/ZLFO/snapshot/ZLFO-$(ZLFO_VERSION).tar.gz
-ZLFO_DIR=ZLFO-$(ZLFO_VERSION)
+ZPLUGINS_VERSION=0.1.2
+ZPLUGINS_TARBALL=zplugins-$(ZPLUGINS_VERSION).tar.gz
+ZPLUGINS_TARBALL_URL=https://git.zrythm.org/cgit/zplugins/snapshot/zplugins-v$(ZPLUGINS_VERSION).tar.gz
+ZPLUGINS_DIR=zplugins-$(ZPLUGINS_VERSION)
 ZLFO_MANIFEST=ZLFO.lv2/manifest.ttl
-ZCHORDZ_VERSION=0.9.0
-ZCHORDZ_TARBALL=zchordz-$(ZCHORDZ_VERSION).tar.gz
-ZCHORDZ_CLONE_URL=https://git.zrythm.org/git/zchordz
-ZCHORDZ_DIR=zchordz-$(ZCHORDZ_VERSION)
-ZCHORDZ_MANIFEST=ZChordz/lv2/manifest.ttl
 ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_VERSION).orig.tar.xz
 ZRYTHM_TRIAL_DEBIAN_TARBALL=zrythm-trial_$(ZRYTHM_VERSION).orig.tar.xz
 SUM_EXT=sha256sum
@@ -43,7 +38,7 @@ OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_
 OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 WINDOWS_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.exe
 WINDOWS_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_VERSION)-setup.exe
-ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini playbook.yml --extra-vars "version=$(ZRYTHM_VERSION) zlfo_version=$(ZLFO_VERSION) zchordz_version=$(ZCHORDZ_VERSION) meson_version=$(MESON_VERSION)" -v
+ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini playbook.yml --extra-vars "version=$(ZRYTHM_VERSION) zplugins_version=$(ZPLUGINS_VERSION) meson_version=$(MESON_VERSION)" -v
 WINDOWS_IP=192.168.100.178
 MINGW_ZRYTHM_PKG_TAR=mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
 MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-x86_64-zrythm-trial-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
@@ -52,7 +47,7 @@ RCEDIT64_VER=1.1.1
 RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
 UNIX_INSTALLER_ZIP=zrythm-$(ZRYTHM_VERSION)-installer.zip
 UNIX_TRIAL_INSTALLER_ZIP=zrythm-trial-$(ZRYTHM_VERSION)-installer.zip
-COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZLFO_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
+COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
 OSX_INSTALL_PREFIX=/tmp/zrythm-osx
 OSX_INSTALL_TRIAL_PREFIX=/tmp/zrythm-trial-osx
 OSX_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.dmg
@@ -75,10 +70,8 @@ endef
 define run_build_in_vm
 	$(call start_vm,$(1))
 	$(ANSIBLE_PLAYBOOK_CMD) -l $(1)
-	cd artifacts/$(1) && unzip -o ZLFO.lv2.zip && \
-		rm ZLFO.lv2.zip
-	cd artifacts/$(1) && unzip -o ZChordz.lv2.zip && \
-		rm ZChordz.lv2.zip
+	cd artifacts/$(1) && unzip -o zplugins.zip && \
+		rm zplugins.zip
 	$(call stop_vm,$(1))
 endef
 
@@ -146,38 +139,22 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 		cp artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE) \
 			bin/opensuse/zrythm-$(ZRYTHM_VERSION)-1_tumbleweed_x86_64.rpm; \
 	fi
-	cp -Rf artifacts/debian10/ZLFO.lv2 bin/debian/ZLFO.lv2-10
-	cp -Rf artifacts/linuxmint193/ZLFO.lv2 \
-		bin/linuxmint/ZLFO.lv2-19.3
-	cp -Rf artifacts/ubuntu1904/ZLFO.lv2 \
-		bin/ubuntu/ZLFO.lv2-19.04
-	cp -Rf artifacts/ubuntu1910/ZLFO.lv2 \
-		bin/ubuntu/ZLFO.lv2-19.10
-	cp -Rf artifacts/ubuntu1804/ZLFO.lv2 \
-		bin/ubuntu/ZLFO.lv2-18.04
-	cp -Rf artifacts/archlinux/ZLFO.lv2 \
-		bin/arch/ZLFO.lv2-arch
-	cp -Rf artifacts/debian9/ZLFO.lv2 bin/debian/ZLFO.lv2-9
-	cp -Rf artifacts/fedora31/ZLFO.lv2 \
-		bin/fedora/ZLFO.lv2-31
-	cp -Rf artifacts/opensuse-tumbleweed/ZLFO.lv2 \
-		bin/opensuse/ZLFO.lv2-tumbleweed
-	cp -Rf artifacts/debian10/ZChordz.lv2 bin/debian/ZChordz.lv2-10
-	cp -Rf artifacts/linuxmint193/ZChordz.lv2 \
-		bin/linuxmint/ZChordz.lv2-19.3
-	cp -Rf artifacts/ubuntu1904/ZChordz.lv2 \
-		bin/ubuntu/ZChordz.lv2-19.04
-	cp -Rf artifacts/ubuntu1910/ZChordz.lv2 \
-		bin/ubuntu/ZChordz.lv2-19.10
-	cp -Rf artifacts/ubuntu1804/ZChordz.lv2 \
-		bin/ubuntu/ZChordz.lv2-18.04
-	cp -Rf artifacts/archlinux/ZChordz.lv2 \
-		bin/arch/ZChordz.lv2-arch
-	cp -Rf artifacts/debian9/ZChordz.lv2 bin/debian/ZChordz.lv2-9
-	cp -Rf artifacts/fedora31/ZChordz.lv2 \
-		bin/fedora/ZChordz.lv2-31
-	cp -Rf artifacts/opensuse-tumbleweed/ZChordz.lv2 \
-		bin/opensuse/ZChordz.lv2-tumbleweed
+	cp -Rf artifacts/debian10/zplugins bin/debian/zplugins-10
+	cp -Rf artifacts/linuxmint193/zplugins \
+		bin/linuxmint/zplugins-19.3
+	cp -Rf artifacts/ubuntu1904/zplugins \
+		bin/ubuntu/zplugins-19.04
+	cp -Rf artifacts/ubuntu1910/zplugins \
+		bin/ubuntu/zplugins-19.10
+	cp -Rf artifacts/ubuntu1804/zplugins \
+		bin/ubuntu/zplugins-18.04
+	cp -Rf artifacts/archlinux/zplugins \
+		bin/arch/zplugins-arch
+	cp -Rf artifacts/debian9/zplugins bin/debian/zplugins-9
+	cp -Rf artifacts/fedora31/zplugins \
+		bin/fedora/zplugins-31
+	cp -Rf artifacts/opensuse-tumbleweed/zplugins \
+		bin/opensuse/zplugins-tumbleweed
 	cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage \
 		Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < README$(2).in > README
@@ -198,9 +175,9 @@ endef
 # arg 4: the extra dependencies
 #artifacts/$(1)/$(2) artifacts/$(1)/$(3) artifacts/$(1)/ZLFO.lv2/manifest.ttl &: $(COMMON_SRC_DEPS) $(4)
 define generic_artifact_target
-artifacts/$(1)/$(ZLFO_MANIFEST): $(COMMON_SRC_DEPS) $(4)
+artifacts/$(1)/zplugins/$(ZLFO_MANIFEST): $(COMMON_SRC_DEPS) $(4)
 	$$(call run_build_in_vm,$(1))
-artifacts/$(1)/$(2): artifacts/$(1)/$(ZLFO_MANIFEST)
+artifacts/$(1)/$(2): artifacts/$(1)/zplugins/$(ZLFO_MANIFEST)
 	$$(call run_build_in_vm,$(1))
 artifacts/$(1)/$(3): artifacts/$(1)/$(2)
 	$$(call run_build_in_vm,$(1))
@@ -342,22 +319,22 @@ define prepare_debian
 			sed -i -e 's/ninja test/echo test/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 		fi
 	if [ "$$(hostname)" = "debian9" ]; then \
+			sed -i -e 's/-Denable_guile=true/-Denable_guile=false/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/fonts-dseg, //' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 			sed -i -e 's/-Dinstall_dseg_font=false/-Dinstall_dseg_font=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 		fi
 	echo "3.0 (quilt)" > $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/source/format
 endef
 
-define make_zlfo
-	cd $(BUILD_DIR) && tar xf $(ZLFO_TARBALL)
-	cd $(BUILD_DIR)/ZLFO-$(ZLFO_VERSION) && ../meson/meson.py build --buildtype=release --prefix=/usr && DESTDIR=/tmp ninja -C build install
-	cp -R /tmp/$(1)/usr/lib/lv2/ZLFO.lv2 $(BUILD_DIR)/
-endef
-
-define make_zchordz
-	cd $(BUILD_DIR) && tar xf $(ZCHORDZ_TARBALL)
-	cd $(BUILD_DIR)/zchordz-$(ZCHORDZ_VERSION) && make
-	cp -R $(BUILD_DIR)/zchordz-$(ZCHORDZ_VERSION)/bin/zchordz.lv2 $(BUILD_DIR)/ZChordz.lv2
+# arg 2: `true` for trial, `false` for normal ver
+define make_zplugins
+	cd $(BUILD_DIR) && tar xf $(ZPLUGINS_TARBALL)
+	cd $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION) && \
+		cd ext/Soundpipe && CC=gcc make && cd ../.. && \
+		../meson/meson.py build --buildtype=release \
+		-Dtrial_ver=$(2) --prefix=/usr && \
+		DESTDIR=/tmp ninja -C build install
+	cp -R /tmp/$(1)/usr/lib/lv2/Z*.lv2 $(BUILD_DIR)/
 endef
 
 $(BUILD_DIR)/$(DEBIAN_PKG_FILE) $(BUILD_DIR)/$(DEBIAN_TRIAL_PKG_FILE)&: debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS)
@@ -373,8 +350,8 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE) $(BUILD_DIR)/$(DEBIAN_TRIAL_PKG_FILE)&: debian.c
 	sed -i -e 's/: zrythm/: zrythm-trial/g' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
 	# make plugins
-	$(call make_zlfo)
-	$(call make_zchordz)
+	$(call make_zplugins,,true)
+	$(call make_zplugins,,false)
 
 $(BUILD_DIR)/$(MESON_TARBALL):
 	wget https://github.com/mesonbuild/meson/releases/download/$(MESON_VERSION)/$(MESON_TARBALL) -O $@
@@ -399,6 +376,7 @@ $(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZRYTHM
 		cd zrythm-$(ZRYTHM_VERSION) && \
 		$$$$MESON_PATH/meson.py build -Denable_sdl=true -Denable_rtaudio=true \
 		  -Denable_rtmidi=true -Denable_ffmpeg=true \
+			-Denable_guile=false \
 			-Dtrial_ver=$(2) --prefix=/usr && \
 		ninja -C build && DESTDIR=$(APPIMAGE_APPDIR) ninja -C build install && \
 		wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
@@ -428,8 +406,8 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	sed -i -e '29s/$$/ -Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make plugins
-	$(call make_zlfo)
-	$(call make_zchordz)
+	$(call make_zplugins,,true)
+	$(call make_zplugins,,false)
 	# make appimage
 
 .PHONY: windows10
@@ -448,8 +426,8 @@ $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM
 	sed -i -e '43s/\\/-Dtrial_ver=true \\/' $(BUILD_WINDOWS_DIR)/PKGBUILD
 	cd $(BUILD_WINDOWS_DIR) && makepkg-mingw -f
 	# make plugins
-	$(call make_zlfo,msys64)
-	$(call make_zchordz,msys64)
+	$(call make_zplugins,msys64,true)
+	$(call make_zplugins,msys64,false)
 
 # arg 1: chroot dir
 # arg 2: zrythm pkg tar
@@ -489,8 +467,7 @@ define create_windows_installer
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/THANKS $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp -R $(BUILD_DIR)/ZLFO.lv2 $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp -R $(BUILD_DIR)/ZChordz.lv2 $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp -R $(BUILD_DIR)/Z*.lv2 $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
 	cp $(BUILD_DIR)/$(RCEDIT64_EXE) $(BUILD_WINDOWS_DIR)/installer/
 	# create installer
@@ -527,8 +504,8 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	sed -i -e '80s/$$$$/ -Dtrial_ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	# make plugins
-	$$(call make_zlfo)
-	$$(call make_zchordz)
+	$$(call make_zplugins,,true)
+	$$(call make_zplugins,,false)
 endef
 
 $(eval $(call make_rpm_target,$(FEDORA31_PKG_FILE),$(BUILD_FEDORA31_DIR)))
@@ -552,20 +529,10 @@ $(BUILD_DIR)/$(ZRYTHM_TARBALL):
 	cd $(BUILD_DIR) && $(CALC_SUM) $(ZRYTHM_TARBALL_SUM)
 	cd $(BUILD_DIR) && gpg --verify $(ZRYTHM_TARBALL).asc $(ZRYTHM_TARBALL)
 
-# target for fetching the ZLFO release tarball
-$(BUILD_DIR)/$(ZLFO_TARBALL):
+# target for fetching the ZPlugins release tarball
+$(BUILD_DIR)/$(ZPLUGINS_TARBALL):
 	mkdir -p $(BUILD_DIR)
-	wget $(ZLFO_TARBALL_URL) -O $@
-
-$(BUILD_DIR)/$(ZCHORDZ_TARBALL):
-	mkdir -p $(BUILD_DIR)
-	rm -rf /tmp/zchordz /tmp/zchordz-$(ZCHORDZ_VERSION)
-	cd /tmp && git clone --recursive $(ZCHORDZ_CLONE_URL) && \
-		cd zchordz && git checkout v$(ZCHORDZ_VERSION) && cd .. && \
-		mv zchordz zchordz-$(ZCHORDZ_VERSION)
-	mv /tmp/zchordz-$(ZCHORDZ_VERSION) ./
-	tar -cvf $@ zchordz-$(ZCHORDZ_VERSION)
-	rm -rf zchordz-$(ZCHORDZ_VERSION)
+	wget $(ZPLUGINS_TARBALL_URL) -O $@
 
 $(BUILD_DIR)/$(RCEDIT64_EXE):
 	wget $(RCEDIT64_URL) -O $@

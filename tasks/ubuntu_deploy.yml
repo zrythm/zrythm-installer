@@ -15,4 +15,4 @@
   when: inventory_hostname == 'debian9'
 
 - name: Zip and deploy ZLFO
-  include_tasks: "{{ playbook_dir }}/tasks/deploy_zlfo.yml"
+  include_tasks: "{{ playbook_dir }}/tasks/deploy_zplugins.yml"

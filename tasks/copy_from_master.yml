@@ -13,6 +13,5 @@
     dest: /tmp/zrythm-installer/build/
   with_fileglob:
     - "{{ playbook_dir }}/build/zrythm-{{ version }}.tar.xz*"
-    - "{{ playbook_dir }}/build/ZLFO-{{ zlfo_version }}.tar.gz"
-    - "{{ playbook_dir }}/build/zchordz-{{ zchordz_version }}.tar.gz"
+    - "{{ playbook_dir }}/build/zplugins-{{ zplugins_version }}.tar.gz"
     - "{{ playbook_dir }}/build/meson-{{ meson_version }}.tar.gz"

@@ -61,7 +61,7 @@
         'libyaml', 'libsamplerate', 'alsa-lib', 'fftw',
         'python', 'gettext', 'sed', 'meson', 'ninja',
         'help2man', 'python-sphinx', 'ladspa', 'lv2',
-        'sdl2',
+        'sdl2', 'guile',
         'vim', 'meson', 'rubberband', 'qt5-base' ]
         update_cache: yes
         state: present
@@ -75,8 +75,8 @@
     - name: Deploy trial version
       fetch: src=/tmp/zrythm-installer/build/archlinux/zrythm-trial-{{ version }}-1-x86_64.pkg.tar.xz dest=./artifacts/archlinux/zrythm-trial-{{ version }}-1-x86_64.pkg.tar.xz flat=yes
 
-    - name: Zip and deploy ZLFO
-      include_tasks: "{{ playbook_dir }}/tasks/deploy_zlfo.yml"
+    - name: Zip and deploy plugins
+      include_tasks: "{{ playbook_dir }}/tasks/deploy_zplugins.yml"
 
 - hosts: fedora31
   tasks:
@@ -89,7 +89,7 @@
         name: ['gcc-c++', 'gcc', 'pkgconfig',
         'gtk3-devel', 'python3',
         'libsndfile-devel', 'lv2-devel',
-        'lilv-devel',
+        'lilv-devel', 'guile22-devel',
         'libyaml-devel', 'libsamplerate-devel',
         'gettext', 'sed', 'alsa-lib-devel',
         'ladspa-devel', 'fftw-devel',
@@ -114,7 +114,7 @@
       fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-trial-{{ version }}-1.fc31.x86_64.rpm dest=./artifacts/fedora31/zrythm-trial-{{ version }}-1.fc31.x86_64.rpm flat=yes
 
     - name: Zip and deploy ZLFO
-      include_tasks: "{{ playbook_dir }}/tasks/deploy_zlfo.yml"
+      include_tasks: "{{ playbook_dir }}/tasks/deploy_zplugins.yml"
 
 # NOTE: for opensuse first add this repository:
 # https://software.opensuse.org//download.html?project=home:rncbc&package=lilv
@@ -137,7 +137,7 @@
         'ladspa-devel', 'fftw-devel',
         'portaudio-devel', 'help2man',
         'vim', 'meson', 'rpm-build', 'git',
-        'lv2', 'liblilv-devel',
+        'lv2', 'liblilv-devel', 'guile22-devel',
         'rpmdevtools', 'update-desktop-files',
         'fftw3-threads-devel',
         'SDL2-devel', 'librsvg2-devel',
@@ -162,4 +162,4 @@
       fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-trial-{{ version }}-1.x86_64.rpm dest=./artifacts/{{ inventory_hostname }}/zrythm-trial-{{ version }}-1.{{ inventory_hostname }}.x86_64.rpm flat=yes
 
     - name: Zip and deploy ZLFO
-      include_tasks: "{{ playbook_dir }}/tasks/deploy_zlfo.yml"
+      include_tasks: "{{ playbook_dir }}/tasks/deploy_zplugins.yml"

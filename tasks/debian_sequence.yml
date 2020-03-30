@@ -2,6 +2,16 @@
 
 - name: Prepare
   include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu.yml"
+  when: inventory_hostname == 'linuxmint193' or
+        inventory_hostname == 'ubuntu1804' or
+        inventory_hostname == 'ubuntu1810' or
+        inventory_hostname == 'ubuntu1904' or
+        inventory_hostname == 'ubuntu1910' or
+        inventory_hostname == 'debian10'
+
+- name: Prepare no guile
+  include_tasks: "{{ playbook_dir }}/tasks/prepare_ubuntu_noguile.yml"
+  when: inventory_hostname == 'debian9'
 
 - name: Make build
   shell: |
