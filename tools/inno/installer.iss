@@ -33,7 +33,7 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
 Name: "zrythm"; Description: "Zrythm DAW"; \
-  Types: full compact; Flags: fixed
+  Types: full compact custom; Flags: fixed
 Name: "plugins"; Description: "Bundled LV2 plugins"; \
   Types: full
 
@@ -81,10 +81,7 @@ Source: "share\fonts\zrythm\DSEG14-Classic-MINI\DSEG14ClassicMini-Italic.ttf"; \
   DestDir: "{fonts}"; FontInstall: "DSEG14 Classic Mini-Italic (OpenType)"; \
   Flags: onlyifdoesntexist uninsneveruninstall fontisnttruetype; \
   Components: zrythm
-Source: "ZLFO.lv2\*"; DestDir: "{commoncf}\LV2\ZLFO.lv2"; \
-  Flags: ignoreversion recursesubdirs; \
-  Components: plugins
-Source: "ZChordz.lv2\*"; DestDir: "{commoncf}\LV2\ZChordz.lv2"; \
+Source: "{#PluginsDir}\*"; DestDir: "{commoncf}\LV2"; \
   Flags: ignoreversion recursesubdirs; \
   Components: plugins
 

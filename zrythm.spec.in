@@ -38,7 +38,9 @@ Requires:      jack fftw3 libfftw3_threads3 libyaml-0-2
 Requires:      librubberband2
 #Requires:      libsuil-0-0
 BuildRequires:      liblilv-devel
+BuildRequires: guile-devel
 Requires:      libgtk-3-0
+Requires: guile
 Requires: libsamplerate0
 Requires: liblilv-0-0
 Requires: libsndfile1
@@ -49,10 +51,12 @@ Requires: libportaudio2
 BuildRequires: jack-audio-connection-kit-devel libX11-devel
 BuildRequires: rubberband-devel
 BuildRequires:      lilv-devel lv2-devel
+BuildRequires: guile22-devel
 Requires:      jack-audio-connection-kit
 Requires:      rubberband fftw
 Requires:      libyaml
 Requires: libsamplerate
+Requires: guile22
 #Requires: suil
 Requires: gtk3 >= 3.24
 Requires: lilv
@@ -77,7 +81,7 @@ and is designed to be intuitive to use.
 
 %build
 rm -rf build
-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Denable_rtaudio=true -Denable_rtmidi=true
+meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Denable_rtaudio=true -Denable_rtmidi=true -Dtrial_ver=false
 ninja -C build
 
 %install

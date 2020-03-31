@@ -4,6 +4,7 @@ Section: sound
 Build-Depends: debhelper (>=9), 
                desktop-file-utils,
                gettext,
+               guile-2.2-dev,
                help2man,
                libgtk-3-dev (>= 3.22),
                libjack-jackd2-dev | libjack-dev,

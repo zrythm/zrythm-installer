@@ -72,6 +72,8 @@ define run_build_in_vm
 	$(ANSIBLE_PLAYBOOK_CMD) -l $(1)
 	cd artifacts/$(1) && unzip -o zplugins.zip && \
 		rm zplugins.zip
+	cd artifacts/$(1) && unzip -o zplugins-trial.zip && \
+		rm zplugins-trial.zip
 	$(call stop_vm,$(1))
 endef
 
@@ -139,30 +141,30 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 		cp artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE) \
 			bin/opensuse/zrythm-$(ZRYTHM_VERSION)-1_tumbleweed_x86_64.rpm; \
 	fi
-	cp -Rf artifacts/debian10/zplugins bin/debian/zplugins-10
-	cp -Rf artifacts/linuxmint193/zplugins \
-		bin/linuxmint/zplugins-19.3
-	cp -Rf artifacts/ubuntu1904/zplugins \
-		bin/ubuntu/zplugins-19.04
-	cp -Rf artifacts/ubuntu1910/zplugins \
-		bin/ubuntu/zplugins-19.10
-	cp -Rf artifacts/ubuntu1804/zplugins \
-		bin/ubuntu/zplugins-18.04
-	cp -Rf artifacts/archlinux/zplugins \
-		bin/arch/zplugins-arch
-	cp -Rf artifacts/debian9/zplugins bin/debian/zplugins-9
-	cp -Rf artifacts/fedora31/zplugins \
-		bin/fedora/zplugins-31
-	cp -Rf artifacts/opensuse-tumbleweed/zplugins \
-		bin/opensuse/zplugins-tumbleweed
+	cp -Rf artifacts/debian10/zplugins$(2) bin/debian/zplugins$(2)-10
+	cp -Rf artifacts/linuxmint193/zplugins$(2) \
+		bin/linuxmint/zplugins$(2)-19.3
+	cp -Rf artifacts/ubuntu1904/zplugins$(2) \
+		bin/ubuntu/zplugins$(2)-19.04
+	cp -Rf artifacts/ubuntu1910/zplugins$(2) \
+		bin/ubuntu/zplugins$(2)-19.10
+	cp -Rf artifacts/ubuntu1804/zplugins$(2) \
+		bin/ubuntu/zplugins$(2)-18.04
+	cp -Rf artifacts/archlinux/zplugins$(2) \
+		bin/arch/zplugins$(2)-arch
+	cp -Rf artifacts/debian9/zplugins bin/debian/zplugins$(2)-9
+	cp -Rf artifacts/fedora31/zplugins$(2) \
+		bin/fedora/zplugins$(2)-31
+	cp -Rf artifacts/opensuse-tumbleweed/zplugins$(2) \
+		bin/opensuse/zplugins$(2)-tumbleweed
 	cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage \
 		Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < README$(2).in > README
 	sed -i -e 's/@_AT_@/@/' README
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < installer.sh.in > installer.sh
-	sed -i -e 's/@ZLFO_VERSION@/$(ZLFO_VERSION)/' installer.sh
-	sed -i -e 's/@ZCHORDZ_VERSION@/$(ZCHORDZ_VERSION)/' installer.sh
+	sed -i -e 's/@ZPLUGINS_VERSION@/$(ZPLUGINS_VERSION)/' installer.sh
 	sed -i -e 's/@ZRYTHM@/zrythm$(2)/' installer.sh
+	sed -i -e 's/@ZPLUGINS@/zplugins$(2)/' installer.sh
 	chmod +x installer.sh
 	tools/gen_installer.sh $(ZRYTHM_VERSION) $(1)
 	rm README installer.sh *.AppImage
@@ -177,10 +179,10 @@ endef
 define generic_artifact_target
 artifacts/$(1)/zplugins/$(ZLFO_MANIFEST): $(COMMON_SRC_DEPS) $(4)
 	$$(call run_build_in_vm,$(1))
-artifacts/$(1)/$(2): artifacts/$(1)/zplugins/$(ZLFO_MANIFEST)
-	$$(call run_build_in_vm,$(1))
-artifacts/$(1)/$(3): artifacts/$(1)/$(2)
-	$$(call run_build_in_vm,$(1))
+#artifacts/$(1)/$(2): artifacts/$(1)/zplugins/$(ZLFO_MANIFEST)
+	#$$(call run_build_in_vm,$(1))
+#artifacts/$(1)/$(3): artifacts/$(1)/$(2)
+	#$$(call run_build_in_vm,$(1))
 endef
 
 # creates the debian artifact targets
@@ -218,7 +220,7 @@ $(eval $(call create_installer_in_x_target,opensuse-tumbleweed))
 # these assume that the trial artifacts and ZLFO
 # are also produced since they are group targets
 .PHONY: unix-artifacts
-unix-artifacts: artifacts/debian9/$(ZLFO_MANIFEST) artifacts/debian10/$(ZLFO_MANIFEST) artifacts/debian10/$(DEBIAN_TRIAL_PKG_FILE) artifacts/linuxmint193/$(ZLFO_MANIFEST) artifacts/ubuntu1904/$(ZLFO_MANIFEST) artifacts/ubuntu1910/$(ZLFO_MANIFEST) artifacts/ubuntu1804/$(ZLFO_MANIFEST) artifacts/archlinux/$(ZLFO_MANIFEST) artifacts/fedora31/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/$(ZLFO_MANIFEST)
+unix-artifacts: artifacts/debian9/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/$(DEBIAN_TRIAL_PKG_FILE) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1904/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora31/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
 
 $(eval $(call debian_artifact_target,debian9))
 $(eval $(call debian_artifact_target,debian10))
@@ -322,12 +324,15 @@ define prepare_debian
 			sed -i -e 's/-Denable_guile=true/-Denable_guile=false/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/fonts-dseg, //' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 			sed -i -e 's/-Dinstall_dseg_font=false/-Dinstall_dseg_font=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
+			sed -i -e 's/guile-2.2-dev/guile-2.0/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 		fi
 	echo "3.0 (quilt)" > $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/source/format
 endef
 
 # arg 2: `true` for trial, `false` for normal ver
 define make_zplugins
+	rm -rf /tmp/$(1)/usr/lib/lv2/Z*.lv2
+	rm -rf $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION)
 	cd $(BUILD_DIR) && tar xf $(ZPLUGINS_TARBALL)
 	cd $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION) && \
 		cd ext/Soundpipe && CC=gcc make && cd ../.. && \
@@ -335,6 +340,7 @@ define make_zplugins
 		-Dtrial_ver=$(2) --prefix=/usr && \
 		DESTDIR=/tmp ninja -C build install
 	cp -R /tmp/$(1)/usr/lib/lv2/Z*.lv2 $(BUILD_DIR)/
+	ls -l $(BUILD_DIR)/Z*.lv2
 endef
 
 $(BUILD_DIR)/$(DEBIAN_PKG_FILE) $(BUILD_DIR)/$(DEBIAN_TRIAL_PKG_FILE)&: debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS)
@@ -453,11 +459,13 @@ $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe $(WIN_TRIAL_CHROOT_DIR)/mingw64/bin/zry
 # arg 1: chroot dir
 # arg 2: installer filename
 # arg 3: AppName
+# arg 4: `-trial` if trial
 define create_windows_installer
 	# create sources distribution
 	- rm -rf $(BUILD_WINDOWS_DIR)/installer
 	-rm $(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
-	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist
+	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist/plugins
+	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist/plugins-trial
 	pacman -Si $(shell pacman -Q --root $(1) | grep mingw | grep -v zrythm | cut -d" " -f1) > $(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
 	# copy other files
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/AUTHORS $(BUILD_WINDOWS_DIR)/installer/dist/
@@ -467,17 +475,23 @@ define create_windows_installer
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/THANKS $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp -R $(BUILD_DIR)/Z*.lv2 $(BUILD_WINDOWS_DIR)/installer/dist/
+	for file in $(shell find $(BUILD_DIR) -name "Z*.lv2" -not -name "*-trial.lv2") ; do \
+		cp -R $$file $(BUILD_WINDOWS_DIR)/installer/dist/plugins/ ; \
+		done
+	cp -R $(BUILD_DIR)/*-trial.lv2 $(BUILD_WINDOWS_DIR)/installer/dist/plugins-trial/
 	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
 	cp $(BUILD_DIR)/$(RCEDIT64_EXE) $(BUILD_WINDOWS_DIR)/installer/
 	# create installer
-	tools/gen_windows_installer.sh $(1)/mingw64 $(ZRYTHM_VERSION) $(BUILD_WINDOWS_DIR)/installer $(shell pwd)/tools/inno/installer.iss "$(3)"
+	tools/gen_windows_installer.sh $(1)/mingw64 \
+		$(ZRYTHM_VERSION) $(BUILD_WINDOWS_DIR)/installer \
+		$(shell pwd)/tools/inno/installer.iss "$(3)" \
+		plugins$(4)
 	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_VERSION).exe" $(BUILD_DIR)/$(2)
 endef
 
 $(BUILD_DIR)/$(WINDOWS_INSTALLER) $(BUILD_DIR)/$(WINDOWS_TRIAL_INSTALLER)&: $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe $(WIN_TRIAL_CHROOT_DIR)/mingw64/bin/zrythm.exe FORCE
 	$(call create_windows_installer,$(WIN_CHROOT_DIR),$(WINDOWS_INSTALLER),Zrythm)
-	$(call create_windows_installer,$(WIN_TRIAL_CHROOT_DIR),$(WINDOWS_TRIAL_INSTALLER),Zrythm Trial Version)
+	$(call create_windows_installer,$(WIN_TRIAL_CHROOT_DIR),$(WINDOWS_TRIAL_INSTALLER),Zrythm Trial Version,-trial)
 
 .PHONY: fedora31
 fedora31: $(BUILD_DIR)/$(FEDORA31_PKG_FILE)
@@ -501,7 +515,7 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	# make trial
 	sed -i -e '9s/zrythm/zrythm-trial/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	sed -i -e '80s/$$$$/ -Dtrial_ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	# make plugins
 	$$(call make_zplugins,,true)

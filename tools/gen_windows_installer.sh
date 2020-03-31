@@ -5,16 +5,16 @@
 #  This file is part of Zrythm
 #
 #  Zrythm is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
+#  it under the terms of the GNU Affero General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
 #  Zrythm is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
+#  GNU Affero General Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License
+#  You should have received a copy of the GNU Affero General Public License
 #  along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 #
 
@@ -24,6 +24,7 @@
 # to stage files to - the root of the installer is in $3/dist
 # $4 path to inno installer definition
 # $5 App name
+# $6 Plugins dir (containing *.lv2 bundles)
 
 ZRYTHM_VERSION="$2"
 
@@ -31,6 +32,7 @@ INNO_ISS=$4
 BUILD_DIR=$3
 MINGW_PREFIX=$1
 APP_NAME=$5
+PLUGINS_DIR=$6
 DIST_DIR=$BUILD_DIR/dist # root of the distribution
 DIST_BINDIR=$DIST_DIR/bin
 DIST_LIBDIR=$DIST_DIR/lib
@@ -180,5 +182,7 @@ $BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm_vst_check.exe" --set-icon  "$DIST
 
 cp "$INNO_ISS" "$DIST_DIR"/
 cd $DIST_DIR
-/c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe "//DAppName=$APP_NAME" "//DAppVersion=$ZRYTHM_VERSION" \
+/c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
+  "//DAppName=$APP_NAME" "//DAppVersion=$ZRYTHM_VERSION" \
+  "//DPluginsDir=$PLUGINS_DIR" \
   installer.iss

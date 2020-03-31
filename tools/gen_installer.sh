@@ -8,4 +8,4 @@ FILE=$2
 rm $FILE
 # TODO add *.AppImage
 zip $FILE installer.sh README \
-  bin/**/*.* bin/**/**/* bin/**/**/**/*
+  bin/**/*.* bin/**/**/* bin/**/**/**/* bin/**/**/**/**/*

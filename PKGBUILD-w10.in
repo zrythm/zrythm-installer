@@ -18,6 +18,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-adwaita-icon-theme"
          "${MINGW_PACKAGE_PREFIX}-libyaml")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-gettext"
+             "guile"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
@@ -42,6 +43,7 @@ build() {
     -Denable_rtaudio=true \
     -Denable_rtmidi=true \
     -Denable_jack=false \
+    -Denable_guile=false \
     -Dwindows_release=true \
     --buildtype=release \
     "../zrythm-${pkgver}"

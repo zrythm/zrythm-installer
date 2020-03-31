@@ -137,7 +137,7 @@
         'ladspa-devel', 'fftw-devel',
         'portaudio-devel', 'help2man',
         'vim', 'meson', 'rpm-build', 'git',
-        'lv2', 'liblilv-devel', 'guile22-devel',
+        'lv2', 'liblilv-devel', 'guile-devel',
         'rpmdevtools', 'update-desktop-files',
         'fftw3-threads-devel',
         'SDL2-devel', 'librsvg2-devel',
