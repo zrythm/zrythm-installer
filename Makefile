@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.200
+ZRYTHM_VERSION=0.8.252
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
@@ -220,7 +220,7 @@ $(eval $(call create_installer_in_x_target,opensuse-tumbleweed))
 # these assume that the trial artifacts and ZLFO
 # are also produced since they are group targets
 .PHONY: unix-artifacts
-unix-artifacts: artifacts/debian9/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/$(DEBIAN_TRIAL_PKG_FILE) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1904/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora31/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
+unix-artifacts: artifacts/debian9/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1904/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora31/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
 
 $(eval $(call debian_artifact_target,debian9))
 $(eval $(call debian_artifact_target,debian10))
@@ -323,6 +323,7 @@ define prepare_debian
 	if [ "$$(hostname)" = "debian9" ]; then \
 			sed -i -e 's/-Denable_guile=true/-Denable_guile=false/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/fonts-dseg, //' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
+			sed -i -e '/libgtksourceview-3.0-dev,/d' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 			sed -i -e 's/-Dinstall_dseg_font=false/-Dinstall_dseg_font=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/guile-2.2-dev/guile-2.0/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 		fi
@@ -409,7 +410,7 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make trial
 	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD
-	sed -i -e '29s/$$/ -Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
+	sed -i -e '30s/$$/ -Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make plugins
 	$(call make_zplugins,,true)

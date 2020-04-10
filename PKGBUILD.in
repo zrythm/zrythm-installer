@@ -7,7 +7,8 @@ arch=('x86_64' 'i686')
 url="https://www.zrythm.org"
 license=('AGPL3')
 depends=('gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
-  'libyaml' 'libsamplerate' 'guile' 'alsa-lib' 'fftw'
+  'libyaml' 'libsamplerate' 'guile' 'gtksourceview4' 'alsa-lib'
+  'fftw'
   'rubberband' 'xdg-utils' 'sdl2')
 makedepends=(
   'python' 'gettext' 'sed'

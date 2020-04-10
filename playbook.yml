@@ -61,7 +61,7 @@
         'libyaml', 'libsamplerate', 'alsa-lib', 'fftw',
         'python', 'gettext', 'sed', 'meson', 'ninja',
         'help2man', 'python-sphinx', 'ladspa', 'lv2',
-        'sdl2', 'guile',
+        'sdl2', 'guile', 'gtksourceview4',
         'vim', 'meson', 'rubberband', 'qt5-base' ]
         update_cache: yes
         state: present
@@ -96,6 +96,7 @@
         'portaudio-devel', 'help2man',
         'vim', 'meson', 'rpm-build',
         'SDL2-devel', 'librsvg2-devel',
+        'gtksourceview3-devel',
         'jack-audio-connection-kit-devel',
         'libX11-devel', 'qt5-devel', 'make',
         'rubberband-devel' ]
@@ -141,6 +142,7 @@
         'rpmdevtools', 'update-desktop-files',
         'fftw3-threads-devel',
         'SDL2-devel', 'librsvg2-devel',
+        'gtksourceview4-devel',
         'jack-audio-connection-kit-devel',
         'libX11-devel', 'make',
         'librubberband-devel' ]

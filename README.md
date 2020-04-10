@@ -1,7 +1,13 @@
+Zrythm installer scripts
+========================
+
+These scripts assume each distro is available in
+each VM according to ansible-conf.ini.
+
 # Create installer
 
     export ANSIBLE_STDOUT_CALLBACK=debug
-    make -j4
+    make -j2
 
 # Note for windows
 Can use the following to spawn an MSYS2 shell from the
