@@ -23,11 +23,12 @@ _rootdir="zrythm-${pkgver}"
 
 build() {
   cd $_rootdir
-  meson build --prefix=/usr -Denable_tests=true \
+  PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig \
+    meson build --prefix=/usr -Denable_tests=true \
     -Dmanpage=true \
     -Dbuildtype=release -Denable_ffmpeg=true \
     -Denable_sdl=true -Denable_rtaudio=true \
-    -Denable_rtmidi=true
+    -Denable_rtmidi=true -Denable_carla=true
   ninja -C build
 }
 
@@ -41,4 +42,6 @@ package() {
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
   DESTDIR="${pkgdir}/" ninja -C build install
+  mkdir -p "${pkgdir}/usr/lib/zrythm/lib"
+  cp -R /usr/lib/zrythm/lib/carla ${pkgdir}/usr/lib/zrythm/lib/
 }

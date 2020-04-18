@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.252
+ZRYTHM_VERSION=0.8.298
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
@@ -12,6 +12,12 @@ SUM_EXT=sha256sum
 ZRYTHM_TARBALL_SUM=zrythm-$(ZRYTHM_VERSION).tar.xz.$(SUM_EXT)
 CALC_SUM=sha256sum --check
 ZRYTHM_TARBALL_URL=https://www.zrythm.org/releases/$(ZRYTHM_TARBALL)
+CARLA_VERSION=b5ee6613712cd50db9d3ff2cc73a7f182a569777
+CARLA_GIT_URL=https://github.com/falkTX/Carla.git
+CARLA_WINDOWS_BINARY_64_ZIP=carla-64-$(shell echo $(CARLA_VERSION) | head -c 7).zip
+CARLA_WINDOWS_BINARY_32_ZIP=carla-2.1-woe32.zip
+CARLA_WINDOWS_BINARY_64_URL=https://www.zrythm.org/downloads/carla/$(CARLA_WINDOWS_BINARY_64_ZIP)
+CARLA_WINDOWS_BINARY_32_URL=https://www.zrythm.org/downloads/carla/$(CARLA_WINDOWS_BINARY_32_ZIP)
 BUILD_DIR=build
 BUILD_DEBIAN10_DIR=$(BUILD_DIR)/debian10
 MESON_VERSION=0.53.0
@@ -179,10 +185,6 @@ endef
 define generic_artifact_target
 artifacts/$(1)/zplugins/$(ZLFO_MANIFEST): $(COMMON_SRC_DEPS) $(4)
 	$$(call run_build_in_vm,$(1))
-#artifacts/$(1)/$(2): artifacts/$(1)/zplugins/$(ZLFO_MANIFEST)
-	#$$(call run_build_in_vm,$(1))
-#artifacts/$(1)/$(3): artifacts/$(1)/$(2)
-	#$$(call run_build_in_vm,$(1))
 endef
 
 # creates the debian artifact targets
@@ -344,8 +346,25 @@ define make_zplugins
 	ls -l $(BUILD_DIR)/Z*.lv2
 endef
 
-$(BUILD_DIR)/$(DEBIAN_PKG_FILE) $(BUILD_DIR)/$(DEBIAN_TRIAL_PKG_FILE)&: debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS)
+define make_carla
+	export PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig && \
+	if pkg-config --atleast-version=2.1 carla-native-plugin ; then \
+		echo "latest carla installed" ; \
+	else \
+		cd $(BUILD_DIR) && git clone $(CARLA_GIT_URL) ; \
+	fi
+	cd $(BUILD_DIR)/Carla && \
+		make -j4 && sudo make install PREFIX=/usr/lib/zrythm
+endef
+
+define remove_carla
+	cd $(BUILD_DIR)/Carla && \
+		sudo make uninstall PREFIX=/usr/lib/zrythm
+endef
+
+$(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS)
 	rm -rf $(BUILD_DEBIAN10_DIR)
+	$(call make_carla)
 	# make regular version
 	$(call prepare_debian)
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
@@ -359,6 +378,7 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE) $(BUILD_DIR)/$(DEBIAN_TRIAL_PKG_FILE)&: debian.c
 	# make plugins
 	$(call make_zplugins,,true)
 	$(call make_zplugins,,false)
+	$(call remove_carla)
 
 $(BUILD_DIR)/$(MESON_TARBALL):
 	wget https://github.com/mesonbuild/meson/releases/download/$(MESON_VERSION)/$(MESON_TARBALL) -O $@
@@ -401,6 +421,7 @@ $(eval $(call make_appimg_target,,false))
 $(eval $(call make_appimg_target,-trial,true))
 
 $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
+	$(call make_carla)
 	rm -rf $(BUILD_ARCH_DIR)
 	mkdir -p $(BUILD_ARCH_DIR)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
@@ -410,17 +431,28 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make trial
 	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD
-	sed -i -e '30s/$$/ -Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
+	sed -i -e '31s/$$/ -Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make plugins
 	$(call make_zplugins,,true)
 	$(call make_zplugins,,false)
 	# make appimage
+	$(call remove_carla)
 
 .PHONY: windows10
 windows10: $(BUILD_DIR)/$(WINDOWS_INSTALLER)
 
 $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_TRIAL_PKG_TAR)&: PKGBUILD-w10.in $(COMMON_SRC_DEPS)
+	# install carla
+	cd $(BUILD_DIR) && \
+		wget $(CARLA_WINDOWS_BINARY_64_URL) && \
+		unzip -o $(CARLA_WINDOWS_BINARY_64_ZIP) -d \
+		/mingw64/
+	cd $(BUILD_DIR) && \
+		wget $(CARLA_WINDOWS_BINARY_32_URL) && \
+		unzip -o $(CARLA_WINDOWS_BINARY_32_ZIP) -d \
+		/mingw64/lib/carla/
+	# prepare
 	rm -rf $(BUILD_WINDOWS_DIR)
 	mkdir -p $(BUILD_WINDOWS_DIR)/src
 	cp PKGBUILD-w10.in $(BUILD_WINDOWS_DIR)/PKGBUILD
@@ -449,6 +481,7 @@ define make_windows_chroot
 	# install package in chroot
 	pacman -U $(BUILD_WINDOWS_DIR)/$(2) --noconfirm --needed --root $(1)
 	ls $(1)/mingw64/bin/zrythm.exe
+	cp -R /mingw64/lib/carla $(1)/mingw64/lib/
 	# compile glib schemas
 	glib-compile-schemas.exe $(1)/mingw64/share/glib-2.0/schemas
 endef
@@ -505,6 +538,7 @@ opensuse-tumbleweed: $(BUILD_DIR)/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
 # arg 2: build dir
 define make_rpm_target
 $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
+	$$(call make_carla)
 	rm -rf $(2)
 	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
 	mkdir -p $(2)
@@ -521,6 +555,7 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	# make plugins
 	$$(call make_zplugins,,true)
 	$$(call make_zplugins,,false)
+	$$(call remove_carla)
 endef
 
 $(eval $(call make_rpm_target,$(FEDORA31_PKG_FILE),$(BUILD_FEDORA31_DIR)))

@@ -109,6 +109,11 @@ DLLS=" \
   #cp $MINGW_PREFIX/bin/$file $DIST_BINDIR/
 #done
 cp $MINGW_PREFIX/bin/*.dll $DIST_BINDIR/
+cp $MINGW_PREFIX/lib/carla/*.dll $DIST_BINDIR/
+# for an unknown reason it doesn't work unless it
+# is named CarlaNativePlugin.dll
+mv $DIST_BINDIR/libcarla_native-plugin.dll \
+  $DIST_BINDIR/CarlaNativePlugin.dll
 
 # ******************************
 

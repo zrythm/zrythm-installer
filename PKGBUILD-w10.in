@@ -45,7 +45,7 @@ build() {
     -Denable_rtmidi=true \
     -Denable_jack=false \
     -Denable_guile=false \
-    -Dwindows_release=true \
+    -Dwindows_release=true -Denable_carla=true \
     --buildtype=release \
     "../zrythm-${pkgver}"
 

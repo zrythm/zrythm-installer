@@ -85,16 +85,19 @@ and is designed to be intuitive to use.
 
 %build
 rm -rf build
-meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Denable_rtaudio=true -Denable_rtmidi=true -Dtrial_ver=false
+PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Denable_rtaudio=true -Denable_rtmidi=true -Dtrial_ver=false -Denable_carla=true
 ninja -C build
 
 %install
 DESTDIR="%{buildroot}/" ninja -C build install
+mkdir -p "%{buildroot}/usr/lib/zrythm/lib"
+cp -R /usr/lib/zrythm/lib/carla %{buildroot}/usr/lib/zrythm/lib/
 %find_lang zrythm
 
 %files -f zrythm.lang
 %license COPYING
 %doc README.md CONTRIBUTING.md INSTALL.md CHANGELOG.md
+%{_bindir}/carla-discovery-native
 %{_bindir}/zrythm
 %{_bindir}/zrythm_launch
 %{_bindir}/zrythm_vst_check
@@ -105,8 +108,10 @@ DESTDIR="%{buildroot}/" ninja -C build install
 %{_datadir}/zrythm
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
+%{_datadir}/sourceview-styles
 %{_sysconfdir}/bash_completion.d/zrythm
 #%{_exec_prefix}/lib64/**/*
+%{_prefix}/lib/zrythm
 
 %post
 %if ! 0%{?suse_version}
