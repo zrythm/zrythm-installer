@@ -6,6 +6,6 @@
 - name: install guile
   become: yes
   apt:
-    name: [ 'guile-2.2-dev', 'libgtksourceview-3.0-dev' ]
+    name: [ 'guile-2.2-dev' ]
     update_cache: yes
     state: present

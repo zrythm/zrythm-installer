@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.298
+ZRYTHM_VERSION=0.8.333
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
@@ -53,7 +53,7 @@ RCEDIT64_VER=1.1.1
 RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
 UNIX_INSTALLER_ZIP=zrythm-$(ZRYTHM_VERSION)-installer.zip
 UNIX_TRIAL_INSTALLER_ZIP=zrythm-trial-$(ZRYTHM_VERSION)-installer.zip
-COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
+COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py $(BUILD_DIR)/Carla
 OSX_INSTALL_PREFIX=/tmp/zrythm-osx
 OSX_INSTALL_TRIAL_PREFIX=/tmp/zrythm-trial-osx
 OSX_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.dmg
@@ -325,7 +325,6 @@ define prepare_debian
 	if [ "$$(hostname)" = "debian9" ]; then \
 			sed -i -e 's/-Denable_guile=true/-Denable_guile=false/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/fonts-dseg, //' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
-			sed -i -e '/libgtksourceview-3.0-dev,/d' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 			sed -i -e 's/-Dinstall_dseg_font=false/-Dinstall_dseg_font=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/guile-2.2-dev/guile-2.0/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 		fi
@@ -350,8 +349,6 @@ define make_carla
 	export PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig && \
 	if pkg-config --atleast-version=2.1 carla-native-plugin ; then \
 		echo "latest carla installed" ; \
-	else \
-		cd $(BUILD_DIR) && git clone $(CARLA_GIT_URL) ; \
 	fi
 	cd $(BUILD_DIR)/Carla && \
 		make -j4 && sudo make install PREFIX=/usr/lib/zrythm
@@ -445,11 +442,9 @@ windows10: $(BUILD_DIR)/$(WINDOWS_INSTALLER)
 $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_TRIAL_PKG_TAR)&: PKGBUILD-w10.in $(COMMON_SRC_DEPS)
 	# install carla
 	cd $(BUILD_DIR) && \
-		wget $(CARLA_WINDOWS_BINARY_64_URL) && \
 		unzip -o $(CARLA_WINDOWS_BINARY_64_ZIP) -d \
 		/mingw64/
 	cd $(BUILD_DIR) && \
-		wget $(CARLA_WINDOWS_BINARY_32_URL) && \
 		unzip -o $(CARLA_WINDOWS_BINARY_32_ZIP) -d \
 		/mingw64/lib/carla/
 	# prepare
@@ -586,6 +581,15 @@ $(BUILD_DIR)/$(ZPLUGINS_TARBALL):
 
 $(BUILD_DIR)/$(RCEDIT64_EXE):
 	wget $(RCEDIT64_URL) -O $@
+
+$(BUILD_DIR)/Carla:
+	cd $(BUILD_DIR) && git clone $(CARLA_GIT_URL)
+
+$(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP):
+	cd $(BUILD_DIR) && wget $(CARLA_WINDOWS_BINARY_64_URL)
+
+$(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_32_ZIP):
+	cd $(BUILD_DIR) && wget $(CARLA_WINDOWS_BINARY_32_URL)
 
 # call this if cleaning the chroot environment is needed
 .PHONY: clean-windows10-chroot
