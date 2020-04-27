@@ -5,7 +5,7 @@
   when: inventory_hostname == 'linuxmint193' or
         inventory_hostname == 'ubuntu1804' or
         inventory_hostname == 'ubuntu1810' or
-        inventory_hostname == 'ubuntu1904' or
+        inventory_hostname == 'ubuntu2004' or
         inventory_hostname == 'ubuntu1910' or
         inventory_hostname == 'debian10'
 

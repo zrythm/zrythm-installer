@@ -115,8 +115,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 			bin/debian/zrythm$(2)-$(ZRYTHM_VERSION)-1_10_amd64.deb; \
 		cp artifacts/linuxmint193/$(DEBIAN_TRIAL_PKG_FILE) \
 			bin/linuxmint/zrythm$(2)-$(ZRYTHM_VERSION)-1_19.3_amd64.deb; \
-		cp artifacts/ubuntu1904/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/ubuntu/zrythm$(2)-$(ZRYTHM_VERSION)-1_19.04_amd64.deb; \
+		cp artifacts/ubuntu2004/$(DEBIAN_TRIAL_PKG_FILE) \
+			bin/ubuntu/zrythm$(2)-$(ZRYTHM_VERSION)-1_20.04_amd64.deb; \
 		cp artifacts/ubuntu1910/$(DEBIAN_TRIAL_PKG_FILE) \
 			bin/ubuntu/zrythm$(2)-$(ZRYTHM_VERSION)-1_19.10_amd64.deb; \
 		cp artifacts/ubuntu1804/$(DEBIAN_TRIAL_PKG_FILE) \
@@ -134,8 +134,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 			bin/debian/zrythm-$(ZRYTHM_VERSION)-1_10_amd64.deb; \
 		cp artifacts/linuxmint193/$(DEBIAN_PKG_FILE) \
 			bin/linuxmint/zrythm-$(ZRYTHM_VERSION)-1_19.3_amd64.deb; \
-		cp artifacts/ubuntu1904/$(DEBIAN_PKG_FILE) \
-			bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.04_amd64.deb; \
+		cp artifacts/ubuntu2004/$(DEBIAN_PKG_FILE) \
+			bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_20.04_amd64.deb; \
 		cp artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) \
 			bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.10_amd64.deb; \
 		cp artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) \
@@ -150,8 +150,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 	cp -Rf artifacts/debian10/zplugins$(2) bin/debian/zplugins$(2)-10
 	cp -Rf artifacts/linuxmint193/zplugins$(2) \
 		bin/linuxmint/zplugins$(2)-19.3
-	cp -Rf artifacts/ubuntu1904/zplugins$(2) \
-		bin/ubuntu/zplugins$(2)-19.04
+	cp -Rf artifacts/ubuntu2004/zplugins$(2) \
+		bin/ubuntu/zplugins$(2)-20.04
 	cp -Rf artifacts/ubuntu1910/zplugins$(2) \
 		bin/ubuntu/zplugins$(2)-19.10
 	cp -Rf artifacts/ubuntu1804/zplugins$(2) \
@@ -197,7 +197,7 @@ endef
 all: installers-in-vms
 
 .PHONY: installers-in-vms
-installers-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1910 installer-in-ubuntu1904 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
+installers-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1910 installer-in-ubuntu2004 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
 
 .PHONY: FORCE
 FORCE:
@@ -211,7 +211,7 @@ $(eval $(call create_installer_in_x_target,debian9))
 $(eval $(call create_installer_in_x_target,debian10))
 $(eval $(call create_installer_in_x_target,linuxmint193))
 $(eval $(call create_installer_in_x_target,ubuntu1910))
-$(eval $(call create_installer_in_x_target,ubuntu1904))
+$(eval $(call create_installer_in_x_target,ubuntu2004))
 $(eval $(call create_installer_in_x_target,ubuntu1804))
 $(eval $(call create_installer_in_x_target,archlinux))
 $(eval $(call create_installer_in_x_target,fedora31))
@@ -222,12 +222,12 @@ $(eval $(call create_installer_in_x_target,opensuse-tumbleweed))
 # these assume that the trial artifacts and ZLFO
 # are also produced since they are group targets
 .PHONY: unix-artifacts
-unix-artifacts: artifacts/debian9/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1904/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora31/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
+unix-artifacts: artifacts/debian9/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu2004/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora31/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
 
 $(eval $(call debian_artifact_target,debian9))
 $(eval $(call debian_artifact_target,debian10))
 $(eval $(call debian_artifact_target,linuxmint193))
-$(eval $(call debian_artifact_target,ubuntu1904))
+$(eval $(call debian_artifact_target,ubuntu2004))
 $(eval $(call debian_artifact_target,ubuntu1910))
 $(eval $(call debian_artifact_target,ubuntu1804))
 $(eval $(call generic_artifact_target,archlinux,$(ARCH_PKG_FILE),$(ARCH_TRIAL_PKG_FILE)))
@@ -294,10 +294,10 @@ debian10: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 .PHONY: linuxmint193
 linuxmint193: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
-# Ubuntu 19.04 target to be used by ansible inside the
+# Ubuntu 20.04 target to be used by ansible inside the
 # ubuntu VM
-.PHONY: ubuntu1904
-ubuntu1904: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+.PHONY: ubuntu2004
+ubuntu2004: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
 .PHONY: ubuntu1910
 ubuntu1910: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)

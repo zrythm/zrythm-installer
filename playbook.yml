@@ -29,7 +29,7 @@
     - name: Do
       include_tasks: "{{ playbook_dir }}/tasks/debian_sequence.yml"
 
-- hosts: ubuntu1904
+- hosts: ubuntu2004
   tasks:
     - name: Do
       include_tasks: "{{ playbook_dir }}/tasks/debian_sequence.yml"

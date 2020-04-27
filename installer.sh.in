@@ -46,8 +46,8 @@ debian_9_str="Debian GNU/Linux 9"
 mint_19_3_str="LinuxMint 19.3"
 ubuntu_18_04="Ubuntu 18.04"
 ubuntu_18_10_str="Ubuntu 18.10"
-ubuntu_19_04_str="Ubuntu 19.04"
 ubuntu_19_10_str="Ubuntu 19.10"
+ubuntu_20_04_str="Ubuntu 20.04"
 
 zenity_width=360
 have_zenity=0
@@ -87,10 +87,10 @@ if [[ "$ID" = *"ubuntu"* ]]; then
     is_ubuntu=1
     distro_ver=18
     ubuntu_lts="10"
-  elif [[ "$VERSION_ID" = *"19.04"* ]]; then
-    echo "found $ubuntu_19_04_str"
+  elif [[ "$VERSION_ID" = *"20.04"* ]]; then
+    echo "found $ubuntu_20_04_str"
     is_ubuntu=1
-    distro_ver=19
+    distro_ver=20
     ubuntu_lts="04"
   elif [[ "$VERSION_ID" = *"19.10"* ]]; then
     echo "found $ubuntu_19_10_str"
