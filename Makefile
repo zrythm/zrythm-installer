@@ -246,6 +246,20 @@ artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INS
 	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_TRIAL_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER)
 	$(call stop_vm,windows10)
 
+define make_carla
+	export PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig && \
+	if pkg-config --atleast-version=2.1 carla-native-plugin ; then \
+		echo "latest carla installed" ; \
+	fi
+	cd $(BUILD_DIR)/Carla && \
+		make -j4 && $(2) make install PREFIX=$(1)/lib/zrythm
+endef
+
+define remove_carla
+	cd $(BUILD_DIR)/Carla && \
+		sudo make uninstall PREFIX=$(1)/lib/zrythm
+endef
+
 # arg 1: prefix
 # arg 2: trial version true/false
 define make_osx
@@ -255,17 +269,20 @@ define make_osx
 		meson build -Denable_sdl=true -Denable_rtaudio=true \
 		  -Denable_rtmidi=true -Denable_ffmpeg=true \
 			-Dmac_release=true -Dtrial_ver=$(2) \
-			-Denable_jack=false \
+			-Denable_jack=false -Denable_graphviz=true \
+			-Denable_carla=true \
 			--prefix=$(1) && \
 		ninja -C build && ninja -C build install
 endef
 
-$(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUILD_DIR)/$(ZRYTHM_TARBALL)
+$(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/Carla
 	-rm -rf $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
 	-rm -rf $(OSX_INSTALL_PREFIX)
 	mkdir -p $(BUILD_OSX_DIR)
 	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
+	$(call make_carla,$(OSX_INSTALL_TRIAL_PREFIX))
 	$(call make_osx,$(OSX_INSTALL_TRIAL_PREFIX),true)
+	$(call make_carla,$(OSX_INSTALL_PREFIX))
 	$(call make_osx,$(OSX_INSTALL_PREFIX),false)
 
 # this must be run on macos
@@ -345,23 +362,9 @@ define make_zplugins
 	ls -l $(BUILD_DIR)/Z*.lv2
 endef
 
-define make_carla
-	export PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig && \
-	if pkg-config --atleast-version=2.1 carla-native-plugin ; then \
-		echo "latest carla installed" ; \
-	fi
-	cd $(BUILD_DIR)/Carla && \
-		make -j4 && sudo make install PREFIX=/usr/lib/zrythm
-endef
-
-define remove_carla
-	cd $(BUILD_DIR)/Carla && \
-		sudo make uninstall PREFIX=/usr/lib/zrythm
-endef
-
 $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS)
 	rm -rf $(BUILD_DEBIAN10_DIR)
-	$(call make_carla)
+	$(call make_carla,/usr,sudo)
 	# make regular version
 	$(call prepare_debian)
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
@@ -418,7 +421,7 @@ $(eval $(call make_appimg_target,,false))
 $(eval $(call make_appimg_target,-trial,true))
 
 $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
-	$(call make_carla)
+	$(call make_carla,/usr,sudo)
 	rm -rf $(BUILD_ARCH_DIR)
 	mkdir -p $(BUILD_ARCH_DIR)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
@@ -533,7 +536,7 @@ opensuse-tumbleweed: $(BUILD_DIR)/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
 # arg 2: build dir
 define make_rpm_target
 $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
-	$$(call make_carla)
+	$$(call make_carla,/usr,sudo)
 	rm -rf $(2)
 	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
 	mkdir -p $(2)

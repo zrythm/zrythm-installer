@@ -94,6 +94,10 @@ mkdir -p $Lib/$GDK_PIXBUF_DIR
 cp -RL $NORMAL_PREFIX/lib/$GDK_PIXBUF_DIR/* $Lib/$GDK_PIXBUF_DIR/
 cp -RL $NORMAL_PREFIX/lib/librsvg*.dylib $Lib/
 
+# Carla
+cp -RL $NORMAL_PREFIX/lib/carla $Lib/
+cp -RL $NORMAL_PREFIX/lib/carla/*.dylib $Lib/
+
 # localization
 echo "copying languages"
 languages="fr de it es ja"
