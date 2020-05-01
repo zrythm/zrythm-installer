@@ -41,12 +41,12 @@ build() {
   mkdir -p build-${MINGW_CHOST} && cd build-${MINGW_CHOST}
 
   ${MINGW_PREFIX}/bin/meson \
-    -Denable_sdl=true \
-    -Denable_rtaudio=true \
-    -Denable_rtmidi=true \
-    -Denable_jack=false \
-    -Denable_guile=false \
-    -Dwindows_release=true -Denable_carla=true \
+    -Dsdl=enabled \
+    -Drtaudio=auto \
+    -Drtmidi=auto \
+    -Djack=disabled \
+    -Dguile=disabled \
+    -Dwindows_release=true -Dcarla=enabled \
     --buildtype=release \
     "../zrythm-${pkgver}"
 

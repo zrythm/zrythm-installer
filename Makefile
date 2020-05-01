@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.333
+ZRYTHM_VERSION=0.8.378
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
@@ -12,8 +12,9 @@ SUM_EXT=sha256sum
 ZRYTHM_TARBALL_SUM=zrythm-$(ZRYTHM_VERSION).tar.xz.$(SUM_EXT)
 CALC_SUM=sha256sum --check
 ZRYTHM_TARBALL_URL=https://www.zrythm.org/releases/$(ZRYTHM_TARBALL)
-CARLA_VERSION=b5ee6613712cd50db9d3ff2cc73a7f182a569777
-CARLA_GIT_URL=https://github.com/falkTX/Carla.git
+CARLA_VERSION=b082b8b50820478d18e4056fd900c5013adbf8ff
+CARLA_SOURCE_URL=https://github.com/falkTX/Carla/archive/$(CARLA_VERSION).zip
+CARLA_SOURCE_ZIP=Carla-$(CARLA_VERSION).zip
 CARLA_WINDOWS_BINARY_64_ZIP=carla-64-$(shell echo $(CARLA_VERSION) | head -c 7).zip
 CARLA_WINDOWS_BINARY_32_ZIP=carla-2.1-woe32.zip
 CARLA_WINDOWS_BINARY_64_URL=https://www.zrythm.org/downloads/carla/$(CARLA_WINDOWS_BINARY_64_ZIP)
@@ -53,7 +54,7 @@ RCEDIT64_VER=1.1.1
 RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
 UNIX_INSTALLER_ZIP=zrythm-$(ZRYTHM_VERSION)-installer.zip
 UNIX_TRIAL_INSTALLER_ZIP=zrythm-trial-$(ZRYTHM_VERSION)-installer.zip
-COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py $(BUILD_DIR)/Carla
+COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py $(BUILD_DIR)/$(CARLA_SOURCE_ZIP)
 OSX_INSTALL_PREFIX=/tmp/zrythm-osx
 OSX_INSTALL_TRIAL_PREFIX=/tmp/zrythm-trial-osx
 OSX_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.dmg
@@ -251,12 +252,13 @@ define make_carla
 	if pkg-config --atleast-version=2.1 carla-native-plugin ; then \
 		echo "latest carla installed" ; \
 	fi
-	cd $(BUILD_DIR)/Carla && \
+	cd $(BUILD_DIR) && unzip $(CARLA_SOURCE_ZIP) && \
+		cd Carla-$(CARLA_VERSION) && \
 		make -j4 && $(2) make install PREFIX=$(1)/lib/zrythm
 endef
 
 define remove_carla
-	cd $(BUILD_DIR)/Carla && \
+	cd $(BUILD_DIR)/Carla-$(CARLA_VERSION) && \
 		sudo make uninstall PREFIX=$(1)/lib/zrythm
 endef
 
@@ -266,16 +268,16 @@ define make_osx
 	cd $(BUILD_OSX_DIR) && tar xf $(ZRYTHM_TARBALL) && \
 		cd zrythm-$(ZRYTHM_VERSION) && \
 		rm -rf build && \
-		meson build -Denable_sdl=true -Denable_rtaudio=true \
-		  -Denable_rtmidi=true -Denable_ffmpeg=true \
+		meson build -Dsdl=enabled -Drtaudio=auto \
+		  -Drtmidi=auto -Dffmpeg=enabled \
 			-Dmac_release=true -Dtrial_ver=$(2) \
-			-Denable_jack=false -Denable_graphviz=true \
-			-Denable_carla=true \
+			-Djack=disabled -Dgraphviz=enabled \
+			-Dcarla=enabled \
 			--prefix=$(1) && \
 		ninja -C build && ninja -C build install
 endef
 
-$(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/Carla
+$(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/$(CARLA_SOURCE_ZIP)
 	-rm -rf $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
 	-rm -rf $(OSX_INSTALL_PREFIX)
 	mkdir -p $(BUILD_OSX_DIR)
@@ -336,11 +338,11 @@ define prepare_debian
 	cp debian.copyright $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/copyright
 	cp debian.rules $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
 	if [ "$$(hostname)" = "debian9" ] || [ "$$(hostname)" = "linuxmint193" ] ; then \
-			sed -i -e 's/-Denable_ffmpeg=true/-Denable_ffmpeg=false/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
+			sed -i -e 's/-Dffmpeg=enabled/-Dffmpeg=disabled/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/ninja test/echo test/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 		fi
 	if [ "$$(hostname)" = "debian9" ]; then \
-			sed -i -e 's/-Denable_guile=true/-Denable_guile=false/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
+			sed -i -e 's/-Dguile=enabled/-Dguile=disabled/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/fonts-dseg, //' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 			sed -i -e 's/-Dinstall_dseg_font=false/-Dinstall_dseg_font=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/guile-2.2-dev/guile-2.0/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
@@ -401,9 +403,9 @@ $(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZRYTHM
 		echo "meson path is $$$$MESON_PATH" && \
 		cd /tmp/zrythm$(1)-appimg && tar xf $(ZRYTHM_TARBALL) && \
 		cd zrythm-$(ZRYTHM_VERSION) && \
-		$$$$MESON_PATH/meson.py build -Denable_sdl=true -Denable_rtaudio=true \
-		  -Denable_rtmidi=true -Denable_ffmpeg=true \
-			-Denable_guile=false \
+		$$$$MESON_PATH/meson.py build -Dsdl=enabled -Drtaudio=auto \
+		  -Drtmidi=auto -Dffmpeg=enabled \
+			-Dguile=enabled \
 			-Dtrial_ver=$(2) --prefix=/usr && \
 		ninja -C build && DESTDIR=$(APPIMAGE_APPDIR) ninja -C build install && \
 		wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
@@ -585,8 +587,9 @@ $(BUILD_DIR)/$(ZPLUGINS_TARBALL):
 $(BUILD_DIR)/$(RCEDIT64_EXE):
 	wget $(RCEDIT64_URL) -O $@
 
-$(BUILD_DIR)/Carla:
-	cd $(BUILD_DIR) && git clone $(CARLA_GIT_URL)
+$(BUILD_DIR)/$(CARLA_SOURCE_ZIP):
+	cd $(BUILD_DIR) && wget $(CARLA_SOURCE_URL) && \
+		mv $(CARLA_VERSION).zip $(CARLA_SOURCE_ZIP)
 
 $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP):
 	cd $(BUILD_DIR) && wget $(CARLA_WINDOWS_BINARY_64_URL)

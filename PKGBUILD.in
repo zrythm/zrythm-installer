@@ -26,9 +26,9 @@ build() {
   PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig \
     meson build --prefix=/usr -Denable_tests=true \
     -Dmanpage=true \
-    -Dbuildtype=release -Denable_ffmpeg=true \
-    -Denable_sdl=true -Denable_rtaudio=true \
-    -Denable_rtmidi=true -Denable_carla=true
+    -Dbuildtype=release -Dffmpeg=enabled \
+    -Dsdl=enabled -Drtaudio=auto \
+    -Drtmidi=auto -Dcarla=enabled
   ninja -C build
 }
 
