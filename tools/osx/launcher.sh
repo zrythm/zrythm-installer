@@ -16,7 +16,10 @@ bundle_etc="$bundle_res"/etc
 export PREFIX="$bundle_res"
 export DYLD_LIBRARY_PATH="$bundle_lib"
 export XDG_CONFIG_DIRS="$bundle_etc"/xdg
-export XDG_DATA_DIRS="$bundle_data"
+# don't use XDG_DATA_DIRS because zrythm tries to create
+# the zrythm dir inside that
+#export XDG_DATA_DIRS="$bundle_data"
+export GSETTINGS_SCHEMA_DIR=$bundle_data/glib-2.0/schemas
 export GTK_DATA_PREFIX="$bundle_res"
 export GTK_EXE_PREFIX="$bundle_res"
 export GTK_PATH="$bundle_res"

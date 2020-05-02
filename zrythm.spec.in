@@ -100,9 +100,10 @@ cp -R /usr/lib/zrythm/lib/carla %{buildroot}/usr/lib/zrythm/lib/
 %license COPYING
 %doc README.md CONTRIBUTING.md INSTALL.md CHANGELOG.md
 %{_bindir}/carla-discovery-native
+%{_bindir}/carla-bridge-lv2-gtk2
+%{_bindir}/carla-bridge-native
 %{_bindir}/zrythm
 %{_bindir}/zrythm_launch
-%{_bindir}/zrythm_vst_check
 %{_datadir}/applications/zrythm.desktop
 %{_datadir}/fonts/zrythm
 %{_datadir}/glib-2.0/schemas/*.xml
@@ -110,9 +111,8 @@ cp -R /usr/lib/zrythm/lib/carla %{buildroot}/usr/lib/zrythm/lib/
 %{_datadir}/zrythm
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
-%{_datadir}/sourceview-styles
 %{_sysconfdir}/bash_completion.d/zrythm
-#%{_exec_prefix}/lib64/**/*
+# _exec_prefix/lib64/**/*
 %{_prefix}/lib/zrythm
 
 %post
@@ -120,10 +120,6 @@ cp -R /usr/lib/zrythm/lib/carla %{buildroot}/usr/lib/zrythm/lib/
   xdg-desktop-menu forceupdate
 %endif
 
-%postun
-%if ! 0%{?suse_version}
-  xdg-desktop-menu forceupdate
-%endif
 %changelog
 * Sun Nov 03 2019 Alexandros Theodotou
 - v0.7.093

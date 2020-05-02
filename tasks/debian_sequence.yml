@@ -24,7 +24,7 @@
     cd /tmp/zrythm-installer
     make build/Zrythm-{{ version }}-x86_64.AppImage
     make build/Zrythm-trial-{{ version }}-x86_64.AppImage
-  when: inventory_hostname == 'debian9'
+  when: inventory_hostname == 'never'
 
 - name: Deploy artifacts
   include_tasks: "{{ playbook_dir }}/tasks/ubuntu_deploy.yml"

@@ -97,6 +97,7 @@ cp -RL $NORMAL_PREFIX/lib/librsvg*.dylib $Lib/
 # Carla
 cp -RL $NORMAL_PREFIX/lib/carla $Lib/
 cp -RL $NORMAL_PREFIX/lib/carla/*.dylib $Lib/
+cp $NORMAL_PREFIX/lib/carla/carla-discovery-native $Bin/
 
 # localization
 echo "copying languages"
@@ -137,7 +138,7 @@ sed -i -e \
 
 SCHEMAS_DIR="glib-2.0/schemas"
 mkdir -p $Share/$SCHEMAS_DIR
-cp $ZRYTHM_SRC_DIR/data/org.zrythm*.xml \
+cp $ZRYTHM_INSTALL_PREFIX/share/$SCHEMAS_DIR/org.zrythm*.xml \
   "$Share/$SCHEMAS_DIR/"
 cp $NORMAL_PREFIX/share/$SCHEMAS_DIR/org.gtk.*.xml \
   "$Share/$SCHEMAS_DIR/"

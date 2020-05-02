@@ -45,7 +45,7 @@ OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_
 OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 WINDOWS_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.exe
 WINDOWS_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_VERSION)-setup.exe
-ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini playbook.yml --extra-vars "version=$(ZRYTHM_VERSION) zplugins_version=$(ZPLUGINS_VERSION) meson_version=$(MESON_VERSION)" -v
+ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini playbook.yml --extra-vars "version=$(ZRYTHM_VERSION) zplugins_version=$(ZPLUGINS_VERSION) meson_version=$(MESON_VERSION) carla_version=$(CARLA_VERSION)" -v
 WINDOWS_IP=192.168.100.178
 MINGW_ZRYTHM_PKG_TAR=mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
 MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-x86_64-zrythm-trial-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
@@ -164,8 +164,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 		bin/fedora/zplugins$(2)-31
 	cp -Rf artifacts/opensuse-tumbleweed/zplugins$(2) \
 		bin/opensuse/zplugins$(2)-tumbleweed
-	cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage \
-		Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage
+	#cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage \
+		#Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < README$(2).in > README
 	sed -i -e 's/@_AT_@/@/' README
 	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < installer.sh.in > installer.sh
@@ -174,7 +174,7 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 	sed -i -e 's/@ZPLUGINS@/zplugins$(2)/' installer.sh
 	chmod +x installer.sh
 	tools/gen_installer.sh $(ZRYTHM_VERSION) $(1)
-	rm README installer.sh *.AppImage
+	rm -rf README installer.sh *.AppImage
 endef
 
 # creates a generic artifact target
@@ -252,7 +252,7 @@ define make_carla
 	if pkg-config --atleast-version=2.1 carla-native-plugin ; then \
 		echo "latest carla installed" ; \
 	fi
-	cd $(BUILD_DIR) && unzip $(CARLA_SOURCE_ZIP) && \
+	cd $(BUILD_DIR) && unzip -o $(CARLA_SOURCE_ZIP) && \
 		cd Carla-$(CARLA_VERSION) && \
 		make -j4 && $(2) make install PREFIX=$(1)/lib/zrythm
 endef
@@ -373,7 +373,7 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.contro
 	# make trial
 	$(call prepare_debian)
 	sed -i -e '8s/$$/ -Dtrial_ver=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
-	sed -i -e 's|debian/zrythm |debian/zrythm-trial |' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
+	sed -i -e 's|debian/zrythm|debian/zrythm-trial|' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
 	sed -i -e '1s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
 	sed -i -e 's/: zrythm/: zrythm-trial/g' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
@@ -433,7 +433,7 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make trial
 	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD
-	sed -i -e '31s/$$/ -Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
+	sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make plugins
 	$(call make_zplugins,,true)

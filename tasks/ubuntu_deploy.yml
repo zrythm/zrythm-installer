@@ -8,11 +8,11 @@
 
 - name: Deploy AppImage
   fetch: src=/tmp/zrythm-installer/build/Zrythm-{{ version }}-x86_64.AppImage dest=./artifacts/{{ inventory_hostname }}/Zrythm-{{ version }}-x86_64.AppImage flat=yes
-  when: inventory_hostname == 'debian9'
+  when: inventory_hostname == 'never'
 
 - name: Deploy AppImage trial
   fetch: src=/tmp/zrythm-installer/build/Zrythm-trial-{{ version }}-x86_64.AppImage dest=./artifacts/{{ inventory_hostname }}/Zrythm-trial-{{ version }}-x86_64.AppImage flat=yes
-  when: inventory_hostname == 'debian9'
+  when: inventory_hostname == 'never'
 
 - name: Zip and deploy ZLFO
   include_tasks: "{{ playbook_dir }}/tasks/deploy_zplugins.yml"

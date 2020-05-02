@@ -57,12 +57,13 @@
     - name: Ensure dependencies are installed
       become: yes
       pacman:
-        name: ['gtk3', 'lilv', 'libx11', 'jack', 'libsndfile',
+        name: ['gtk3', 'gtk2', 'lilv', 'libx11', 'jack', 'libsndfile',
         'libyaml', 'libsamplerate', 'alsa-lib', 'fftw',
         'python', 'gettext', 'sed', 'meson', 'ninja',
         'help2man', 'python-sphinx', 'ladspa', 'lv2',
         'sdl2', 'guile', 'gtksourceview4', 'graphviz',
-        'vim', 'meson', 'rubberband', 'qt5-base' ]
+        'vim', 'meson', 'rubberband', 'qt5-base',
+        'rtaudio', 'rtmidi' ]
         update_cache: yes
         state: present
 
@@ -87,7 +88,7 @@
       become: yes
       dnf:
         name: ['gcc-c++', 'gcc', 'pkgconfig',
-        'gtk3-devel', 'python3',
+        'gtk3-devel', 'gtk2-devel', 'python3',
         'libsndfile-devel', 'lv2-devel',
         'lilv-devel', 'guile22-devel',
         'libyaml-devel', 'libsamplerate-devel',
@@ -132,7 +133,7 @@
       become: yes
       zypper:
         name: ['gcc-c++', 'gcc', 'pkgconfig',
-        'gtk3-devel', 'python3',
+        'gtk3-devel', 'gtk2-devel', 'python3',
         'libsndfile-devel',
         'libyaml-devel', 'libsamplerate-devel',
         'gettext', 'sed', 'alsa-lib-devel',

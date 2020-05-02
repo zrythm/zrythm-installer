@@ -18,6 +18,8 @@
 #  along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+set -e
+
 # $1 mingw prefix (chroot/mingw64)
 # $2 zrythm version
 # $3 build dir, this is the staging directory to use
@@ -144,6 +146,11 @@ cp -R "$MINGW_PREFIX/share/icons/hicolor" "$DIST_SHAREDIR/icons/"
 # ******************************
 
 # ******************************
+echo "packaging gtksourceview files"
+cp -R $MINGW_PREFIX/share/gtksourceview-4 $DIST_SHAREDIR/
+# ******************************
+
+# ******************************
 echo "packaging locales"
 cp -R $MINGW_PREFIX/share/locale $DIST_SHAREDIR/
 # ******************************
@@ -164,8 +171,13 @@ PIXBUF_DIR="lib/gdk-pixbuf-2.0/2.10.0"
 mkdir -p "$DIST_DIR/$PIXBUF_DIR/loaders"
 cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders/"*.dll \
   "$DIST_DIR/$PIXBUF_DIR/loaders/"
-cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders.cache" \
-  "$DIST_DIR/$PIXBUF_DIR/"
+#cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders.cache" \
+#  "$DIST_DIR/$PIXBUF_DIR/"
+GDK_PIXBUF_MODULEDIR="$MINGW_PREFIX/$PIXBUF_DIR/loaders" \
+  gdk-pixbuf-query-loaders.exe > \
+  "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
+sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
+  "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
 # ******************************
 
 # ******************************
@@ -180,9 +192,7 @@ cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders.cache" \
 # ******************************
 echo "packaging zrythm.exe"
 cp "$MINGW_PREFIX/bin/zrythm.exe" "$DIST_BINDIR/"
-cp "$MINGW_PREFIX/bin/zrythm_vst_check.exe" "$DIST_BINDIR/"
 $BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm.exe" --set-icon  "$DIST_DIR/zrythm.ico"
-$BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm_vst_check.exe" --set-icon  "$DIST_DIR/zrythm.ico"
 # ******************************
 
 cp "$INNO_ISS" "$DIST_DIR"/

@@ -17,8 +17,6 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-set -e
-
 zrythm="@ZRYTHM@"
 zrythm_ver="@VERSION@"
 zplugins="@ZPLUGINS@"
@@ -183,6 +181,8 @@ print_install_success()
 {
   show_info "Install successful!"
 }
+
+set -e
 
 proceed=0
 proceed_txt="Proceed with the installation of Zrythm v$zrythm_ver?"
