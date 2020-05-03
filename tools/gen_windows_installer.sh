@@ -137,8 +137,8 @@ cp -R $MINGW_PREFIX/etc/gtk-3.0 $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
 
 # ******************************
 echo "packaging Adwaita icons"
-mkdir -p "$DIST_SHAREDIR/icons"
-cp -R "$MINGW_PREFIX/share/icons/Adwaita" "$DIST_SHAREDIR/icons/"
+mkdir -p "$DIST_SHAREDIR/icons/Adwaita"
+cp -R "$MINGW_PREFIX/share/icons/Adwaita/scalable" "$DIST_SHAREDIR/icons/Adwaita"
 #echo "packaging breeze icons"
 #cp -R "$MINGW_PREFIX/bin/data/icons/breeze-dark" "$DIST_SHAREDIR/icons/"
 echo "packaging existing hicolor icons"
@@ -190,8 +190,9 @@ sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
 # ******************************
 
 # ******************************
-echo "packaging zrythm.exe"
+echo "packaging binaries"
 cp "$MINGW_PREFIX/bin/zrythm.exe" "$DIST_BINDIR/"
+cp $MINGW_PREFIX/bin/carla*.exe "$DIST_BINDIR/"
 $BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm.exe" --set-icon  "$DIST_DIR/zrythm.ico"
 # ******************************
 

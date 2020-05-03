@@ -25,12 +25,12 @@ _rootdir="zrythm-${pkgver}"
 build() {
   cd $_rootdir
   PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig \
-    meson build --prefix=/usr -Denable_tests=false \
-    -Dmanpage=true \
+    meson build --prefix=/usr -Denable-tests=false \
+    -Dwith-manpage=true \
     -Dbuildtype=release -Dffmpeg=enabled \
     -Dsdl=enabled -Drtaudio=enabled \
     -Drtmidi=enabled -Dcarla=enabled \
-    -Dtrial_ver=false
+    -Dtrial-ver=false
   ninja -C build
 }
 

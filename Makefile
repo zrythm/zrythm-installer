@@ -270,7 +270,7 @@ define make_osx
 		rm -rf build && \
 		meson build -Dsdl=enabled -Drtaudio=auto \
 		  -Drtmidi=auto -Dffmpeg=enabled \
-			-Dmac_release=true -Dtrial_ver=$(2) \
+			-Dmac_release=true -Dtrial-ver=$(2) \
 			-Djack=disabled -Dgraphviz=enabled \
 			-Dcarla=enabled \
 			--prefix=$(1) && \
@@ -358,7 +358,7 @@ define make_zplugins
 	cd $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION) && \
 		cd ext/Soundpipe && CC=gcc make && cd ../.. && \
 		../meson/meson.py build --buildtype=release \
-		-Dtrial_ver=$(2) --prefix=/usr && \
+		-Dtrial-ver=$(2) --prefix=/usr && \
 		DESTDIR=/tmp ninja -C build install
 	cp -R /tmp/$(1)/usr/lib/lv2/Z*.lv2 $(BUILD_DIR)/
 	ls -l $(BUILD_DIR)/Z*.lv2
@@ -372,7 +372,7 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.contro
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
 	# make trial
 	$(call prepare_debian)
-	sed -i -e '8s/$$/ -Dtrial_ver=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
+	sed -i -e '8s/$$/ -Dtrial-ver=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
 	sed -i -e 's|debian/zrythm|debian/zrythm-trial|' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
 	sed -i -e '1s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
 	sed -i -e 's/: zrythm/: zrythm-trial/g' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
@@ -406,7 +406,7 @@ $(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZRYTHM
 		$$$$MESON_PATH/meson.py build -Dsdl=enabled -Drtaudio=auto \
 		  -Drtmidi=auto -Dffmpeg=enabled \
 			-Dguile=enabled \
-			-Dtrial_ver=$(2) --prefix=/usr && \
+			-Dtrial-ver=$(2) --prefix=/usr && \
 		ninja -C build && DESTDIR=$(APPIMAGE_APPDIR) ninja -C build install && \
 		wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
 		wget -c "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" && \
@@ -433,7 +433,7 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make trial
 	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD
-	sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
+	sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make plugins
 	$(call make_zplugins,,true)
@@ -462,7 +462,7 @@ $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM
 	cd $(BUILD_WINDOWS_DIR) && makepkg-mingw -f
 	# make trial
 	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_WINDOWS_DIR)/PKGBUILD
-	sed -i -e '43s/\\/-Dtrial_ver=true \\/' $(BUILD_WINDOWS_DIR)/PKGBUILD
+	sed -i -e '43s/\\/-Dtrial-ver=true \\/' $(BUILD_WINDOWS_DIR)/PKGBUILD
 	cd $(BUILD_WINDOWS_DIR) && makepkg-mingw -f
 	# make plugins
 	$(call make_zplugins,msys64,true)
@@ -550,7 +550,7 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	# make trial
 	sed -i -e '9s/zrythm/zrythm-trial/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	# make plugins
 	$$(call make_zplugins,,true)

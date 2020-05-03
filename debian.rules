@@ -5,7 +5,7 @@
 
 override_dh_auto_configure:
 	mkdir -p debian/build
-	cd debian/build && PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dinstall_dseg_font=false -Dmanpage=true -Dbuildtype=release -Dffmpeg=enabled -Dsdl=enabled -Drtaudio=auto -Drtmidi=auto -Dguile=enabled -Dcarla=enabled -Dgraphviz=enabled
+	cd debian/build && PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig ../../../../meson/meson.py --prefix=/usr ../.. -Denable-tests=true -Dwith-dseg-font=false -Dwith-manpage=true -Dbuildtype=release -Dffmpeg=enabled -Dsdl=enabled -Drtaudio=auto -Drtmidi=auto -Dguile=enabled -Dcarla=enabled -Dgraphviz=enabled
 
 override_dh_auto_build:
 	cd debian/build && ninja -v
