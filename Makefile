@@ -27,6 +27,7 @@ MESON_TARBALL=$(MESON_DIR).tar.gz
 BUILD_ARCH_DIR=$(BUILD_DIR)/archlinux
 BUILD_WINDOWS_DIR=$(BUILD_DIR)/windows10
 BUILD_OSX_DIR=$(BUILD_DIR)/osx
+WINDOWS_CHROOT_BASE=/tmp/chroot-for-zrythm
 WIN_CHROOT_DIR=/tmp/zrythm-root
 WIN_TRIAL_CHROOT_DIR=/tmp/zrythm-trial-root
 # This is the directory to rsync into
@@ -240,7 +241,7 @@ artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INS
 	echo "Make sure that the default openssh shell is bash.exe"
 	echo "Copying files, enter password (alex) to continue"
 	rsync -r ./* alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/
-	echo "Go into the VM and run make windows10 in the zrythm-build directory. When the installer is built, press y to continue" && \
+	echo "Go into the VM and run make windows10-chroot-base (if needed) followed by make windows10 in the zrythm-build directory. When the installer is built, press y to continue" && \
 		read -d "y"
 	mkdir -p artifacts/windows10
 	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
@@ -468,16 +469,22 @@ $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM
 	$(call make_zplugins,msys64,true)
 	$(call make_zplugins,msys64,false)
 
-# arg 1: chroot dir
-# arg 2: zrythm pkg tar
-define make_windows_chroot
+# makes a common chroot base
+define make_windows_chroot_base
 	- rm -rf $(1)
 	# create chroot
 	mkdir -p $(1)/var/lib/pacman
 	mkdir -p $(1)/var/log
 	mkdir -p $(1)/tmp
 	pacman -Syu --root $(1)
-	pacman -S filesystem bash pacman --noconfirm --needed --root $(1)
+	pacman -S filesystem bash pacman mingw-w64-x86_64-gtksourceview4 --noconfirm --needed --root $(1)
+endef
+
+# arg 1: chroot dir
+# arg 2: zrythm pkg tar
+define make_windows_chroot
+	- rm -rf $(1)
+	cp -R $(WINDOWS_CHROOT_BASE) $(1)
 	# install package in chroot
 	pacman -U $(BUILD_WINDOWS_DIR)/$(2) --noconfirm --needed --root $(1)
 	ls $(1)/mingw64/bin/zrythm.exe
@@ -485,6 +492,9 @@ define make_windows_chroot
 	# compile glib schemas
 	glib-compile-schemas.exe $(1)/mingw64/share/glib-2.0/schemas
 endef
+
+windows10-chroot-base:
+	$(call make_windows_chroot_base,$(WINDOWS_CHROOT_BASE))
 
 $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe $(WIN_TRIAL_CHROOT_DIR)/mingw64/bin/zrythm.exe&: $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_TRIAL_PKG_TAR)
 	$(call make_windows_chroot,$(WIN_CHROOT_DIR),$(MINGW_ZRYTHM_PKG_TAR))
