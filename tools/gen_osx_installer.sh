@@ -110,10 +110,13 @@ for lang in $languages; do
   cp $SRC_DIR/gtk30.mo $SRC_DIR/gtk30-properties.mo $CUR_DIR/
 done
 
-echo "copying Adwaita icons"
+echo "copying zrythm resoures"
+cp -RL "$ZRYTHM_INSTALL_PREFIX/share/zrythm" "$Share/"
+
+echo "copying breeze icons"
 ICONS_DIR="$Share/icons"
 mkdir -p "$ICONS_DIR"
-cp -RL "$NORMAL_PREFIX/share/icons/Adwaita" "$ICONS_DIR/"
+cp -RL "/Users/alex/.local/share/icons/breeze-dark" "$ICONS_DIR/"
 
 echo "copying existing hicolor icons"
 cp -RL "$NORMAL_PREFIX/share/icons/hicolor" "$ICONS_DIR/"
