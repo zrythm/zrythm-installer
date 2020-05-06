@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.378
+ZRYTHM_VERSION=0.8.397
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
@@ -34,14 +34,14 @@ WIN_TRIAL_CHROOT_DIR=/tmp/zrythm-trial-root
 MINGW_SRC_DIR=../../msys64/home/alex/zrythm-build
 WINDOWS_ZRYTHM_PKG_TAR_XZ=
 RPMBUILD_ROOT=/home/ansible/rpmbuild
-BUILD_FEDORA31_DIR=$(BUILD_DIR)/fedora31
+BUILD_FEDORA32_DIR=$(BUILD_DIR)/fedora32
 BUILD_OPENSUSE_TUMBLEWEED_DIR=$(BUILD_DIR)/opensuse-tumbleweed
 ARCH_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1-x86_64.pkg.tar.xz
 ARCH_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1-x86_64.pkg.tar.xz
 DEBIAN_PKG_FILE=zrythm_$(ZRYTHM_VERSION)-1_amd64.deb
 DEBIAN_TRIAL_PKG_FILE=zrythm-trial_$(ZRYTHM_VERSION)-1_amd64.deb
-FEDORA31_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.fc31.x86_64.rpm
-FEDORA31_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1.fc31.x86_64.rpm
+FEDORA32_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.fc32.x86_64.rpm
+FEDORA32_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1.fc32.x86_64.rpm
 OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 WINDOWS_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.exe
@@ -125,8 +125,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 			bin/ubuntu/zrythm$(2)-$(ZRYTHM_VERSION)-1_18.04_amd64.deb; \
 		cp artifacts/archlinux/$(ARCH_TRIAL_PKG_FILE) \
 			bin/arch/zrythm$(2)-$(ZRYTHM_VERSION)-1_x86_64.pkg.tar.xz; \
-		cp artifacts/fedora31/$(FEDORA31_TRIAL_PKG_FILE) \
-			bin/fedora/zrythm$(2)-$(ZRYTHM_VERSION)-1_31_x86_64.rpm; \
+		cp artifacts/fedora32/$(FEDORA32_TRIAL_PKG_FILE) \
+			bin/fedora/zrythm$(2)-$(ZRYTHM_VERSION)-1_32_x86_64.rpm; \
 		cp artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE) \
 			bin/opensuse/zrythm$(2)-$(ZRYTHM_VERSION)-1_tumbleweed_x86_64.rpm; \
 	else \
@@ -144,8 +144,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 			bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_18.04_amd64.deb; \
 		cp artifacts/archlinux/$(ARCH_PKG_FILE) \
 			bin/arch/zrythm-$(ZRYTHM_VERSION)-1_x86_64.pkg.tar.xz; \
-		cp artifacts/fedora31/$(FEDORA31_PKG_FILE) \
-			bin/fedora/zrythm-$(ZRYTHM_VERSION)-1_31_x86_64.rpm; \
+		cp artifacts/fedora32/$(FEDORA32_PKG_FILE) \
+			bin/fedora/zrythm-$(ZRYTHM_VERSION)-1_32_x86_64.rpm; \
 		cp artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_PKG_FILE) \
 			bin/opensuse/zrythm-$(ZRYTHM_VERSION)-1_tumbleweed_x86_64.rpm; \
 	fi
@@ -161,8 +161,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 	cp -Rf artifacts/archlinux/zplugins$(2) \
 		bin/arch/zplugins$(2)-arch
 	cp -Rf artifacts/debian9/zplugins bin/debian/zplugins$(2)-9
-	cp -Rf artifacts/fedora31/zplugins$(2) \
-		bin/fedora/zplugins$(2)-31
+	cp -Rf artifacts/fedora32/zplugins$(2) \
+		bin/fedora/zplugins$(2)-32
 	cp -Rf artifacts/opensuse-tumbleweed/zplugins$(2) \
 		bin/opensuse/zplugins$(2)-tumbleweed
 	#cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage \
@@ -199,7 +199,7 @@ endef
 all: installers-in-vms
 
 .PHONY: installers-in-vms
-installers-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1910 installer-in-ubuntu2004 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora31 installer-in-opensuse-tumbleweed
+installers-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1910 installer-in-ubuntu2004 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora32 installer-in-opensuse-tumbleweed
 
 .PHONY: FORCE
 FORCE:
@@ -216,7 +216,7 @@ $(eval $(call create_installer_in_x_target,ubuntu1910))
 $(eval $(call create_installer_in_x_target,ubuntu2004))
 $(eval $(call create_installer_in_x_target,ubuntu1804))
 $(eval $(call create_installer_in_x_target,archlinux))
-$(eval $(call create_installer_in_x_target,fedora31))
+$(eval $(call create_installer_in_x_target,fedora32))
 $(eval $(call create_installer_in_x_target,opensuse-tumbleweed))
 
 # runs the ansible playbook to produce artifacts
@@ -224,7 +224,7 @@ $(eval $(call create_installer_in_x_target,opensuse-tumbleweed))
 # these assume that the trial artifacts and ZLFO
 # are also produced since they are group targets
 .PHONY: unix-artifacts
-unix-artifacts: artifacts/debian9/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu2004/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora31/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
+unix-artifacts: artifacts/debian9/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu2004/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora32/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
 
 $(eval $(call debian_artifact_target,debian9))
 $(eval $(call debian_artifact_target,debian10))
@@ -233,7 +233,7 @@ $(eval $(call debian_artifact_target,ubuntu2004))
 $(eval $(call debian_artifact_target,ubuntu1910))
 $(eval $(call debian_artifact_target,ubuntu1804))
 $(eval $(call generic_artifact_target,archlinux,$(ARCH_PKG_FILE),$(ARCH_TRIAL_PKG_FILE)))
-$(eval $(call generic_artifact_target,fedora31,$(FEDORA31_PKG_FILE),$(FEDORA31_TRIAL_PKG_FILE)))
+$(eval $(call generic_artifact_target,fedora32,$(FEDORA32_PKG_FILE),$(FEDORA32_TRIAL_PKG_FILE)))
 $(eval $(call generic_artifact_target,opensuse-tumbleweed,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE)))
 
 artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER) &: PKGBUILD-w10.in $(COMMON_SRC_DEPS) $(BUILD_DIR)/$(RCEDIT64_EXE)
@@ -359,7 +359,7 @@ define make_zplugins
 	cd $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION) && \
 		cd ext/Soundpipe && CC=gcc make && cd ../.. && \
 		../meson/meson.py build --buildtype=release \
-		-Dtrial-ver=$(2) --prefix=/usr && \
+		-Dtrial_ver=$(2) --prefix=/usr && \
 		DESTDIR=/tmp ninja -C build install
 	cp -R /tmp/$(1)/usr/lib/lv2/Z*.lv2 $(BUILD_DIR)/
 	ls -l $(BUILD_DIR)/Z*.lv2
@@ -537,8 +537,8 @@ $(BUILD_DIR)/$(WINDOWS_INSTALLER) $(BUILD_DIR)/$(WINDOWS_TRIAL_INSTALLER)&: $(WI
 	$(call create_windows_installer,$(WIN_CHROOT_DIR),$(WINDOWS_INSTALLER),Zrythm)
 	$(call create_windows_installer,$(WIN_TRIAL_CHROOT_DIR),$(WINDOWS_TRIAL_INSTALLER),Zrythm Trial Version,-trial)
 
-.PHONY: fedora31
-fedora31: $(BUILD_DIR)/$(FEDORA31_PKG_FILE)
+.PHONY: fedora32
+fedora32: $(BUILD_DIR)/$(FEDORA32_PKG_FILE)
 
 .PHONY: opensuse-tumbleweed
 opensuse-tumbleweed: $(BUILD_DIR)/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
@@ -568,7 +568,7 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	$$(call remove_carla)
 endef
 
-$(eval $(call make_rpm_target,$(FEDORA31_PKG_FILE),$(BUILD_FEDORA31_DIR)))
+$(eval $(call make_rpm_target,$(FEDORA32_PKG_FILE),$(BUILD_FEDORA32_DIR)))
 $(eval $(call make_rpm_target,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(BUILD_OPENSUSE_TUMBLEWEED_DIR)))
 
 # target to fetch latest version of git, used whenever
@@ -625,4 +625,4 @@ clean-tarball:
 clean:
 	rm -rf $(BUILD_DEBIAN10_DIR)
 	rm -rf $(BUILD_ARCH_DIR)
-	rm -rf $(BUILD_FEDORA31_DIR)
+	rm -rf $(BUILD_FEDORA32_DIR)

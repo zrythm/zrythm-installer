@@ -50,6 +50,7 @@ Requires: liblilv-0-0
 Requires: libsndfile1
 Requires: alsa
 Requires: libportaudio2
+Requires: breeze5-icons
 %endif
 %if 0%{?fedora}
 BuildRequires: jack-audio-connection-kit-devel libX11-devel
@@ -57,6 +58,7 @@ BuildRequires: rubberband-devel
 BuildRequires:      lilv-devel lv2-devel
 BuildRequires: guile22-devel
 BuildRequires: gtksourceview3-devel
+Requires: breeze-icon-theme
 Requires: gtksourceview3
 Requires:      jack-audio-connection-kit
 Requires:      rubberband fftw

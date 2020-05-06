@@ -63,7 +63,7 @@
         'help2man', 'python-sphinx', 'ladspa', 'lv2',
         'sdl2', 'guile', 'gtksourceview4', 'graphviz',
         'vim', 'meson', 'rubberband', 'qt5-base',
-        'rtaudio', 'rtmidi' ]
+        'rtaudio', 'rtmidi', 'breeze-icons' ]
         update_cache: yes
         state: present
 
@@ -79,7 +79,7 @@
     - name: Zip and deploy plugins
       include_tasks: "{{ playbook_dir }}/tasks/deploy_zplugins.yml"
 
-- hosts: fedora31
+- hosts: fedora32
   tasks:
     - name: Copy file from master
       include_tasks: "{{ playbook_dir }}/tasks/copy_from_master.yml"
@@ -95,7 +95,7 @@
         'gettext', 'sed', 'alsa-lib-devel',
         'ladspa-devel', 'fftw-devel',
         'portaudio-devel', 'help2man',
-        'graphviz-devel',
+        'graphviz-devel', 'breeze-icon-theme',
         'vim', 'meson', 'rpm-build',
         'SDL2-devel', 'librsvg2-devel',
         'gtksourceview3-devel',
@@ -106,15 +106,15 @@
         state: present
 
     - name: Make
-      shell: cd /tmp/zrythm-installer && make clean && make fedora31
+      shell: cd /tmp/zrythm-installer && make clean && make fedora32
       environment:
         PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
 
     - name: Deploy normal version
-      fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-{{ version }}-1.fc31.x86_64.rpm dest=./artifacts/fedora31/zrythm-{{ version }}-1.fc31.x86_64.rpm flat=yes
+      fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-{{ version }}-1.fc32.x86_64.rpm dest=./artifacts/fedora32/zrythm-{{ version }}-1.fc32.x86_64.rpm flat=yes
 
     - name: Deploy trial version
-      fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-trial-{{ version }}-1.fc31.x86_64.rpm dest=./artifacts/fedora31/zrythm-trial-{{ version }}-1.fc31.x86_64.rpm flat=yes
+      fetch: src=/home/ansible/rpmbuild/RPMS/x86_64/zrythm-trial-{{ version }}-1.fc32.x86_64.rpm dest=./artifacts/fedora32/zrythm-trial-{{ version }}-1.fc32.x86_64.rpm flat=yes
 
     - name: Zip and deploy ZLFO
       include_tasks: "{{ playbook_dir }}/tasks/deploy_zplugins.yml"
@@ -143,7 +143,7 @@
         'lv2', 'liblilv-devel', 'guile-devel',
         'rpmdevtools', 'update-desktop-files',
         'fftw3-threads-devel',
-        'graphviz-devel',
+        'graphviz-devel', 'breeze5-icons',
         'SDL2-devel', 'librsvg2-devel',
         'gtksourceview4-devel',
         'jack-audio-connection-kit-devel',

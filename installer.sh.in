@@ -127,10 +127,15 @@ is_opensuse=0
 is_tumbleweed=0
 fedora_30_str="Fedora 30"
 fedora_31_str="Fedora 31"
+fedora_32_str="Fedora 32"
 
 if [[ "$ID" = "fedora" ]]; then
   architecture="x86_64"
-  if [[ "$VERSION_ID" = *"31"* ]]; then
+  if [[ "$VERSION_ID" = *"32"* ]]; then
+    echo "found $fedora_32_str"
+    is_fedora=1
+    distro_ver=32
+  elif [[ "$VERSION_ID" = *"31"* ]]; then
     echo "found $fedora_31_str"
     is_fedora=1
     distro_ver=31
