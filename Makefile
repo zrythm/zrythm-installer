@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.397
+ZRYTHM_VERSION=0.8.459
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
@@ -12,7 +12,7 @@ SUM_EXT=sha256sum
 ZRYTHM_TARBALL_SUM=zrythm-$(ZRYTHM_VERSION).tar.xz.$(SUM_EXT)
 CALC_SUM=sha256sum --check
 ZRYTHM_TARBALL_URL=https://www.zrythm.org/releases/$(ZRYTHM_TARBALL)
-CARLA_VERSION=b082b8b50820478d18e4056fd900c5013adbf8ff
+CARLA_VERSION=c8b2c61037640ca8c1fa277f8da77fcc86745435
 CARLA_SOURCE_URL=https://github.com/falkTX/Carla/archive/$(CARLA_VERSION).zip
 CARLA_SOURCE_ZIP=Carla-$(CARLA_VERSION).zip
 CARLA_WINDOWS_BINARY_64_ZIP=carla-64-$(shell echo $(CARLA_VERSION) | head -c 7).zip
@@ -111,8 +111,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 	mkdir -p bin/fedora
 	mkdir -p bin/opensuse
 	if [ "$(2)" == "-trial" ]; then \
-		cp artifacts/debian9/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/debian/zrythm$(2)-$(ZRYTHM_VERSION)-1_9_amd64.deb; \
+		#cp artifacts/debian9/$(DEBIAN_TRIAL_PKG_FILE) \
+			#bin/debian/zrythm$(2)-$(ZRYTHM_VERSION)-1_9_amd64.deb; \
 		cp artifacts/debian10/$(DEBIAN_TRIAL_PKG_FILE) \
 			bin/debian/zrythm$(2)-$(ZRYTHM_VERSION)-1_10_amd64.deb; \
 		cp artifacts/linuxmint193/$(DEBIAN_TRIAL_PKG_FILE) \
@@ -130,8 +130,8 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 		cp artifacts/opensuse-tumbleweed/$(OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE) \
 			bin/opensuse/zrythm$(2)-$(ZRYTHM_VERSION)-1_tumbleweed_x86_64.rpm; \
 	else \
-		cp artifacts/debian9/$(DEBIAN_PKG_FILE) \
-			bin/debian/zrythm-$(ZRYTHM_VERSION)-1_9_amd64.deb; \
+		#cp artifacts/debian9/$(DEBIAN_PKG_FILE) \
+			#bin/debian/zrythm-$(ZRYTHM_VERSION)-1_9_amd64.deb; \
 		cp artifacts/debian10/$(DEBIAN_PKG_FILE) \
 			bin/debian/zrythm-$(ZRYTHM_VERSION)-1_10_amd64.deb; \
 		cp artifacts/linuxmint193/$(DEBIAN_PKG_FILE) \
@@ -160,7 +160,7 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 		bin/ubuntu/zplugins$(2)-18.04
 	cp -Rf artifacts/archlinux/zplugins$(2) \
 		bin/arch/zplugins$(2)-arch
-	cp -Rf artifacts/debian9/zplugins bin/debian/zplugins$(2)-9
+	#cp -Rf artifacts/debian9/zplugins bin/debian/zplugins$(2)-9
 	cp -Rf artifacts/fedora32/zplugins$(2) \
 		bin/fedora/zplugins$(2)-32
 	cp -Rf artifacts/opensuse-tumbleweed/zplugins$(2) \
@@ -199,7 +199,7 @@ endef
 all: installers-in-vms
 
 .PHONY: installers-in-vms
-installers-in-vms: installer-in-debian9 installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1910 installer-in-ubuntu2004 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora32 installer-in-opensuse-tumbleweed
+installers-in-vms: installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1910 installer-in-ubuntu2004 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora32 installer-in-opensuse-tumbleweed
 
 .PHONY: FORCE
 FORCE:
@@ -209,7 +209,7 @@ $(eval $(call create_installer_zip_target,$(UNIX_INSTALLER_ZIP),))
 $(eval $(call create_installer_zip_target,$(UNIX_TRIAL_INSTALLER_ZIP),-trial,$(UNIX_INSTALLER_ZIP)))
 
 # installer-in-x targets
-$(eval $(call create_installer_in_x_target,debian9))
+#$(eval $(call create_installer_in_x_target,debian9))
 $(eval $(call create_installer_in_x_target,debian10))
 $(eval $(call create_installer_in_x_target,linuxmint193))
 $(eval $(call create_installer_in_x_target,ubuntu1910))
@@ -224,9 +224,9 @@ $(eval $(call create_installer_in_x_target,opensuse-tumbleweed))
 # these assume that the trial artifacts and ZLFO
 # are also produced since they are group targets
 .PHONY: unix-artifacts
-unix-artifacts: artifacts/debian9/zplugins/$(ZLFO_MANIFEST) artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu2004/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora32/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
+unix-artifacts: artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu2004/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora32/zplugins/$(ZLFO_MANIFEST) artifacts/opensuse-tumbleweed/zplugins/$(ZLFO_MANIFEST)
 
-$(eval $(call debian_artifact_target,debian9))
+#$(eval $(call debian_artifact_target,debian9))
 $(eval $(call debian_artifact_target,debian10))
 $(eval $(call debian_artifact_target,linuxmint193))
 $(eval $(call debian_artifact_target,ubuntu2004))
@@ -303,8 +303,8 @@ artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_
 		$$(pwd)/tools/osx /usr/local \
 		"Zrythm (Trial)" Zrythm-trial
 
-.PHONY: debian9
-debian9: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+#.PHONY: debian9
+#debian9: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
 # Debian 10 target to be used by ansible inside the
 # debian VM
@@ -338,15 +338,9 @@ define prepare_debian
 	cp debian.control $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
 	cp debian.copyright $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/copyright
 	cp debian.rules $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
-	if [ "$$(hostname)" = "debian9" ] || [ "$$(hostname)" = "linuxmint193" ] ; then \
+	if [ "$$(hostname)" = "linuxmint193" ] ; then \
 			sed -i -e 's/-Dffmpeg=enabled/-Dffmpeg=disabled/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/ninja test/echo test/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
-		fi
-	if [ "$$(hostname)" = "debian9" ]; then \
-			sed -i -e 's/-Dguile=enabled/-Dguile=disabled/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
-			sed -i -e 's/fonts-dseg, //' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
-			sed -i -e 's/-Dinstall_dseg_font=false/-Dinstall_dseg_font=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
-			sed -i -e 's/guile-2.2-dev/guile-2.0/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control; \
 		fi
 	echo "3.0 (quilt)" > $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/source/format
 endef
@@ -432,6 +426,12 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
 	# make normal version
 	cd $(BUILD_ARCH_DIR) && makepkg -f
+	# make manual
+	cd $(BUILD_DIR) && tar xf $(ZRYTHM_TARBALL) && \
+		cd zrythm-$(ZRYTHM_VERSION) && \
+		meson build && \
+		ninja -C build latexpdf-manual-en latexpdf-manual-fr latexpdf-manual-de
+	exit -1
 	# make trial
 	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD
 	sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD

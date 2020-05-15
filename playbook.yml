@@ -62,7 +62,7 @@
         'python', 'gettext', 'sed', 'meson', 'ninja',
         'help2man', 'python-sphinx', 'ladspa', 'lv2',
         'sdl2', 'guile', 'gtksourceview4', 'graphviz',
-        'vim', 'meson', 'rubberband', 'qt5-base',
+        'vim', 'meson', 'rubberband', 'qt5-base', 'zstd',
         'rtaudio', 'rtmidi', 'breeze-icons' ]
         update_cache: yes
         state: present
@@ -75,6 +75,9 @@
 
     - name: Deploy trial version
       fetch: src=/tmp/zrythm-installer/build/archlinux/zrythm-trial-{{ version }}-1-x86_64.pkg.tar.xz dest=./artifacts/archlinux/zrythm-trial-{{ version }}-1-x86_64.pkg.tar.xz flat=yes
+
+    - name: Zip and deploy manuals
+      include_tasks: "{{ playbook_dir }}/tasks/deploy_manuals.yml"
 
     - name: Zip and deploy plugins
       include_tasks: "{{ playbook_dir }}/tasks/deploy_zplugins.yml"
@@ -98,7 +101,7 @@
         'graphviz-devel', 'breeze-icon-theme',
         'vim', 'meson', 'rpm-build',
         'SDL2-devel', 'librsvg2-devel',
-        'gtksourceview3-devel',
+        'gtksourceview3-devel', 'libzstd-devel',
         'jack-audio-connection-kit-devel',
         'libX11-devel', 'qt5-devel', 'make',
         'rubberband-devel' ]
@@ -145,7 +148,7 @@
         'fftw3-threads-devel',
         'graphviz-devel', 'breeze5-icons',
         'SDL2-devel', 'librsvg2-devel',
-        'gtksourceview4-devel',
+        'gtksourceview4-devel', 'libzstd-devel',
         'jack-audio-connection-kit-devel',
         'libX11-devel', 'make',
         'librubberband-devel' ]

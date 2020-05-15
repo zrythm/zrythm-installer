@@ -8,7 +8,7 @@
   apt:
     name: ['libgtk-3-dev', 'libgtk2.0-dev', 'libjack-jackd2-dev',
     'libsndfile1-dev', 'ninja-build', 'lv2-dev',
-    'liblilv-dev', 'libsdl2-dev',
+    'liblilv-dev', 'libsdl2-dev', 'libzstd-dev',
     'help2man', 'python3-sphinx', 'qtbase5-dev',
     'libasound2-dev', 'libavcodec-dev', 'portaudio19-dev',
     'ladspa-sdk', 'libfftw3-dev', 'guile-2.0',

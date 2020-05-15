@@ -8,7 +8,7 @@ url="https://www.zrythm.org"
 license=('AGPL3')
 depends=('gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
   'libyaml' 'libsamplerate' 'guile' 'gtksourceview4' 'alsa-lib'
-  'fftw' 'graphviz' 'rtmidi' 'rtaudio' 'breeze-icons'
+  'fftw' 'graphviz' 'rtmidi' 'rtaudio' 'breeze-icons' 'zstd'
   'rubberband' 'xdg-utils' 'sdl2')
 makedepends=(
   'python' 'gettext' 'sed'
