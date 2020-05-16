@@ -11,3 +11,4 @@ zrythm_installer
 *.md5
 tools/osx/zrythm.bundle
 tools/osx/Info.plist
+*.tar.xz
