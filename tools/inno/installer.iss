@@ -59,6 +59,9 @@ Source: "share\*"; DestDir: "{app}\share"; \
 Source: "etc\*"; DestDir: "{app}\etc"; \
   Flags: ignoreversion recursesubdirs; \
   Components: zrythm
+Source: "Zrythm-*.pdf"; DestDir: "{app}"; \
+  Flags: skipifsourcedoesntexist; \
+  Components: zrythm
 Source: "COPYING"; DestDir: "{app}"; \
   Components: zrythm
 Source: "COPYING.GPL3"; DestDir: "{app}"; \

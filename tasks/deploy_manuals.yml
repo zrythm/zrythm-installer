@@ -3,11 +3,12 @@
 - name: Zip manuals
   shell: |
     cd /tmp/zrythm-installer/build/zrythm-{{ version }} &&
-    rm user-manual.zip &&
-    mv build/doc/user/_build/en/latex/Zrythm.pdf build/doc/user/_build/Zrythm-en.pdf &&
-    mv build/doc/user/_build/fr/latex/Zrythm.pdf build/doc/user/_build/Zrythm-fr.pdf &&
-    mv build/doc/user/_build/de/latex/Zrythm.pdf build/doc/user/_build/Zrythm-de.pdf &&
-    zip -r user-manual.zip build/doc/user/_build/Zrythm-fr.pdf build/doc/user/_build/Zrythm-en.pdf build/doc/user/_build/Zrythm-de.pdf &&
+    cd build/doc/user &&
+    rm -rf user-manual.zip &&
+    mv en/latex/Zrythm.pdf Zrythm-en.pdf &&
+    mv fr/latex/Zrythm.pdf Zrythm-fr.pdf &&
+    mv de/latex/Zrythm.pdf Zrythm-de.pdf &&
+    zip -r user-manual.zip Zrythm-fr.pdf Zrythm-en.pdf Zrythm-de.pdf
 
 - name: Deploy manuals
-  fetch: src=/tmp/zrythm-installer/build/zrythm-{{ version }}/user-manual.zip dest=./artifacts/{{ inventory_hostname }}/user-manual.zip flat=yes
+  fetch: src=/tmp/zrythm-installer/build/zrythm-{{ version }}/build/doc/user/user-manual.zip dest=./artifacts/{{ inventory_hostname }}/user-manual.zip flat=yes

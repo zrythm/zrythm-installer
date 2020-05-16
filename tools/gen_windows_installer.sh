@@ -27,6 +27,7 @@ set -e
 # $4 path to inno installer definition
 # $5 App name
 # $6 Plugins dir (containing *.lv2 bundles)
+# $7 "-trial" or nothing
 
 ZRYTHM_VERSION="$2"
 
@@ -35,6 +36,7 @@ BUILD_DIR=$3
 MINGW_PREFIX=$1
 APP_NAME=$5
 PLUGINS_DIR=$6
+TRIAL=$7
 DIST_DIR=$BUILD_DIR/dist # root of the distribution
 DIST_BINDIR=$DIST_DIR/bin
 DIST_LIBDIR=$DIST_DIR/lib
@@ -116,6 +118,14 @@ cp $MINGW_PREFIX/lib/carla/*.dll $DIST_BINDIR/
 # is named CarlaNativePlugin.dll
 mv $DIST_BINDIR/libcarla_native-plugin.dll \
   $DIST_BINDIR/CarlaNativePlugin.dll
+
+# ******************************
+
+# ******************************
+if [ "$TRIAL" != "-trial" ]; then
+  echo "packaging user manuals" ;
+  unzip -o $BUILD_DIR/../../../artifacts/archlinux/user-manual.zip -d $DIST_DIR/ ;
+fi
 
 # ******************************
 

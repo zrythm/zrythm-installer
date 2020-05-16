@@ -103,6 +103,8 @@ cp -R /usr/lib/zrythm/lib/carla %{buildroot}/usr/lib/zrythm/lib/
 %doc README.md CONTRIBUTING.md INSTALL.md CHANGELOG.md
 %{_bindir}/carla-discovery-native
 %{_bindir}/carla-bridge-lv2-gtk2
+%{_bindir}/carla-bridge-lv2-gtk3
+%{_bindir}/carla-bridge-lv2-qt5
 %{_bindir}/carla-bridge-native
 %{_bindir}/zrythm
 %{_bindir}/zrythm_launch

@@ -7,5 +7,5 @@
 FILE=$2
 rm $FILE
 # TODO add *.AppImage
-zip $FILE installer.sh README \
+zip $FILE Zrythm-*.pdf installer.sh README \
   bin/**/*.* bin/**/**/* bin/**/**/**/* bin/**/**/**/**/*

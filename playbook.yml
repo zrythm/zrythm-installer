@@ -63,6 +63,7 @@
         'help2man', 'python-sphinx', 'ladspa', 'lv2',
         'sdl2', 'guile', 'gtksourceview4', 'graphviz',
         'vim', 'meson', 'rubberband', 'qt5-base', 'zstd',
+        'texlive-core', 'texlive-lang',
         'rtaudio', 'rtmidi', 'breeze-icons' ]
         update_cache: yes
         state: present
