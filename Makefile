@@ -46,10 +46,19 @@ OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_
 OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 WINDOWS_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.exe
 WINDOWS_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_VERSION)-setup.exe
-ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini playbook.yml --extra-vars "version=$(ZRYTHM_VERSION) zplugins_version=$(ZPLUGINS_VERSION) meson_version=$(MESON_VERSION) carla_version=$(CARLA_VERSION)" -v
+GNU_PLAYBOOK=playbook.yml
+WOE_PLAYBOOK=woe-playbook.yml
+ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini --extra-vars "version=$(ZRYTHM_VERSION) zplugins_version=$(ZPLUGINS_VERSION) meson_version=$(MESON_VERSION) carla_version=$(CARLA_VERSION)" -v
 WINDOWS_IP=192.168.100.178
-MINGW_ZRYTHM_PKG_TAR=mingw-w64-x86_64-zrythm-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
-MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-x86_64-zrythm-trial-$(ZRYTHM_VERSION)-2-any.pkg.tar.zst
+ARCH_IP=192.168.100.142
+ZRYTHM_MINGW_REVISION=2
+MINGW_ZRYTHM_PKG_TAR=mingw-w64-zrythm-$(ZRYTHM_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.xz
+MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-zrythm-trial-$(ZRYTHM_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.xz
+MINGW_ZPLUGINS_PKG_TAR=mingw-w64-zplugins-$(ZPLUGINS_VERSION)-1-any.pkg.tar.xz
+MINGW_ZPLUGINS_TRIAL_PKG_TAR=mingw-w64-zplugins-trial-$(ZPLUGINS_VERSION)-1-any.pkg.tar.xz
+MINGW_ZRYTHM_SRC=/tmp/makepkg/mingw-w64-zrythm/src/zrythm-$(ZRYTHM_VERSION)
+MINGW_ZPLUGINS_SRC=/tmp/makepkg/mingw-w64-zplugins/src/zplugins-$(ZPLUGINS_VERSION)
+MINGW_PREFIX=/usr/x86_64-w64-mingw32
 RCEDIT64_EXE=rcedit-x64.exe
 RCEDIT64_VER=1.1.1
 RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
@@ -75,14 +84,21 @@ define stop_vm
 	sudo virsh shutdown $(1)
 endef
 
+# arg 1: VM name
 define run_build_in_vm
 	$(call start_vm,$(1))
-	$(ANSIBLE_PLAYBOOK_CMD) -l $(1)
+	$(ANSIBLE_PLAYBOOK_CMD) -l $(1) $(GNU_PLAYBOOK)
 	cd artifacts/$(1) && unzip -o zplugins.zip && \
 		rm zplugins.zip
 	cd artifacts/$(1) && unzip -o zplugins-trial.zip && \
 		rm zplugins-trial.zip
 	$(call stop_vm,$(1))
+endef
+
+define run_windows_build_in_vm
+	$(call start_vm,archlinux)
+	$(ANSIBLE_PLAYBOOK_CMD) -l archlinux $(WOE_PLAYBOOK)
+	$(call stop_vm,archlinux)
 endef
 
 # creates an installer-in-x target (UNIX)
@@ -225,17 +241,8 @@ $(eval $(call generic_artifact_target,archlinux,$(ARCH_PKG_FILE),$(ARCH_TRIAL_PK
 $(eval $(call generic_artifact_target,fedora32,$(FEDORA32_PKG_FILE),$(FEDORA32_TRIAL_PKG_FILE)))
 $(eval $(call generic_artifact_target,opensuse-tumbleweed,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE)))
 
-artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER) &: PKGBUILD-w10.in $(COMMON_SRC_DEPS) $(BUILD_DIR)/$(RCEDIT64_EXE)
-	$(call start_vm,windows10)
-	echo "Make sure that the default openssh shell is bash.exe"
-	echo "Copying files, enter password (alex) to continue"
-	rsync -r ./* alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/
-	echo "Go into the VM and run make windows10-chroot-base (if needed) followed by make windows10 in the zrythm-build directory. When the installer is built, press y to continue" && \
-		read -d "y"
-	mkdir -p artifacts/windows10
-	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_INSTALLER)
-	scp alex@$(WINDOWS_IP):$(MINGW_SRC_DIR)/build/$(WINDOWS_TRIAL_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER)
-	$(call stop_vm,windows10)
+artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER) &: arch-mingw/PKGBUILD.in $(COMMON_SRC_DEPS) $(BUILD_DIR)/$(RCEDIT64_EXE)
+	$(call run_windows_build_in_vm))
 
 define make_carla
 	export PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig && \
@@ -334,6 +341,7 @@ define prepare_debian
 	echo "3.0 (quilt)" > $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/source/format
 endef
 
+# arg 1: anything
 # arg 2: `true` for trial, `false` for normal ver
 define make_zplugins
 	rm -rf /tmp/$(1)/usr/lib/lv2/Z*.lv2
@@ -435,99 +443,87 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	$(call remove_carla)
 
 .PHONY: windows10
-windows10: $(BUILD_DIR)/$(WINDOWS_INSTALLER)
+windows10: $(BUILD_DIR)/$(WINDOWS_TRIAL_INSTALLER)
 
-$(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_TRIAL_PKG_TAR)&: PKGBUILD-w10.in $(COMMON_SRC_DEPS)
-	# install carla
-	cd $(BUILD_DIR) && \
-		unzip -o $(CARLA_WINDOWS_BINARY_64_ZIP) -d \
-		/mingw64/
+# target for zplugins mingw packages on windows
+$(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR): arch-mingw/zplugins-PKGBUILD.in $(COMMON_SRC_DEPS)
+	rm -rf $(BUILD_WINDOWS_DIR)/plugins
+	mkdir -p $(BUILD_WINDOWS_DIR)/plugins
+	cp arch-mingw/zplugins-PKGBUILD.in $(BUILD_WINDOWS_DIR)/plugins/PKGBUILD
+	sed -i -e 's/@VERSION@/$(ZPLUGINS_VERSION)/' $(BUILD_WINDOWS_DIR)/plugins/PKGBUILD
+	cd $(BUILD_WINDOWS_DIR)/plugins && \
+		cp ../../$(ZPLUGINS_TARBALL) ./ && \
+		makepkg -f
+	# make trial
+	sed -i -e '2s/zplugins/zplugins-trial/' $(BUILD_WINDOWS_DIR)/plugins/PKGBUILD
+	sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_WINDOWS_DIR)/plugins/PKGBUILD
+	cd $(BUILD_WINDOWS_DIR)/plugins && makepkg -f
+
+# target for zrythm mingw packages on windows
+$(BUILD_WINDOWS_DIR)/zrythm/$(MINGW_ZRYTHM_TRIAL_PKG_TAR): arch-mingw/PKGBUILD.in $(COMMON_SRC_DEPS) $(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR)
+	# prepare
+	mkdir -p /tmp/carla32
 	cd $(BUILD_DIR) && \
 		unzip -o $(CARLA_WINDOWS_BINARY_32_ZIP) -d \
-		/mingw64/lib/carla/
-	# prepare
-	rm -rf $(BUILD_WINDOWS_DIR)
-	mkdir -p $(BUILD_WINDOWS_DIR)/src
-	cp PKGBUILD-w10.in $(BUILD_WINDOWS_DIR)/PKGBUILD
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_WINDOWS_DIR)/
-	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_WINDOWS_DIR)/PKGBUILD
+		/tmp/carla32/
+	sudo cp /tmp/carla32/carla-bridge-win32.exe /usr/x86_64-w64-mingw32/lib/carla/
+	sudo chmod +x /usr/x86_64-w64-mingw32/lib/carla/carla-bridge-win32.exe
+	rm -rf $(BUILD_WINDOWS_DIR)/zrythm
+	mkdir -p $(BUILD_WINDOWS_DIR)/zrythm
+	cp arch-mingw/PKGBUILD.in $(BUILD_WINDOWS_DIR)/zrythm/PKGBUILD
+	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_WINDOWS_DIR)/zrythm/PKGBUILD
+	sed -i -e 's/@REVISION@/$(ZRYTHM_MINGW_REVISION)/' $(BUILD_WINDOWS_DIR)/zrythm/PKGBUILD
 	# make regular version
-	cd $(BUILD_WINDOWS_DIR) && makepkg-mingw -f
+	cd $(BUILD_WINDOWS_DIR)/zrythm && \
+		cp ../../$(ZRYTHM_TARBALL) ./ && \
+		makepkg -f
 	# make trial
-	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_WINDOWS_DIR)/PKGBUILD
-	sed -i -e '43s/\\/-Dtrial-ver=true \\/' $(BUILD_WINDOWS_DIR)/PKGBUILD
-	cd $(BUILD_WINDOWS_DIR) && makepkg-mingw -f
-	# make plugins
-	$(call make_zplugins,msys64,true)
-	$(call make_zplugins,msys64,false)
+	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_WINDOWS_DIR)/zrythm/PKGBUILD
+	sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_WINDOWS_DIR)/zrythm/PKGBUILD
+	cd $(BUILD_WINDOWS_DIR)/zrythm && makepkg -f
 
-# makes a common chroot base
-define make_windows_chroot_base
-	- rm -rf $(1)
-	# create chroot
-	mkdir -p $(1)/var/lib/pacman
-	mkdir -p $(1)/var/log
-	mkdir -p $(1)/tmp
-	pacman -Syu --root $(1)
-	pacman -S filesystem bash pacman mingw-w64-x86_64-gtksourceview4 --noconfirm --needed --root $(1)
-endef
-
-# arg 1: chroot dir
-# arg 2: zrythm pkg tar
-define make_windows_chroot
-	- rm -rf $(1)
-	cp -R $(WINDOWS_CHROOT_BASE) $(1)
-	# install package in chroot
-	pacman -U $(BUILD_WINDOWS_DIR)/$(2) --noconfirm --needed --root $(1)
-	ls $(1)/mingw64/bin/zrythm.exe
-	cp -R /mingw64/lib/carla $(1)/mingw64/lib/
-	# compile glib schemas
-	glib-compile-schemas.exe $(1)/mingw64/share/glib-2.0/schemas
-endef
-
-windows10-chroot-base:
-	$(call make_windows_chroot_base,$(WINDOWS_CHROOT_BASE))
-
-$(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe $(WIN_TRIAL_CHROOT_DIR)/mingw64/bin/zrythm.exe&: $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_DIR)/$(MINGW_ZRYTHM_TRIAL_PKG_TAR)
-	$(call make_windows_chroot,$(WIN_CHROOT_DIR),$(MINGW_ZRYTHM_PKG_TAR))
-	$(call make_windows_chroot,$(WIN_TRIAL_CHROOT_DIR),$(MINGW_ZRYTHM_TRIAL_PKG_TAR))
-
-# arg 1: chroot dir
+# arg 1: ignore
 # arg 2: installer filename
 # arg 3: AppName
 # arg 4: `-trial` if trial
 define create_windows_installer
 	# create sources distribution
 	- rm -rf $(BUILD_WINDOWS_DIR)/installer
-	-rm $(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
-	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist/plugins
-	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist/plugins-trial
-	pacman -Si $(shell pacman -Q --root $(1) | grep mingw | grep -v zrythm | cut -d" " -f1) > $(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
+	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist/plugins$(4)
+	# TODO add thirdparty info
+	touch $(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
 	# copy other files
-	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/AUTHORS $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/COPYING* $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/README.md $(BUILD_WINDOWS_DIR)/installer/dist/README.txt
-	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/CONTRIBUTING.md $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/THANKS $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
-	for file in $(shell find $(BUILD_DIR) -name "Z*.lv2" -not -name "*-trial.lv2") ; do \
-		cp -R $$file $(BUILD_WINDOWS_DIR)/installer/dist/plugins/ ; \
-		done
-	cp -R $(BUILD_DIR)/*-trial.lv2 $(BUILD_WINDOWS_DIR)/installer/dist/plugins-trial/
-	cp $(BUILD_WINDOWS_DIR)/src/zrythm-$(ZRYTHM_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
+	cp $(MINGW_ZRYTHM_SRC)/AUTHORS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(MINGW_ZRYTHM_SRC)/COPYING* $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(MINGW_ZRYTHM_SRC)/README.md $(BUILD_WINDOWS_DIR)/installer/dist/README.txt
+	cp $(MINGW_ZRYTHM_SRC)/CONTRIBUTING.md $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(MINGW_ZRYTHM_SRC)/THANKS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(MINGW_ZRYTHM_SRC)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp $(MINGW_ZRYTHM_SRC)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp -R $(MINGW_PREFIX)/lib/lv2/Z*$(4).lv2 $(BUILD_WINDOWS_DIR)/installer/dist/plugins$(4)/
+	cp $(MINGW_ZRYTHM_SRC)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
 	cp $(BUILD_DIR)/$(RCEDIT64_EXE) $(BUILD_WINDOWS_DIR)/installer/
 	# create installer
-	tools/gen_windows_installer.sh $(1)/mingw64 \
+	chmod +x tools/gen_windows_installer.sh
+	tools/gen_windows_installer.sh $(MINGW_PREFIX) \
 		$(ZRYTHM_VERSION) $(BUILD_WINDOWS_DIR)/installer \
 		$(shell pwd)/tools/inno/installer.iss "$(3)" \
 		plugins$(4) $(4)
 	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_VERSION).exe" $(BUILD_DIR)/$(2)
 endef
 
-$(BUILD_DIR)/$(WINDOWS_INSTALLER) $(BUILD_DIR)/$(WINDOWS_TRIAL_INSTALLER)&: $(WIN_CHROOT_DIR)/mingw64/bin/zrythm.exe $(WIN_TRIAL_CHROOT_DIR)/mingw64/bin/zrythm.exe FORCE
+$(BUILD_DIR)/$(WINDOWS_TRIAL_INSTALLER): $(BUILD_WINDOWS_DIR)/zrythm/$(MINGW_ZRYTHM_TRIAL_PKG_TAR) $(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR) FORCE
+	(pacman -Qi mingw-w64-zrythm-trial && sudo pacman --noconfirm -R mingw-w64-zrythm-trial) || true
+	(pacman -Qi mingw-w64-zplugins-trial && sudo pacman --noconfirm -R mingw-w64-zplugins-trial) || true
+	sudo pacman -U --noconfirm $(BUILD_WINDOWS_DIR)/zrythm/$(MINGW_ZRYTHM_PKG_TAR) \
+		$(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_PKG_TAR)
 	$(call create_windows_installer,$(WIN_CHROOT_DIR),$(WINDOWS_INSTALLER),Zrythm)
+	(pacman -Qi mingw-w64-zrythm && sudo pacman --noconfirm -R mingw-w64-zrythm) || true
+	(pacman -Qi mingw-w64-zplugins && sudo pacman --noconfirm -R mingw-w64-zplugins) || true
+	sudo pacman -U --noconfirm $(BUILD_WINDOWS_DIR)/zrythm/$(MINGW_ZRYTHM_TRIAL_PKG_TAR) \
+		$(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR)
 	$(call create_windows_installer,$(WIN_TRIAL_CHROOT_DIR),$(WINDOWS_TRIAL_INSTALLER),Zrythm Trial Version,-trial)
+	# uninstall the packages
 
 .PHONY: fedora32
 fedora32: $(BUILD_DIR)/$(FEDORA32_PKG_FILE)

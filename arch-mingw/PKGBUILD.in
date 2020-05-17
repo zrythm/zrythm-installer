@@ -2,11 +2,12 @@
 _pkgbase=zrythm
 MINGW_PACKAGE_PREFIX=mingw-w64
 pkgname=$MINGW_PACKAGE_PREFIX-$_pkgbase
-pkgver=0.8.459
-pkgrel=2
+pkgver=@VERSION@
+pkgrel=@REVISION@
 arch=('any')
 pkgdesc='a highly automated and intuitive digital audio workstation (mingw-w64)'
 depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
+         "${MINGW_PACKAGE_PREFIX}-carla"
          "${MINGW_PACKAGE_PREFIX}-rubberband"
          "${MINGW_PACKAGE_PREFIX}-libsndfile"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
@@ -23,19 +24,17 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
 options=('!strip' 'staticlibs')
 license=("AGPL3")
 url="https://www.zrythm.org"
-source=(https://www.zrythm.org/releases/zrythm-${pkgver}.tar.xz
-  "diff.patch")
-sha256sums=('SKIP' 'SKIP')
+source=(zrythm-${pkgver}.tar.xz)
+sha256sums=('SKIP')
 _architectures=('x86_64-w64-mingw32')
 
 prepare() {
-  cd "${srcdir}/${_pkgbase}-${pkgver}"
-  pwd
-  patch -Np1 -i ../diff.patch
+  cd "${srcdir}/zrythm-${pkgver}"
+  #patch -Np1 -i ../diff.patch
 }
 
 build() {
-  cd "${srcdir}/${_pkgbase}-${pkgver}"
+  cd "${srcdir}/zrythm-${pkgver}"
 
   export NEED_WINE=1
   for _arch in "${_architectures[@]}"; do
@@ -48,8 +47,9 @@ build() {
       -Djack=disabled \
       -Dguile=disabled \
       -Dwith-manpage=false \
-      -Dwindows-release=true -Dcarla=disabled \
-      --buildtype=release \
+      -Dwindows-release=true -Dcarla=enabled \
+      -Dtrial-ver=false \
+      --buildtype=debugoptimized \
       --wrap-mode=forcefallback \
       ..
     sed -i -e '45s|#|//#|' ../subprojects/lilv/lilv-0.24.6/src/util.c
@@ -62,6 +62,6 @@ build() {
 package() {
   export NEED_WINE=1
   for _arch in "${_architectures[@]}"; do
-    DESTDIR="${pkgdir}" meson install -C ${srcdir}/${_pkgbase}-${pkgver}/build-${_arch}
+    DESTDIR="${pkgdir}" meson install -C ${srcdir}/zrythm-${pkgver}/build-${_arch}
   done
 }

@@ -1,0 +1,70 @@
+---
+
+- hosts: archlinux
+  tasks:
+    - name: Copy package definitions from master
+      copy:
+        src: "{{ item }}"
+        dest: /tmp/zrythm-installer/
+      with_fileglob:
+        - "{{ playbook_dir }}/*"
+
+    - name: Copy arch-mingw
+      copy:
+        src: "{{ item }}"
+        dest: /tmp/zrythm-installer/arch-mingw/
+      with_fileglob:
+        - "{{ playbook_dir }}/arch-mingw/*"
+
+    - name: Copy tools
+      copy:
+        src: "{{ item }}"
+        dest: /tmp/zrythm-installer/tools/
+      with_fileglob:
+        - "{{ playbook_dir }}/tools/*"
+
+    - name: Copy tools/inno
+      copy:
+        src: "{{ item }}"
+        dest: /tmp/zrythm-installer/tools/inno/
+      with_fileglob:
+        - "{{ playbook_dir }}/tools/inno/*"
+
+    - name: Creates directory
+      file:
+        path: /tmp/zrythm-installer/artifacts/archlinux
+        state: directory
+
+    - name: Copy manual
+      copy:
+        src: "{{ item }}"
+        dest: /tmp/zrythm-installer/artifacts/archlinux/user-manual.zip
+      with_fileglob:
+        - "{{ playbook_dir }}/artifacts/archlinux/user-manual.zip"
+
+    - name: Copy tarballs from master
+      copy:
+        src: "{{ item }}"
+        dest: /tmp/zrythm-installer/build/
+      with_fileglob:
+        - "{{ playbook_dir }}/build/zrythm-{{ version }}.tar.xz*"
+        - "{{ playbook_dir }}/build/zplugins-{{ zplugins_version }}.tar.gz"
+        - "{{ playbook_dir }}/build/Carla-{{ carla_version }}.zip"
+        - "{{ playbook_dir }}/build/meson-{{ meson_version }}.tar.gz"
+        - "{{ playbook_dir }}/build/carla-2.1-woe32.zip"
+        - "{{ playbook_dir }}/build/rcedit-x64.exe"
+
+    - name: Make plugins
+      shell: cd /tmp/zrythm-installer && make build/windows10/plugins/mingw-w64-zplugins-trial-{{ zplugins_version }}-1-any.pkg.tar.xz
+
+    - name: Make zrythm
+      shell: cd /tmp/zrythm-installer && make build/windows10/zrythm/mingw-w64-zrythm-trial-{{ version }}-2-any.pkg.tar.xz
+
+    - name: Make installer
+      shell: cd /tmp/zrythm-installer && make build/zrythm-trial-{{ version }}-setup.exe
+
+    - name: Deploy normal installer
+      fetch: src=/tmp/zrythm-installer/build/zrythm-{{ version }}-setup.exe dest=./artifacts/windows10/zrythm-{{ version }}-setup.exe flat=yes
+
+    - name: Deploy trial version
+      fetch: src=/tmp/zrythm-installer/build/zrythm-trial-{{ version }}-setup.exe dest=./artifacts/windows10/zrythm-trial-{{ version }}-setup.exe flat=yes

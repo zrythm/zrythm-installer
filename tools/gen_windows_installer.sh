@@ -20,7 +20,7 @@
 
 set -e
 
-# $1 mingw prefix (chroot/mingw64)
+# $1 mingw prefix (chroot/mingw64 or /usr/x86_64-w64-mingw32)
 # $2 zrythm version
 # $3 build dir, this is the staging directory to use
 # to stage files to - the root of the installer is in $3/dist
@@ -52,6 +52,7 @@ mkdir -p $DIST_SHAREDIR
 mkdir -p $DIST_ETCDIR
 
 mkdir -p $DIST_DIR/$GLIB_SCHEMAS_DIR_SUFFIX
+sudo glib-compile-schemas $MINGW_PREFIX/$GLIB_SCHEMAS_DIR_SUFFIX
 cp $MINGW_PREFIX/$GLIB_SCHEMAS_DIR_SUFFIX/* $DIST_DIR/$GLIB_SCHEMAS_DIR_SUFFIX/
 
 # ******************************
@@ -134,7 +135,8 @@ fi
 #mkdir -p $DIST_ETCDIR/gtk-3.0
 #cp data/settings.ini $ETC_GTK_DIR/
 
-cp -R $MINGW_PREFIX/etc/gtk-3.0 $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
+#cp -R $MINGW_PREFIX/etc/gtk-3.0 $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
+cp -R $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
 # ******************************
 
 # ******************************
@@ -149,7 +151,7 @@ cp -R $MINGW_PREFIX/etc/gtk-3.0 $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
 echo "packaging breeze icons"
 mkdir -p "$DIST_SHAREDIR/icons"
 # the icons are preinstalled here
-cp -R "/home/alex/icons/breeze-dark" "$DIST_SHAREDIR/icons"/
+cp -R "/home/ansible/icons/breeze-dark" "$DIST_SHAREDIR/icons"/
 #echo "packaging breeze icons"
 #cp -R "$MINGW_PREFIX/bin/data/icons/breeze-dark" "$DIST_SHAREDIR/icons/"
 echo "packaging existing hicolor icons"
@@ -185,7 +187,7 @@ cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders/"*.dll \
 #cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders.cache" \
 #  "$DIST_DIR/$PIXBUF_DIR/"
 GDK_PIXBUF_MODULEDIR="$MINGW_PREFIX/$PIXBUF_DIR/loaders" \
-  gdk-pixbuf-query-loaders.exe > \
+  $MINGW_PREFIX/bin/gdk-pixbuf-query-loaders.exe > \
   "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
 sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
   "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
@@ -204,14 +206,16 @@ sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
 echo "packaging binaries"
 cp "$MINGW_PREFIX/bin/zrythm.exe" "$DIST_BINDIR/"
 cp $MINGW_PREFIX/bin/carla*.exe "$DIST_BINDIR/"
+chmod +x $BUILD_DIR/rcedit-x64.exe
 $BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm.exe" --set-icon  "$DIST_DIR/zrythm.ico"
 cp "$MINGW_PREFIX/bin/gspawn-win64-helper.exe" "$DIST_BINDIR/"
 cp "$MINGW_PREFIX/bin/gspawn-win64-helper-console.exe" "$DIST_BINDIR/"
+cp "$MINGW_PREFIX/bin/gdbus.exe" "$DIST_BINDIR/"
 # ******************************
 
 cp "$INNO_ISS" "$DIST_DIR"/
 cd $DIST_DIR
-/c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
-  "//DAppName=$APP_NAME" "//DAppVersion=$ZRYTHM_VERSION" \
-  "//DPluginsDir=$PLUGINS_DIR" \
+~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
+  "/DAppName=$APP_NAME" "/DAppVersion=$ZRYTHM_VERSION" \
+  "/DPluginsDir=$PLUGINS_DIR" \
   installer.iss
