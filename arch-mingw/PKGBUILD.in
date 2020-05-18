@@ -10,6 +10,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
          "${MINGW_PACKAGE_PREFIX}-carla"
          "${MINGW_PACKAGE_PREFIX}-rubberband"
          "${MINGW_PACKAGE_PREFIX}-libsndfile"
+         "${MINGW_PACKAGE_PREFIX}-librsvg"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
          "${MINGW_PACKAGE_PREFIX}-gtksourceview4"
          "${MINGW_PACKAGE_PREFIX}-dlfcn"
@@ -39,7 +40,7 @@ build() {
   export NEED_WINE=1
   for _arch in "${_architectures[@]}"; do
     mkdir -p build-${_arch} && pushd build-${_arch}
-    sed -i -e "s/'-lws2_32',/'-lws2_32', '-lssp',/" ../meson.build
+    #sed -i -e "s/'-lws2_32',/'-lws2_32', '-lssp',/" ../meson.build
     $_arch-meson \
       -Dsdl=disabled \
       -Drtaudio=auto \
@@ -49,7 +50,7 @@ build() {
       -Dwith-manpage=false \
       -Dwindows-release=true -Dcarla=enabled \
       -Dtrial-ver=false \
-      --buildtype=debugoptimized \
+      --buildtype=debug \
       --wrap-mode=forcefallback \
       ..
     sed -i -e '45s|#|//#|' ../subprojects/lilv/lilv-0.24.6/src/util.c

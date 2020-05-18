@@ -152,6 +152,7 @@ echo "packaging breeze icons"
 mkdir -p "$DIST_SHAREDIR/icons"
 # the icons are preinstalled here
 cp -R "/home/ansible/icons/breeze-dark" "$DIST_SHAREDIR/icons"/
+cp -R "$MINGW_PREFIX/share/icons/Adwaita" "$DIST_SHAREDIR/icons"/
 #echo "packaging breeze icons"
 #cp -R "$MINGW_PREFIX/bin/data/icons/breeze-dark" "$DIST_SHAREDIR/icons/"
 echo "packaging existing hicolor icons"
