@@ -54,14 +54,14 @@
         - "{{ playbook_dir }}/build/carla-2.1-woe32.zip"
         - "{{ playbook_dir }}/build/rcedit-x64.exe"
 
-    - name: Make plugins
-      shell: cd /tmp/zrythm-installer && make build/windows10/plugins/mingw-w64-zplugins-trial-{{ zplugins_version }}-1-any.pkg.tar.xz
+    #- name: Make plugins
+      #shell: cd /tmp/zrythm-installer && make build/windows10/plugins/mingw-w64-zplugins-trial-{{ zplugins_version }}-1-any.pkg.tar.xz
 
     - name: Make zrythm
-      shell: cd /tmp/zrythm-installer && make build/windows10/zrythm/mingw-w64-zrythm-trial-{{ version }}-2-any.pkg.tar.xz
+      shell: cd /tmp/zrythm-installer && make windows10
 
-    - name: Make installer
-      shell: cd /tmp/zrythm-installer && make build/zrythm-trial-{{ version }}-setup.exe
+    #- name: Make installer
+      #shell: cd /tmp/zrythm-installer && make build/zrythm-trial-{{ version }}-setup.exe
 
     - name: Deploy normal installer
       fetch: src=/tmp/zrythm-installer/build/zrythm-{{ version }}-setup.exe dest=./artifacts/windows10/zrythm-{{ version }}-setup.exe flat=yes

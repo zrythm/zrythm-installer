@@ -152,7 +152,7 @@ echo "packaging breeze icons"
 mkdir -p "$DIST_SHAREDIR/icons"
 # the icons are preinstalled here
 cp -R "/home/ansible/icons/breeze-dark" "$DIST_SHAREDIR/icons"/
-cp -R "$MINGW_PREFIX/share/icons/Adwaita" "$DIST_SHAREDIR/icons"/
+#cp -R "$MINGW_PREFIX/share/icons/Adwaita" "$DIST_SHAREDIR/icons"/
 #echo "packaging breeze icons"
 #cp -R "$MINGW_PREFIX/bin/data/icons/breeze-dark" "$DIST_SHAREDIR/icons/"
 echo "packaging existing hicolor icons"
@@ -188,7 +188,7 @@ cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders/"*.dll \
 #cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders.cache" \
 #  "$DIST_DIR/$PIXBUF_DIR/"
 GDK_PIXBUF_MODULEDIR="$MINGW_PREFIX/$PIXBUF_DIR/loaders" \
-  $MINGW_PREFIX/bin/gdk-pixbuf-query-loaders.exe > \
+  $MINGW_PREFIX/bin/gdk-pixbuf-query-loaders.exe $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-svg.dll > \
   "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
 sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
   "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
@@ -205,13 +205,13 @@ sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
 
 # ******************************
 echo "packaging binaries"
-cp "$MINGW_PREFIX/bin/zrythm.exe" "$DIST_BINDIR/"
+cp "$MINGW_PREFIX/bin/zrythm$TRIAL.exe" "$DIST_BINDIR/zrythm.exe"
 cp $MINGW_PREFIX/bin/carla*.exe "$DIST_BINDIR/"
 chmod +x $BUILD_DIR/rcedit-x64.exe
 $BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm.exe" --set-icon  "$DIST_DIR/zrythm.ico"
 cp "$MINGW_PREFIX/bin/gspawn-win64-helper.exe" "$DIST_BINDIR/"
 cp "$MINGW_PREFIX/bin/gspawn-win64-helper-console.exe" "$DIST_BINDIR/"
-cp "$MINGW_PREFIX/bin/gdbus.exe" "$DIST_BINDIR/"
+#cp "$MINGW_PREFIX/bin/gdbus.exe" "$DIST_BINDIR/"
 # ******************************
 
 cp "$INNO_ISS" "$DIST_DIR"/
