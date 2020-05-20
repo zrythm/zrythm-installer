@@ -188,7 +188,13 @@ cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders/"*.dll \
 #cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders.cache" \
 #  "$DIST_DIR/$PIXBUF_DIR/"
 GDK_PIXBUF_MODULEDIR="$MINGW_PREFIX/$PIXBUF_DIR/loaders" \
-  $MINGW_PREFIX/bin/gdk-pixbuf-query-loaders.exe $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-svg.dll > \
+  $MINGW_PREFIX/bin/gdk-pixbuf-query-loaders.exe \
+  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-svg.dll \
+  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-jpeg.dll \
+  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-gif.dll \
+  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-bmp.dll \
+  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-tiff.dll \
+  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-png.dll > \
   "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
 sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
   "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
