@@ -1,4 +1,4 @@
-ZRYTHM_VERSION=0.8.459
+ZRYTHM_VERSION=master
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.gz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
@@ -562,6 +562,9 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	$$(call make_carla,/usr,sudo)
 	rm -rf $(2)
 	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
+	mkdir -p $(RPMBUILD_ROOT) && \
+		cd $(RPMBUILD_ROOT) && \
+		mkdir BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
 	mkdir -p $(2)
 	cp zrythm.spec.in $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
