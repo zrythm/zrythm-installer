@@ -566,7 +566,7 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
 	mkdir -p $(RPMBUILD_ROOT) && \
 		cd $(RPMBUILD_ROOT) && \
-		mkdir BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
+		mkdir -p BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
 	mkdir -p $(2)
 	cp zrythm.spec.in $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
