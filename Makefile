@@ -463,7 +463,7 @@ $(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR): arch-mingw/zplugin
 	sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_WINDOWS_DIR)/plugins/PKGBUILD
 	cd $(BUILD_WINDOWS_DIR)/plugins && makepkg -f
 
-$(ARCH_MXE_64_STATIC_PREFIX)/lib/carla/carla-bridge-win32.exe:
+$(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe:
 	mkdir -p /tmp/carla32
 	cd $(BUILD_DIR) && \
 		unzip -o $(CARLA_WINDOWS_BINARY_32_ZIP) -d \
@@ -476,18 +476,19 @@ $(ARCH_MXE_64_STATIC_PREFIX)/lib/carla/carla-bridge-win32.exe:
 	sudo chmod +x $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe
 
 # arg 1: '-trial' if trial
+# arg 2: 'true' if trial, false otherwise
 define make_zrythm_mxe_target
-$(ARCH_MXE_64_STATIC_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_STATIC_PREFIX)/lib/carla/carla-bridge-win32.exe
+$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe
 	cd $(ARCH_MXE_ROOT) && \
-		make $(MXE_FLAGS) zrythm$(1)
-	cd $(ARCH_MXE_64_STATIC_PREFIX)/bin && \
-		mv zrythm.exe zrythm1.exe && \
-		mv zrythm1.exe zrythm$(1).exe
-	cd $(ARCH_MXE_64_SHARED_PREFIX)/bin && \
-		mv zrythm.exe zrythm1.exe && \
-		mv zrythm1.exe zrythm$(1).exe
+		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=$(2)/' src/zrythm.mk && \
+		sed -i -e 's/-Dtrial-ver=true/-Dtrial-ver=$(2)/' src/zrythm.mk && \
+		make $(MXE_FLAGS) zrythm
+	if [ "$(1)" == "-trial" ]; then \
+		mv $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm.exe \
+			$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe ; \
+	fi
 
-$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_STATIC_PREFIX)/bin/zrythm$(1).exe
+#$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_STATIC_PREFIX)/bin/zrythm$(1).exe
 
 $(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.dll: $(ARCH_MXE_64_STATIC_PREFIX)/bin/zrythm$(1).exe
 	mkdir -p $(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders
@@ -495,8 +496,8 @@ $(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-s
 		$(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/
 endef
 
-$(eval $(call make_zrythm_mxe_target,))
-$(eval $(call make_zrythm_mxe_target,-trial))
+$(eval $(call make_zrythm_mxe_target,,false))
+$(eval $(call make_zrythm_mxe_target,-trial,true))
 
 # arg 1: ignore
 # arg 2: installer filename
@@ -507,8 +508,20 @@ $(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64
 	# create sources distribution
 	- rm -rf $(BUILD_WINDOWS_DIR)/installer
 	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist/plugins$(4)
-	# TODO add thirdparty info
-	touch $(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
+	# copy plugins
+	cp -R \
+		$(ARCH_MXE_64_SHARED_PREFIX)/lib/lv2/Z*.lv2 \
+		$(BUILD_WINDOWS_DIR)/installer/dist/plugins$(4)/
+	# remove some plugins if trial ver
+	if [ "$(4)" == "-trial" ]; then \
+		rm -rf $(BUILD_WINDOWS_DIR)/installer/dist/plugins$(4)/ZChordz*.lv2 ; \
+		rm -rf $(BUILD_WINDOWS_DIR)/installer/dist/plugins$(4)/ZLFO*.lv2 ; \
+	fi
+	# add thirdparty version info
+	chmod +x tools/print_mxe_deps.sh
+	tools/print_mxe_deps.sh \
+		$(ARCH_MXE_ROOT) \
+		$(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
 	# copy other files
 	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) /tmp && \
 		cd /tmp && tar xf $(ZRYTHM_TARBALL)
@@ -519,7 +532,6 @@ $(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64
 	cp /tmp/zrythm-$(ZRYTHM_VERSION)/THANKS $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp /tmp/zrythm-$(ZRYTHM_VERSION)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
 	cp /tmp/zrythm-$(ZRYTHM_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
-	#cp -R $(MINGW_PREFIX)/lib/lv2/Z*$(4).lv2 $(BUILD_WINDOWS_DIR)/installer/dist/plugins$(4)/
 	cp /tmp/zrythm-$(ZRYTHM_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
 	cp $(BUILD_DIR)/$(RCEDIT64_EXE) $(BUILD_WINDOWS_DIR)/installer/
 	# create installer
