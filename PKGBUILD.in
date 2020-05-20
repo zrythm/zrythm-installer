@@ -16,7 +16,7 @@ makedepends=(
   'ladspa' 'lv2')
 optdepends=('portaudio: portaudio backend')
 conflicts=( 'zrythm-git' )
-source=( "https://www.zrythm.org/releases/zrythm-$pkgver.tar.xz" )
+source=( "https://www.zrythm.org/releases/zrythm-$pkgver.tar.gz" )
 sha256sums=('SKIP')
 
 _rootdir="zrythm-${pkgver}"
