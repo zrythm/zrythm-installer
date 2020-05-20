@@ -1,5 +1,5 @@
 ZRYTHM_VERSION=0.8.459
-ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.xz
+ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.gz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
 ZPLUGINS_TARBALL=zplugins-$(ZPLUGINS_VERSION).tar.gz
@@ -9,9 +9,9 @@ ZLFO_MANIFEST=ZLFO.lv2/manifest.ttl
 ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_VERSION).orig.tar.xz
 ZRYTHM_TRIAL_DEBIAN_TARBALL=zrythm-trial_$(ZRYTHM_VERSION).orig.tar.xz
 SUM_EXT=sha256sum
-ZRYTHM_TARBALL_SUM=zrythm-$(ZRYTHM_VERSION).tar.xz.$(SUM_EXT)
+ZRYTHM_TARBALL_SUM=zrythm-$(ZRYTHM_VERSION).tar.gz.$(SUM_EXT)
 CALC_SUM=sha256sum --check
-ZRYTHM_TARBALL_URL=https://www.zrythm.org/releases/$(ZRYTHM_TARBALL)
+ZRYTHM_TARBALL_URL=https://git.zrythm.org/cgit/zrythm/snapshot/zrythm-$(ZRYTHM_VERSION).tar.gz
 CARLA_VERSION=c8b2c61037640ca8c1fa277f8da77fcc86745435
 CARLA_SOURCE_URL=https://github.com/falkTX/Carla/archive/$(CARLA_VERSION).zip
 CARLA_SOURCE_ZIP=Carla-$(CARLA_VERSION).zip
@@ -478,10 +478,12 @@ $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe:
 # arg 1: '-trial' if trial
 # arg 2: 'true' if trial, false otherwise
 define make_zrythm_mxe_target
-$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe
+$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe FORCE
 	cd $(ARCH_MXE_ROOT) && \
 		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/-Dtrial-ver=true/-Dtrial-ver=$(2)/' src/zrythm.mk && \
+		sed -i -e 's/_VERSION  .*/_VERSION  := $(ZRYTHM_VERSION)/' src/zrythm.mk && \
+		make update-checksum-zrythm && \
 		make $(MXE_FLAGS) zrythm
 	if [ "$(1)" == "-trial" ]; then \
 		mv $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm.exe \
@@ -593,10 +595,10 @@ $(BUILD_DIR)/meson/meson.py: $(BUILD_DIR)/$(MESON_TARBALL)
 $(BUILD_DIR)/$(ZRYTHM_TARBALL):
 	mkdir -p $(BUILD_DIR)
 	wget $(ZRYTHM_TARBALL_URL) -O $@
-	wget $(ZRYTHM_TARBALL_URL).$(SUM_EXT) -O $(BUILD_DIR)/$(ZRYTHM_TARBALL_SUM)
-	wget $(ZRYTHM_TARBALL_URL).asc -O $(BUILD_DIR)/$(ZRYTHM_TARBALL).asc
-	cd $(BUILD_DIR) && $(CALC_SUM) $(ZRYTHM_TARBALL_SUM)
-	cd $(BUILD_DIR) && gpg --verify $(ZRYTHM_TARBALL).asc $(ZRYTHM_TARBALL)
+	#wget $(ZRYTHM_TARBALL_URL).$(SUM_EXT) -O $(BUILD_DIR)/$(ZRYTHM_TARBALL_SUM)
+	#wget $(ZRYTHM_TARBALL_URL).asc -O $(BUILD_DIR)/$(ZRYTHM_TARBALL).asc
+	#cd $(BUILD_DIR) && $(CALC_SUM) $(ZRYTHM_TARBALL_SUM)
+	#cd $(BUILD_DIR) && gpg --verify $(ZRYTHM_TARBALL).asc $(ZRYTHM_TARBALL)
 
 # target for fetching the ZPlugins release tarball
 $(BUILD_DIR)/$(ZPLUGINS_TARBALL):
