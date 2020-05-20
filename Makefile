@@ -1,13 +1,15 @@
-ZRYTHM_VERSION=master
+ZRYTHM_VERSION=master # git tag/commit
+ZRYTHM_PKG_VERSION=master # version to use in packages
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.gz
+ZRYTHM_PKG_TARBALL=zrythm-$(ZRYTHM_PKG_VERSION).tar.gz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
 ZPLUGINS_VERSION=0.1.2
 ZPLUGINS_TARBALL=zplugins-$(ZPLUGINS_VERSION).tar.gz
 ZPLUGINS_TARBALL_URL=https://git.zrythm.org/cgit/zplugins/snapshot/zplugins-v$(ZPLUGINS_VERSION).tar.gz
 ZPLUGINS_DIR=zplugins-$(ZPLUGINS_VERSION)
 ZLFO_MANIFEST=ZLFO.lv2/manifest.ttl
-ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_VERSION).orig.tar.xz
-ZRYTHM_TRIAL_DEBIAN_TARBALL=zrythm-trial_$(ZRYTHM_VERSION).orig.tar.xz
+ZRYTHM_DEBIAN_TARBALL=zrythm_$(ZRYTHM_PKG_VERSION).orig.tar.xz
+ZRYTHM_TRIAL_DEBIAN_TARBALL=zrythm-trial_$(ZRYTHM_PKG_VERSION).orig.tar.xz
 SUM_EXT=sha256sum
 ZRYTHM_TARBALL_SUM=zrythm-$(ZRYTHM_VERSION).tar.gz.$(SUM_EXT)
 CALC_SUM=sha256sum --check
@@ -40,39 +42,39 @@ WINDOWS_ZRYTHM_PKG_TAR_XZ=
 RPMBUILD_ROOT=/home/ansible/rpmbuild
 BUILD_FEDORA32_DIR=$(BUILD_DIR)/fedora32
 BUILD_OPENSUSE_TUMBLEWEED_DIR=$(BUILD_DIR)/opensuse-tumbleweed
-ARCH_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1-x86_64.pkg.tar.xz
-ARCH_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1-x86_64.pkg.tar.xz
-DEBIAN_PKG_FILE=zrythm_$(ZRYTHM_VERSION)-1_amd64.deb
-DEBIAN_TRIAL_PKG_FILE=zrythm-trial_$(ZRYTHM_VERSION)-1_amd64.deb
-FEDORA32_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.fc32.x86_64.rpm
-FEDORA32_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1.fc32.x86_64.rpm
-OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
-OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
-WINDOWS_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.exe
-WINDOWS_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_VERSION)-setup.exe
+ARCH_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1-x86_64.pkg.tar.xz
+ARCH_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1-x86_64.pkg.tar.xz
+DEBIAN_PKG_FILE=zrythm_$(ZRYTHM_PKG_VERSION)-1_amd64.deb
+DEBIAN_TRIAL_PKG_FILE=zrythm-trial_$(ZRYTHM_PKG_VERSION)-1_amd64.deb
+FEDORA32_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.fc32.x86_64.rpm
+FEDORA32_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.fc32.x86_64.rpm
+OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
+OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
+WINDOWS_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-setup.exe
+WINDOWS_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_PKG_VERSION)-setup.exe
 GNU_PLAYBOOK=playbook.yml
 WOE_PLAYBOOK=woe-playbook.yml
-ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini --extra-vars "version=$(ZRYTHM_VERSION) zplugins_version=$(ZPLUGINS_VERSION) meson_version=$(MESON_VERSION) carla_version=$(CARLA_VERSION)" -v
+ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini --extra-vars "version=$(ZRYTHM_PKG_VERSION) zplugins_version=$(ZPLUGINS_VERSION) meson_version=$(MESON_VERSION) carla_version=$(CARLA_VERSION)" -v
 WINDOWS_IP=192.168.100.178
 ARCH_IP=192.168.100.142
 ZRYTHM_MINGW_REVISION=2
-MINGW_ZRYTHM_PKG_TAR=mingw-w64-zrythm-$(ZRYTHM_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.xz
-MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-zrythm-trial-$(ZRYTHM_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.xz
+MINGW_ZRYTHM_PKG_TAR=mingw-w64-zrythm-$(ZRYTHM_PKG_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.xz
+MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-zrythm-trial-$(ZRYTHM_PKG_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.xz
 MINGW_ZPLUGINS_PKG_TAR=mingw-w64-zplugins-$(ZPLUGINS_VERSION)-1-any.pkg.tar.xz
 MINGW_ZPLUGINS_TRIAL_PKG_TAR=mingw-w64-zplugins-trial-$(ZPLUGINS_VERSION)-1-any.pkg.tar.xz
-MINGW_ZRYTHM_SRC=/tmp/makepkg/mingw-w64-zrythm/src/zrythm-$(ZRYTHM_VERSION)
+MINGW_ZRYTHM_SRC=/tmp/makepkg/mingw-w64-zrythm/src/zrythm-$(ZRYTHM_PKG_VERSION)
 MINGW_ZPLUGINS_SRC=/tmp/makepkg/mingw-w64-zplugins/src/zplugins-$(ZPLUGINS_VERSION)
 MINGW_PREFIX=/usr/x86_64-w64-mingw32
 RCEDIT64_EXE=rcedit-x64.exe
 RCEDIT64_VER=1.1.1
 RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
-UNIX_INSTALLER_ZIP=zrythm-$(ZRYTHM_VERSION)-installer.zip
-UNIX_TRIAL_INSTALLER_ZIP=zrythm-trial-$(ZRYTHM_VERSION)-installer.zip
-COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py $(BUILD_DIR)/$(CARLA_SOURCE_ZIP)
+UNIX_INSTALLER_ZIP=zrythm-$(ZRYTHM_PKG_VERSION)-installer.zip
+UNIX_TRIAL_INSTALLER_ZIP=zrythm-trial-$(ZRYTHM_PKG_VERSION)-installer.zip
+COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/meson/meson.py $(BUILD_DIR)/$(CARLA_SOURCE_ZIP)
 OSX_INSTALL_PREFIX=/tmp/zrythm-osx
 OSX_INSTALL_TRIAL_PREFIX=/tmp/zrythm-trial-osx
-OSX_INSTALLER=zrythm-$(ZRYTHM_VERSION)-setup.dmg
-OSX_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_VERSION)-setup.dmg
+OSX_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-setup.dmg
+OSX_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_PKG_VERSION)-setup.dmg
 APPIMAGE_APPDIR=/tmp/appimage/AppDir
 
 define start_vm
@@ -131,34 +133,34 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 	mkdir -p bin/fedora
 	if [ "$(2)" == "-trial" ]; then \
 		cp artifacts/debian10/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/debian/zrythm$(2)-$(ZRYTHM_VERSION)-1_10_amd64.deb; \
+			bin/debian/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_10_amd64.deb; \
 		cp artifacts/linuxmint193/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/linuxmint/zrythm$(2)-$(ZRYTHM_VERSION)-1_19.3_amd64.deb; \
+			bin/linuxmint/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_19.3_amd64.deb; \
 		cp artifacts/ubuntu2004/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/ubuntu/zrythm$(2)-$(ZRYTHM_VERSION)-1_20.04_amd64.deb; \
+			bin/ubuntu/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_20.04_amd64.deb; \
 		cp artifacts/ubuntu1910/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/ubuntu/zrythm$(2)-$(ZRYTHM_VERSION)-1_19.10_amd64.deb; \
+			bin/ubuntu/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_19.10_amd64.deb; \
 		cp artifacts/ubuntu1804/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/ubuntu/zrythm$(2)-$(ZRYTHM_VERSION)-1_18.04_amd64.deb; \
+			bin/ubuntu/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_18.04_amd64.deb; \
 		cp artifacts/archlinux/$(ARCH_TRIAL_PKG_FILE) \
-			bin/arch/zrythm$(2)-$(ZRYTHM_VERSION)-1_x86_64.pkg.tar.xz; \
+			bin/arch/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_x86_64.pkg.tar.xz; \
 		cp artifacts/fedora32/$(FEDORA32_TRIAL_PKG_FILE) \
-			bin/fedora/zrythm$(2)-$(ZRYTHM_VERSION)-1_32_x86_64.rpm; \
+			bin/fedora/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_32_x86_64.rpm; \
 	else \
 		cp artifacts/debian10/$(DEBIAN_PKG_FILE) \
-			bin/debian/zrythm-$(ZRYTHM_VERSION)-1_10_amd64.deb; \
+			bin/debian/zrythm-$(ZRYTHM_PKG_VERSION)-1_10_amd64.deb; \
 		cp artifacts/linuxmint193/$(DEBIAN_PKG_FILE) \
-			bin/linuxmint/zrythm-$(ZRYTHM_VERSION)-1_19.3_amd64.deb; \
+			bin/linuxmint/zrythm-$(ZRYTHM_PKG_VERSION)-1_19.3_amd64.deb; \
 		cp artifacts/ubuntu2004/$(DEBIAN_PKG_FILE) \
-			bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_20.04_amd64.deb; \
+			bin/ubuntu/zrythm-$(ZRYTHM_PKG_VERSION)-1_20.04_amd64.deb; \
 		cp artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) \
-			bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_19.10_amd64.deb; \
+			bin/ubuntu/zrythm-$(ZRYTHM_PKG_VERSION)-1_19.10_amd64.deb; \
 		cp artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) \
-			bin/ubuntu/zrythm-$(ZRYTHM_VERSION)-1_18.04_amd64.deb; \
+			bin/ubuntu/zrythm-$(ZRYTHM_PKG_VERSION)-1_18.04_amd64.deb; \
 		cp artifacts/archlinux/$(ARCH_PKG_FILE) \
-			bin/arch/zrythm-$(ZRYTHM_VERSION)-1_x86_64.pkg.tar.xz; \
+			bin/arch/zrythm-$(ZRYTHM_PKG_VERSION)-1_x86_64.pkg.tar.xz; \
 		cp artifacts/fedora32/$(FEDORA32_PKG_FILE) \
-			bin/fedora/zrythm-$(ZRYTHM_VERSION)-1_32_x86_64.rpm; \
+			bin/fedora/zrythm-$(ZRYTHM_PKG_VERSION)-1_32_x86_64.rpm; \
 		unzip -o artifacts/archlinux/user-manual.zip -d ./ ; \
 	fi
 	cp -Rf artifacts/debian10/zplugins$(2) bin/debian/zplugins$(2)-10
@@ -174,16 +176,16 @@ ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE 
 		bin/arch/zplugins$(2)-arch
 	cp -Rf artifacts/fedora32/zplugins$(2) \
 		bin/fedora/zplugins$(2)-32
-	#cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage \
-		#Zrythm$(2)-$(ZRYTHM_VERSION)-x86_64.AppImage
-	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < README$(2).in > README
+	#cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage \
+		#Zrythm$(2)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage
+	sed 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' < README$(2).in > README
 	sed -i -e 's/@_AT_@/@/' README
-	sed 's/@VERSION@/$(ZRYTHM_VERSION)/' < installer.sh.in > installer.sh
+	sed 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' < installer.sh.in > installer.sh
 	sed -i -e 's/@ZPLUGINS_VERSION@/$(ZPLUGINS_VERSION)/' installer.sh
 	sed -i -e 's/@ZRYTHM@/zrythm$(2)/' installer.sh
 	sed -i -e 's/@ZPLUGINS@/zplugins$(2)/' installer.sh
 	chmod +x installer.sh
-	tools/gen_installer.sh $(ZRYTHM_VERSION) $(1)
+	tools/gen_installer.sh $(ZRYTHM_PKG_VERSION) $(1)
 	rm -rf README installer.sh *.AppImage Zrythm-*.pdf
 endef
 
@@ -266,8 +268,8 @@ endef
 # arg 1: prefix
 # arg 2: trial version true/false
 define make_osx
-	cd $(BUILD_OSX_DIR) && tar xf $(ZRYTHM_TARBALL) && \
-		cd zrythm-$(ZRYTHM_VERSION) && \
+	cd $(BUILD_OSX_DIR) && tar xf $(ZRYTHM_PKG_TARBALL) && \
+		cd zrythm-$(ZRYTHM_PKG_VERSION) && \
 		rm -rf build && \
 		meson build -Dsdl=enabled -Drtaudio=auto \
 		  -Drtmidi=auto -Dffmpeg=enabled \
@@ -278,11 +280,11 @@ define make_osx
 		ninja -C build && ninja -C build install
 endef
 
-$(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/$(CARLA_SOURCE_ZIP)
-	-rm -rf $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
+$(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/$(CARLA_SOURCE_ZIP)
+	-rm -rf $(BUILD_OSX_DIR)/$(ZRYTHM_PKG_TARBALL)
 	-rm -rf $(OSX_INSTALL_PREFIX)
 	mkdir -p $(BUILD_OSX_DIR)
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_TARBALL)
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_PKG_TARBALL)
 	$(call make_carla,$(OSX_INSTALL_TRIAL_PREFIX))
 	$(call make_osx,$(OSX_INSTALL_TRIAL_PREFIX),true)
 	$(call make_carla,$(OSX_INSTALL_PREFIX))
@@ -290,14 +292,14 @@ $(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUIL
 
 # this must be run on macos
 artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_osx_installer.sh $(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm tools/osx/launcher.sh tools/osx/appdmg.json.in
-	tools/gen_osx_installer.sh $(ZRYTHM_VERSION) \
-		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_VERSION) \
+	tools/gen_osx_installer.sh $(ZRYTHM_PKG_VERSION) \
+		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_PKG_VERSION) \
 		$(OSX_INSTALL_PREFIX) \
 		artifacts/osx/$(OSX_INSTALLER) \
 		$$(pwd)/tools/osx /usr/local \
 		Zrythm Zrythm
-	tools/gen_osx_installer.sh $(ZRYTHM_VERSION) \
-		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_VERSION) \
+	tools/gen_osx_installer.sh $(ZRYTHM_PKG_VERSION) \
+		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_PKG_VERSION) \
 		$(OSX_INSTALL_TRIAL_PREFIX) \
 		artifacts/osx/$(OSX_TRIAL_INSTALLER) \
 		$$(pwd)/tools/osx /usr/local \
@@ -328,12 +330,12 @@ ubuntu1804: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 define prepare_debian
 	rm -rf $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)
 	mkdir -p $(BUILD_DEBIAN10_DIR)
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DEBIAN_TARBALL)
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_TRIAL_DEBIAN_TARBALL)
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DEBIAN_TARBALL)
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_TRIAL_DEBIAN_TARBALL)
 	cd $(BUILD_DEBIAN10_DIR) && tar xf $(ZRYTHM_DEBIAN_TARBALL)
 	mkdir -p $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/source
 	cp debian.changelog.in $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
-	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
 	cp debian.compat $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/compat
 	cp debian.control $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
 	cp debian.copyright $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/copyright
@@ -388,17 +390,17 @@ archlinux: $(BUILD_DIR)/$(ARCH_PKG_FILE)
 # arg 1: '-trial' if trial
 # arg 2: 'true' if trial, 'false' if not
 define make_appimg_target
-$(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_DIR)/meson/meson.py
+$(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/meson/meson.py
 	rm -rf $(APPIMAGE_APPDIR)
 	rm -rf /tmp/zrythm$(1)-appimg
 	mkdir -p $(APPIMAGE_APPDIR)
 	mkdir -p /tmp/zrythm$(1)-appimg
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) /tmp/zrythm$(1)-appimg/
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) /tmp/zrythm$(1)-appimg/
 	BUILD_DIR_PATH=$$$$(pwd)/$(BUILD_DIR) && \
 	MESON_PATH=$$$$BUILD_DIR_PATH/meson && \
 		echo "meson path is $$$$MESON_PATH" && \
-		cd /tmp/zrythm$(1)-appimg && tar xf $(ZRYTHM_TARBALL) && \
-		cd zrythm-$(ZRYTHM_VERSION) && \
+		cd /tmp/zrythm$(1)-appimg && tar xf $(ZRYTHM_PKG_TARBALL) && \
+		cd zrythm-$(ZRYTHM_PKG_VERSION) && \
 		$$$$MESON_PATH/meson.py build -Dsdl=enabled -Drtaudio=auto \
 		  -Drtmidi=auto -Dffmpeg=enabled \
 			-Dguile=enabled \
@@ -412,7 +414,7 @@ $(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZRYTHM
 		sed -i -e 's/Exec=.*zrythm_launch/Exec=zrythm_launch/' $(APPIMAGE_APPDIR)/usr/share/applications/zrythm.desktop && \
 		sed -i -e 's|/usr|$$$$(dirname "$$$$0")/usr|' $(APPIMAGE_APPDIR)/usr/bin/zrythm_launch && \
 		./linuxdeploy-x86_64.AppImage --appdir $(APPIMAGE_APPDIR) --plugin gtk --output appimage --icon-file=$(APPIMAGE_APPDIR)/usr/share/icons/hicolor/scalable/apps/zrythm.svg --desktop-file $(APPIMAGE_APPDIR)/usr/share/applications/zrythm.desktop && \
-	cp Zrythm-x86_64.AppImage $$$$BUILD_DIR_PATH/Zrythm$(1)-$(ZRYTHM_VERSION)-x86_64.AppImage
+	cp Zrythm-x86_64.AppImage $$$$BUILD_DIR_PATH/Zrythm$(1)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage
 endef
 
 $(eval $(call make_appimg_target,,false))
@@ -423,13 +425,13 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	rm -rf $(BUILD_ARCH_DIR)
 	mkdir -p $(BUILD_ARCH_DIR)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(BUILD_ARCH_DIR)/
-	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
 	# make normal version
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make manual
-	cd $(BUILD_DIR) && tar xf $(ZRYTHM_TARBALL) && \
-		cd zrythm-$(ZRYTHM_VERSION) && \
+	cd $(BUILD_DIR) && tar xf $(ZRYTHM_PKG_TARBALL) && \
+		cd zrythm-$(ZRYTHM_PKG_VERSION) && \
 		meson build && \
 		sed -i -e 's/latexpdf/latex/' doc/user/meson.build && \
 		ninja -C build latex-manual-en latex-manual-fr latex-manual-de && \
@@ -525,24 +527,24 @@ $(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64
 		$(ARCH_MXE_ROOT) \
 		$(BUILD_WINDOWS_DIR)/installer/dist/THIRDPARTY_INFO
 	# copy other files
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) /tmp && \
-		cd /tmp && tar xf $(ZRYTHM_TARBALL)
-	cp /tmp/zrythm-$(ZRYTHM_VERSION)/AUTHORS $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp /tmp/zrythm-$(ZRYTHM_VERSION)/COPYING* $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp /tmp/zrythm-$(ZRYTHM_VERSION)/README.md $(BUILD_WINDOWS_DIR)/installer/dist/README.txt
-	cp /tmp/zrythm-$(ZRYTHM_VERSION)/CONTRIBUTING.md $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp /tmp/zrythm-$(ZRYTHM_VERSION)/THANKS $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp /tmp/zrythm-$(ZRYTHM_VERSION)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp /tmp/zrythm-$(ZRYTHM_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
-	cp /tmp/zrythm-$(ZRYTHM_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) /tmp && \
+		cd /tmp && tar xf $(ZRYTHM_PKG_TARBALL)
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/AUTHORS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/COPYING* $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/README.md $(BUILD_WINDOWS_DIR)/installer/dist/README.txt
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/CONTRIBUTING.md $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/THANKS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/TRANSLATORS $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_DIR)/installer/dist/zrythm.ico
 	cp $(BUILD_DIR)/$(RCEDIT64_EXE) $(BUILD_WINDOWS_DIR)/installer/
 	# create installer
 	chmod +x tools/gen_windows_installer.sh
 	tools/gen_windows_installer.sh $(ARCH_MXE_64_SHARED_PREFIX) \
-		$(ZRYTHM_VERSION) $(BUILD_WINDOWS_DIR)/installer \
+		$(ZRYTHM_PKG_VERSION) $(BUILD_WINDOWS_DIR)/installer \
 		$(shell pwd)/tools/inno/installer.iss "$(3)" \
 		plugins$(4) $(4)
-	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_VERSION).exe" $(BUILD_DIR)/$(2)
+	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_PKG_VERSION).exe" $(BUILD_DIR)/$(2)
 endef
 
 $(eval $(call make_windows_installer_target,,$(WINDOWS_INSTALLER),Zrythm))
@@ -567,8 +569,8 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 		mkdir BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
 	mkdir -p $(2)
 	cp zrythm.spec.in $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	sed -i -e 's/@VERSION@/$(ZRYTHM_VERSION)/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	cp $(BUILD_DIR)/$(ZRYTHM_TARBALL) \
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) \
 		$(RPMBUILD_ROOT)/SOURCES/
 	# make normal version
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
@@ -602,6 +604,11 @@ $(BUILD_DIR)/$(ZRYTHM_TARBALL):
 	#wget $(ZRYTHM_TARBALL_URL).asc -O $(BUILD_DIR)/$(ZRYTHM_TARBALL).asc
 	#cd $(BUILD_DIR) && $(CALC_SUM) $(ZRYTHM_TARBALL_SUM)
 	#cd $(BUILD_DIR) && gpg --verify $(ZRYTHM_TARBALL).asc $(ZRYTHM_TARBALL)
+
+$(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL): $(BUILD_DIR)/$(ZRYTHM_TARBALL)
+	cd $(BUILD_DIR) && tar xf $(ZRYTHM_TARBALL) && \
+	mv zrythm-$(ZRYTHM_VERSION) zrythm-$(ZRYTHM_PKG_VERSION) && \
+	tar cf $(ZRYTHM_PKG_TARBALL) zrythm-$(ZRYTHM_PKG_VERSION)
 
 # target for fetching the ZPlugins release tarball
 $(BUILD_DIR)/$(ZPLUGINS_TARBALL):
