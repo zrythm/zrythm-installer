@@ -1,5 +1,7 @@
-ZRYTHM_VERSION=master # git tag/commit
-ZRYTHM_PKG_VERSION=master # version to use in packages
+# git tag/commit
+ZRYTHM_VERSION=master
+# version to use in packages
+ZRYTHM_PKG_VERSION=1
 ZRYTHM_TARBALL=zrythm-$(ZRYTHM_VERSION).tar.gz
 ZRYTHM_PKG_TARBALL=zrythm-$(ZRYTHM_PKG_VERSION).tar.gz
 ZRYTHM_DIR=zrythm-$(ZRYTHM_VERSION)
@@ -493,12 +495,12 @@ $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_SHARED_PREFIX)/li
 	fi
 
 #$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_STATIC_PREFIX)/bin/zrythm$(1).exe
+endef
 
-$(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.dll: $(ARCH_MXE_64_STATIC_PREFIX)/bin/zrythm$(1).exe
+$(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.dll: $(ARCH_MXE_64_STATIC_PREFIX)/bin/zrythm.exe
 	mkdir -p $(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders
 	cp $(ARCH_MXE_64_SHARED_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/*.dll \
 		$(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/
-endef
 
 $(eval $(call make_zrythm_mxe_target,,false))
 $(eval $(call make_zrythm_mxe_target,-trial,true))
@@ -627,6 +629,12 @@ $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP):
 
 $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_32_ZIP):
 	cd $(BUILD_DIR) && wget $(CARLA_WINDOWS_BINARY_32_URL)
+
+pkg-filename-%:
+	@echo $($*_PKG_FILE)
+
+pkg-trial-filename-%:
+	@echo $($*_PKG_TRIAL_FILE)
 
 # call this if cleaning the chroot environment is needed
 .PHONY: clean-windows10-chroot
