@@ -87,6 +87,7 @@ OSX_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_PKG_VERSION)-setup.dmg
 OSX_TRIAL_PKG_FILE=$(OSX_TRIAL_INSTALLER)
 APPIMAGE_APPDIR=/tmp/appimage/AppDir
 BREEZE_DARK_PATH=/Users/alex/.local/share/icons/breeze-dark
+MANUAL_ZIP_PATH=$(BUILD_DIR)/user-manual.zip
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
@@ -489,7 +490,8 @@ $(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64
 	tools/gen_windows_installer.sh $(ARCH_MXE_64_SHARED_PREFIX) \
 		$(ZRYTHM_PKG_VERSION) $(BUILD_WINDOWS_DIR)/installer \
 		$(shell pwd)/tools/inno/installer.iss "$(3)" \
-		plugins$(4) $(4) $(BREEZE_DARK_PATH)
+		plugins$(4) $(4) $(BREEZE_DARK_PATH) \
+		$(MANUAL_ZIP_PATH)
 	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_PKG_VERSION).exe" $(BUILD_DIR)/$(2)
 endef
 

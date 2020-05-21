@@ -38,6 +38,7 @@ APP_NAME=$5
 PLUGINS_DIR=$6
 TRIAL=$7
 BREEZE_DARK_PATH=$8
+manual_zip_path=$9
 DIST_DIR=$BUILD_DIR/dist # root of the distribution
 DIST_BINDIR=$DIST_DIR/bin
 DIST_LIBDIR=$DIST_DIR/lib
@@ -126,7 +127,7 @@ mv $DIST_BINDIR/libcarla_native-plugin.dll \
 # ******************************
 if [ "$TRIAL" != "-trial" ]; then
   echo "packaging user manuals" ;
-  unzip -o $BUILD_DIR/../../../artifacts/archlinux/user-manual.zip -d $DIST_DIR/ ;
+  unzip -o $manual_zip_path -d $DIST_DIR/ ;
 fi
 
 # ******************************
