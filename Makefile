@@ -128,69 +128,7 @@ endef
 # they are not run in parallel)
 define create_installer_zip_target
 ${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE ${3}
-	rm -rf bin.bak
-	- mv bin bin.bak
-	mkdir -p bin/debian
-	mkdir -p bin/ubuntu
-	mkdir -p bin/linuxmint
-	mkdir -p bin/arch
-	mkdir -p bin/fedora
-	if [ "$(2)" == "-trial" ]; then \
-		cp artifacts/debian10/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/debian/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_10_amd64.deb; \
-		cp artifacts/linuxmint193/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/linuxmint/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_19.3_amd64.deb; \
-		cp artifacts/ubuntu2004/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/ubuntu/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_20.04_amd64.deb; \
-		cp artifacts/ubuntu1910/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/ubuntu/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_19.10_amd64.deb; \
-		cp artifacts/ubuntu1804/$(DEBIAN_TRIAL_PKG_FILE) \
-			bin/ubuntu/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_18.04_amd64.deb; \
-		cp artifacts/archlinux/$(ARCH_TRIAL_PKG_FILE) \
-			bin/arch/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_x86_64.pkg.tar.xz; \
-		cp artifacts/fedora32/$(FEDORA32_TRIAL_PKG_FILE) \
-			bin/fedora/zrythm$(2)-$(ZRYTHM_PKG_VERSION)-1_32_x86_64.rpm; \
-	else \
-		cp artifacts/debian10/$(DEBIAN_PKG_FILE) \
-			bin/debian/zrythm-$(ZRYTHM_PKG_VERSION)-1_10_amd64.deb; \
-		cp artifacts/linuxmint193/$(DEBIAN_PKG_FILE) \
-			bin/linuxmint/zrythm-$(ZRYTHM_PKG_VERSION)-1_19.3_amd64.deb; \
-		cp artifacts/ubuntu2004/$(DEBIAN_PKG_FILE) \
-			bin/ubuntu/zrythm-$(ZRYTHM_PKG_VERSION)-1_20.04_amd64.deb; \
-		cp artifacts/ubuntu1910/$(DEBIAN_PKG_FILE) \
-			bin/ubuntu/zrythm-$(ZRYTHM_PKG_VERSION)-1_19.10_amd64.deb; \
-		cp artifacts/ubuntu1804/$(DEBIAN_PKG_FILE) \
-			bin/ubuntu/zrythm-$(ZRYTHM_PKG_VERSION)-1_18.04_amd64.deb; \
-		cp artifacts/archlinux/$(ARCH_PKG_FILE) \
-			bin/arch/zrythm-$(ZRYTHM_PKG_VERSION)-1_x86_64.pkg.tar.xz; \
-		cp artifacts/fedora32/$(FEDORA32_PKG_FILE) \
-			bin/fedora/zrythm-$(ZRYTHM_PKG_VERSION)-1_32_x86_64.rpm; \
-		unzip -o artifacts/archlinux/user-manual.zip -d ./ ; \
-	fi
-	cp -Rf artifacts/debian10/zplugins$(2) bin/debian/zplugins$(2)-10
-	cp -Rf artifacts/linuxmint193/zplugins$(2) \
-		bin/linuxmint/zplugins$(2)-19.3
-	cp -Rf artifacts/ubuntu2004/zplugins$(2) \
-		bin/ubuntu/zplugins$(2)-20.04
-	cp -Rf artifacts/ubuntu1910/zplugins$(2) \
-		bin/ubuntu/zplugins$(2)-19.10
-	cp -Rf artifacts/ubuntu1804/zplugins$(2) \
-		bin/ubuntu/zplugins$(2)-18.04
-	cp -Rf artifacts/archlinux/zplugins$(2) \
-		bin/arch/zplugins$(2)-arch
-	cp -Rf artifacts/fedora32/zplugins$(2) \
-		bin/fedora/zplugins$(2)-32
-	#cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage \
-		#Zrythm$(2)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage
-	sed 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' < README$(2).in > README
-	sed -i -e 's/@_AT_@/@/' README
-	sed 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' < installer.sh.in > installer.sh
-	sed -i -e 's/@ZPLUGINS_VERSION@/$(ZPLUGINS_VERSION)/' installer.sh
-	sed -i -e 's/@ZRYTHM@/zrythm$(2)/' installer.sh
-	sed -i -e 's/@ZPLUGINS@/zplugins$(2)/' installer.sh
-	chmod +x installer.sh
-	tools/gen_installer.sh $(ZRYTHM_PKG_VERSION) $(1)
-	rm -rf README installer.sh *.AppImage Zrythm-*.pdf
+	tools/gen_installer.sh $(ZRYTHM_PKG_VERSION) $(1) $(2) $(ZPLUGINS_VERSION)
 endef
 
 # creates a generic artifact target

@@ -17,11 +17,14 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-zrythm="@ZRYTHM@"
+set -e
+
 zrythm_ver="@VERSION@"
-zplugins="@ZPLUGINS@"
 zplugins_ver="@ZPLUGINS_VERSION@"
 architecture="amd64"
+trial="@TRIAL@"
+
+distro_identifier=""
 
 distro_ver=0
 os_release_file=
@@ -33,17 +36,8 @@ elif [ -e /usr/lib/os-release ]; then
 fi
 
 # ---- Detect debian based systems ----
-is_ubuntu=0
-is_debian=0
-is_mint=0
-# LTS is version x.04
-ubuntu_lts="04"
-
 debian_10_str="Debian GNU/Linux 10"
-debian_9_str="Debian GNU/Linux 9"
-mint_19_3_str="LinuxMint 19.3"
 ubuntu_18_04="Ubuntu 18.04"
-ubuntu_18_10_str="Ubuntu 18.10"
 ubuntu_19_10_str="Ubuntu 19.10"
 ubuntu_20_04_str="Ubuntu 20.04"
 
@@ -54,100 +48,54 @@ if [ $? -eq 0 ]; then
   have_zenity=1
 fi
 
-if [[ "$ID" = *"linuxmint"* ]]; then
-  if [[ "$VERSION_ID" = *"19.3"* ]]; then
-    echo "found $mint_19_3_str"
-    is_mint=1
-    distro_ver=19.3
-  fi
-fi
-
 if [[ "$ID" = *"debian"* ]]; then
   if [[ "$VERSION_ID" = *"10"* ]]; then
     echo "found $debian_10_str"
-    is_debian=1
-    distro_ver=10
-  elif [[ "$VERSION_ID" = *"9"* ]]; then
-    echo "found $debian_9_str"
-    is_debian=1
-    distro_ver=9
+    distro_identifier="debian10"
   fi
 fi
 
 if [[ "$ID" = *"ubuntu"* ]]; then
   if [[ "$VERSION_ID" = *"18.04"* ]]; then
     echo "found $ubuntu_18_04_str"
-    is_ubuntu=1
-    distro_ver=18
-    ubuntu_lts="04"
-  elif [[ "$VERSION_ID" = *"18.10"* ]]; then
-    echo "found $ubuntu_18_10_str"
-    is_ubuntu=1
-    distro_ver=18
-    ubuntu_lts="10"
+    distro_identifier="ubuntu1804"
   elif [[ "$VERSION_ID" = *"20.04"* ]]; then
     echo "found $ubuntu_20_04_str"
-    is_ubuntu=1
-    distro_ver=20
-    ubuntu_lts="04"
+    distro_identifier="ubuntu2004"
   elif [[ "$VERSION_ID" = *"19.10"* ]]; then
     echo "found $ubuntu_19_10_str"
-    is_ubuntu=1
-    distro_ver=19
-    ubuntu_lts="10"
+    distro_identifier="ubuntu1910"
   fi
 elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
   if [[ "$UBUNTU_CODENAME" = *"bionic"* ]]; then
     echo "found $ubuntu_18_04_str"
-    is_ubuntu=1
-    distro_ver=18
-    ubuntu_lts="04"
+    distro_identifier="ubuntu1804"
+  elif [[ "$UBUNTU_CODENAME" = *"focal"* ]]; then
+    echo "found $ubuntu_20_04_str"
+    distro_identifier="ubuntu2004"
   fi
 fi
 
 # ---- Detect arch systems ----
 
 arch_str="Arch GNU/Linux"
-is_arch=0
 
-if [[ "$ID" = "arch" ]]; then
+if [[ "$ID" = "arch" -o "$ID_LIKE" = *"arch"* ]]; then
   echo "found $arch_str"
   architecture="x86_64"
-  is_arch=1
-elif [[ "$ID_LIKE" = *"arch"* ]]; then
-  echo "found $arch_str"
-  architecture="x86_64"
-  is_arch=1
+  distro_identifier="archlinux"
 fi
 
 # ---- Detect fedora/opensuse ----
 
-is_fedora=0
-is_opensuse=0
-is_tumbleweed=0
-fedora_30_str="Fedora 30"
-fedora_31_str="Fedora 31"
 fedora_32_str="Fedora 32"
 
 if [[ "$ID" = "fedora" ]]; then
   architecture="x86_64"
   if [[ "$VERSION_ID" = *"32"* ]]; then
     echo "found $fedora_32_str"
-    is_fedora=1
-    distro_ver=32
-  elif [[ "$VERSION_ID" = *"31"* ]]; then
-    echo "found $fedora_31_str"
-    is_fedora=1
-    distro_ver=31
-  elif [[ "$VERSION_ID" = *"30"* ]]; then
-    echo "found $fedora_30_str"
-    is_fedora=1
-    distro_ver=30
+    distro_identifier="fedora32"
   fi
-elif [[ "$ID" = "opensuse-tumbleweed" ]]; then
-  is_opensuse=1
-  is_tumbleweed=1
-  architecture="x86_64"
 fi
 
 # ---- Install ----
@@ -170,9 +118,8 @@ show_info()
   fi
 }
 
-if [ $is_ubuntu = 0 -a $is_debian = 0 -a $is_mint = 0 -a \
-  $is_arch = 0 -a $is_fedora = 0 -a $is_tumbleweed = 0 ]; then
-  show_error "Could not detect your distro or your distro is not supported yet. Please contact the Zrythm developers for assistance."
+if [ -z $distro_identifier ]; then
+  show_error "Could not detect your distro or your distro is not supported yet. Please contact the Zrythm maintainers for assistance."
   exit 1
 fi
 
@@ -187,10 +134,8 @@ print_install_success()
   show_info "Install successful!"
 }
 
-set -e
-
 proceed=0
-proceed_txt="Proceed with the installation of Zrythm v$zrythm_ver?"
+proceed_txt="Proceed with the installation of Zrythm$TRIAL v$zrythm_ver?"
 if [ $have_zenity -ne 0 ]; then
   zenity --question --text="$proceed_txt" --width $zenity_width
   if [ $? -eq 0 ]; then
@@ -203,42 +148,25 @@ else
   fi
 fi
 
+# install packages
+prefix="bin/$distro_identifier/zrythm-$zrythm_ver"
 if [ $proceed -ne 0 ]; then
-  if [ $is_ubuntu = 1 ]; then
+  if [[ $distro_identifier = "ubuntu"* -o $distro_identifier = "debian"* ]]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
       "apt update && \
-      dpkg -i \"bin/ubuntu/${zrythm}-${zrythm_ver}-1_${distro_ver}.${ubuntu_lts}_${architecture}.deb\" || \
+      dpkg -i \"$prefix-1_$architecture.deb\" || \
       apt install -f -y" && \
       print_install_success
-  elif [ $is_mint = 1 ]; then
+  elif [[ $distro_identifier = "fedora"* ]]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
-      "apt update && \
-      dpkg -i \"bin/linuxmint/${zrythm}-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
-      apt install -f -y" && \
+      "dnf -y install \"$prefix-1_$architecture.rpm\"" && \
       print_install_success
-  elif [ $is_debian = 1 ]; then
+  elif [[ $distro_identifier = "archlinux" ]]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
-      "apt update && \
-      dpkg -i \"bin/debian/${zrythm}-${zrythm_ver}-1_${distro_ver}_${architecture}.deb\" || \
-      apt install -f -y" && \
-      print_install_success
-  elif [ $is_fedora = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "dnf -y install \"bin/fedora/${zrythm}-${zrythm_ver}-1_${distro_ver}_${architecture}.rpm\"" && \
-      print_install_success
-  elif [ $is_tumbleweed = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "zypper -in install --allow-unsigned-rpm \"bin/opensuse/${zrythm}-${zrythm_ver}-1_tumbleweed_${architecture}.rpm\"" && \
-      print_install_success
-  elif [ $is_arch = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "pacman -U --noconfirm \"bin/arch/${zrythm}-${zrythm_ver}-1_${architecture}.pkg.tar.xz\"" && \
+      "pacman -U --noconfirm \"$prefix-1_${architecture}.pkg.tar.xz\"" && \
       print_install_success
   fi
 fi
@@ -257,36 +185,14 @@ else
   fi
 fi
 
+# install plugins
 if [ $proceed -ne 0 ]; then
-  if [ $is_ubuntu = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "cp -R \"bin/ubuntu/${zplugins}-${distro_ver}.${ubuntu_lts}/\"* /usr/lib/lv2/" && \
-      print_install_success
-  elif [ $is_mint = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "cp -R \"bin/linuxmint/${zplugins}-${distro_ver}/\"* /usr/lib/lv2/" && \
-      print_install_success
-  elif [ $is_debian = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "cp -R \"bin/debian/${zplugins}-${distro_ver}/\"* /usr/lib/lv2/" && \
-      print_install_success
-  elif [ $is_fedora = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "cp -R \"bin/fedora/${zplugins}-${distro_ver}/\"* /usr/lib64/lv2/" && \
-      print_install_success
-  elif [ $is_tumbleweed = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "cp -R \"bin/opensuse/${zplugins}-tumbleweed/\"* /usr/lib64/lv2/" && \
-      print_install_success
-  elif [ $is_arch = 1 ]; then
-    ask_for_root_pw;
-    sudo /bin/sh -c \
-      "cp -R \"bin/arch/${zplugins}-arch/\"* /usr/lib/lv2/" && \
-      print_install_success
+  ask_for_root_pw;
+  libdir="lib"
+  if [[ $distro_identifier = "fedora"* ]]; then
+    libdir="lib64"
   fi
+  sudo /bin/sh -c \
+    "cp -R \"bin/$zplugins/\"* /usr/$libdir/lv2/"
+  print_install_success
 fi
