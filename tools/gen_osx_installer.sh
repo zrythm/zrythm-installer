@@ -9,7 +9,7 @@
 # 3. Uses appdmg (brew install npm, npm install -g appdmg)
 # 4. need to install librsvg and then reinstall gdk-pixbuf
 #   in brew to get svg support (or copy the pixbuf loader from
-#   the Cellar of libtsvg to the Cellar of gdk-pixbuf) OR just install adwaitta-icon-theme which
+#   the Cellar of libtsvg to the Cellar of gdk-pixbuf) OR just install adwaita-icon-theme which
 # installs both
 # 5. do a `brew remove adwaita-icon-theme gtk+3 librsvg yelp-tools gdk-pixbuf` when done to check
 # if it loads without these
@@ -34,6 +34,7 @@ OSX_SOURCE_DATA_DIR=$5
 NORMAL_PREFIX=$6
 APP_NAME_W_SPACES=$7
 APP_NAME_NO_SPACES=$8
+breeze_dark_path=$9
 WORK_ROOT=/tmp/zrythm-dmg
 
 rm -rf $WORK_ROOT
@@ -116,7 +117,7 @@ cp -RL "$ZRYTHM_INSTALL_PREFIX/share/zrythm" "$Share/"
 echo "copying breeze icons"
 ICONS_DIR="$Share/icons"
 mkdir -p "$ICONS_DIR"
-cp -RL "/Users/alex/.local/share/icons/breeze-dark" "$ICONS_DIR/"
+cp -RL "$breeze_dark_path" "$ICONS_DIR/breeze-dark"
 
 echo "copying existing hicolor icons"
 cp -RL "$NORMAL_PREFIX/share/icons/hicolor" "$ICONS_DIR/"

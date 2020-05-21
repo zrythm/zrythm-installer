@@ -84,6 +84,7 @@ OSX_PKG_FILE=$(OSX_INSTALLER)
 OSX_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_PKG_VERSION)-setup.dmg
 OSX_TRIAL_PKG_FILE=$(OSX_TRIAL_INSTALLER)
 APPIMAGE_APPDIR=/tmp/appimage/AppDir
+BREEZE_DARK_PATH=/Users/alex/.local/share/icons/breeze-dark
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
@@ -243,13 +244,13 @@ artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_
 		$(OSX_INSTALL_PREFIX) \
 		artifacts/osx/$(OSX_INSTALLER) \
 		$$(pwd)/tools/osx /usr/local \
-		Zrythm Zrythm
+		Zrythm Zrythm $(BREEZE_DARK_PATH)
 	tools/gen_osx_installer.sh $(ZRYTHM_PKG_VERSION) \
 		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_PKG_VERSION) \
 		$(OSX_INSTALL_TRIAL_PREFIX) \
 		artifacts/osx/$(OSX_TRIAL_INSTALLER) \
 		$$(pwd)/tools/osx /usr/local \
-		"Zrythm (Trial)" Zrythm-trial
+		"Zrythm (Trial)" Zrythm-trial $(BREEZE_DARK_PATH)
 
 .PHONY: osx
 osx: artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)
@@ -427,6 +428,7 @@ $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: FORCE
 		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/-Dtrial-ver=true/-Dtrial-ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/_VERSION  .*/_VERSION  := $(ZRYTHM_VERSION)/' src/zrythm.mk && \
+		./bootstrap && \
 		make update-checksum-zrythm && \
 		make $(MXE_FLAGS) zrythm
 	if [ "$(1)" = "-trial" ]; then \
