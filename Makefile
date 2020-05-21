@@ -30,6 +30,7 @@ ARCH_MXE_64_STATIC_PREFIX=$(ARCH_MXE_ROOT)/usr/x86_64-w64-mingw32.static
 ARCH_MXE_64_SHARED_PREFIX=$(ARCH_MXE_ROOT)/usr/x86_64-w64-mingw32.shared
 MXE_FLAGS=MXE_TARGETS='x86_64-w64-mingw32.shared' MXE_PLUGIN_DIRS=$(ARCH_MXE_ROOT)/plugins/meson-wrapper -j1
 MXE_ZPLUGINS_CLONE_PATH=/home/ansible/Documents/git/ZPlugins
+MXE_GTK3_CLONE_PATH=/home/ansible/Documents/non-git/gtk+-3.24.18
 BUILD_DIR=build
 BUILD_DEBIAN10_DIR=$(BUILD_DIR)/debian10
 MESON_VERSION=0.53.0
@@ -430,6 +431,7 @@ $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: FORCE
 		sed -i -e 's/-Dtrial-ver=true/-Dtrial-ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/_VERSION  .*/_VERSION  := $(ZRYTHM_VERSION)/' src/zrythm.mk && \
 		sed -i -e 's,/home/ansible/Documents/git/ZPlugins,$(MXE_ZPLUGINS_CLONE_PATH),' src/zplugins.mk && \
+		sed -i -e 's,/home/ansible/Documents/non-git/gtk+-3.24.18,$(MXE_GTK3_CLONE_PATH),' src/gtk3.mk && \
 		./bootstrap && \
 		make update-checksum-zrythm && \
 		make $(MXE_FLAGS) zrythm
