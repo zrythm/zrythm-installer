@@ -251,6 +251,9 @@ artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_
 		$$(pwd)/tools/osx /usr/local \
 		"Zrythm (Trial)" Zrythm-trial
 
+.PHONY: osx
+osx: artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)
+
 #.PHONY: debian9
 #debian9: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
 
