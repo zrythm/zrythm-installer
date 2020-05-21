@@ -15,9 +15,7 @@ DISTROS="archlinux debian10 ubuntu1804 ubuntu1910 ubuntu2004 fedora32"
 
 rm $INSTALLER_ZIP_FILE
 
-is_trial () {
-  [ $TRIAL = "-trial" ]
-}
+is_trial=[ $TRIAL = "-trial" ]
 
 copy_plugins () {
   distro=$1
@@ -31,7 +29,7 @@ copy_plugins () {
   done
 
   # copy remaining if not trial
-  if !is_trial ; then
+  if [ ! $is_trial ] ; then
     for plugin in ZChordz.lv2 ZLFO.lv2 ; do
       cp -Rf $src_dir/$plugin $dest_dir/
     done
@@ -51,7 +49,7 @@ get_package_filename () {
     "fedora32")
       search_str="FEDORA32"
   esac
-  if is_trial ; then
+  if [ $is_trial ] ; then
     echo "$(cd zrythm-installer && make pkg-trial-filename-$search_str)"
   else
     echo "$(cd zrythm-installer && make pkg-filename-$search_str)"
@@ -104,8 +102,11 @@ sed "s/@VERSION@/$ZRYTHM_VERSION/" \
   < installer.sh.in > installer.sh
 chmod +x installer.sh
 
-# TODO add *.AppImage
-zip $INSTALLER_ZIP_FILE Zrythm-*.pdf installer.sh README \
+pdf=""
+if [ ! $is_trial ] ; then
+  pdf=$(ls Zrythm-*.pdf)
+fi
+zip $INSTALLER_ZIP_FILE $pdf installer.sh README \
   bin/**/*.* bin/**/**/* bin/**/**/**/* bin/**/**/**/**/*
 
-rm -rf README installer.sh *.AppImage Zrythm-*.pdf
+rm -rf README installer.sh *.AppImage $pdf
