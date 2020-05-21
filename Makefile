@@ -412,29 +412,17 @@ $(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR): arch-mingw/zplugin
 	sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_WINDOWS_DIR)/plugins/PKGBUILD
 	cd $(BUILD_WINDOWS_DIR)/plugins && makepkg -f
 
-$(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe:
-	mkdir -p /tmp/carla32
-	cd $(BUILD_DIR) && \
-		unzip -o $(CARLA_WINDOWS_BINARY_32_ZIP) -d \
-		/tmp/carla32/
-	mkdir -p $(ARCH_MXE_64_STATIC_PREFIX)/lib/carla
-	mkdir -p $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla
-	sudo cp /tmp/carla32/carla-bridge-win32.exe $(ARCH_MXE_64_STATIC_PREFIX)/lib/carla/
-	sudo cp /tmp/carla32/carla-bridge-win32.exe $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/
-	sudo chmod +x $(ARCH_MXE_64_STATIC_PREFIX)/lib/carla/carla-bridge-win32.exe
-	sudo chmod +x $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe
-
 # arg 1: '-trial' if trial
 # arg 2: 'true' if trial, false otherwise
 define make_zrythm_mxe_target
-$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: $(ARCH_MXE_64_SHARED_PREFIX)/lib/carla/carla-bridge-win32.exe FORCE
+$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: FORCE
 	cd $(ARCH_MXE_ROOT) && \
 		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/-Dtrial-ver=true/-Dtrial-ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/_VERSION  .*/_VERSION  := $(ZRYTHM_VERSION)/' src/zrythm.mk && \
 		make update-checksum-zrythm && \
 		make $(MXE_FLAGS) zrythm
-	if [ "$(1)" == "-trial" ]; then \
+	if [ "$(1)" = "-trial" ]; then \
 		mv $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm.exe \
 			$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe ; \
 	fi
