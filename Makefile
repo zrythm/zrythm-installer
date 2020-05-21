@@ -425,13 +425,11 @@ $(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR): arch-mingw/zplugin
 # arg 1: '-trial' if trial
 # arg 2: 'true' if trial, false otherwise
 define make_zrythm_mxe_target
-$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe: FORCE
+$(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe:
 	cd $(ARCH_MXE_ROOT) && \
 		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/-Dtrial-ver=true/-Dtrial-ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/_VERSION  .*/_VERSION  := $(ZRYTHM_VERSION)/' src/zrythm.mk && \
-		sed -i -e 's,/home/ansible/Documents/git/ZPlugins,$(MXE_ZPLUGINS_CLONE_PATH),' src/zplugins.mk && \
-		sed -i -e 's,/home/ansible/Documents/non-git/gtk+-3.24.18,$(MXE_GTK3_CLONE_PATH),' src/gtk3.mk && \
 		./bootstrap && \
 		make update-checksum-zrythm && \
 		make $(MXE_FLAGS) zrythm
@@ -456,7 +454,7 @@ $(eval $(call make_zrythm_mxe_target,-trial,true))
 # arg 3: AppName
 # arg 4: `-trial` if trial
 define make_windows_installer_target
-$(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64_SHARED_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.dll
+$(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64_SHARED_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.dll $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/$(RCEDIT64_EXE)
 	# create sources distribution
 	- rm -rf $(BUILD_WINDOWS_DIR)/installer
 	mkdir -p $(BUILD_WINDOWS_DIR)/installer/dist/plugins$(4)
@@ -491,7 +489,7 @@ $(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64
 	tools/gen_windows_installer.sh $(ARCH_MXE_64_SHARED_PREFIX) \
 		$(ZRYTHM_PKG_VERSION) $(BUILD_WINDOWS_DIR)/installer \
 		$(shell pwd)/tools/inno/installer.iss "$(3)" \
-		plugins$(4) $(4)
+		plugins$(4) $(4) $(BREEZE_DARK_PATH)
 	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_PKG_VERSION).exe" $(BUILD_DIR)/$(2)
 endef
 

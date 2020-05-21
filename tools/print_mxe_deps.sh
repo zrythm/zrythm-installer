@@ -20,14 +20,16 @@
 
 set -e
 
-# $1 MXE root
-# $2 dest file
+mxe_root=$1
+dest_file=$2
 
-MXE_ROOT=$1
-DEST_FILE=$2
+rm -rf $dest_file
 
-rm -rf $DEST_FILE
+tmp_file=/tmp/zrythm-deps.txt
 
-for dep in $(make -C $MXE_ROOT show-upstream-deps-zrythm); do
-  echo "$dep $(make -C $MXE_ROOT print-ver-$dep)" >> $DEST_FILE
+deps=$(make -C $mxe_root -s show-upstream-deps-zrythm)
+for dep in $deps; do
+  echo "$dep $(make -C $mxe_root -s print-ver-$dep)" >> $tmp_file
 done
+
+mv $tmp_file $dest_file

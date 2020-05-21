@@ -37,6 +37,7 @@ MINGW_PREFIX=$1
 APP_NAME=$5
 PLUGINS_DIR=$6
 TRIAL=$7
+BREEZE_DARK_PATH=$8
 DIST_DIR=$BUILD_DIR/dist # root of the distribution
 DIST_BINDIR=$DIST_DIR/bin
 DIST_LIBDIR=$DIST_DIR/lib
@@ -151,7 +152,7 @@ cp -R $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
 echo "packaging breeze icons"
 mkdir -p "$DIST_SHAREDIR/icons"
 # the icons are preinstalled here
-cp -R "/home/ansible/icons/breeze-dark" "$DIST_SHAREDIR/icons"/
+cp -R "$BREEZE_DARK_PATH" "$DIST_SHAREDIR/icons"/
 #cp -R "$MINGW_PREFIX/share/icons/Adwaita" "$DIST_SHAREDIR/icons"/
 #echo "packaging breeze icons"
 #cp -R "$MINGW_PREFIX/bin/data/icons/breeze-dark" "$DIST_SHAREDIR/icons/"
@@ -224,5 +225,6 @@ cp "$INNO_ISS" "$DIST_DIR"/
 cd $DIST_DIR
 ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
   "/DAppName=$APP_NAME" "/DAppVersion=$ZRYTHM_VERSION" \
+  "/DAppInfoVersion=${ZRYTHM_VERSION:0:7}" \
   "/DPluginsDir=$PLUGINS_DIR" \
   installer.iss
