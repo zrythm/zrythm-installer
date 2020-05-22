@@ -258,27 +258,21 @@ artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_
 .PHONY: osx
 osx: artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)
 
-#.PHONY: debian9
-#debian9: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+# 1: distro name (debian10,ubuntu2004,...)
+define debian_based_phony_target
+.PHONY: $(1)
+$(1): $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+	mkdir -p $(BUILD_DIR)/$@
+	mkdir -p $(BUILD_DIR)/$@/zplugins
+	cp $< $(BUILD_DIR)/$@/$(DEBIAN_PKG_FILE)
+	cp -r $(BUILD_DIR)/zplugins/* $(BUILD_DIR)/$@/zplugins/
+endef
 
-# Debian 10 target to be used by ansible inside the
-# debian VM
-.PHONY: debian10
-debian10: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
-
-.PHONY: linuxmint193
-linuxmint193: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
-
-# Ubuntu 20.04 target to be used by ansible inside the
-# ubuntu VM
-.PHONY: ubuntu2004
-ubuntu2004: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
-
-.PHONY: ubuntu1910
-ubuntu1910: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
-
-.PHONY: ubuntu1804
-ubuntu1804: $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
+$(eval $(call debian_based_phony_target,debian10))
+$(eval $(call debian_based_phony_target,linuxmint193))
+$(eval $(call debian_based_phony_target,ubuntu1804))
+$(eval $(call debian_based_phony_target,ubuntu1910))
+$(eval $(call debian_based_phony_target,ubuntu2004))
 
 define prepare_debian
 	rm -rf $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)
@@ -306,7 +300,7 @@ define prepare_debian
 endef
 
 # arg 1: anything
-# arg 2: `true` for trial, `false` for normal ver
+# arg 2: distro
 define make_zplugins
 	rm -rf /tmp/$(1)/usr/lib/lv2/Z*.lv2
 	rm -rf $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION)
@@ -314,10 +308,11 @@ define make_zplugins
 	cd $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION) && \
 		cd ext/Soundpipe && CC=gcc make && cd ../.. && \
 		../meson/meson.py build --buildtype=release \
-		-Dtrial_ver=$(2) --prefix=/usr && \
+		--prefix=/usr && \
 		DESTDIR=/tmp ninja -C build install
-	cp -R /tmp/$(1)/usr/lib/lv2/Z*.lv2 $(BUILD_DIR)/
-	ls -l $(BUILD_DIR)/Z*.lv2
+	mkdir -p $(BUILD_DIR)/$(2)/zplugins
+	cp -R /tmp/$(1)/usr/lib/lv2/Z*.lv2 $(BUILD_DIR)/$(2)/zplugins
+	ls -l $(BUILD_DIR)/$(2)/zplugins/Z*.lv2
 endef
 
 $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS)
@@ -334,8 +329,7 @@ $(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.contro
 	sed -i -e 's/: zrythm/: zrythm-trial/g' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
 	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
 	# make plugins
-	$(call make_zplugins,,true)
-	$(call make_zplugins,,false)
+	$(call make_zplugins,)
 	$(call remove_carla)
 
 $(BUILD_DIR)/$(MESON_TARBALL):
@@ -343,6 +337,7 @@ $(BUILD_DIR)/$(MESON_TARBALL):
 
 .PHONY: archlinux
 archlinux: $(BUILD_DIR)/$(ARCH_PKG_FILE)
+	cp $< $(BUILD_DIR)/archlinux/$(ARCH_PKG_FILE)
 
 # create AppImage target
 # arg 1: '-trial' if trial
@@ -401,8 +396,7 @@ $(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
 	sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	# make plugins
-	$(call make_zplugins,,true)
-	$(call make_zplugins,,false)
+	$(call make_zplugins,,archlinux)
 	# make appimage
 	$(call remove_carla)
 
@@ -492,7 +486,7 @@ $(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64
 		$(shell pwd)/tools/inno/installer.iss "$(3)" \
 		plugins$(4) $(BREEZE_DARK_PATH) \
 		$(MANUAL_ZIP_PATH) $(4)
-	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_PKG_VERSION).exe" $(BUILD_DIR)/$(2)
+	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_PKG_VERSION).exe" $(BUILD_WINDOWS_DIR)/$(2)
 endef
 
 $(eval $(call make_windows_installer_target,,$(WINDOWS_INSTALLER),Zrythm))
@@ -507,6 +501,8 @@ fedora32: $(BUILD_DIR)/$(FEDORA32_PKG_FILE)
 # create RPM target
 # arg 1: pkg filename
 # arg 2: build dir
+# arg 3: trial pkg filename
+# arg 4: distro
 define make_rpm_target
 $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	$$(call make_carla,/usr,sudo)
@@ -526,14 +522,15 @@ $(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
 	sed -i -e '9s/zrythm/zrythm-trial/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	cp $(RPMBUILD_ROOT)/RPMS/x86_64/$(1) $(2)/
+	cp $(RPMBUILD_ROOT)/RPMS/x86_64/$(3) $(2)/
 	# make plugins
-	$$(call make_zplugins,,true)
-	$$(call make_zplugins,,false)
+	$$(call make_zplugins,,$(4))
 	$$(call remove_carla)
 endef
 
-$(eval $(call make_rpm_target,$(FEDORA32_PKG_FILE),$(BUILD_FEDORA32_DIR)))
-$(eval $(call make_rpm_target,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(BUILD_OPENSUSE_TUMBLEWEED_DIR)))
+$(eval $(call make_rpm_target,$(FEDORA32_PKG_FILE),$(BUILD_FEDORA32_DIR),$(FEDORA32_TRIAL_PKG_FILE),fedora32))
+#$(eval $(call make_rpm_target,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(BUILD_OPENSUSE_TUMBLEWEED_DIR)))
 
 # target to fetch latest version of git, used whenever
 # the meson version is too old
