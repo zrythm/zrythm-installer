@@ -84,9 +84,9 @@ Source: "share\fonts\zrythm\DSEG14-Classic-MINI\DSEG14ClassicMini-Italic.ttf"; \
   DestDir: "{fonts}"; FontInstall: "DSEG14 Classic Mini-Italic (OpenType)"; \
   Flags: onlyifdoesntexist uninsneveruninstall fontisnttruetype; \
   Components: zrythm
-;Source: "{#PluginsDir}\*"; DestDir: "{commoncf}\LV2"; \
-  ;Flags: ignoreversion recursesubdirs; \
-  ;Components: plugins
+Source: "{#PluginsDir}\*"; DestDir: "{commoncf}\LV2"; \
+  Flags: ignoreversion recursesubdirs; \
+  Components: plugins
 
 [Messages]
 

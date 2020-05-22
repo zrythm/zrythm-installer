@@ -490,8 +490,8 @@ $(BUILD_DIR)/$(2): $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(4).exe $(ARCH_MXE_64
 	tools/gen_windows_installer.sh $(ARCH_MXE_64_SHARED_PREFIX) \
 		$(ZRYTHM_PKG_VERSION) $(BUILD_WINDOWS_DIR)/installer \
 		$(shell pwd)/tools/inno/installer.iss "$(3)" \
-		plugins$(4) $(4) $(BREEZE_DARK_PATH) \
-		$(MANUAL_ZIP_PATH)
+		plugins$(4) $(BREEZE_DARK_PATH) \
+		$(MANUAL_ZIP_PATH) $(4)
 	cp "$(BUILD_WINDOWS_DIR)/installer/dist/Output/$(3) $(ZRYTHM_PKG_VERSION).exe" $(BUILD_DIR)/$(2)
 endef
 
