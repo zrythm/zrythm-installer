@@ -28,7 +28,7 @@ CARLA_WINDOWS_BINARY_32_URL=https://www.zrythm.org/downloads/carla/$(CARLA_WINDO
 ARCH_MXE_ROOT=/home/ansible/Documents/git/mxe
 ARCH_MXE_64_STATIC_PREFIX=$(ARCH_MXE_ROOT)/usr/x86_64-w64-mingw32.static
 ARCH_MXE_64_SHARED_PREFIX=$(ARCH_MXE_ROOT)/usr/x86_64-w64-mingw32.shared
-MXE_FLAGS=MXE_TARGETS='x86_64-w64-mingw32.shared' MXE_PLUGIN_DIRS=$(ARCH_MXE_ROOT)/plugins/meson-wrapper -j1 JOBS=6
+MXE_FLAGS=MXE_TARGETS='x86_64-w64-mingw32.shared' MXE_PLUGIN_DIRS=$(ARCH_MXE_ROOT)/plugins/meson-wrapper -j3 JOBS=4
 MXE_ZPLUGINS_CLONE_PATH=/home/ansible/Documents/git/ZPlugins
 MXE_GTK3_CLONE_PATH=/home/ansible/Documents/non-git/gtk+-3.24.18
 BUILD_DIR=build
