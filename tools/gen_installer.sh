@@ -5,17 +5,22 @@ set -e
 # args:
 # 1: zrythm version
 # 2: installer zip filename
-# 3: `-trial` if trial, otherwise empty
+# 3: zplugins version
+# 4: `-trial` if trial, otherwise empty
 
-ZRYTHM_VERSION=$1
-INSTALLER_ZIP_FILE=$2
-TRIAL=$3
-ZPLUGINS_VERSION=$4
-DISTROS="archlinux debian10 ubuntu1804 ubuntu1910 ubuntu2004 fedora32"
+zrythm_version=$1
+installer_zip=$2
+zplugins_version=$3
+trial=$4
+distros="archlinux debian10 ubuntu1804 ubuntu1910 ubuntu2004 fedora32"
 
-rm $INSTALLER_ZIP_FILE
+rm -rf $installer_zip
 
-is_trial=[ $TRIAL = "-trial" ]
+sed -i -e "s/ZRYTHM_PKG_VERSION=.*/ZRYTHM_PKG_VERSION=$zrythm_version/" Makefile
+
+is_trial () {
+  [ "$trial" = "-trial" ]
+}
 
 copy_plugins () {
   distro=$1
@@ -29,7 +34,7 @@ copy_plugins () {
   done
 
   # copy remaining if not trial
-  if [ ! $is_trial ] ; then
+  if ! is_trial ; then
     for plugin in ZChordz.lv2 ZLFO.lv2 ; do
       cp -Rf $src_dir/$plugin $dest_dir/
     done
@@ -41,24 +46,26 @@ get_package_filename () {
   search_str=""
   distro=$1
   case "$distro" in
-    "debian10" | "ubuntu"*)
+    "debian"* | "ubuntu"*)
       search_str="DEBIAN"
       ;;
     "archlinux")
       search_str="ARCH"
+      ;;
     "fedora32")
       search_str="FEDORA32"
+      ;;
   esac
-  if [ $is_trial ] ; then
-    echo "$(cd zrythm-installer && make pkg-trial-filename-$search_str)"
+  if is_trial ; then
+    echo "$(make --no-print-directory -s pkg-trial-filename-$search_str)"
   else
-    echo "$(cd zrythm-installer && make pkg-filename-$search_str)"
+    echo "$(make --no-print-directory -s pkg-filename-$search_str)"
   fi
 }
 
 # returns the filename to be placed inside "bin"
 get_dest_package_filename () {
-  prefix="zrythm-$ZRYTHM_VERSION"
+  prefix="zrythm-$zrythm_version"
   distro=$1
   res=""
   case "$distro" in
@@ -76,16 +83,16 @@ get_dest_package_filename () {
 
 copy_package () {
   distro=$1
-  src_pkg_file=get_package_filename $distro
-  dest_pkg_file=get_dest_package_filename $distro
-  cp "artifacts/$distro/$pkg_file" "bin/$distro/$dest_pkg_file"
+  src_pkg_file="$(get_package_filename $distro)"
+  dest_pkg_file="$(get_dest_package_filename $distro)"
+  cp "artifacts/$distro/$src_pkg_file" "bin/$distro/$dest_pkg_file"
 }
 
 # remove prev backup
 rm -rf bin.bak
 mv bin bin.bak || true
 
-for distro in $DISTROS ; do
+for distro in $distros ; do
   mkdir -p bin/$distro
   copy_plugins $distro
   copy_package $distro
@@ -94,19 +101,19 @@ done
 #cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage \
   #Zrythm$(2)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage
 
-sed -e "s/@VERSION@/$ZRYTHM_VERSION/" \
-  -e 's/@_AT_@/@/' < README$TRIAL.in > README
-sed "s/@VERSION@/$ZRYTHM_VERSION/" \
-  -e "s/@ZPLUGINS_VERSION@/$ZPLUGINS_VERSION/" \
-  -e "s/@TRIAL@/$TRIAL/" \
+sed -e "s/@VERSION@/$zrythm_version/" \
+  -e 's/@_AT_@/@/' < README$trial.in > README
+sed -e "s/@VERSION@/$zrythm_version/" \
+  -e "s/@ZPLUGINS_VERSION@/$zplugins_version/" \
+  -e "s/@TRIAL@/$trial/" \
   < installer.sh.in > installer.sh
 chmod +x installer.sh
 
 pdf=""
-if [ ! $is_trial ] ; then
+if ! is_trial ; then
   pdf=$(ls Zrythm-*.pdf)
 fi
-zip $INSTALLER_ZIP_FILE $pdf installer.sh README \
+zip $installer_zip $pdf installer.sh README \
   bin/**/*.* bin/**/**/* bin/**/**/**/* bin/**/**/**/**/*
 
 rm -rf README installer.sh *.AppImage $pdf
