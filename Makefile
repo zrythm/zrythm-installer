@@ -32,7 +32,6 @@ MXE_FLAGS=MXE_TARGETS='x86_64-w64-mingw32.shared' MXE_PLUGIN_DIRS=$(ARCH_MXE_ROO
 MXE_ZPLUGINS_CLONE_PATH=/home/ansible/Documents/git/ZPlugins
 MXE_GTK3_CLONE_PATH=/home/ansible/Documents/non-git/gtk+-3.24.18
 BUILD_DIR=build
-BUILD_DEBIAN10_DIR=$(BUILD_DIR)/debian10
 MESON_VERSION=0.53.0
 MESON_DIR=meson-$(MESON_VERSION)
 MESON_TARBALL=$(MESON_DIR).tar.gz
@@ -88,6 +87,8 @@ OSX_TRIAL_PKG_FILE=$(OSX_TRIAL_INSTALLER)
 APPIMAGE_APPDIR=/tmp/appimage/AppDir
 BREEZE_DARK_PATH=/Users/alex/.local/share/icons/breeze-dark
 MANUAL_ZIP_PATH=$(BUILD_DIR)/user-manual.zip
+BUILD_ZPLUGINS_DIR=$(BUILD_DIR)/zplugins
+ZSAW_MANIFEST_PATH=$(BUILD_DIR)/zplugins/ZSaw.lv2/manifest.ttl
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
@@ -119,48 +120,15 @@ define run_windows_build_in_vm
 	$(call stop_vm,archlinux)
 endef
 
-# creates an installer-in-x target (UNIX)
-# arg 1: VM name
-define create_installer_in_x_target
-installer-in-$(1): $(UNIX_INSTALLER_ZIP) $(UNIX_TRIAL_INSTALLER_ZIP)
-	$$(call start_vm,$(1))
-	ansible -i ./ansible-conf.ini -m copy -a "src=$(UNIX_INSTALLER_ZIP) dest=~/" $(1)
-	ansible -i ./ansible-conf.ini -m copy -a "src=$(UNIX_TRIAL_INSTALLER_ZIP) dest=~/" $(1)
-	$$(call stop_vm,$(1))
-endef
-
 # creates the artifacts for unix
 # argument 1: the installer zip filename
 # argument 2: `-trial` if trial, otherwise empty
 # argument 3: dependency (make trial depend on non-trial so
 # they are not run in parallel)
 define create_installer_zip_target
-${1}: unix-artifacts tools/gen_installer.sh README$(2).in installer.sh.in FORCE ${3}
+${1}: tools/gen_installer.sh README$(2).in installer.sh.in FORCE ${3}
 	tools/gen_installer.sh $(ZRYTHM_PKG_VERSION) $(1) $(2) $(ZPLUGINS_VERSION)
 endef
-
-# creates a generic artifact target
-# arg 1: the VM name
-# arg 2: the package filename
-# arg 3: the trial package filename
-# arg 4: the extra dependencies
-#artifacts/$(1)/$(2) artifacts/$(1)/$(3) artifacts/$(1)/ZLFO.lv2/manifest.ttl &: $(COMMON_SRC_DEPS) $(4)
-define generic_artifact_target
-artifacts/$(1)/zplugins/$(ZLFO_MANIFEST): $(COMMON_SRC_DEPS) $(4)
-	$$(call run_build_in_vm,$(1))
-endef
-
-# creates the debian artifact targets
-# arg 1: the VM name
-define debian_artifact_target
-$(call generic_artifact_target,$(1),$(DEBIAN_PKG_FILE),$(DEBIAN_TRIAL_PKG_FILE),debian.changelog.in debian.compat debian.control debian.copyright debian.rules)
-endef
-
-.PHONY: all
-all: installers-in-vms
-
-.PHONY: installers-in-vms
-installers-in-vms: installer-in-debian10 installer-in-linuxmint193 installer-in-ubuntu1910 installer-in-ubuntu2004 installer-in-ubuntu1804 installer-in-archlinux installer-in-fedora32
 
 .PHONY: FORCE
 FORCE:
@@ -168,34 +136,6 @@ FORCE:
 # runs everything and produces the installer zip
 $(eval $(call create_installer_zip_target,$(UNIX_INSTALLER_ZIP),))
 $(eval $(call create_installer_zip_target,$(UNIX_TRIAL_INSTALLER_ZIP),-trial,$(UNIX_INSTALLER_ZIP)))
-
-# installer-in-x targets
-#$(eval $(call create_installer_in_x_target,debian9))
-$(eval $(call create_installer_in_x_target,debian10))
-$(eval $(call create_installer_in_x_target,linuxmint193))
-$(eval $(call create_installer_in_x_target,ubuntu1910))
-$(eval $(call create_installer_in_x_target,ubuntu2004))
-$(eval $(call create_installer_in_x_target,ubuntu1804))
-$(eval $(call create_installer_in_x_target,archlinux))
-$(eval $(call create_installer_in_x_target,fedora32))
-#$(eval $(call create_installer_in_x_target,opensuse-tumbleweed))
-
-# runs the ansible playbook to produce artifacts
-# for each distro
-# these assume that the trial artifacts and ZLFO
-# are also produced since they are group targets
-.PHONY: unix-artifacts
-unix-artifacts: artifacts/debian10/zplugins/$(ZLFO_MANIFEST) artifacts/linuxmint193/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu2004/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1910/zplugins/$(ZLFO_MANIFEST) artifacts/ubuntu1804/zplugins/$(ZLFO_MANIFEST) artifacts/archlinux/zplugins/$(ZLFO_MANIFEST) artifacts/fedora32/zplugins/$(ZLFO_MANIFEST)
-
-#$(eval $(call debian_artifact_target,debian9))
-$(eval $(call debian_artifact_target,debian10))
-$(eval $(call debian_artifact_target,linuxmint193))
-$(eval $(call debian_artifact_target,ubuntu2004))
-$(eval $(call debian_artifact_target,ubuntu1910))
-$(eval $(call debian_artifact_target,ubuntu1804))
-$(eval $(call generic_artifact_target,archlinux,$(ARCH_PKG_FILE),$(ARCH_TRIAL_PKG_FILE)))
-$(eval $(call generic_artifact_target,fedora32,$(FEDORA32_PKG_FILE),$(FEDORA32_TRIAL_PKG_FILE)))
-$(eval $(call generic_artifact_target,opensuse-tumbleweed,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE)))
 
 artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER) &: $(COMMON_SRC_DEPS) $(BUILD_DIR)/$(RCEDIT64_EXE)
 	$(call run_windows_build_in_vm))
@@ -258,86 +198,172 @@ artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_
 .PHONY: osx
 osx: artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)
 
-# 1: distro name (debian10,ubuntu2004,...)
-define debian_based_phony_target
-.PHONY: $(1)
-$(1): $(BUILD_DIR)/$(DEBIAN_PKG_FILE)
-	mkdir -p $(BUILD_DIR)/$@
-	mkdir -p $(BUILD_DIR)/$@/zplugins
-	cp $< $(BUILD_DIR)/$@/$(DEBIAN_PKG_FILE)
-	cp -r $(BUILD_DIR)/zplugins/* $(BUILD_DIR)/$@/zplugins/
-endef
+#
+# Function to get the full path to the ZSaw manifest file
+# for a specific distro
+#
+# 1: distro name
+#
+get_zsaw_manifest_target=$(BUILD_DIR)/$(1)/zplugins/ZSaw.lv2/manifest.ttl
 
-$(eval $(call debian_based_phony_target,debian10))
-$(eval $(call debian_based_phony_target,linuxmint193))
-$(eval $(call debian_based_phony_target,ubuntu1804))
-$(eval $(call debian_based_phony_target,ubuntu1910))
-$(eval $(call debian_based_phony_target,ubuntu2004))
-
-define prepare_debian
-	rm -rf $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)
-	mkdir -p $(BUILD_DEBIAN10_DIR)
-	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DEBIAN_TARBALL)
-	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_TRIAL_DEBIAN_TARBALL)
-	# rezip because gzip says not valid gzip format
-	cd $(BUILD_DEBIAN10_DIR) && tar xf $(ZRYTHM_DEBIAN_TARBALL) && \
-		tar cf $(ZRYTHM_DEBIAN_TARBALL_TAR) $(ZRYTHM_DIR) && \
-		tar cf $(ZRYTHM_TRIAL_DEBIAN_TARBALL_TAR) $(ZRYTHM_DIR) && \
-		rm $(ZRYTHM_DEBIAN_TARBALL) && gzip $(ZRYTHM_DEBIAN_TARBALL_TAR) && \
-		rm $(ZRYTHM_TRIAL_DEBIAN_TARBALL) && gzip $(ZRYTHM_TRIAL_DEBIAN_TARBALL_TAR)
-	mkdir -p $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/source
-	cp debian.changelog.in $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
-	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
-	cp debian.compat $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/compat
-	cp debian.control $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
-	cp debian.copyright $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/copyright
-	cp debian.rules $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
-	if [ "$$(hostname)" = "linuxmint193" ] ; then \
-			sed -i -e 's/-Dffmpeg=enabled/-Dffmpeg=disabled/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
-			sed -i -e 's/ninja test/echo test/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules; \
-		fi
-	echo "3.0 (quilt)" > $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/source/format
-endef
-
-# arg 1: anything
-# arg 2: distro
-define make_zplugins
-	rm -rf /tmp/$(1)/usr/lib/lv2/Z*.lv2
+#
+# Zplugins source target
+#
+$(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION)/meson.build: $(BUILD_DIR)/$(ZPLUGINS_TARBALL)
 	rm -rf $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION)
 	cd $(BUILD_DIR) && tar xf $(ZPLUGINS_TARBALL)
+
+# arg 1: distro
+# arg 2: optional tmpdir suffix
+define make_zplugins
+	rm -rf /tmp/$(2)/usr/lib/lv2/Z*.lv2
 	cd $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION) && \
 		cd ext/Soundpipe && CC=gcc make && cd ../.. && \
 		../meson/meson.py build --buildtype=release \
 		--prefix=/usr && \
 		DESTDIR=/tmp ninja -C build install
-	mkdir -p $(BUILD_DIR)/$(2)/zplugins
-	cp -R /tmp/$(1)/usr/lib/lv2/Z*.lv2 $(BUILD_DIR)/$(2)/zplugins
-	ls -l $(BUILD_DIR)/$(2)/zplugins/Z*.lv2
+	mkdir -p $(BUILD_DIR)/$(1)/zplugins
+	cp -R /tmp/$(2)/usr/lib/lv2/Z*.lv2 $(BUILD_DIR)/$(1)/zplugins
+	ls -l $(BUILD_DIR)/$(1)/zplugins/Z*.lv2
 endef
 
-$(BUILD_DIR)/$(DEBIAN_PKG_FILE): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS)
-	rm -rf $(BUILD_DEBIAN10_DIR)
-	$(call make_carla,/usr,sudo)
-	# make regular version
-	$(call prepare_debian)
-	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
-	# make trial
-	$(call prepare_debian)
-	sed -i -e '8s/$$/ -Dtrial-ver=true/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
-	sed -i -e 's|debian/zrythm|debian/zrythm-trial|' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/rules
-	sed -i -e '1s/zrythm/zrythm-trial/' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/changelog
-	sed -i -e 's/: zrythm/: zrythm-trial/g' $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR)/debian/control
-	cd $(BUILD_DEBIAN10_DIR)/$(ZRYTHM_DIR) && debuild -us -uc
-	# make plugins
-	$(call make_zplugins,)
-	$(call remove_carla)
+# 1: distro name (debian10,ubuntu2004,...)
+# 2: base distro in caps (DEBIAN,FEDORA32,...)
+define make_distro_target
+$(call make_distro_zplugins_target,$(1))
 
-$(BUILD_DIR)/$(MESON_TARBALL):
-	wget https://github.com/mesonbuild/meson/releases/download/$(MESON_VERSION)/$(MESON_TARBALL) -O $@
+$(call get_zsaw_manifest_target,$(1)): $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION)/meson.build
+	$$(call make_zplugins,$(1),)
 
-.PHONY: archlinux
-archlinux: $(BUILD_DIR)/$(ARCH_PKG_FILE)
-	cp $< $(BUILD_DIR)/archlinux/$(ARCH_PKG_FILE)
+.PHONY: $(1)
+$(1): $(BUILD_DIR)/$(1)/$($(2)_PKG_FILE) $(BUILD_DIR)/$(1)/$($(2)_TRIAL_PKG_FILE) $(call get_zsaw_manifest_target,$(1))
+endef
+
+# 1: distro name
+define prepare_debian
+	rm -rf $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)
+	mkdir -p $(BUILD_DIR)/$(1)
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/$(1)/$(ZRYTHM_DEBIAN_TARBALL)
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/$(1)/$(ZRYTHM_TRIAL_DEBIAN_TARBALL)
+	# rezip because gzip says not valid gzip format
+	cd $(BUILD_DIR)/$(1) && tar xf $(ZRYTHM_DEBIAN_TARBALL) && \
+		tar cf $(ZRYTHM_DEBIAN_TARBALL_TAR) $(ZRYTHM_DIR) && \
+		tar cf $(ZRYTHM_TRIAL_DEBIAN_TARBALL_TAR) $(ZRYTHM_DIR) && \
+		rm $(ZRYTHM_DEBIAN_TARBALL) && gzip $(ZRYTHM_DEBIAN_TARBALL_TAR) && \
+		rm $(ZRYTHM_TRIAL_DEBIAN_TARBALL) && gzip $(ZRYTHM_TRIAL_DEBIAN_TARBALL_TAR)
+	mkdir -p $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/source
+	cp debian.changelog.in $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/changelog
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/changelog
+	cp debian.compat $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/compat
+	cp debian.control $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/control
+	cp debian.copyright $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/copyright
+	cp debian.rules $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules
+	if [ "$$(hostname)" = "linuxmint193" ] ; then \
+			sed -i -e 's/-Dffmpeg=enabled/-Dffmpeg=disabled/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules; \
+			sed -i -e 's/ninja test/echo test/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules; \
+		fi
+	echo "3.0 (quilt)" > $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/source/format
+endef
+
+# 1: pkg filename
+# 2: distro (debian10,ubuntu1804,...)
+# 3: "-trial" for trial
+# 4: dependency (to make trial depend on full)
+define make_debian_pkg_target
+$(BUILD_DIR)/$(2)/$(1): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS) $(4)
+	$$(call make_carla,/usr,sudo)
+	$$(call prepare_debian,$(2))
+	if [ "$(3)" = "-trial" ]; then \
+		cd $(BUILD_DIR)/$(2)/$(ZRYTHM_DIR) && \
+		sed -i -e '8s/$$$$/ -Dtrial-ver=true/' debian/rules && \
+		sed -i -e 's|debian/zrythm|debian/zrythm-trial|' debian/rules && \
+		sed -i -e '1s/zrythm/zrythm-trial/' debian/changelog && \
+		sed -i -e 's/: zrythm/: zrythm-trial/g' debian/control ; \
+	fi
+	cd $(BUILD_DIR)/$(2)/$(ZRYTHM_DIR) && debuild -us -uc
+endef
+
+# 1: distro (debian10,ubuntu1804,...)
+define make_debian_target
+$(call make_debian_pkg_target,$(DEBIAN_PKG_FILE),$(1),,)
+$(call make_debian_pkg_target,$(DEBIAN_TRIAL_PKG_FILE),$(1),-trial,)
+
+$(call make_distro_target,$(1),DEBIAN)
+endef
+
+$(eval $(call make_debian_target,debian10))
+$(eval $(call make_debian_target,ubuntu1804))
+$(eval $(call make_debian_target,ubuntu1910))
+$(eval $(call make_debian_target,ubuntu2004))
+
+# 1: pkg filename
+# 2: distro (debian10,ubuntu1804,...)
+# 3: "-trial" for trial
+# 4: dependency (to make trial depend on full)
+define make_arch_pkg_target
+$(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
+	$$(call make_carla,/usr,sudo)
+	mkdir -p $(BUILD_ARCH_DIR)
+	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
+	if [ "$(3)" = "-trial" ]; then \
+		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
+		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
+	else \
+		cd $(BUILD_DIR) && tar xf $(ZRYTHM_PKG_TARBALL) && \
+			cd zrythm-$(ZRYTHM_PKG_VERSION) && \
+			meson build && \
+			sed -i -e 's/latexpdf/latex/' doc/user/meson.build && \
+			ninja -C build latex-manual-en latex-manual-fr latex-manual-de && \
+			make -C build/doc/user/en/latex && \
+			make -C build/doc/user/fr/latex && \
+			make -C build/doc/user/de/latex ; \
+	fi
+	cd $(BUILD_ARCH_DIR) && makepkg -f
+endef
+
+# 1: distro (debian10,ubuntu1804,...)
+define make_arch_target
+$(call make_arch_pkg_target,$(ARCH_PKG_FILE),$(1),,)
+$(call make_arch_pkg_target,$(ARCH_TRIAL_PKG_FILE),$(1),-trial,)
+$(call make_distro_target,$(1),ARCH)
+endef
+
+$(eval $(call make_arch_target,archlinux))
+
+# 1: pkg filename
+# 2: distro (debian10,ubuntu1804,...)
+# 3: "-trial" for trial
+# 4: dependency (to make trial depend on full)
+define make_rpm_pkg_target
+$(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
+	$$(call make_carla,/usr,sudo)
+	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
+	mkdir -p $(RPMBUILD_ROOT) && \
+		cd $(RPMBUILD_ROOT) && \
+		mkdir -p BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
+	mkdir -p $(BUILD_DIR)/$(2)
+	cp zrythm.spec.in $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) \
+		$(RPMBUILD_ROOT)/SOURCES/
+	if [ "$(3)" = "-trial" ]; then \
+		sed -i -e '9s/zrythm/zrythm-trial/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec ; \
+		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec ; \
+	fi
+	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	cp $(RPMBUILD_ROOT)/RPMS/x86_64/$(1) $$@
+endef
+
+# 1: distro (debian10,ubuntu1804,...)
+define make_rpm_target
+$(call make_rpm_pkg_target,$(FEDORA32_PKG_FILE),$(1),,)
+$(call make_rpm_pkg_target,$(FEDORA32_TRIAL_PKG_FILE),$(1),-trial,)
+$(call make_distro_target,$(1),FEDORA32)
+endef
+
+$(eval $(call make_rpm_target,fedora32))
 
 # create AppImage target
 # arg 1: '-trial' if trial
@@ -372,34 +398,6 @@ endef
 
 $(eval $(call make_appimg_target,,false))
 $(eval $(call make_appimg_target,-trial,true))
-
-$(BUILD_DIR)/$(ARCH_PKG_FILE): PKGBUILD.in $(COMMON_SRC_DEPS)
-	$(call make_carla,/usr,sudo)
-	rm -rf $(BUILD_ARCH_DIR)
-	mkdir -p $(BUILD_ARCH_DIR)
-	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
-	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
-	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
-	# make normal version
-	cd $(BUILD_ARCH_DIR) && makepkg -f
-	# make manual
-	cd $(BUILD_DIR) && tar xf $(ZRYTHM_PKG_TARBALL) && \
-		cd zrythm-$(ZRYTHM_PKG_VERSION) && \
-		meson build && \
-		sed -i -e 's/latexpdf/latex/' doc/user/meson.build && \
-		ninja -C build latex-manual-en latex-manual-fr latex-manual-de && \
-		make -C build/doc/user/en/latex && \
-		make -C build/doc/user/fr/latex && \
-		make -C build/doc/user/de/latex
-	# make trial
-	sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD
-	sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD
-	cd $(BUILD_ARCH_DIR) && makepkg -f
-	# make plugins
-	$(call make_zplugins,,archlinux)
-	# make appimage
-	$(call remove_carla)
-
 .PHONY: windows10
 windows10: $(BUILD_DIR)/$(WINDOWS_TRIAL_INSTALLER) $(BUILD_DIR)/$(WINDOWS_INSTALLER)
 
@@ -492,46 +490,6 @@ endef
 $(eval $(call make_windows_installer_target,,$(WINDOWS_INSTALLER),Zrythm))
 $(eval $(call make_windows_installer_target,,$(WINDOWS_TRIAL_INSTALLER),Zrythm Trial,-trial))
 
-.PHONY: fedora32
-fedora32: $(BUILD_DIR)/$(FEDORA32_PKG_FILE)
-
-#.PHONY: opensuse-tumbleweed
-#opensuse-tumbleweed: $(BUILD_DIR)/$(OPENSUSE_TUMBLEWEED_PKG_FILE)
-
-# create RPM target
-# arg 1: pkg filename
-# arg 2: build dir
-# arg 3: trial pkg filename
-# arg 4: distro
-define make_rpm_target
-$(BUILD_DIR)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS)
-	$$(call make_carla,/usr,sudo)
-	rm -rf $(2)
-	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
-	mkdir -p $(RPMBUILD_ROOT) && \
-		cd $(RPMBUILD_ROOT) && \
-		mkdir -p BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
-	mkdir -p $(2)
-	cp zrythm.spec.in $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) \
-		$(RPMBUILD_ROOT)/SOURCES/
-	# make normal version
-	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	# make trial
-	sed -i -e '9s/zrythm/zrythm-trial/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	cp $(RPMBUILD_ROOT)/RPMS/x86_64/$(1) $(2)/
-	cp $(RPMBUILD_ROOT)/RPMS/x86_64/$(3) $(2)/
-	# make plugins
-	$$(call make_zplugins,,$(4))
-	$$(call remove_carla)
-endef
-
-$(eval $(call make_rpm_target,$(FEDORA32_PKG_FILE),$(BUILD_FEDORA32_DIR),$(FEDORA32_TRIAL_PKG_FILE),fedora32))
-#$(eval $(call make_rpm_target,$(OPENSUSE_TUMBLEWEED_PKG_FILE),$(BUILD_OPENSUSE_TUMBLEWEED_DIR)))
-
 # target to fetch latest version of git, used whenever
 # the meson version is too old
 .PHONY: meson
@@ -573,6 +531,9 @@ $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP):
 $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_32_ZIP):
 	cd $(BUILD_DIR) && wget $(CARLA_WINDOWS_BINARY_32_URL)
 
+$(BUILD_DIR)/$(MESON_TARBALL):
+	wget https://github.com/mesonbuild/meson/releases/download/$(MESON_VERSION)/$(MESON_TARBALL) -O $@
+
 pkg-filename-%:
 	@echo $($*_PKG_FILE)
 
@@ -595,6 +556,5 @@ clean-tarball:
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_DEBIAN10_DIR)
 	rm -rf $(BUILD_ARCH_DIR)
 	rm -rf $(BUILD_FEDORA32_DIR)
