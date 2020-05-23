@@ -160,6 +160,9 @@ $(eval $(call create_installer_zip_target,$(UNIX_TRIAL_INSTALLER_ZIP),-trial,$(U
 artifacts/windows10/$(WINDOWS_INSTALLER) artifacts/windows10/$(WINDOWS_TRIAL_INSTALLER) &: $(COMMON_SRC_DEPS) $(BUILD_DIR)/$(RCEDIT64_EXE)
 	$(call run_windows_build_in_vm))
 
+# 1: prefix
+# 2: sudo or empty
+# 3: suffix
 define make_carla
 	export PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig && \
 	if pkg-config --atleast-version=2.1 carla-native-plugin ; then \
@@ -167,12 +170,12 @@ define make_carla
 	fi
 	cd $(BUILD_DIR) && unzip -o $(CARLA_SOURCE_ZIP) && \
 		cd Carla-$(CARLA_VERSION) && \
-		make -j4 && $(2) make install PREFIX=$(1)/lib/zrythm
+		make -j4 && $(2) make install PREFIX=$(1)$(3)
 endef
 
 define remove_carla
 	cd $(BUILD_DIR)/Carla-$(CARLA_VERSION) && \
-		sudo make uninstall PREFIX=$(1)/lib/zrythm
+		sudo make uninstall PREFIX=$(1)$(3)
 endef
 
 # arg 1: prefix
@@ -195,9 +198,10 @@ $(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUIL
 	-rm -rf $(OSX_INSTALL_PREFIX)
 	mkdir -p $(BUILD_OSX_DIR)
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_PKG_TARBALL)
-	$(call make_carla,$(OSX_INSTALL_TRIAL_PREFIX))
+	$(call make_carla,/usr,sudo)
+	$(call make_carla,$(OSX_INSTALL_TRIAL_PREFIX),,/lib/zrythm)
 	$(call make_osx,$(OSX_INSTALL_TRIAL_PREFIX),true)
-	$(call make_carla,$(OSX_INSTALL_PREFIX))
+	$(call make_carla,$(OSX_INSTALL_PREFIX),,/lib/zrythm)
 	$(call make_osx,$(OSX_INSTALL_PREFIX),false)
 
 # this must be run on macos
@@ -291,7 +295,7 @@ endef
 # 4: dependency (to make trial depend on full)
 define make_debian_pkg_target
 $(BUILD_DIR)/$(2)/$(1): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS) $(4)
-	$$(call make_carla,/usr,sudo)
+	$$(call make_carla,/usr,sudo,/lib/zrythm)
 	$$(call prepare_debian,$(2))
 	if [ "$(3)" = "-trial" ]; then \
 		cd $(BUILD_DIR)/$(2)/$(ZRYTHM_DIR) && \
@@ -322,7 +326,7 @@ $(eval $(call make_debian_target,ubuntu2004))
 # 4: dependency (to make trial depend on full)
 define make_arch_pkg_target
 $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
-	$$(call make_carla,/usr,sudo)
+	$$(call make_carla,/usr,sudo,/lib/zrythm)
 	mkdir -p $(BUILD_ARCH_DIR)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
@@ -358,7 +362,7 @@ $(eval $(call make_arch_target,archlinux))
 # 4: dependency (to make trial depend on full)
 define make_rpm_pkg_target
 $(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
-	$$(call make_carla,/usr,sudo)
+	$$(call make_carla,/usr,sudo,/lib/zrythm)
 	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
 	mkdir -p $(RPMBUILD_ROOT) && \
 		cd $(RPMBUILD_ROOT) && \
