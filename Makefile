@@ -184,6 +184,7 @@ define make_osx
 	cd $(BUILD_OSX_DIR) && tar xf $(ZRYTHM_PKG_TARBALL) && \
 		cd zrythm-$(ZRYTHM_PKG_VERSION) && \
 		rm -rf build && \
+		PKG_CONFIG_PATH=$(1)/lib/zrythm/lib/pkgconfig \
 		meson build -Dsdl=enabled -Drtaudio=auto \
 		  -Drtmidi=auto -Dffmpeg=enabled \
 			-Dmac-release=true -Dtrial-ver=$(2) \
@@ -198,7 +199,6 @@ $(OSX_INSTALL_PREFIX)/bin/zrythm $(OSX_INSTALL_TRIAL_PREFIX)/bin/zrythm&: $(BUIL
 	-rm -rf $(OSX_INSTALL_PREFIX)
 	mkdir -p $(BUILD_OSX_DIR)
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_OSX_DIR)/$(ZRYTHM_PKG_TARBALL)
-	$(call make_carla,/usr,sudo)
 	$(call make_carla,$(OSX_INSTALL_TRIAL_PREFIX),,/lib/zrythm)
 	$(call make_osx,$(OSX_INSTALL_TRIAL_PREFIX),true)
 	$(call make_carla,$(OSX_INSTALL_PREFIX),,/lib/zrythm)
