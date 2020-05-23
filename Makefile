@@ -345,6 +345,7 @@ $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
 			make -C build/doc/user/de/latex ; \
 	fi
 	cd $(BUILD_ARCH_DIR) && makepkg -f
+	rm -rf $(BUILD_ARCH_DIR)/src/zrythm-$(ZRYTHM_VERSION)
 endef
 
 # 1: distro (debian10,ubuntu1804,...)
@@ -562,7 +563,7 @@ pkg-filename-%:
 	@echo $($*_PKG_FILE)
 
 pkg-trial-filename-%:
-	@echo $($*_PKG_TRIAL_FILE)
+	@echo $($*_TRIAL_PKG_FILE)
 
 # call this if cleaning the chroot environment is needed
 .PHONY: clean-windows10-chroot
