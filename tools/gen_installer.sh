@@ -88,14 +88,19 @@ copy_package () {
   cp "artifacts/$distro/$src_pkg_file" "bin/$distro/$dest_pkg_file"
 }
 
+echo "removing previous backup (if any)"
 # remove prev backup
 rm -rf bin.bak
 mv bin bin.bak || true
 
 for distro in $distros ; do
   mkdir -p bin/$distro
+  echo "copying plugins for $distro..."
   copy_plugins $distro
+  echo "done"
+  echo "copying packages for $distro..."
   copy_package $distro
+  echo "done"
 done
 
 #cp artifacts/debian9/Zrythm$(2)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage \
@@ -111,9 +116,14 @@ chmod +x installer.sh
 
 pdf=""
 if ! is_trial ; then
-  pdf=$(ls Zrythm-*.pdf)
+  pdf="$(ls Zrythm-*.pdf)"
 fi
+
+echo "zipping installer..."
 zip $installer_zip $pdf installer.sh README \
   bin/**/*.* bin/**/**/* bin/**/**/**/* bin/**/**/**/**/*
+echo "done"
 
+echo "cleaning up..."
 rm -rf README installer.sh *.AppImage $pdf
+echo "done"

@@ -147,7 +147,7 @@ endef
 # they are not run in parallel)
 define create_installer_zip_target
 ${1}: tools/gen_installer.sh README$(2).in installer.sh.in FORCE ${3}
-	tools/gen_installer.sh $(ZRYTHM_PKG_VERSION) $(1) $(2) $(ZPLUGINS_VERSION)
+	tools/gen_installer.sh $(ZRYTHM_PKG_VERSION) $(1) $(ZPLUGINS_VERSION) $(2)
 endef
 
 .PHONY: FORCE
