@@ -46,8 +46,8 @@ build() {
     -Drtmidi=auto \
     -Djack=disabled \
     -Dguile=disabled \
-    -Dwith-manpage=false \
-    -Dwindows-release=true -Dcarla=enabled \
+    -Dmanpage=false \
+    -Dwindows_release=true -Dcarla=enabled \
     --buildtype=release \
     "../zrythm-${pkgver}"
 

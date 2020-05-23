@@ -6,7 +6,7 @@ index 950dfa0..1086f5d 100644
      -Denable_plugins=false \
      -Denable_sdl=true \
      -Dwindows_release=true \
-+    -Dtrial-ver=true \
++    -Dtrial_ver=true \
      --buildtype=release \
      "../${_realname}-${pkgver}"
  
@@ -19,7 +19,7 @@ index 38201fa..71211f8 100644
  build() {
    cd $_rootdir
 -  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true
-+  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true -Dtrial-ver=true
++  meson build --prefix=/usr -Denable_tests=true -Duser_manual=true -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true -Dtrial_ver=true
    ninja -C build
  }
  
@@ -32,7 +32,7 @@ index 67d30be..92f6aa0 100644
  	mkdir -p debian/build
  	pwd
 -	cd debian/build && ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dinstall_dseg_font=false -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true
-+	cd debian/build && ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dinstall_dseg_font=false -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true -Dtrial-ver=true
++	cd debian/build && ../../../../meson/meson.py --prefix=/usr ../.. -Denable_tests=true -Dinstall_dseg_font=false -Dmanpage=true -Dbuildtype=release -Denable_ffmpeg=true -Denable_sdl=true -Dtrial_ver=true
  
  override_dh_auto_build:
  	cd debian/build && ninja -v
@@ -45,15 +45,15 @@ index 6a3b3f7..23b86ee 100644
  rm -rf build
  %if 0%{?suse_version}
 -meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
-+meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial-ver=true
++meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial_ver=true
  %endif
  %if 0%{?fedora}
 -meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
-+meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial-ver=true
++meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial_ver=true
  %endif
  %if 0%{?mageia}
 -meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true
-+meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial-ver=true
++meson build --prefix=/usr -Denable_tests=true -Dmanpage=true --buildtype=release -Denable_sdl=true -Dtrial_ver=true
  %endif
  ninja -C build
  

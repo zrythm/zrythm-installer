@@ -89,7 +89,7 @@ and is designed to be intuitive to use.
 
 %build
 rm -rf build
-PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig meson build --prefix=/usr -Denable-tests=true -Dwith-manpage=true --buildtype=release -Dsdl=enabled -Drtaudio=auto -Drtmidi=auto -Dtrial-ver=false -Dcarla=enabled -Dgraphviz=enabled
+PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig meson build --prefix=/usr -Dtests=true -Dmanpage=true --buildtype=release -Dsdl=enabled -Drtaudio=auto -Drtmidi=auto -Dtrial_ver=false -Dcarla=enabled -Dgraphviz=enabled
 ninja -C build
 
 %install

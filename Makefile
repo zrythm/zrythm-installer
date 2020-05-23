@@ -187,9 +187,9 @@ define make_osx
 		PKG_CONFIG_PATH=$(1)/lib/zrythm/lib/pkgconfig \
 		meson build -Dsdl=enabled -Drtaudio=auto \
 		  -Drtmidi=auto -Dffmpeg=enabled \
-			-Dmac-release=true -Dtrial-ver=$(2) \
+			-Dmac_release=true -Dtrial_ver=$(2) \
 			-Djack=disabled -Dgraphviz=enabled \
-			-Dcarla=enabled -Dwith-manpage=false \
+			-Dcarla=enabled -Dmanpage=false \
 			--prefix=$(1) && \
 		ninja -C build && ninja -C build install
 endef
@@ -299,7 +299,7 @@ $(BUILD_DIR)/$(2)/$(1): debian.changelog.in debian.compat debian.control debian.
 	$$(call prepare_debian,$(2))
 	if [ "$(3)" = "-trial" ]; then \
 		cd $(BUILD_DIR)/$(2)/$(ZRYTHM_DIR) && \
-		sed -i -e '8s/$$$$/ -Dtrial-ver=true/' debian/rules && \
+		sed -i -e '8s/$$$$/ -Dtrial_ver=true/' debian/rules && \
 		sed -i -e 's|debian/zrythm|debian/zrythm-trial|' debian/rules && \
 		sed -i -e '1s/zrythm/zrythm-trial/' debian/changelog && \
 		sed -i -e 's/: zrythm/: zrythm-trial/g' debian/control ; \
@@ -333,7 +333,7 @@ $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
 	if [ "$(3)" = "-trial" ]; then \
 		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
-		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
+		sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
 	else \
 		cd $(BUILD_DIR) && tar xf $(ZRYTHM_PKG_TARBALL) && \
 			cd zrythm-$(ZRYTHM_PKG_VERSION) && \
@@ -375,7 +375,7 @@ $(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
 		$(RPMBUILD_ROOT)/SOURCES/
 	if [ "$(3)" = "-trial" ]; then \
 		sed -i -e '9s/zrythm/zrythm-trial/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec ; \
-		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec ; \
+		sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec ; \
 	fi
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	cp $(RPMBUILD_ROOT)/RPMS/x86_64/$(1) $$@
@@ -408,7 +408,7 @@ $(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZR
 		$$$$MESON_PATH/meson.py build -Dsdl=enabled -Drtaudio=auto \
 		  -Drtmidi=auto -Dffmpeg=enabled \
 			-Dguile=enabled \
-			-Dtrial-ver=$(2) --prefix=/usr && \
+			-Dtrial_ver=$(2) --prefix=/usr && \
 		ninja -C build && DESTDIR=$(APPIMAGE_APPDIR) ninja -C build install && \
 		wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
 		wget -c "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" && \
@@ -445,8 +445,8 @@ $(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR): arch-mingw/zplugin
 define make_zrythm_mxe_target
 $(ARCH_MXE_64_SHARED_PREFIX)/bin/zrythm$(1).exe:
 	cd $(ARCH_MXE_ROOT) && \
-		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=$(2)/' src/zrythm.mk && \
-		sed -i -e 's/-Dtrial-ver=true/-Dtrial-ver=$(2)/' src/zrythm.mk && \
+		sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=$(2)/' src/zrythm.mk && \
+		sed -i -e 's/-Dtrial_ver=true/-Dtrial_ver=$(2)/' src/zrythm.mk && \
 		sed -i -e 's/_VERSION  .*/_VERSION  := $(ZRYTHM_VERSION)/' src/zrythm.mk && \
 		./bootstrap && \
 		make update-checksum-zrythm && \

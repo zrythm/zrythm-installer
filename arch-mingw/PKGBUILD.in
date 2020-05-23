@@ -47,9 +47,9 @@ build() {
       -Drtmidi=auto \
       -Djack=disabled \
       -Dguile=disabled \
-      -Dwith-manpage=false \
-      -Dwindows-release=true -Dcarla=enabled \
-      -Dtrial-ver=false \
+      -Dmanpage=false \
+      -Dwindows_release=true -Dcarla=enabled \
+      -Dtrial_ver=false \
       --buildtype=debug \
       --wrap-mode=forcefallback \
       ..
