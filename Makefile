@@ -498,14 +498,14 @@ $(BUILD_WINDOWS_MSYS_DIR)/$(1): PKGBUILD-w10.in $(3) $(BUILD_DIR)/$(CARLA_WINDOW
 	mkdir -p $(BUILD_WINDOWS_MSYS_DIR)/src
 	cp PKGBUILD-w10.in $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_WINDOWS_MSYS_DIR)/
+	cp $(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_WINDOWS_MSYS_DIR)/
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
+	sed -i -e 's/@ZPLUGINS_VERSION@/$(ZPLUGINS_VERSION)/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	if [ "$(2)" = "-trial" ]; then \
 		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \
 		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \
 	fi
 	cd $(BUILD_WINDOWS_MSYS_DIR) && MINGW_INSTALLS=mingw64 makepkg-mingw -f
-	# make plugins
-	$(call make_zplugins,windows10-msys,msys64,/msys64/mingw64/bin/gcc)
 endef
 
 $(eval $(call make_zrythm_msys_target,$(MINGW_ZRYTHM_PKG_TAR)))
@@ -520,6 +520,7 @@ define make_windows_chroot
 	mkdir -p $(1)/tmp && \
 	pacman -Syu --root $(1) && \
 	pacman -S filesystem bash pacman mingw-w64-x86_64-gtksourceview4 --noconfirm --needed --root $(1) && \
+	pacman -U $(2) --noconfirm --needed --root $(1) && \
 	cp -R /mingw64/lib/carla $(1)/mingw64/lib/ && \
 	glib-compile-schemas.exe $(1)/mingw64/share/glib-2.0/schemas
 endef
@@ -532,15 +533,6 @@ $(BUILD_DIR)/$(1): $(BUILD_WINDOWS_MSYS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WIN
 	# create sources distribution
 	- rm -rf $(BUILD_WINDOWS_MSYS_DIR)/installer
 	mkdir -p $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins
-	# copy plugins
-	cp -R \
-		$(BUILD_WINDOWS_MSYS_DIR)/zplugins/Z*.lv2 \
-		$(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/
-	# remove some plugins if trial ver
-	if [ "$(3)" == "-trial" ]; then \
-		rm -rf $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/ZChordz*.lv2 ; \
-		rm -rf $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/ZLFO*.lv2 ; \
-	fi
 	# add thirdparty version info
 	echo "TODO" > $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/THIRDPARTY_INFO
 	# copy other files
@@ -557,10 +549,19 @@ $(BUILD_DIR)/$(1): $(BUILD_WINDOWS_MSYS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WIN
 	cp $(BUILD_DIR)/$(RCEDIT64_EXE) $(BUILD_WINDOWS_MSYS_DIR)/installer/
 	# create a chroot with all the required files
 	if [ "$(3)" == "-trial" ]; then \
-		$(call make_windows_chroot,/tmp/zrythm$(3),$(MINGW_ZRYTHM_TRIAL_PKG_TAR)) ; \
+		$(call make_windows_chroot,/tmp/zrythm$(3),$(BUILD_WINDOWS_MSYS_DIR)/$(MINGW_ZRYTHM_TRIAL_PKG_TAR)) ; \
 		cp /tmp/zrythm$(3)/mingw64/bin/zrythm.exe /tmp/zrythm$(3)/mingw64/bin/zrythm-trial.exe ; \
 	else \
-		$(call make_windows_chroot,/tmp/zrythm$(3),$(MINGW_ZRYTHM_PKG_TAR)) ; \
+		$(call make_windows_chroot,/tmp/zrythm$(3),$(BUILD_WINDOWS_MSYS_DIR)/$(MINGW_ZRYTHM_PKG_TAR)) ; \
+	fi
+	# copy plugins
+	cp -R \
+		/tmp/zrythm$(3)/mingw64/lib/lv2/Z*.lv2 \
+		$(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/
+	# remove some plugins if trial ver
+	if [ "$(3)" == "-trial" ]; then \
+		rm -rf $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/ZChordz*.lv2 ; \
+		rm -rf $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/ZLFO*.lv2 ; \
 	fi
 	# create installer
 	chmod +x tools/gen_windows_installer.sh

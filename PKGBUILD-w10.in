@@ -1,5 +1,8 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
 _realname=zrythm
+_zplugins_ver=@ZPLUGINS_VERSION@
+_zrythm_builddir="build-zrythm-${MINGW_CHOST}"
+_zplugins_builddir="build-zplugins-${MINGW_CHOST}"
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=@VERSION@
@@ -29,20 +32,20 @@ options=('strip' 'staticlibs')
 license=("AGPL3")
 url="https://www.zrythm.org"
 #install=${_realname}-${CARCH}.install
-source=(zrythm-${pkgver}.tar.gz)
-sha256sums=('SKIP')
+source=("zrythm-$pkgver.tar.gz" "zplugins-$_zplugins_ver.tar.gz")
+sha256sums=('SKIP' 'SKIP')
 
 prepare() {
   cd "${srcdir}"/zrythm-${pkgver}
 }
 
 build() {
-  [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
-  mkdir -p build-${MINGW_CHOST} && cd build-${MINGW_CHOST}
+  [[ -d "$_zrythm_builddir" ]] && rm -rf "$_zrythm_builddir"
+  [[ -d "$_zplugins_builddir" ]] && rm -rf "$_zplugins_builddir"
 
+  mkdir -p $_zrythm_builddir && cd $_zrythm_builddir
   sed -i -e '94s/translator/"invalid"/' \
     ${srcdir}/zrythm-${pkgver}/scripts/gen-translators-list.scm
-
   ${MINGW_PREFIX}/bin/meson \
     -Dsdl=enabled \
     -Drtaudio=auto \
@@ -54,13 +57,28 @@ build() {
     -Dwindows_release=true -Dcarla=enabled \
     --buildtype=release \
     "../zrythm-${pkgver}"
-
   ninja
+
+  cd ${srcdir}
+
+  make -C "zplugins-v$_zplugins_ver/ext/Soundpipe" || true
+  make CC="$MINGW_PREFIX/bin/x86_64-w64-mingw32-gcc.exe" -C "zplugins-v$_zplugins_ver/ext/Soundpipe"
+
+  mkdir -p "$_zplugins_builddir" && cd "$_zplugins_builddir"
+  ${MINGW_PREFIX}/bin/meson \
+    --buildtype=release \
+    "../zplugins-v${_zplugins_ver}"
 }
 
 package() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
-  DESTDIR="${pkgdir}${MINGW_PREFIX}" ninja install
+  destdir="${pkgdir}${MINGW_PREFIX}"
 
+  pushd "$_zrythm_builddir"
+  DESTDIR="$destdir" ninja install
   install -Dm644 "${srcdir}/zrythm-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/zrythm/COPYING"
+  popd
+
+  pushd "$_zplugins_builddir"
+  DESTDIR="$destdir" ninja install
+  popd
 }

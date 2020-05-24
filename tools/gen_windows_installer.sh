@@ -228,7 +228,7 @@ cp "$MINGW_PREFIX/bin/gspawn-win64-helper-console.exe" "$DIST_BINDIR/"
 cp "$INNO_ISS" "$DIST_DIR"/
 cd $DIST_DIR
 ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
-  "/DAppName=$APP_NAME" "/DAppVersion=$ZRYTHM_VERSION" \
-  "/DAppInfoVersion=${ZRYTHM_VERSION:0:7}" \
-  "/DPluginsDir=$PLUGINS_DIR" \
+  "//DAppName=$APP_NAME" "//DAppVersion=$ZRYTHM_VERSION" \
+  "//DAppInfoVersion=${ZRYTHM_VERSION:0:7}" \
+  "//DPluginsDir=$PLUGINS_DIR" \
   installer.iss
