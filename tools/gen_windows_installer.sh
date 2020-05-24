@@ -153,7 +153,7 @@ cp -R $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
 echo "packaging breeze icons"
 mkdir -p "$DIST_SHAREDIR/icons"
 # the icons are preinstalled here
-cp -R "$BREEZE_DARK_PATH" "$DIST_SHAREDIR/icons"/
+cp -R "$BREEZE_DARK_PATH" "$DIST_SHAREDIR/icons"/breeze-dark
 #cp -R "$MINGW_PREFIX/share/icons/Adwaita" "$DIST_SHAREDIR/icons"/
 #echo "packaging breeze icons"
 #cp -R "$MINGW_PREFIX/bin/data/icons/breeze-dark" "$DIST_SHAREDIR/icons/"
@@ -215,6 +215,9 @@ sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
 echo "packaging binaries"
 cp "$MINGW_PREFIX/bin/zrythm$TRIAL.exe" "$DIST_BINDIR/zrythm.exe"
 cp $MINGW_PREFIX/bin/carla*.exe "$DIST_BINDIR/"
+if [ -f "$MINGW_PREFIX/bin/gdbus.exe" ]; then
+  cp "$MINGW_PREFIX/bin/gdbus.exe" "$DIST_BINDIR/"
+fi
 chmod +x $BUILD_DIR/rcedit-x64.exe
 $BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm.exe" --set-icon  "$DIST_DIR/zrythm.ico"
 cp "$MINGW_PREFIX/bin/gspawn-win64-helper.exe" "$DIST_BINDIR/"
