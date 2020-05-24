@@ -56,6 +56,7 @@ MESON_DIR=meson-$(MESON_VERSION)
 MESON_TARBALL=$(MESON_DIR).tar.gz
 BUILD_ARCH_DIR=$(BUILD_DIR)/archlinux
 BUILD_WINDOWS_DIR=$(BUILD_DIR)/windows10
+BUILD_WINDOWS_MSYS_DIR=$(BUILD_DIR)/windows10-msys
 BUILD_OSX_DIR=$(BUILD_DIR)/osx
 WINDOWS_CHROOT_BASE=/tmp/chroot-for-zrythm
 WIN_CHROOT_DIR=/tmp/zrythm-root
@@ -76,21 +77,26 @@ OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.
 OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 WINDOWS_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-setup.exe
 WINDOWS_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_PKG_VERSION)-setup.exe
+WINDOWS_MSYS_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-ms-setup.exe
+WINDOWS_MSYS_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_PKG_VERSION)-ms-setup.exe
 WINDOWS_PKG_FILE=$(WINDOWS_INSTALLER)
 WINDOWS_TRIAL_PKG_FILE=$(WINDOWS_TRIAL_INSTALLER)
+WINDOWS_MSYS_PKG_FILE=$(WINDOWS_MSYS_INSTALLER)
+WINDOWS_MSYS_TRIAL_PKG_FILE=$(WINDOWS_TRIAL_MSYS_INSTALLER)
 GNU_PLAYBOOK=playbook.yml
 WOE_PLAYBOOK=woe-playbook.yml
 ANSIBLE_PLAYBOOK_CMD=ansible-playbook -i ./ansible-conf.ini --extra-vars "version=$(ZRYTHM_PKG_VERSION) zplugins_version=$(ZPLUGINS_VERSION) meson_version=$(MESON_VERSION) carla_version=$(CARLA_VERSION)" -v
 WINDOWS_IP=192.168.100.178
 ARCH_IP=192.168.100.142
 ZRYTHM_MINGW_REVISION=2
-MINGW_ZRYTHM_PKG_TAR=mingw-w64-zrythm-$(ZRYTHM_PKG_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.xz
-MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-zrythm-trial-$(ZRYTHM_PKG_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.xz
+MINGW_ZRYTHM_PKG_TAR=mingw-w64-x86_64-zrythm-$(ZRYTHM_PKG_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.zst
+MINGW_ZRYTHM_TRIAL_PKG_TAR=mingw-w64-x86_64-zrythm-trial-$(ZRYTHM_PKG_VERSION)-$(ZRYTHM_MINGW_REVISION)-any.pkg.tar.zst
 MINGW_ZPLUGINS_PKG_TAR=mingw-w64-zplugins-$(ZPLUGINS_VERSION)-1-any.pkg.tar.xz
 MINGW_ZPLUGINS_TRIAL_PKG_TAR=mingw-w64-zplugins-trial-$(ZPLUGINS_VERSION)-1-any.pkg.tar.xz
 MINGW_ZRYTHM_SRC=/tmp/makepkg/mingw-w64-zrythm/src/zrythm-$(ZRYTHM_PKG_VERSION)
 MINGW_ZPLUGINS_SRC=/tmp/makepkg/mingw-w64-zplugins/src/zplugins-$(ZPLUGINS_VERSION)
 MINGW_PREFIX=/usr/x86_64-w64-mingw32
+MSYS_MINGW_PREFIX=/mingw64
 RCEDIT64_EXE=rcedit-x64.exe
 RCEDIT64_VER=1.1.1
 RCEDIT64_URL=https://github.com/electron/rcedit/releases/download/v$(RCEDIT64_VER)/$(RCEDIT64_EXE)
@@ -240,10 +246,12 @@ $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION)/meson.build: $(BUILD_DIR)/$(ZPLUGINS_
 
 # arg 1: distro
 # arg 2: optional tmpdir suffix
+# arg 3: gcc prefix
 define make_zplugins
 	rm -rf /tmp/$(2)/usr/lib/lv2/Z*.lv2
+	cd $(BUILD_DIR) && tar xf $(ZPLUGINS_TARBALL)
 	cd $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION) && \
-		cd ext/Soundpipe && CC=gcc make && cd ../.. && \
+		cd ext/Soundpipe && CC=$(3)gcc make && cd ../.. && \
 		../meson/meson.py build --buildtype=release \
 		--prefix=/usr && \
 		DESTDIR=/tmp ninja -C build install
@@ -424,8 +432,12 @@ endef
 
 $(eval $(call make_appimg_target,,false))
 $(eval $(call make_appimg_target,-trial,true))
+
 .PHONY: windows10
 windows10: $(BUILD_DIR)/$(WINDOWS_TRIAL_INSTALLER) $(BUILD_DIR)/$(WINDOWS_INSTALLER)
+
+.PHONY: windows10-msys
+windows10-msys: $(BUILD_DIR)/$(WINDOWS_MSYS_TRIAL_INSTALLER) $(BUILD_DIR)/$(WINDOWS_MSYS_INSTALLER)
 
 # target for zplugins mingw packages on windows
 $(BUILD_WINDOWS_DIR)/plugins/$(MINGW_ZPLUGINS_TRIAL_PKG_TAR): arch-mingw/zplugins-PKGBUILD.in $(COMMON_SRC_DEPS)
@@ -468,6 +480,101 @@ $(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-s
 
 $(eval $(call make_zrythm_mxe_target,,false))
 $(eval $(call make_zrythm_mxe_target,-trial,true))
+
+# arg 1: .pkg.tar filename
+# arg 2: '-trial' if trial
+# arg 3: dependency (make trial depend on main ver)
+define make_zrythm_msys_target
+$(BUILD_WINDOWS_MSYS_DIR)/$(1): PKGBUILD-w10.in $(3) $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP) $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_32_ZIP) $(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/meson/meson.py
+	# install carla
+	cd $(BUILD_DIR) && \
+		unzip -o $(CARLA_WINDOWS_BINARY_64_ZIP) -d \
+		/mingw64/
+	cd $(BUILD_DIR) && \
+		unzip -o $(CARLA_WINDOWS_BINARY_32_ZIP) -d \
+		/mingw64/lib/carla/
+	# prepare
+	rm -rf $(BUILD_WINDOWS_MSYS_DIR)/src
+	mkdir -p $(BUILD_WINDOWS_MSYS_DIR)/src
+	cp PKGBUILD-w10.in $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_WINDOWS_MSYS_DIR)/
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
+	if [ "$(2)" = "-trial" ]; then \
+		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \
+		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \
+	fi
+	cd $(BUILD_WINDOWS_MSYS_DIR) && MINGW_INSTALLS=mingw64 makepkg-mingw -f
+	# make plugins
+	$(call make_zplugins,windows10-msys,msys64,/msys64/mingw64/bin/gcc)
+endef
+
+$(eval $(call make_zrythm_msys_target,$(MINGW_ZRYTHM_PKG_TAR)))
+$(eval $(call make_zrythm_msys_target,$(MINGW_ZRYTHM_TRIAL_PKG_TAR),-trial,$(BUILD_WINDOWS_MSYS_DIR)/$(MINGW_ZRYTHM_PKG_TAR)))
+
+# arg 1: chroot dir
+# arg 2: zrythm pkg tar
+define make_windows_chroot
+	rm -rf $(1) && \
+	mkdir -p $(1)/var/lib/pacman && \
+	mkdir -p $(1)/var/log && \
+	mkdir -p $(1)/tmp && \
+	pacman -Syu --root $(1) && \
+	pacman -S filesystem bash pacman mingw-w64-x86_64-gtksourceview4 --noconfirm --needed --root $(1) && \
+	cp -R /mingw64/lib/carla $(1)/mingw64/lib/ && \
+	glib-compile-schemas.exe $(1)/mingw64/share/glib-2.0/schemas
+endef
+
+# arg 1: installer filename
+# arg 2: AppName
+# arg 3: `-trial` if trial
+define make_windows_msys_installer_target
+$(BUILD_DIR)/$(1): $(BUILD_WINDOWS_MSYS_DIR)/$(MINGW_ZRYTHM_PKG_TAR) $(BUILD_WINDOWS_MSYS_DIR)/$(MINGW_ZRYTHM_TRIAL_PKG_TAR) $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/$(RCEDIT64_EXE)
+	# create sources distribution
+	- rm -rf $(BUILD_WINDOWS_MSYS_DIR)/installer
+	mkdir -p $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins
+	# copy plugins
+	cp -R \
+		$(BUILD_WINDOWS_MSYS_DIR)/zplugins/Z*.lv2 \
+		$(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/
+	# remove some plugins if trial ver
+	if [ "$(3)" == "-trial" ]; then \
+		rm -rf $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/ZChordz*.lv2 ; \
+		rm -rf $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/plugins/ZLFO*.lv2 ; \
+	fi
+	# add thirdparty version info
+	echo "TODO" > $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/THIRDPARTY_INFO
+	# copy other files
+	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) /tmp && \
+		cd /tmp && tar xf $(ZRYTHM_PKG_TARBALL)
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/AUTHORS $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/COPYING* $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/README.md $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/README.txt
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/CONTRIBUTING.md $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/THANKS $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/TRANSLATORS $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/CHANGELOG.md $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/
+	cp /tmp/zrythm-$(ZRYTHM_PKG_VERSION)/data/windows/zrythm.ico $(BUILD_WINDOWS_MSYS_DIR)/installer/dist/zrythm.ico
+	cp $(BUILD_DIR)/$(RCEDIT64_EXE) $(BUILD_WINDOWS_MSYS_DIR)/installer/
+	# create a chroot with all the required files
+	if [ "$(3)" == "-trial" ]; then \
+		$(call make_windows_chroot,/tmp/zrythm$(3),$(MINGW_ZRYTHM_TRIAL_PKG_TAR)) ; \
+		cp /tmp/zrythm$(3)/mingw64/bin/zrythm.exe /tmp/zrythm$(3)/mingw64/bin/zrythm-trial.exe ; \
+	else \
+		$(call make_windows_chroot,/tmp/zrythm$(3),$(MINGW_ZRYTHM_PKG_TAR)) ; \
+	fi
+	# create installer
+	chmod +x tools/gen_windows_installer.sh
+	sed -i -e "s/sudo //g" tools/gen_windows_installer.sh
+	tools/gen_windows_installer.sh /tmp/zrythm$(3)/mingw64 \
+		$(ZRYTHM_PKG_VERSION) $(BUILD_WINDOWS_MSYS_DIR)/installer \
+		$(shell pwd)/tools/inno/installer.iss "$(2)" \
+		plugins "$(BREEZE_DARK_PATH)" \
+		$(MANUAL_ZIP_PATH) $(3)
+	cp "$(BUILD_WINDOWS_MSYS_DIR)/installer/dist/Output/$(2) $(ZRYTHM_PKG_VERSION).exe" $(BUILD_WINDOWS_MSYS_DIR)/$(1)
+endef
+
+$(eval $(call make_windows_msys_installer_target,$(WINDOWS_MSYS_INSTALLER),Zrythm))
+$(eval $(call make_windows_msys_installer_target,$(WINDOWS_MSYS_TRIAL_INSTALLER),Zrythm Trial,-trial))
 
 # arg 1: ignore
 # arg 2: installer filename
@@ -546,19 +653,24 @@ $(BUILD_DIR)/$(ZPLUGINS_TARBALL):
 	wget $(ZPLUGINS_TARBALL_URL) -O $@
 
 $(BUILD_DIR)/$(RCEDIT64_EXE):
+	mkdir -p $(BUILD_DIR)
 	wget $(RCEDIT64_URL) -O $@
 
 $(BUILD_DIR)/$(CARLA_SOURCE_ZIP):
+	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && wget $(CARLA_SOURCE_URL) && \
 		mv $(CARLA_VERSION).zip $(CARLA_SOURCE_ZIP)
 
 $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP):
+	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && wget $(CARLA_WINDOWS_BINARY_64_URL)
 
 $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_32_ZIP):
+	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && wget $(CARLA_WINDOWS_BINARY_32_URL)
 
 $(BUILD_DIR)/$(MESON_TARBALL):
+	mkdir -p $(BUILD_DIR)
 	wget https://github.com/mesonbuild/meson/releases/download/$(MESON_VERSION)/$(MESON_TARBALL) -O $@
 
 pkg-filename-%:

@@ -29,7 +29,7 @@ options=('strip' 'staticlibs')
 license=("AGPL3")
 url="https://www.zrythm.org"
 #install=${_realname}-${CARCH}.install
-source=(https://www.zrythm.org/releases/zrythm-${pkgver}.tar.xz)
+source=(zrythm-${pkgver}.tar.gz)
 sha256sums=('SKIP')
 
 prepare() {
@@ -40,6 +40,9 @@ build() {
   [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
   mkdir -p build-${MINGW_CHOST} && cd build-${MINGW_CHOST}
 
+  sed -i -e '94s/translator/"invalid"/' \
+    ${srcdir}/zrythm-${pkgver}/scripts/gen-translators-list.scm
+
   ${MINGW_PREFIX}/bin/meson \
     -Dsdl=enabled \
     -Drtaudio=auto \
@@ -47,6 +50,7 @@ build() {
     -Djack=disabled \
     -Dguile=disabled \
     -Dmanpage=false \
+    -Dtrial-ver=false \
     -Dwindows_release=true -Dcarla=enabled \
     --buildtype=release \
     "../zrythm-${pkgver}"
