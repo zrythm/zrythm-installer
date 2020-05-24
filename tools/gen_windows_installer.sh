@@ -59,6 +59,8 @@ cp $MINGW_PREFIX/$GLIB_SCHEMAS_DIR_SUFFIX/* $DIST_DIR/$GLIB_SCHEMAS_DIR_SUFFIX/
 
 # ******************************
 echo "Copying dlls..."
+
+# --- legacy ---
 DLLS=" \
   libatk-1.0-0.dll \
   libbz2-1.dll \
@@ -115,8 +117,21 @@ DLLS=" \
   #echo "copying $file"
   #cp $MINGW_PREFIX/bin/$file $DIST_BINDIR/
 #done
-cp $MINGW_PREFIX/bin/*.dll $DIST_BINDIR/
+#cp $MINGW_PREFIX/bin/*.dll $DIST_BINDIR/
+# --- end legacy ---
+
+tools/copy-dll-deps.sh \
+  --infile "$MINGW_PREFIX/bin/zrythm$TRIAL.exe" \
+  --destdir $DIST_BINDIR/ \
+  --recursivesrcdir "$MINGW_PREFIX/bin" \
+  --srcdir "$MINGW_PREFIX/bin" \
+  --objdump "/mingw64/bin/objdump.exe" \
+  --copy
+
+# some dlls need to be copied manually
+cp $MINGW_PREFIX/bin/librsvg-2-2.dll $DIST_BINDIR/
 cp $MINGW_PREFIX/lib/carla/*.dll $DIST_BINDIR/
+
 # for an unknown reason it doesn't work unless it
 # is named CarlaNativePlugin.dll
 mv $DIST_BINDIR/libcarla_native-plugin.dll \

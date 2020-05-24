@@ -28,7 +28,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-python3")
-options=('strip' 'staticlibs')
+options=('strip' '!staticlibs')
 license=("AGPL3")
 url="https://www.zrythm.org"
 #install=${_realname}-${CARCH}.install
@@ -55,7 +55,7 @@ build() {
     -Dmanpage=false \
     -Dtrial-ver=false \
     -Dwindows_release=true -Dcarla=enabled \
-    --buildtype=release \
+    --buildtype=debugoptimized \
     "../zrythm-${pkgver}"
   ninja
 
