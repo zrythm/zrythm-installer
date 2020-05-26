@@ -481,11 +481,24 @@ $(ARCH_MXE_64_STATIC_PREFIX)/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-s
 $(eval $(call make_zrythm_mxe_target,,false))
 $(eval $(call make_zrythm_mxe_target,-trial,true))
 
+# 1: package
+define install_lilv_dep
+	cp PKGBUILD-$(1)-mingw $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
+	cd $(BUILD_WINDOWS_MSYS_DIR) && MINGW_INSTALLS=mingw64 makepkg-mingw -fsi --noconfirm
+endef
+
+/mingw64/include/lilv-0/lilv/lilv.h: PKGBUILD-lilv-mingw PKGBUILD-lv2-mingw PKGBUILD-serd-mingw PKGBUILD-sord-mingw PKGBUILD-sratom-mingw
+	$(call install_lilv_dep,lv2)
+	$(call install_lilv_dep,serd)
+	$(call install_lilv_dep,sord)
+	$(call install_lilv_dep,sratom)
+	$(call install_lilv_dep,lilv)
+
 # arg 1: .pkg.tar filename
 # arg 2: '-trial' if trial
 # arg 3: dependency (make trial depend on main ver)
 define make_zrythm_msys_target
-$(BUILD_WINDOWS_MSYS_DIR)/$(1): PKGBUILD-w10.in $(3) $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP) $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_32_ZIP) $(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/meson/meson.py
+$(BUILD_WINDOWS_MSYS_DIR)/$(1): PKGBUILD-w10.in $(3) $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP) $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_32_ZIP) $(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/meson/meson.py /mingw64/include/lilv-0/lilv/lilv.h
 	# install carla
 	cd $(BUILD_DIR) && \
 		unzip -o $(CARLA_WINDOWS_BINARY_64_ZIP) -d \

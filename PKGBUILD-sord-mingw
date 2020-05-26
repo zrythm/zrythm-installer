@@ -1,0 +1,34 @@
+# Maintainer: Alexandros Theodotou <alex at zrythm dot org>
+_realname=sord
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=0.16.4
+pkgrel=1
+arch=('any')
+pkgdesc='sord'
+depends=("$MINGW_PACKAGE_PREFIX-serd")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-python3")
+options=('strip' 'staticlibs')
+license=("AGPL3")
+url="https://www.zrythm.org"
+source=("http://download.drobilla.net/$_realname-$pkgver.tar.bz2")
+sha256sums=('SKIP')
+
+build() {
+  #CC="$MINGW_PREFIX/bin/x86_64-w64-mingw32-gcc.exe"
+
+  pushd "$srcdir/$_realname-$pkgver"
+  ./waf configure --prefix="$MINGW_PREFIX" --static --no-shared --no-utils
+  ./waf
+  popd
+}
+
+package() {
+  destdir="${pkgdir}${MINGW_PREFIX}"
+
+  pushd "$srcdir/$_realname-$pkgver"
+  DESTDIR="$destdir" ./waf install
+  popd
+}

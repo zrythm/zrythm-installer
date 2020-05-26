@@ -1,0 +1,43 @@
+# Maintainer: Alexandros Theodotou <alex at zrythm dot org>
+_realname=lilv
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=0.24.8
+pkgrel=1
+arch=('any')
+pkgdesc='lilv'
+depends=("$MINGW_PACKAGE_PREFIX-sratom")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-python3")
+options=('strip' 'staticlibs')
+license=("AGPL3")
+url="https://www.zrythm.org"
+source=("http://download.drobilla.net/$_realname-$pkgver.tar.bz2")
+sha256sums=('SKIP')
+
+prepare () {
+  pushd "$srcdir/$_realname-$pkgver"
+  sed -i -e '40s/.*/#if 0/' src/util.c
+  popd
+}
+
+build() {
+  #CC="$MINGW_PREFIX/bin/x86_64-w64-mingw32-gcc.exe"
+
+  pushd "$srcdir/$_realname-$pkgver"
+  ./waf configure \
+    --prefix="$MINGW_PREFIX" \
+    --static --no-shared \
+    --no-utils --no-bindings
+  ./waf
+  popd
+}
+
+package() {
+  destdir="${pkgdir}${MINGW_PREFIX}"
+
+  pushd "$srcdir/$_realname-$pkgver"
+  DESTDIR="$destdir" ./waf install
+  popd
+}
