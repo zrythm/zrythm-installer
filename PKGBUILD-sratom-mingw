@@ -36,7 +36,7 @@ build() {
 
   /usr/bin/python3 ./waf configure \
     --prefix=${MINGW_PREFIX} \
-    --static --no-shared --no-utils
+    --static --no-shared
   /usr/bin/python ./waf build
 }
 

@@ -22,7 +22,6 @@ prepare() {
 
   [[ -x ./waf ]] || /usr/bin/python ./bootstrap.py
   sed -i 's:bin/env python$:bin/env python:' waf
-  sed -i -e "226s/bundle_dir.*/bundle_dir = 'lv2bundles.lv2'/" wscript
 }
 
 build() {
@@ -38,7 +37,7 @@ build() {
 
   /usr/bin/python3 ./waf configure \
     --prefix=${MINGW_PREFIX} \
-    --no-plugins --lv2-user
+    --no-plugins --lv2dir=tmp
   /usr/bin/python ./waf build
 }
 
