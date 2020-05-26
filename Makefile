@@ -517,7 +517,7 @@ $(BUILD_WINDOWS_MSYS_DIR)/$(1): PKGBUILD-w10.in $(3) $(BUILD_DIR)/$(CARLA_WINDOW
 	sed -i -e 's/@ZPLUGINS_VERSION@/$(ZPLUGINS_VERSION)/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	if [ "$(2)" = "-trial" ]; then \
 		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \
-		sed -i -e 's/-Dtrial-ver=false/-Dtrial-ver=true/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \
+		sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \
 	fi
 	cd $(BUILD_WINDOWS_MSYS_DIR) && MINGW_INSTALLS=mingw64 makepkg-mingw -f
 endef
@@ -534,6 +534,11 @@ define make_windows_chroot
 	mkdir -p $(1)/tmp && \
 	pacman -Syu --root $(1) && \
 	pacman -S filesystem bash pacman mingw-w64-x86_64-gtksourceview4 --noconfirm --needed --root $(1) && \
+	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-lv2-1.18.0-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
+	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-serd-0.30.4-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
+	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-sord-0.16.4-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
+	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-sratom-0.6.4-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
+	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-lilv-0.24.8-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
 	pacman -U $(2) --noconfirm --needed --root $(1) && \
 	cp -R /mingw64/lib/carla $(1)/mingw64/lib/ && \
 	glib-compile-schemas.exe $(1)/mingw64/share/glib-2.0/schemas

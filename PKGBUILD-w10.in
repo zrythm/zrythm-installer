@@ -55,7 +55,7 @@ build() {
     -Djack=disabled \
     -Dguile=disabled \
     -Dmanpage=false \
-    -Dtrial-ver=false \
+    -Dtrial_ver=false \
     -Dwindows_release=true -Dcarla=enabled \
     --buildtype=debugoptimized \
     "../zrythm-${pkgver}"
