@@ -27,7 +27,7 @@ build() {
 
   pushd "$srcdir/$_realname-$pkgver"
   ./waf configure \
-    --prefix="$MINGW_PREFIX" \
+    --prefix=/c/mingw64 \
     --static --no-shared \
     --no-utils --no-bindings
   ./waf
@@ -35,9 +35,7 @@ build() {
 }
 
 package() {
-  destdir="${pkgdir}${MINGW_PREFIX}"
-
   pushd "$srcdir/$_realname-$pkgver"
-  DESTDIR="$destdir" ./waf install
+  DESTDIR="$pkgdir" ./waf install
   popd
 }

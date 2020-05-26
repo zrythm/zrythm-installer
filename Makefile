@@ -483,6 +483,7 @@ $(eval $(call make_zrythm_mxe_target,-trial,true))
 
 # 1: package
 define install_lilv_dep
+	mkdir -p $(BUILD_WINDOWS_MSYS_DIR)
 	cp PKGBUILD-$(1)-mingw $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	cd $(BUILD_WINDOWS_MSYS_DIR) && MINGW_INSTALLS=mingw64 makepkg-mingw -fsi --noconfirm
 endef

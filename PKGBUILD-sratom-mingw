@@ -20,15 +20,13 @@ build() {
   #CC="$MINGW_PREFIX/bin/x86_64-w64-mingw32-gcc.exe"
 
   pushd "$srcdir/$_realname-$pkgver"
-  ./waf configure --prefix="$MINGW_PREFIX" --static --no-shared
+  ./waf configure --prefix=/c/mingw64 --static --no-shared
   ./waf
   popd
 }
 
 package() {
-  destdir="${pkgdir}${MINGW_PREFIX}"
-
   pushd "$srcdir/$_realname-$pkgver"
-  DESTDIR="$destdir" ./waf install
+  DESTDIR="$pkgdir" ./waf install
   popd
 }

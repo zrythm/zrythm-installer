@@ -14,6 +14,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
          "${MINGW_PACKAGE_PREFIX}-rubberband"
          "${MINGW_PACKAGE_PREFIX}-libsndfile"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
+         "${MINGW_PACKAGE_PREFIX}-lilv"
          "${MINGW_PACKAGE_PREFIX}-gtksourceview4"
          "${MINGW_PACKAGE_PREFIX}-graphviz"
          "${MINGW_PACKAGE_PREFIX}-dlfcn"
@@ -32,13 +33,8 @@ options=('strip' '!staticlibs')
 license=("AGPL3")
 url="https://www.zrythm.org"
 #install=${_realname}-${CARCH}.install
-source=("zrythm-$pkgver.tar.gz" "zplugins-$_zplugins_ver.tar.gz"
-  "http://lv2plug.in/spec/lv2-1.18.0.tar.bz2"
-  "http://download.drobilla.net/serd-0.30.4.tar.bz2"
-  "https://download.drobilla.net/sord-0.16.4.tar.bz2"
-  "https://download.drobilla.net/sratom-0.6.4.tar.bz2"
-  "https://download.drobilla.net/lilv-0.24.8.tar.bz2")
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+source=("zrythm-$pkgver.tar.gz" "zplugins-$_zplugins_ver.tar.gz")
+sha256sums=('SKIP' 'SKIP')
 
 prepare() {
   cd "${srcdir}"/zrythm-${pkgver}
