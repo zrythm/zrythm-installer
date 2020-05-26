@@ -16,26 +16,34 @@ url="https://www.zrythm.org"
 source=("http://download.drobilla.net/$_realname-$pkgver.tar.bz2")
 sha256sums=('SKIP')
 
-prepare () {
-  pushd "$srcdir/$_realname-$pkgver"
+prepare() {
+  cd ${_realname}-${pkgver}
+
+  [[ -x ./waf ]] || /usr/bin/python ./bootstrap.py
+  sed -i 's:bin/env python$:bin/env python:' waf
   sed -i -e '40s/.*/#if 0/' src/util.c
-  popd
 }
 
 build() {
-  #CC="$MINGW_PREFIX/bin/x86_64-w64-mingw32-gcc.exe"
+  cd "${srcdir}/${_realname}-${pkgver}"
 
-  pushd "$srcdir/$_realname-$pkgver"
-  ./waf configure \
-    --prefix=/c/mingw64 \
+  DEST_OS=win32 \
+  TARGET=${MINGW_CHOST} \
+  PKG_CONFIG=${MINGW_PREFIX}/bin/pkg-config \
+  CC=gcc PERL=/usr/bin/perl \
+  AR=${MINGW_PREFIX}/bin/ar \
+  WINDRES=${MINGW_PREFIX}/bin/windres \
+  RST2MAN=${MINGW_PREFIX}/bin/rst2man3 \
+
+  /usr/bin/python3 ./waf configure \
+    --prefix=${MINGW_PREFIX} \
     --static --no-shared \
     --no-utils --no-bindings
-  ./waf
-  popd
+  /usr/bin/python ./waf build
 }
 
 package() {
-  pushd "$srcdir/$_realname-$pkgver"
-  DESTDIR="$pkgdir" ./waf install
-  popd
+  cd "${srcdir}/${_realname}-${pkgver}"
+  export PYTHON=${MINGW_PREFIX}/bin/python
+  /usr/bin/python ./waf install --destdir="${pkgdir}"
 }
