@@ -218,7 +218,8 @@ artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_
 		$(OSX_INSTALL_PREFIX) \
 		artifacts/osx/$(OSX_INSTALLER) \
 		$$(pwd)/tools/osx /usr/local \
-		Zrythm Zrythm $(BREEZE_DARK_PATH)
+		Zrythm Zrythm $(BREEZE_DARK_PATH) \
+		$(MANUAL_ZIP_PATH)
 	tools/gen_osx_installer.sh $(ZRYTHM_PKG_VERSION) \
 		$(BUILD_OSX_DIR)/zrythm-$(ZRYTHM_PKG_VERSION) \
 		$(OSX_INSTALL_TRIAL_PREFIX) \

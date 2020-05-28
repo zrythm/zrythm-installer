@@ -32,9 +32,10 @@ zrythm_install_prefix=$3
 FINAL_DMG_PATH=$4
 OSX_SOURCE_DATA_DIR=$5
 normal_prefix=$6
-APP_NAME_W_SPACES=$7
+app_name_w_spaces=$7
 APP_NAME_NO_SPACES=$8
 breeze_dark_path=$9
+manual_zip_path=${10}
 WORK_ROOT=/tmp/zrythm-dmg
 
 rm -rf $WORK_ROOT
@@ -45,6 +46,7 @@ Contents=$APPDIR/Contents
 Resources=$Contents/Resources
 Bin=$Resources/bin
 Share=$Resources/share
+Doc=$Resources/doc
 Etc=$Resources/etc
 Locale=$Resources/share/locale
 Lib=$Resources/lib
@@ -66,6 +68,7 @@ mkdir -p $Etc
 mkdir -p $Locale
 mkdir -p $Lib
 mkdir -p $Bin
+mkdir -p $Doc
 
 # copy static files
 echo "copying plists"
@@ -243,9 +246,15 @@ done
 sed -i -e "s|/usr/local|@executable_path/..|" $Lib/$GDK_PIXBUF_DIR/loaders.cache
 
 # add license, readme, third party info
-cp $zrythm_src_dir/README.md $Resources/
-cp $zrythm_src_dir/COPYING* $Resources/
-brew list --versions -1 -v > $Resources/THIRDPARTY_INFO.txt
+cp $zrythm_src_dir/README.md $Doc/
+cp $zrythm_src_dir/COPYING* $Doc/
+brew list --versions -1 -v > $Doc/THIRDPARTY_INFO.txt
+
+# add user manuals if not trial
+if ! [[ "$app_name_w_spaces" == *"rial"* ]]; then
+  echo "packaging user manuals from $manual_zip_path" ;
+  unzip -o $manual_zip_path -d $Doc/ ;
+fi
 
 # remove unnecessary files
 rm -f $Lib/$GDK_PIXBUF_DIR/loaders/*.a
@@ -257,7 +266,7 @@ rm -f $FINAL_DMG_PATH
 mkdir -p $(dirname "$FINAL_DMG_PATH")
 sed "s|@APP_PATH@|$APPDIR|" < \
   $OSX_SOURCE_DATA_DIR/appdmg.json.in > $WORK_ROOT/appdmg.json
-sed -i -e "s|@APPNAME@|$APP_NAME_W_SPACES|" $WORK_ROOT/appdmg.json
+sed -i -e "s|@APPNAME@|$app_name_w_spaces|" $WORK_ROOT/appdmg.json
 sed -i -e "s|@ICNS_PATH@|$Resources/zrythm.icns|" \
   $WORK_ROOT/appdmg.json
 cat $WORK_ROOT/appdmg.json
