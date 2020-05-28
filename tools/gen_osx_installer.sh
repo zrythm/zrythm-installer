@@ -96,19 +96,20 @@ cp -RL $normal_prefix/lib/$GDK_PIXBUF_DIR/* $Lib/$GDK_PIXBUF_DIR/
 cp -RL $normal_prefix/lib/librsvg*.dylib $Lib/
 
 # Carla
-cp -RL $zrythm_install_prefix/lib/carla $Lib/
-cp -RL $zrythm_install_prefix/lib/carla/*.dylib $Lib/
-cp $zrythm_install_prefix/lib/carla/carla-discovery-native $Bin/
+cp -RL $zrythm_install_prefix/lib/zrythm/lib/carla $Lib/
+cp -RL $zrythm_install_prefix/lib/zrythm/lib/carla/*.dylib $Lib/
+cp $zrythm_install_prefix/lib/zrythm/lib/carla/carla-discovery-native $Bin/
 
 # localization
 echo "copying languages"
 languages="fr de it es ja"
 for lang in $languages; do
-  SRC_DIR=$zrythm_install_prefix/share/locale/$lang/LC_MESSAGES
   CUR_DIR="$Locale/$lang/LC_MESSAGES"
   mkdir -p $CUR_DIR
-  cp $SRC_DIR/zrythm.mo "$CUR_DIR/"
-  cp $SRC_DIR/gtk30.mo $SRC_DIR/gtk30-properties.mo $CUR_DIR/
+  _src_dir=$zrythm_install_prefix/share/locale/$lang/LC_MESSAGES
+  cp $_src_dir/zrythm.mo "$CUR_DIR/"
+  _src_dir=$normal_prefix/share/locale/$lang/LC_MESSAGES
+  cp $_src_dir/gtk30.mo $_src_dir/gtk30-properties.mo $CUR_DIR/
 done
 
 echo "copying zrythm resoures"
