@@ -120,8 +120,10 @@ if ! is_trial ; then
 fi
 
 echo "zipping installer..."
-zip $installer_zip $pdf installer.sh README \
-  bin/**/*.* bin/**/**/* bin/**/**/**/* bin/**/**/**/**/*
+installer_zip_dir=${installer_zip::-4}
+mkdir $installer_zip_dir
+cp -R $pdf installer.sh README bin $installer_zip_dir/
+zip -r $installer_zip $installer_zip_dir
 echo "done"
 
 echo "cleaning up..."
