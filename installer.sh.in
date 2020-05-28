@@ -80,7 +80,7 @@ fi
 
 arch_str="Arch GNU/Linux"
 
-if [[ "$ID" = "arch" -o "$ID_LIKE" = *"arch"* ]]; then
+if [[ "$ID" = "arch" ]] || [[ "$ID_LIKE" = *"arch"* ]]; then
   echo "found $arch_str"
   architecture="x86_64"
   distro_identifier="archlinux"
@@ -151,7 +151,7 @@ fi
 # install packages
 prefix="bin/$distro_identifier/zrythm-$zrythm_ver"
 if [ $proceed -ne 0 ]; then
-  if [[ $distro_identifier = "ubuntu"* -o $distro_identifier = "debian"* ]]; then
+  if [[ $distro_identifier = "ubuntu"* ]] || [[ $distro_identifier = "debian"* ]]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
       "apt update && \
