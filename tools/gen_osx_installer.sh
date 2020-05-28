@@ -26,12 +26,12 @@
 
 set -e
 
-ZRYTHM_VERSION=$1
-ZRYTHM_SRC_DIR=$2
-ZRYTHM_INSTALL_PREFIX=$3
+zrythm_version=$1
+zrythm_src_dir=$2
+zrythm_install_prefix=$3
 FINAL_DMG_PATH=$4
 OSX_SOURCE_DATA_DIR=$5
-NORMAL_PREFIX=$6
+normal_prefix=$6
 APP_NAME_W_SPACES=$7
 APP_NAME_NO_SPACES=$8
 breeze_dark_path=$9
@@ -50,7 +50,7 @@ Locale=$Resources/share/locale
 Lib=$Resources/lib
 
 echo "system dependencies:"
-for file in $ZRYTHM_INSTALL_PREFIX/bin/zrythm* ; do
+for file in $zrythm_install_prefix/bin/zrythm* ; do
 	if ! file $file | grep -qs Mach-O ; then
 	    continue
 	fi
@@ -69,7 +69,7 @@ mkdir -p $Bin
 
 # copy static files
 echo "copying plists"
-sed "s/@VERSION@/$ZRYTHM_VERSION/" < \
+sed "s/@VERSION@/$zrythm_version/" < \
   $OSX_SOURCE_DATA_DIR/Info.plist.in > $Contents/Info.plist
 
 cp $OSX_SOURCE_DATA_DIR/launcher.sh $Contents/MacOS/Zrythm
@@ -77,34 +77,34 @@ chmod 775 $Contents/MacOS/Zrythm
 MAIN_EXECUTABLE=zrythm  ## used in startup_script
 
 echo "Copying zrythm executable ...."
-cp $ZRYTHM_INSTALL_PREFIX/bin/zrythm $Bin/
+cp $zrythm_install_prefix/bin/zrythm $Bin/
 cp $OSX_SOURCE_DATA_DIR/zrythm.icns $Resources/
 
 set +e
 
 # etc gtk
-cp -RL $NORMAL_PREFIX/etc/gtk-3.0 $Etc/
+cp -RL $normal_prefix/etc/gtk-3.0 $Etc/
 
 # charset alias
-cp -RL $NORMAL_PREFIX/lib/charset.alias $Lib/
+cp -RL $normal_prefix/lib/charset.alias $Lib/
 
 # GDK Pixbuf
 echo "copying gdk pixbuf loaders"
 GDK_PIXBUF_DIR=gdk-pixbuf-2.0/2.10.0
 mkdir -p $Lib/$GDK_PIXBUF_DIR
-cp -RL $NORMAL_PREFIX/lib/$GDK_PIXBUF_DIR/* $Lib/$GDK_PIXBUF_DIR/
-cp -RL $NORMAL_PREFIX/lib/librsvg*.dylib $Lib/
+cp -RL $normal_prefix/lib/$GDK_PIXBUF_DIR/* $Lib/$GDK_PIXBUF_DIR/
+cp -RL $normal_prefix/lib/librsvg*.dylib $Lib/
 
 # Carla
-cp -RL $NORMAL_PREFIX/lib/carla $Lib/
-cp -RL $NORMAL_PREFIX/lib/carla/*.dylib $Lib/
-cp $NORMAL_PREFIX/lib/carla/carla-discovery-native $Bin/
+cp -RL $zrythm_install_prefix/lib/carla $Lib/
+cp -RL $zrythm_install_prefix/lib/carla/*.dylib $Lib/
+cp $zrythm_install_prefix/lib/carla/carla-discovery-native $Bin/
 
 # localization
 echo "copying languages"
 languages="fr de it es ja"
 for lang in $languages; do
-  SRC_DIR=$NORMAL_PREFIX/share/locale/$lang/LC_MESSAGES
+  SRC_DIR=$zrythm_install_prefix/share/locale/$lang/LC_MESSAGES
   CUR_DIR="$Locale/$lang/LC_MESSAGES"
   mkdir -p $CUR_DIR
   cp $SRC_DIR/zrythm.mo "$CUR_DIR/"
@@ -112,7 +112,7 @@ for lang in $languages; do
 done
 
 echo "copying zrythm resoures"
-cp -RL "$ZRYTHM_INSTALL_PREFIX/share/zrythm" "$Share/"
+cp -RL "$zrythm_install_prefix/share/zrythm" "$Share/"
 
 echo "copying breeze icons"
 ICONS_DIR="$Share/icons"
@@ -120,31 +120,31 @@ mkdir -p "$ICONS_DIR"
 cp -RL "$breeze_dark_path" "$ICONS_DIR/breeze-dark"
 
 echo "copying existing hicolor icons"
-cp -RL "$NORMAL_PREFIX/share/icons/hicolor" "$ICONS_DIR/"
+cp -RL "$normal_prefix/share/icons/hicolor" "$ICONS_DIR/"
 
 echo "copying app icon"
 APPICON_DIR1=$ICONS_DIR/hicolor/scalable/apps
 APPICON_DIR2=$ICONS_DIR/hicolor/48x48/apps
 mkdir -p $APPICON_DIR1
 mkdir -p $APPICON_DIR2
-cp $ZRYTHM_SRC_DIR/resources/icons/zrythm/zrythm.svg $APPICON_DIR1/
-cp $ZRYTHM_SRC_DIR/resources/icons/zrythm/zrythm.svg $APPICON_DIR2/
+cp $zrythm_src_dir/data/icon-themes/zrythm-dark/scalable/apps/zrythm.svg $APPICON_DIR1/
+cp $zrythm_src_dir/data/icon-themes/zrythm-dark/scalable/apps/zrythm.svg $APPICON_DIR2/
 
 echo "copying themes"
 #rsync -a --copy-links /usr/local/share/ $Share/
-cp -RL "$NORMAL_PREFIX/share/themes" "$Share/"
+cp -RL "$normal_prefix/share/themes" "$Share/"
 
 echo "copying fonts"
-cp -R $ZRYTHM_SRC_DIR/data/fonts "$Share/"
-cp -R $NORMAL_PREFIX/etc/fonts "$Etc/"
+cp -R $zrythm_src_dir/data/fonts "$Share/"
+cp -R $normal_prefix/etc/fonts "$Etc/"
 sed -i -e \
   's|<dir>~/.fonts</dir>|<dir prefix="relative">../share/fonts</dir>|' $Etc/fonts/fonts.conf
 
 SCHEMAS_DIR="glib-2.0/schemas"
 mkdir -p $Share/$SCHEMAS_DIR
-cp $ZRYTHM_INSTALL_PREFIX/share/$SCHEMAS_DIR/org.zrythm*.xml \
+cp $zrythm_install_prefix/share/$SCHEMAS_DIR/org.zrythm*.xml \
   "$Share/$SCHEMAS_DIR/"
-cp $NORMAL_PREFIX/share/$SCHEMAS_DIR/org.gtk.*.xml \
+cp $normal_prefix/share/$SCHEMAS_DIR/org.gtk.*.xml \
   "$Share/$SCHEMAS_DIR/"
 echo "building schemas"
 glib-compile-schemas "$Share/$SCHEMAS_DIR/"
@@ -166,7 +166,7 @@ while [ true ] ; do
 		strip -u -r -arch all $file &>/dev/null
 	fi
 
-	deps=`otool -L $file | awk '{print $1}' | egrep "($NORMAL_PREFIX|libs/$STDCPP)" | grep -v "$(basename $file)"`
+	deps=`otool -L $file | awk '{print $1}' | egrep "($normal_prefix|libs/$STDCPP)" | grep -v "$(basename $file)"`
   echo "deps=$deps"
 	# echo -n "."
 	for dep in $deps ; do
@@ -194,7 +194,7 @@ for exe in $executables; do
   echo "processing executable $exe"
   EXE=$Bin/$exe
   changes=""
-  for lib in `otool -L $EXE | egrep "($NORMAL_PREFIX|$ZRYTHM_INSTALL_PREFIX|/opt/|/local/)" | awk '{print $1}' | grep -v 'libjack\.'` ; do
+  for lib in `otool -L $EXE | egrep "($normal_prefix|$zrythm_install_prefix|/opt/|/local/)" | awk '{print $1}' | grep -v 'libjack\.'` ; do
     base=`basename $lib`
     changes="$changes -change $lib @executable_path/../lib/$base"
   done
@@ -214,7 +214,7 @@ for libdir in $Lib ; do
     fi
     # change all the dependencies
     changes=""
-    for lib in `otool -L $dylib | egrep "($NORMAL_PREFIX|$ZRYTHM_INSTALL_PREFIX|/opt/|/local/)" | awk '{print $1}' | grep -v 'libjack\.'` ; do
+    for lib in `otool -L $dylib | egrep "($normal_prefix|$zrythm_install_prefix|/opt/|/local/)" | awk '{print $1}' | grep -v 'libjack\.'` ; do
       base=`basename $lib`
       if echo $lib | grep -s libbase; then
         changes="$changes -change $lib @executable_path/../$libbase/$base"
@@ -242,8 +242,8 @@ done
 sed -i -e "s|/usr/local|@executable_path/..|" $Lib/$GDK_PIXBUF_DIR/loaders.cache
 
 # add license, readme, third party info
-cp $ZRYTHM_SRC_DIR/README.md $Resources/
-cp $ZRYTHM_SRC_DIR/COPYING* $Resources/
+cp $zrythm_src_dir/README.md $Resources/
+cp $zrythm_src_dir/COPYING* $Resources/
 brew list --versions -1 -v > $Resources/THIRDPARTY_INFO.txt
 
 # remove unnecessary files
