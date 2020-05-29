@@ -54,6 +54,7 @@ build() {
     -Drtmidi=auto \
     -Djack=disabled \
     -Dguile=disabled \
+    -Dfallback_version=@VERSION@ \
     -Dmanpage=false \
     -Dtrial_ver=false \
     -Dwindows_release=true -Dcarla=enabled \

@@ -30,6 +30,7 @@ build() {
     -Dbuildtype=release -Dffmpeg=enabled \
     -Dsdl=enabled -Drtaudio=enabled \
     -Drtmidi=enabled -Dcarla=enabled \
+    -Dfallback_version=@VERSION@ \
     -Dtrial_ver=false
   ninja -C build
 }

@@ -292,6 +292,7 @@ define prepare_debian
 	cp debian.control $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/control
 	cp debian.copyright $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/copyright
 	cp debian.rules $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules
 	if [ "$$(hostname)" = "linuxmint193" ] ; then \
 			sed -i -e 's/-Dffmpeg=enabled/-Dffmpeg=disabled/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/ninja test/echo test/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules; \
@@ -340,7 +341,7 @@ $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
 	mkdir -p $(BUILD_ARCH_DIR)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
-	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_ARCH_DIR)/PKGBUILD
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' $(BUILD_ARCH_DIR)/PKGBUILD
 	if [ "$(3)" = "-trial" ]; then \
 		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
 		sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
@@ -380,7 +381,7 @@ $(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
 		mkdir -p BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
 	mkdir -p $(BUILD_DIR)/$(2)
 	cp zrythm.spec.in $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) \
 		$(RPMBUILD_ROOT)/SOURCES/
 	if [ "$(3)" = "-trial" ]; then \
@@ -514,7 +515,7 @@ $(BUILD_WINDOWS_MSYS_DIR)/$(1): PKGBUILD-w10.in $(3) $(BUILD_DIR)/$(CARLA_WINDOW
 	cp PKGBUILD-w10.in $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_WINDOWS_MSYS_DIR)/
 	cp $(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_WINDOWS_MSYS_DIR)/
-	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	sed -i -e 's/@ZPLUGINS_VERSION@/$(ZPLUGINS_VERSION)/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	if [ "$(2)" = "-trial" ]; then \
 		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \
