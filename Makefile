@@ -58,6 +58,7 @@ BUILD_ARCH_DIR=$(BUILD_DIR)/archlinux
 BUILD_WINDOWS_DIR=$(BUILD_DIR)/windows10
 BUILD_WINDOWS_MSYS_DIR=$(BUILD_DIR)/windows10-msys
 BUILD_OSX_DIR=$(BUILD_DIR)/osx
+BUILD_OSX_BREW_DIR=$(BUILD_DIR)/osx-brew-zip
 WINDOWS_CHROOT_BASE=/tmp/chroot-for-zrythm
 WIN_CHROOT_DIR=/tmp/zrythm-root
 WIN_TRIAL_CHROOT_DIR=/tmp/zrythm-trial-root
@@ -115,7 +116,7 @@ OSX_BREW_BOTTLE=zrythm--$(ZRYTHM_PKG_VERSION).catalina.bottle.tar.gz
 OSX_TRIAL_BREW_BOTTLE=zrythm-trial--$(ZRYTHM_PKG_VERSION).catalina.bottle.tar.gz
 OSX_BREW_ZIP_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-osx-installer.zip
 OSX_BREW_ZIP_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-osx-installer.zip
-CARLA_BOTTLE=carla-git--0.1.catalina.bottle.tar.gz
+CARLA_BOTTLE=carla-git--0.1.1.catalina.bottle.tar.gz
 APPIMAGE_APPDIR=/tmp/appimage/AppDir
 BREEZE_DARK_PATH=/Users/alex/.local/share/icons/breeze-dark
 MANUAL_ZIP_PATH=$(BUILD_DIR)/user-manual.zip
@@ -238,8 +239,8 @@ osx: artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)
 # 1: brew bottle
 # 2: dep
 define make_osx_brew_bottle_target
-$(BUILD_OSX_DIR)/$(1): tools/gen_osx_installer_brew.sh tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(2)
-	mkdir -p $(BUILD_OSX_DIR)
+$(BUILD_OSX_BREW_DIR)/$(1): tools/gen_osx_installer_brew.sh tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(2)
+	mkdir -p $(BUILD_OSX_BREW_DIR)
 	rm -rf /tmp/breeze-dark
 	cp -R $(BREEZE_DARK_PATH) /tmp/breeze-dark
 	tools/gen_osx_installer_brew.sh bottle "$$@" tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(ZRYTHM_PKG_VERSION) $(CARLA_VERSION)
@@ -247,16 +248,16 @@ $(BUILD_OSX_DIR)/$(1): tools/gen_osx_installer_brew.sh tools/osx/zrythm.rb $(BUI
 endef
 
 $(eval $(call make_osx_brew_bottle_target,$(OSX_BREW_BOTTLE)))
-$(eval $(call make_osx_brew_bottle_target,$(OSX_TRIAL_BREW_BOTTLE),$(BUILD_OSX_DIR)/$(OSX_BREW_BOTTLE)))
+$(eval $(call make_osx_brew_bottle_target,$(OSX_TRIAL_BREW_BOTTLE),$(BUILD_OSX_BREW_DIR)/$(OSX_BREW_BOTTLE)))
 
-$(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_PKG_FILE): $(BUILD_OSX_DIR)/$(OSX_BREW_BOTTLE)
-	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(BUILD_OSX_DIR)/$(CARLA_BOTTLE)
+$(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_PKG_FILE): $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_BOTTLE)
+	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(BUILD_OSX_BREW_DIR)/$(CARLA_BOTTLE)
 
-$(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_TRIAL_PKG_FILE): $(BUILD_OSX_DIR)/$(OSX_TRIAL_BREW_BOTTLE) $(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_PKG_FILE)
-	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(BUILD_OSX_DIR)/$(CARLA_BOTTLE)
+$(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_TRIAL_PKG_FILE): $(BUILD_OSX_BREW_DIR)/$(OSX_TRIAL_BREW_BOTTLE) $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_PKG_FILE)
+	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(BUILD_OSX_BREW_DIR)/$(CARLA_BOTTLE)
 
 .PHONY: osx-brew-zip
-osx-brew-zip: $(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_PKG_FILE) $(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_TRIAL_PKG_FILE)
+osx-brew-zip: $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_PKG_FILE) $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_TRIAL_PKG_FILE)
 
 #
 # Function to get the full path to the ZSaw manifest file

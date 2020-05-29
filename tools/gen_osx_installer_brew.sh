@@ -45,9 +45,10 @@ if [ "$bottle_or_zip" = "bottle" ]; then
   brew install --verbose --debug --build-bottle carla-git
   brew bottle carla-git
   brew link --overwrite carla-git
+  brew unlink carla-git
   brew unlink zrythm || true
   brew unlink zrythm-trial || true
-  brew install --verbose --debug --build-bottle $pkg_name
+  brew install --verbose --debug --build-bottle $pkg_name || true
   brew bottle $pkg_name
   brew link --overwrite $pkg_name
   destdir="$(dirname $bottle_file)"
