@@ -241,7 +241,7 @@ define make_osx_brew_bottle_target
 $(BUILD_OSX_DIR)/$(1): tools/gen_osx_installer_brew.sh tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(2)
 	mkdir -p $(BUILD_OSX_DIR)
 	rm -rf /tmp/breeze-dark
-	cp -R $(BREEZE_DARK_PATH) /tmp/
+	cp -R $(BREEZE_DARK_PATH) /tmp/breeze-dark
 	tools/gen_osx_installer_brew.sh bottle "$$@" tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(ZRYTHM_PKG_VERSION) $(CARLA_VERSION)
 	touch $$@
 endef

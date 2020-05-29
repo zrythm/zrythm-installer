@@ -28,7 +28,10 @@ class Zrythm < Formula
 
   def install
     mkdir "build" do
-      system "meson", *std_meson_args, "-Dtests=false", "-Dtrial_ver=false", "-Dcarla=enabled", "-Dffmpeg=enabled", ".."
+      system "meson", *std_meson_args, "-Dtests=false", "-Dtrial_ver=false",
+        "-Dcarla=enabled", "-Dffmpeg=enabled",
+        "-Drtmidi=enabled", "-Drtaudio=enabled",
+        ".."
       system "ninja", "-v"
       system "ninja", "install", "-v"
       system "cp", "-r", "/tmp/breeze-dark", "#{share}/icons/breeze-dark"
