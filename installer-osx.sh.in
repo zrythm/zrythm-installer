@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# Copyright (C) 2020 Alexandros Theodotou <alex at zrythm dot org>
+#
+#  This file is part of Zrythm
+#
+#  Zrythm is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Zrythm is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+set -e
+
+zrythm_ver="@VERSION@"
+zplugins_ver="@ZPLUGINS_VERSION@"
+
+show_error () {
+  echo "$1" >&2
+  exit 1
+}
+
+show_info () {
+  echo "$1"
+}
+
+if ! [ -x "$(command -v brew)" ]; then
+  show_error 'Error: brew is not installed. please visit https://brew.sh/ and follow the instructions'
+fi
+
+print_install_success()
+{
+  show_info "Install successful!"
+}
+
+proceed=0
+proceed_txt="Proceed with the installation of Zrythm v$zrythm_ver?"
+read -p "$proceed_txt (type Y or y): " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  proceed=1
+fi
+
+# install packages
+if [ $proceed -ne 0 ]; then
+  tar xf bin/carla-git*.catalina.bottle.tar.gz -C /usr/local/Cellar
+  brew unlink carla-git || true
+  brew link carla-git
+  tar xf bin/zrythm*.catalina.bottle.tar.gz -C /usr/local/Cellar
+  brew unlink zrythm || true
+  brew link zrythm
+  print_install_success
+fi
+
+exit 0
+
+proceed=0
+proceed_txt="Proceed with the installation of ZPlugins v$zplugins_ver?"
+read -p "$proceed_txt (type Y or y): " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  proceed=1
+fi
+
+# install plugins
+if [ $proceed -ne 0 ]; then
+  print_install_success
+fi

@@ -111,6 +111,11 @@ OSX_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-setup.dmg
 OSX_PKG_FILE=$(OSX_INSTALLER)
 OSX_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_PKG_VERSION)-setup.dmg
 OSX_TRIAL_PKG_FILE=$(OSX_TRIAL_INSTALLER)
+OSX_BREW_BOTTLE=zrythm--$(ZRYTHM_PKG_VERSION).catalina.bottle.tar.gz
+OSX_TRIAL_BREW_BOTTLE=zrythm-trial--$(ZRYTHM_PKG_VERSION).catalina.bottle.tar.gz
+OSX_BREW_ZIP_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-osx-installer.zip
+OSX_BREW_ZIP_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-osx-installer.zip
+CARLA_BOTTLE=carla-git--0.1.catalina.bottle.tar.gz
 APPIMAGE_APPDIR=/tmp/appimage/AppDir
 BREEZE_DARK_PATH=/Users/alex/.local/share/icons/breeze-dark
 MANUAL_ZIP_PATH=$(BUILD_DIR)/user-manual.zip
@@ -229,6 +234,29 @@ artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)&: tools/gen_
 
 .PHONY: osx
 osx: artifacts/osx/$(OSX_INSTALLER) artifacts/osx/$(OSX_TRIAL_INSTALLER)
+
+# 1: brew bottle
+# 2: dep
+define make_osx_brew_bottle_target
+$(BUILD_OSX_DIR)/$(1): tools/gen_osx_installer_brew.sh tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(2)
+	mkdir -p $(BUILD_OSX_DIR)
+	rm -rf /tmp/breeze-dark
+	cp -R $(BREEZE_DARK_PATH) /tmp/
+	tools/gen_osx_installer_brew.sh bottle "$$@" tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(ZRYTHM_PKG_VERSION) $(CARLA_VERSION)
+	touch $$@
+endef
+
+$(eval $(call make_osx_brew_bottle_target,$(OSX_BREW_BOTTLE)))
+$(eval $(call make_osx_brew_bottle_target,$(OSX_TRIAL_BREW_BOTTLE),$(BUILD_OSX_DIR)/$(OSX_BREW_BOTTLE)))
+
+$(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_PKG_FILE): $(BUILD_OSX_DIR)/$(OSX_BREW_BOTTLE)
+	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(BUILD_OSX_DIR)/$(CARLA_BOTTLE)
+
+$(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_TRIAL_PKG_FILE): $(BUILD_OSX_DIR)/$(OSX_TRIAL_BREW_BOTTLE) $(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_PKG_FILE)
+	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(BUILD_OSX_DIR)/$(CARLA_BOTTLE)
+
+.PHONY: osx-brew-zip
+osx-brew-zip: $(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_PKG_FILE) $(BUILD_OSX_DIR)/$(OSX_BREW_ZIP_TRIAL_PKG_FILE)
 
 #
 # Function to get the full path to the ZSaw manifest file
