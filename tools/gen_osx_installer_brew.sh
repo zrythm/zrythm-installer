@@ -33,7 +33,7 @@ if [ "$bottle_or_zip" = "bottle" ]; then
   cp tools/osx/carla-git.rb $formula_dir/
   sed -i -e "s/@TARBALL_FILENAME@/$tarball_filename/" \
     $formula_dir/$formula_filename
-  sed -i -e "s/@VERSION@/$zrythm_version/" \
+  sed -i -e "s/@VERSION@/$zrythm_version/g" \
     $formula_dir/$formula_filename
   sed -i -e "s/@VERSION@/$carla_version/" \
     $formula_dir/carla-git.rb
@@ -67,20 +67,22 @@ elif [ "$bottle_or_zip" = "zip" ]; then
   tmp="${zip_filename%.*}"
   mkdir -p $tmp
   rm -rf $zip_file
+  cp installer-osx.sh.in $tmp/installer.sh
+  sed -i -e "s/@VERSION@/$zrythm_version/" \
+    $tmp/installer.sh
   if [[ "$bottle_filename" == *"rial"* ]]; then
     cp README-osx-trial.in $tmp/README
-    sed -i -e "s/@TRIAL@/-trial/g" $tmp/README
+    sed -i -e "s/@TRIAL@/-trial/g" \
+      $tmp/installer.sh
   else
     cp README-osx.in $tmp/README
-    sed -i -e "s/@TRIAL@//g" $tmp/README
+    sed -i -e "s/@TRIAL@//g" $tmp/installer.sh
   fi
   sed -i -e "s/@VERSION@/$zrythm_version/" \
     $tmp/README
   mkdir -p $tmp/bin
   cp $bottle_file $tmp/bin/zrythm-$zrythm_version.catalina.bottle.tar.gz
   cp $carla_bottle_file $tmp/bin/carla-git.catalina.bottle.tar.gz
-  cp installer-osx.sh.in $tmp/installer.sh
-  sed -i -e "s/@VERSION@/$zrythm_version/" \
-    $tmp/installer.sh
+  rm $tmp/*-e
   zip -r $zip_file $tmp
 fi

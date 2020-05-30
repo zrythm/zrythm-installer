@@ -31,6 +31,7 @@ class Zrythm < Formula
       system "meson", *std_meson_args, "-Dtests=false", "-Dtrial_ver=false",
         "-Dcarla=enabled", "-Dffmpeg=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
+        "-Dfallback_version=@VERSION@",
         ".."
       system "ninja", "-v"
       system "ninja", "install", "-v"
