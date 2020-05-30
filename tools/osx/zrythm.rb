@@ -7,11 +7,11 @@ class Zrythm < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "guile" => :build
   depends_on "pkg-config" => :build
   depends_on "help2man" => :build
   depends_on "libyaml"
   depends_on "gtk+3"
+  depends_on "guile"
   depends_on "ffmpeg"
   depends_on "fftw"
   depends_on "libsamplerate"

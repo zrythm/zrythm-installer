@@ -32,12 +32,18 @@ show_info () {
 }
 
 if ! [ -x "$(command -v brew)" ]; then
-  show_error 'Error: brew is not installed. please visit https://brew.sh/ and follow the instructions'
+  echo 'Error: brew is not installed. install it?'
+  read -p "$proceed_txt (type Y or y): " -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  else
+    show_error "Homebrew is necessary to install zrythm"
+  fi
 fi
 
 print_install_success()
 {
-  show_info "Install successful!"
+  show_info "Install successful! Type 'zrythm --version' to verify"
 }
 
 proceed=0
@@ -49,12 +55,46 @@ fi
 
 # install packages
 if [ $proceed -ne 0 ]; then
+  echo "Unpacking..."
   tar xf bin/carla-git*.catalina.bottle.tar.gz -C /usr/local/Cellar
   brew unlink carla-git || true
-  brew link carla-git
-  tar xf bin/zrythm*.catalina.bottle.tar.gz -C /usr/local/Cellar
   brew unlink zrythm || true
-  brew link zrythm
+  brew unlink zrythm-trial || true
+  tar xf bin/zrythm*.catalina.bottle.tar.gz -C /usr/local/Cellar
+
+  # link
+  echo "Linking..."
+  brew link carla-git
+  brew link --overwrite zrythm@TRIAL@
+
+  # install deps
+  echo "Installing deps..."
+  zrythm_deps="$(brew info zrythm@TRIAL@ | grep Required | sed -e "s/Required: //" | sed -e "s/, / /g" | sed -e "s/carla-git//")"
+  carla_deps="$(brew info carla-git | grep Required | sed -e "s/Required: //" | sed -e "s/, / /g")"
+  brew install $carla_deps
+  brew install $zrythm_deps
+
+  # fix paths
+  echo "Fixing paths..."
+  exe_path="$(dirname /usr/local/bin/zrythm)/$(readlink /usr/local/bin/zrythm)"
+  chmod +w $exe_path
+  for exe in $exe_path; do
+    echo "processing executable $exe"
+    changes=""
+    for lib in `otool -L $exe | egrep "@@HOMEBREW_PREFIX@@" | awk '{print $1}'` ; do
+      replaced=`echo "$lib" | sed -e "s,@@HOMEBREW_PREFIX@@,/usr/local,g"`
+      changes="$changes -change $lib $replaced"
+    done
+    if test "x$changes" != "x" ; then
+      install_name_tool $changes $exe
+    fi
+  done
+  chmod -w $exe_path
+
+  # recompile schemas
+  echo "Recompiling schemas..."
+  /usr/local/bin/glib-compile-schemas /usr/local/share/glib-2.0/schemas
+
   print_install_success
 fi
 

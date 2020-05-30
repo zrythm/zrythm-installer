@@ -69,8 +69,10 @@ elif [ "$bottle_or_zip" = "zip" ]; then
   rm -rf $zip_file
   if [[ "$bottle_filename" == *"rial"* ]]; then
     cp README-osx-trial.in $tmp/README
+    sed -i -e "s/@TRIAL@/-trial/g" $tmp/README
   else
     cp README-osx.in $tmp/README
+    sed -i -e "s/@TRIAL@//g" $tmp/README
   fi
   sed -i -e "s/@VERSION@/$zrythm_version/" \
     $tmp/README
