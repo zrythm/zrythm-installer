@@ -127,5 +127,6 @@ zip -r $installer_zip $installer_zip_dir
 echo "done"
 
 echo "cleaning up..."
-rm -rf README installer.sh *.AppImage $pdf
+#rm -rf README installer.sh *.AppImage $pdf
+rm -rf README installer.sh *.AppImage $installer_zip_dir
 echo "done"
