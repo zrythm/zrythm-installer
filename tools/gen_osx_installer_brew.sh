@@ -70,12 +70,15 @@ elif [ "$bottle_or_zip" = "zip" ]; then
   cp installer-osx.sh.in $tmp/installer.sh
   sed -i -e "s/@VERSION@/$zrythm_version/" \
     $tmp/installer.sh
+  sed -i -e "s/@CARLA_VERSION@/0.1.1/" \
+    $tmp/installer.sh
   if [[ "$bottle_filename" == *"rial"* ]]; then
     cp README-osx-trial.in $tmp/README
     sed -i -e "s/@TRIAL@/-trial/g" \
       $tmp/installer.sh
   else
     cp README-osx.in $tmp/README
+    sed -i -e "s/@_AT_@/@/g" $tmp/README
     sed -i -e "s/@TRIAL@//g" $tmp/installer.sh
   fi
   sed -i -e "s/@VERSION@/$zrythm_version/" \

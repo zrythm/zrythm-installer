@@ -20,6 +20,7 @@
 set -e
 
 zrythm_ver="@VERSION@"
+carla_ver="@CARLA_VERSION@"
 zplugins_ver="@ZPLUGINS_VERSION@"
 
 show_error () {
@@ -64,15 +65,22 @@ if [ $proceed -ne 0 ]; then
 
   # link
   echo "Linking..."
-  brew link carla-git
-  brew link --overwrite zrythm@TRIAL@
+  brew switch carla-git $carla_ver || true
+  brew switch zrythm@TRIAL@ $zrythm_ver || true
+  brew unlink carla-git && \
+    brew link --overwrite carla-git && \
+    brew switch carla-git $carla_ver
+  brew unlink zrythm@TRIAL@ && \
+    brew link --overwrite zrythm@TRIAL@ && \
+    brew switch zrythm@TRIAL@ $zrythm_ver
 
   # install deps
   echo "Installing deps..."
   zrythm_deps="$(brew info zrythm@TRIAL@ | grep Required | sed -e "s/Required: //" | sed -e "s/, / /g" | sed -e "s/carla-git//")"
   carla_deps="$(brew info carla-git | grep Required | sed -e "s/Required: //" | sed -e "s/, / /g")"
-  brew install $carla_deps
-  brew install $zrythm_deps
+  brew upgrade
+  brew install $carla_deps || true
+  brew install $zrythm_deps || true
 
   # fix paths
   echo "Fixing paths..."
