@@ -2,7 +2,7 @@ class CarlaGit < Formula
   desc "Audio plugin host supporting LADSPA, LV2, VST2/3, SF2 and more"
   homepage "https://kxstudio.linuxaudio.org/Applications:Carla"
   url "https://github.com/falkTX/Carla/archive/@VERSION@.zip"
-  sha256 "adcfbf85bef896ce9228480b000b24a328b1dea647ea6b81e8724d471f1d0ffc"
+  sha256 "a96d4339d8b85b179a76d093b45eed95967a324ce044fa95ca3cb02b4042540a"
   head "https://github.com/falkTX/Carla.git"
   version "0.1.1"
 
