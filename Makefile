@@ -519,12 +519,16 @@ define install_lilv_dep
 	cd $(BUILD_WINDOWS_MSYS_DIR) && MINGW_INSTALLS=mingw64 makepkg-mingw -fsi --noconfirm
 endef
 
-/mingw64/include/lilv-0/lilv/lilv.h: PKGBUILD-lilv-mingw PKGBUILD-lv2-mingw PKGBUILD-serd-mingw PKGBUILD-sord-mingw PKGBUILD-sratom-mingw
+install-lilv-dep-%:
+	$(call install_lilv_dep,$*)
+
+/mingw64/include/lilv-0/lilv/lilv.h: PKGBUILD-lilv-mingw PKGBUILD-lv2-mingw PKGBUILD-serd-mingw PKGBUILD-sord-mingw PKGBUILD-sratom-mingw PKGBUILD-jack2-mingw
 	$(call install_lilv_dep,lv2)
 	$(call install_lilv_dep,serd)
 	$(call install_lilv_dep,sord)
 	$(call install_lilv_dep,sratom)
 	$(call install_lilv_dep,lilv)
+	$(call install_lilv_dep,jack2)
 
 # arg 1: .pkg.tar filename
 # arg 2: '-trial' if trial
@@ -570,6 +574,7 @@ define make_windows_chroot
 	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-sord-0.16.4-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
 	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-sratom-0.6.4-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
 	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-lilv-0.24.8-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
+	pacman -U "$(BUILD_WINDOWS_MSYS_DIR)/mingw-w64-x86_64-jack2-1.9.14.r1-1-any.pkg.tar.zst" --noconfirm --needed --root $(1) && \
 	pacman -U $(2) --noconfirm --needed --root $(1) && \
 	cp -R /mingw64/lib/carla $(1)/mingw64/lib/ && \
 	glib-compile-schemas.exe $(1)/mingw64/share/glib-2.0/schemas

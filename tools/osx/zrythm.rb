@@ -25,6 +25,8 @@ class Zrythm < Formula
   depends_on "rtmidi"
   depends_on "zstd"
   depends_on "carla-git"
+  depends_on "jack"
+  depends_on "qjackctl"
 
   def install
     mkdir "build" do
