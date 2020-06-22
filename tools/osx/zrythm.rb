@@ -1,4 +1,8 @@
 class Zrythm < Formula
+  resource("fix_paths_script") do
+    url "https://git.zrythm.org/cgit/zrythm-installer/plain/tools/osx/cp_and_fix_dependency_paths.sh"
+    sha256 "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  end
   desc "Digital audio workstation"
   homepage "https://www.zrythm.org"
   url "https://git.zrythm.org/cgit/zrythm/snapshot/@TARBALL_FILENAME@"
@@ -38,6 +42,11 @@ class Zrythm < Formula
       system "ninja", "-v"
       system "ninja", "install", "-v"
       system "cp", "-r", "/tmp/breeze-dark", "#{share}/icons/breeze-dark"
+      # copy all libs
+      resource("fix_paths_script").stage do
+        system "./cp_and_fix_dependency_paths.sh", "#{bin}/zrythm", "/usr/local/opt", "#{lib}/zrythm"
+        system "./cp_and_fix_dependency_paths.sh", "#{bin}/zrythm", "@@HOMEBREW_PREFIX@@", "#{lib}/zrythm"
+      end
     end
   end
 
