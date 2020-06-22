@@ -1,7 +1,7 @@
 class Zrythm < Formula
   resource("fix_paths_script") do
     url "https://git.zrythm.org/cgit/zrythm-installer/plain/tools/osx/cp_and_fix_dependency_paths.sh"
-    sha256 "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    sha256 "385d934730e48516261f7f8fd927cc7a232b5c86ab63e3a4e40dda8e0bff7d57"
   end
   desc "Digital audio workstation"
   homepage "https://www.zrythm.org"
@@ -44,8 +44,11 @@ class Zrythm < Formula
       system "cp", "-r", "/tmp/breeze-dark", "#{share}/icons/breeze-dark"
       # copy all libs
       resource("fix_paths_script").stage do
-        system "./cp_and_fix_dependency_paths.sh", "#{bin}/zrythm", "/usr/local/opt", "#{lib}/zrythm"
-        system "./cp_and_fix_dependency_paths.sh", "#{bin}/zrythm", "@@HOMEBREW_PREFIX@@", "#{lib}/zrythm"
+        system "mkdir", "-p", "#{lib}/zrythm"
+        system "ls", "-la"
+        system "bash", "cp_and_fix_dependency_paths.sh", "#{bin}/zrythm", "/usr/local/opt", "#{lib}/zrythm", "copy", "true"
+        system "bash", "cp_and_fix_dependency_paths.sh", "#{bin}/zrythm", "/usr/local/opt", "#{lib}/zrythm", "fix-in-dir", "false"
+        system "bash", "cp_and_fix_dependency_paths.sh", "#{bin}/zrythm", "/usr/local/opt", "#{lib}/zrythm", "fix", "false"
       end
     end
   end
