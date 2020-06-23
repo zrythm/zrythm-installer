@@ -84,8 +84,13 @@ elif [ "$bottle_or_zip" = "zip" ]; then
   sed -i -e "s/@VERSION@/$zrythm_version/" \
     $tmp/README
   mkdir -p $tmp/bin
+  mkdir -p $tmp/formulae
+  mkdir -p $tmp/icons
+  mkdir -p $tmp/src
   cp $bottle_file $tmp/bin/zrythm-$zrythm_version.catalina.bottle.tar.gz
   cp $carla_bottle_file $tmp/bin/carla-git.catalina.bottle.tar.gz
+  cp $formula_dir/zrythm*.rb $tmp/formulae/
+  cp -r /tmp/breeze-dark $tmp/icons/
   rm $tmp/*-e
   zip -r $zip_file $tmp
 fi
