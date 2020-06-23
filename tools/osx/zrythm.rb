@@ -34,6 +34,8 @@ class Zrythm < Formula
         "-Dcarla=enabled", "-Dffmpeg=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
         "-Dfallback_version=@VERSION@",
+        # manpage fails
+        "-Dmanpage=false",
         ".."
       system "ninja", "-v"
       system "ninja", "install", "-v"

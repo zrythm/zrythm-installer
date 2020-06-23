@@ -61,43 +61,53 @@ if [ $proceed -ne 0 ]; then
   brew unlink carla-git || true
   brew unlink zrythm || true
   brew unlink zrythm-trial || true
-  tar xf bin/zrythm*.catalina.bottle.tar.gz -C /usr/local/Cellar
 
   # link
   echo "Linking..."
   brew switch carla-git $carla_ver || true
-  brew switch zrythm@TRIAL@ $zrythm_ver || true
   brew unlink carla-git && \
     brew link --overwrite carla-git && \
     brew switch carla-git $carla_ver
-  brew unlink zrythm@TRIAL@ && \
-    brew link --overwrite zrythm@TRIAL@ && \
-    brew switch zrythm@TRIAL@ $zrythm_ver
 
   # install deps
   echo "Installing deps..."
-  zrythm_deps="$(brew info zrythm@TRIAL@ | grep Required | sed -e "s/Required: //" | sed -e "s/, / /g" | sed -e "s/carla-git//")"
   carla_deps="$(brew info carla-git | grep Required | sed -e "s/Required: //" | sed -e "s/, / /g")"
   brew upgrade
   brew install $carla_deps || true
-  brew install $zrythm_deps || true
 
   # fix paths
   echo "Fixing paths..."
-  exe_path="$(dirname /usr/local/bin/zrythm)/$(readlink /usr/local/bin/zrythm)"
-  chmod +w $exe_path
-  for exe in $exe_path; do
+  for exe in $(ls /usr/local/opt/carla-git/bin); do
+    exe=/usr/local/opt/carla-git/bin/$exe
     echo "processing executable $exe"
+    chmod +w $exe
+    if [[ "$exe" == *".dylib" ]]; then
+      new_id="$(otool -L $exe | sed "1d" | head -n 1 | awk '{print $1}' | sed -e "s,@@HOMEBREW_CELLAR@@,/usr/local/Cellar,g")"
+      install_name_tool -id "$exe" "$new_id"
+    fi
     changes=""
-    for lib in `otool -L $exe | egrep "@@HOMEBREW_PREFIX@@" | awk '{print $1}'` ; do
-      replaced=`echo "$lib" | sed -e "s,@@HOMEBREW_PREFIX@@,/usr/local,g"`
+    for lib in `otool -L $exe | grep '@@HOMEBREW_PREFIX@@\|@@HOMEBREW_CELLAR@@' | grep -v "/usr/lib" | awk '{print $1}'` ; do
+      replaced=`echo "$lib" | sed -e "s,@@HOMEBREW_PREFIX@@,/usr/local,g" | sed -e "s,@@HOMEBREW_CELLAR@@,/usr/local/Cellar,g"`
       changes="$changes -change $lib $replaced"
     done
     if test "x$changes" != "x" ; then
       install_name_tool $changes $exe
     fi
+    chmod -w $exe
   done
-  chmod -w $exe_path
+  for pc_file in $(ls /usr/local/opt/carla-git/lib/pkgconfig); do
+    pc_file=/usr/local/opt/carla-git/lib/pkgconfig/$pc_file
+    echo "processing pc file $pc_file"
+    sed -i -e "s,@@HOMEBREW_PREFIX@@,/usr/local,g" $pc_file
+    sed -i -e "s,@@HOMEBREW_CELLAR@@,/usr/local/Cellar,g" $pc_file
+  done
+
+  # install zrythm from source
+  cp -r icons/breeze-dark /tmp/
+  formula_dir=/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
+  cp formulae/zrythm.rb $formula_dir/
+  brew install --build-from-source zrythm
+  brew link --overwrite zrythm || true
 
   # recompile schemas
   echo "Recompiling schemas..."

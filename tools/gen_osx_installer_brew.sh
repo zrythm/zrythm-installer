@@ -12,7 +12,7 @@ if [ "$bottle_or_zip" = "bottle" ]; then
   bottle_filename="$(basename $bottle_file)"
   formula_file=$3
   tarball=$4
-  tarball_filename="$(basename $tarball)"
+  tarball_filename="$(git ls-remote https://git.zrythm.org/git/zrythm | grep HEAD | awk '{print $1}').tar.gz"
   zrythm_version=$5
   carla_version=$6
 
@@ -87,7 +87,7 @@ elif [ "$bottle_or_zip" = "zip" ]; then
   mkdir -p $tmp/formulae
   mkdir -p $tmp/icons
   mkdir -p $tmp/src
-  cp $bottle_file $tmp/bin/zrythm-$zrythm_version.catalina.bottle.tar.gz
+  #cp $bottle_file $tmp/bin/zrythm-$zrythm_version.catalina.bottle.tar.gz
   cp $carla_bottle_file $tmp/bin/carla-git.catalina.bottle.tar.gz
   cp $formula_dir/zrythm*.rb $tmp/formulae/
   cp -r /tmp/breeze-dark $tmp/icons/
