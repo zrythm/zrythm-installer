@@ -106,14 +106,19 @@ if [ $proceed -ne 0 ]; then
   cp -r icons/breeze-dark /tmp/
   formula_dir=/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
   cp formulae/zrythm.rb $formula_dir/
-  brew install --build-from-source zrythm
+  brew install --build-from-source zrythm || true
   brew link --overwrite zrythm || true
 
   # recompile schemas
   echo "Recompiling schemas..."
   /usr/local/bin/glib-compile-schemas /usr/local/share/glib-2.0/schemas
 
-  print_install_success
+  if zrythm --version; then
+    print_install_success
+  else
+    echo "installation failed"
+    exit 1
+  fi
 fi
 
 exit 0

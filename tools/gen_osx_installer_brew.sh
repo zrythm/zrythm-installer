@@ -16,6 +16,8 @@ if [ "$bottle_or_zip" = "bottle" ]; then
   zrythm_version=$5
   carla_version=$6
 
+  wget https://git.zrythm.org/cgit/zrythm/snapshot/$tarball_filename
+
   # copy formula file to where it needs to be
   if [[ "$bottle_filename" == *"rial"* ]]; then
     cp $formula_file $formula_dir/zrythm-trial.rb
@@ -37,7 +39,7 @@ if [ "$bottle_or_zip" = "bottle" ]; then
     $formula_dir/$formula_filename
   sed -i -e "s/@VERSION@/$carla_version/" \
     $formula_dir/carla-git.rb
-  sed -i -e "s/@SHA256@/$(openssl sha256 -r $tarball | awk '{print $1;}')/" \
+  sed -i -e "s/@SHA256@/$(openssl sha256 -r $tarball_filename | awk '{print $1;}')/" \
     $formula_dir/$formula_filename
 
   # build bottle
