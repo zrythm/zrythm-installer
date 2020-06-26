@@ -36,7 +36,7 @@ SUM_EXT=sha256sum
 ZRYTHM_TARBALL_SUM=zrythm-$(ZRYTHM_VERSION).tar.gz.$(SUM_EXT)
 CALC_SUM=sha256sum --check
 ZRYTHM_TARBALL_URL=https://git.zrythm.org/cgit/zrythm/snapshot/zrythm-$(ZRYTHM_VERSION).tar.gz
-CARLA_VERSION=3c3f67054d6b3cb1f57585b50dd111197f0ced7d
+CARLA_VERSION=9f8c9369b71ece323f77f385963a32f94bf141d3
 CARLA_SOURCE_URL=https://github.com/falkTX/Carla/archive/$(CARLA_VERSION).zip
 CARLA_SOURCE_ZIP=Carla-$(CARLA_VERSION).zip
 CARLA_WINDOWS_BINARY_64_ZIP=carla-64-$(shell echo $(CARLA_VERSION) | head -c 7).zip
@@ -116,7 +116,8 @@ OSX_BREW_BOTTLE=zrythm--$(ZRYTHM_PKG_VERSION).catalina.bottle.tar.gz
 OSX_TRIAL_BREW_BOTTLE=zrythm-trial--$(ZRYTHM_PKG_VERSION).catalina.bottle.tar.gz
 OSX_BREW_ZIP_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-osx-installer.zip
 OSX_BREW_ZIP_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-osx-installer.zip
-CARLA_BOTTLE=carla-git--0.1.1.catalina.bottle.tar.gz
+CARLA_BOTTLE_VER=0.1.2
+CARLA_BOTTLE=carla-git--$(CARLA_BOTTLE_VER).catalina.bottle.tar.gz
 APPIMAGE_APPDIR=/tmp/appimage/AppDir
 BREEZE_DARK_PATH=/Users/alex/.local/share/icons/breeze-dark
 MANUAL_ZIP_PATH=$(BUILD_DIR)/user-manual.zip
@@ -243,7 +244,7 @@ $(BUILD_OSX_BREW_DIR)/$(1): tools/gen_osx_installer_brew.sh tools/osx/zrythm.rb 
 	mkdir -p $(BUILD_OSX_BREW_DIR)
 	rm -rf /tmp/breeze-dark
 	cp -R $(BREEZE_DARK_PATH) /tmp/breeze-dark
-	tools/gen_osx_installer_brew.sh bottle "$$@" tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(ZRYTHM_PKG_VERSION) $(CARLA_VERSION)
+	tools/gen_osx_installer_brew.sh bottle "$$@" tools/osx/zrythm.rb $(BUILD_DIR)/$(ZRYTHM_TARBALL) $(ZRYTHM_PKG_VERSION) $(CARLA_VERSION) $(CARLA_BOTTLE_VER)
 	touch $$@
 endef
 
@@ -251,10 +252,10 @@ $(eval $(call make_osx_brew_bottle_target,$(OSX_BREW_BOTTLE)))
 $(eval $(call make_osx_brew_bottle_target,$(OSX_TRIAL_BREW_BOTTLE),$(BUILD_OSX_BREW_DIR)/$(OSX_BREW_BOTTLE)))
 
 $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_PKG_FILE): $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_BOTTLE)
-	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(BUILD_OSX_BREW_DIR)/$(CARLA_BOTTLE)
+	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(CARLA_BOTTLE_VER) $(BUILD_OSX_BREW_DIR)/$(CARLA_BOTTLE)
 
 $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_TRIAL_PKG_FILE): $(BUILD_OSX_BREW_DIR)/$(OSX_TRIAL_BREW_BOTTLE) $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_PKG_FILE)
-	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(BUILD_OSX_BREW_DIR)/$(CARLA_BOTTLE)
+	tools/gen_osx_installer_brew.sh zip "$<" "$@" $(ZRYTHM_PKG_VERSION) $(CARLA_BOTTLE_VER) $(BUILD_OSX_BREW_DIR)/$(CARLA_BOTTLE)
 
 .PHONY: osx-brew-zip
 osx-brew-zip: $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_PKG_FILE) $(BUILD_OSX_BREW_DIR)/$(OSX_BREW_ZIP_TRIAL_PKG_FILE)

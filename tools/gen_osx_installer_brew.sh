@@ -15,6 +15,7 @@ if [ "$bottle_or_zip" = "bottle" ]; then
   tarball_filename="$(git ls-remote https://git.zrythm.org/git/zrythm | grep HEAD | awk '{print $1}').tar.gz"
   zrythm_version=$5
   carla_version=$6
+  carla_bottle_ver=$7
 
   wget https://git.zrythm.org/cgit/zrythm/snapshot/$tarball_filename
 
@@ -39,6 +40,8 @@ if [ "$bottle_or_zip" = "bottle" ]; then
     $formula_dir/$formula_filename
   sed -i -e "s/@VERSION@/$carla_version/" \
     $formula_dir/carla-git.rb
+  sed -i -e "s/@BOTTLE_VERSION@/$carla_bottle_ver/" \
+    $formula_dir/carla-git.rb
   sed -i -e "s/@SHA256@/$(openssl sha256 -r $tarball_filename | awk '{print $1;}')/" \
     $formula_dir/$formula_filename
 
@@ -54,7 +57,7 @@ if [ "$bottle_or_zip" = "bottle" ]; then
   brew bottle $pkg_name
   brew link --overwrite $pkg_name
   destdir="$(dirname $bottle_file)"
-  carla_git_bottle_filename="carla-git--0.1.1.catalina.bottle.tar.gz"
+  carla_git_bottle_filename="carla-git--$carla_bottle_ver.catalina.bottle.tar.gz"
   rm -rf $destdir/$carla_git_bottle_filename
   mv $carla_git_bottle_filename "$destdir"/
   rm -rf $bottle_file
@@ -65,14 +68,15 @@ elif [ "$bottle_or_zip" = "zip" ]; then
   zip_file=$3
   zip_filename="$(basename $zip_file)"
   zrythm_version=$4
-  carla_bottle_file=$5
+  carla_bottle_ver=$5
+  carla_bottle_file=$6
   tmp="${zip_filename%.*}"
   mkdir -p $tmp
   rm -rf $zip_file
   cp installer-osx.sh.in $tmp/installer.sh
   sed -i -e "s/@VERSION@/$zrythm_version/" \
     $tmp/installer.sh
-  sed -i -e "s/@CARLA_VERSION@/0.1.1/" \
+  sed -i -e "s/@CARLA_VERSION@/$carla_bottle_ver/" \
     $tmp/installer.sh
   if [[ "$bottle_filename" == *"rial"* ]]; then
     cp README-osx-trial.in $tmp/README
