@@ -73,7 +73,7 @@ get_dest_package_filename () {
       res="$prefix-1_amd64.deb"
       ;;
     "archlinux")
-      res="$prefix-1_x86_64.pkg.tar.xz"
+      res="$prefix-1_x86_64.pkg.tar.zst"
       ;;
     "fedora32")
       res="$prefix-1_x86_64.rpm"

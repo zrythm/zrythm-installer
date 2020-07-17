@@ -166,7 +166,7 @@ if [ $proceed -ne 0 ]; then
   elif [[ $distro_identifier = "archlinux" ]]; then
     ask_for_root_pw;
     sudo /bin/sh -c \
-      "pacman -U --noconfirm \"$prefix-1_${architecture}.pkg.tar.xz\"" && \
+      "pacman -U --noconfirm \"$prefix-1_${architecture}.pkg.tar.zst\"" && \
       print_install_success
   fi
 fi
