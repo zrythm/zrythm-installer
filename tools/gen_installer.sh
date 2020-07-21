@@ -12,7 +12,7 @@ zrythm_version=$1
 installer_zip=$2
 zplugins_version=$3
 trial=$4
-distros="archlinux debian10 ubuntu1804 ubuntu1910 ubuntu2004 fedora32"
+distros="archlinux debian10 ubuntu1804 ubuntu2004 ubuntu2010 fedora32"
 
 rm -rf $installer_zip
 

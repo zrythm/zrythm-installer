@@ -62,9 +62,9 @@ if [[ "$ID" = *"ubuntu"* ]]; then
   elif [[ "$VERSION_ID" = *"20.04"* ]]; then
     echo "found $ubuntu_20_04_str"
     distro_identifier="ubuntu2004"
-  elif [[ "$VERSION_ID" = *"19.10"* ]]; then
+  elif [[ "$VERSION_ID" = *"20.10"* ]]; then
     echo "found $ubuntu_19_10_str"
-    distro_identifier="ubuntu1910"
+    distro_identifier="ubuntu2010"
   fi
 elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
   if [[ "$UBUNTU_CODENAME" = *"bionic"* ]]; then

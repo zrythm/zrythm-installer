@@ -358,8 +358,8 @@ endef
 
 $(eval $(call make_debian_target,debian10))
 $(eval $(call make_debian_target,ubuntu1804))
-$(eval $(call make_debian_target,ubuntu1910))
 $(eval $(call make_debian_target,ubuntu2004))
+$(eval $(call make_debian_target,ubuntu2010))
 
 # 1: pkg filename
 # 2: distro (debian10,ubuntu1804,...)
