@@ -103,6 +103,7 @@ if [ $proceed -ne 0 ]; then
   done
 
   # install zrythm from source
+  rm -rf /tmp/breeze-dark || true
   cp -r icons/breeze-dark /tmp/
   formula_dir=/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
   cp formulae/zrythm.rb $formula_dir/
