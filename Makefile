@@ -413,7 +413,6 @@ $(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
 	mkdir -p $(BUILD_DIR)/$(2)
 	cp zrythm.spec.in $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	sed -i -e 's|@MESON@|$$(pwd)/$(BUILD_DIR)/meson/meson.py|g' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) \
 		$(RPMBUILD_ROOT)/SOURCES/
 	if [ "$(3)" = "-trial" ]; then \
