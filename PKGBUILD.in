@@ -12,7 +12,7 @@ depends=('gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
   'rubberband' 'xdg-utils' 'sdl2')
 makedepends=(
   'python' 'gettext' 'sed'
-  'meson' 'ninja' 'help2man' 'python-sphinx'
+  'ninja' 'help2man' 'python-sphinx'
   'ladspa' 'lv2')
 optdepends=('portaudio: portaudio backend')
 conflicts=( 'zrythm-git' )
