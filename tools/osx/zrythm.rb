@@ -9,6 +9,7 @@ class Zrythm < Formula
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
   depends_on "help2man" => :build
+  depends_on "cmake" => :build
   depends_on "libyaml"
   depends_on "gtk+3"
   depends_on "guile"
@@ -30,7 +31,6 @@ class Zrythm < Formula
 
   def install
     mkdir "build" do
-      system "export", "PATH=$PATH:/usr/local/bin"
       system "meson", *std_meson_args, "-Dtests=false", "-Dtrial_ver=false",
         "-Dcarla=enabled", "-Dffmpeg=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
