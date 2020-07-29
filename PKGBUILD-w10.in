@@ -27,7 +27,6 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-gettext"
              "guile"
-             "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-python3")
 options=('strip' '!staticlibs')
@@ -49,8 +48,7 @@ build() {
   mkdir -p $_zrythm_builddir && cd $_zrythm_builddir
   sed -i -e '94s/translator/"invalid"/' \
     ${srcdir}/zrythm-${pkgver}/scripts/gen-translators-list.scm
-  $meson_path \
-    --prefix= \
+  ${MINGW_PREFIX}/bin/meson \
     -Dsdl=enabled \
     -Drtaudio=auto \
     -Drtmidi=auto \
