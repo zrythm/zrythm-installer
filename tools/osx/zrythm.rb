@@ -30,6 +30,7 @@ class Zrythm < Formula
 
   def install
     mkdir "build" do
+      system "export", "PATH=$PATH:/usr/local/bin"
       system "meson", *std_meson_args, "-Dtests=false", "-Dtrial_ver=false",
         "-Dcarla=enabled", "-Dffmpeg=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
