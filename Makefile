@@ -373,7 +373,6 @@ $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' $(BUILD_ARCH_DIR)/PKGBUILD
-	sed -i -e 's|@MESON@|$$(pwd)/$(BUILD_DIR)/meson/meson.py|g' $(BUILD_ARCH_DIR)/PKGBUILD
 	if [ "$(3)" = "-trial" ]; then \
 		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
 		sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
