@@ -51,7 +51,7 @@ MXE_FLAGS_STATIC=MXE_TARGETS='x86_64-w64-mingw32.static' MXE_PLUGIN_DIRS=$(ARCH_
 MXE_ZPLUGINS_CLONE_PATH=/home/ansible/Documents/git/ZPlugins
 MXE_GTK3_CLONE_PATH=/home/ansible/Documents/non-git/gtk+-3.24.18
 BUILD_DIR=build
-MESON_VERSION=0.53.0
+MESON_VERSION=0.55.0
 MESON_DIR=meson-$(MESON_VERSION)
 MESON_TARBALL=$(MESON_DIR).tar.gz
 BUILD_ARCH_DIR=$(BUILD_DIR)/archlinux
@@ -357,6 +357,7 @@ $(call make_distro_target,$(1),DEBIAN)
 endef
 
 $(eval $(call make_debian_target,debian10))
+$(eval $(call make_debian_target,debian11))
 $(eval $(call make_debian_target,ubuntu1804))
 $(eval $(call make_debian_target,ubuntu2004))
 $(eval $(call make_debian_target,ubuntu2010))
@@ -372,6 +373,7 @@ $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' $(BUILD_ARCH_DIR)/PKGBUILD
+	sed -i -e 's|@MESON@|$$(pwd)/$(BUILD_DIR)/meson/meson.py|g' $(BUILD_ARCH_DIR)/PKGBUILD
 	if [ "$(3)" = "-trial" ]; then \
 		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
 		sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(BUILD_ARCH_DIR)/PKGBUILD ; \
@@ -412,6 +414,7 @@ $(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
 	mkdir -p $(BUILD_DIR)/$(2)
 	cp zrythm.spec.in $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
+	sed -i -e 's|@MESON@|$$(pwd)/$(BUILD_DIR)/meson/meson.py|g' $(RPMBUILD_ROOT)/SPECS/zrythm.spec
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) \
 		$(RPMBUILD_ROOT)/SOURCES/
 	if [ "$(3)" = "-trial" ]; then \
@@ -550,6 +553,7 @@ $(BUILD_WINDOWS_MSYS_DIR)/$(1): PKGBUILD-w10.in $(3) $(BUILD_DIR)/$(CARLA_WINDOW
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_WINDOWS_MSYS_DIR)/
 	cp $(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_WINDOWS_MSYS_DIR)/
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
+	sed -i -e 's|@MESON@|$$(pwd)/$(BUILD_DIR)/meson/meson.py|g' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	sed -i -e 's/@ZPLUGINS_VERSION@/$(ZPLUGINS_VERSION)/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD
 	if [ "$(2)" = "-trial" ]; then \
 		sed -i -e '2s/zrythm/zrythm-trial/' $(BUILD_WINDOWS_MSYS_DIR)/PKGBUILD ; \

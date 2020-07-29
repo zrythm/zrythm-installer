@@ -6,6 +6,7 @@ _zplugins_builddir="build-zplugins-${MINGW_CHOST}"
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=@VERSION@
+meson_path=@MESON@
 pkgrel=2
 arch=('any')
 pkgdesc='a highly automated and intuitive digital audio workstation (mingw-w64)'

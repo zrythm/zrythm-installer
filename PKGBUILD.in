@@ -1,6 +1,7 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
 pkgname=zrythm
 pkgver=@VERSION@
+meson_path=@MESON@
 pkgrel=1
 pkgdesc='a highly automated and intuitive digital audio workstation'
 arch=('x86_64' 'i686')
@@ -25,7 +26,7 @@ _rootdir="zrythm-${pkgver}"
 build() {
   cd $_rootdir
   PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig \
-    meson build --prefix=/usr -Dtests=false \
+    $meson_path build --prefix=/usr -Dtests=false \
     -Dmanpage=true \
     -Dbuildtype=release -Dffmpeg=enabled \
     -Dsdl=enabled -Drtaudio=enabled \
