@@ -20,8 +20,8 @@ source=("https://github.com/mesonbuild/${_realname}/releases/download/${pkgver}/
         'install-man.patch')
 sha256sums=('0a1ae2bfe2ae14ac47593537f93290fb79e9b775c55b4c53c282bc3ca3745b35'
             '5805aed0a117536eb16dd8eef978c6be57c2471b655ede63e25517c28b4f4cf0'
-            '363182db7e7059526353278966aa4704e8a26cbaf7c3b7dc5d6e4f01692a40e6'
-            '2093c617cf3146a4cea601e7c73400d8ec5fd52ac5cf642c4f5af2d6493b1cb1'
+            'eb85e166347da7721af4441fce1ac3cb50aee351f361a9b76e92eabac30dab0e'
+            'b23d16c0b82ed9cb3b6e859a1654385727e19cd4bd9bf904fd509fabd0a82f45'
             '0682a36cb75e545a78b81293303835a16171f25baf949905dc08029436efff84')
 
 prepare() {
