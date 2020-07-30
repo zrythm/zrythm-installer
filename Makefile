@@ -66,14 +66,14 @@ WIN_TRIAL_CHROOT_DIR=/tmp/zrythm-trial-root
 MINGW_SRC_DIR=../../msys64/home/alex/zrythm-build
 WINDOWS_ZRYTHM_PKG_TAR_XZ=
 RPMBUILD_ROOT=/home/ansible/rpmbuild
-BUILD_FEDORA32_DIR=$(BUILD_DIR)/fedora32
 BUILD_OPENSUSE_TUMBLEWEED_DIR=$(BUILD_DIR)/opensuse-tumbleweed
 ARCH_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1-x86_64.pkg.tar.zst
 ARCH_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1-x86_64.pkg.tar.zst
 DEBIAN_PKG_FILE=zrythm_$(ZRYTHM_PKG_VERSION)-1_amd64.deb
 DEBIAN_TRIAL_PKG_FILE=zrythm-trial_$(ZRYTHM_PKG_VERSION)-1_amd64.deb
-FEDORA32_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.fc32.x86_64.rpm
-FEDORA32_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.fc32.x86_64.rpm
+FEDORA_VERSION=version
+FEDORA_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.fc$(FEDORA_VERSION).x86_64.rpm
+FEDORA_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.fc$(FEDORA_VERSION).x86_64.rpm
 OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 WINDOWS_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-setup.exe
@@ -425,11 +425,13 @@ endef
 
 # 1: distro (debian10,ubuntu1804,...)
 define make_rpm_target
-$(call make_rpm_pkg_target,$(FEDORA32_PKG_FILE),$(1),,)
-$(call make_rpm_pkg_target,$(FEDORA32_TRIAL_PKG_FILE),$(1),-trial,)
+$(call make_rpm_pkg_target,$(FEDORA_PKG_FILE),$(1),,)
+$(call make_rpm_pkg_target,$(FEDORA_TRIAL_PKG_FILE),$(1),-trial,)
+$(call make_distro_target,$(1),FEDORA31)
 $(call make_distro_target,$(1),FEDORA32)
 endef
 
+$(eval $(call make_rpm_target,fedora31))
 $(eval $(call make_rpm_target,fedora32))
 
 # create AppImage target
