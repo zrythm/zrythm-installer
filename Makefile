@@ -428,12 +428,30 @@ endef
 define make_rpm_target
 $(call make_rpm_pkg_target,$(FEDORA_PKG_FILE),$(1),,)
 $(call make_rpm_pkg_target,$(FEDORA_TRIAL_PKG_FILE),$(1),-trial,)
-$(call make_distro_target,$(1),FEDORA31)
-$(call make_distro_target,$(1),FEDORA32)
+$(call make_distro_target,$(1),FEDORA)
 endef
 
 $(eval $(call make_rpm_target,fedora31))
 $(eval $(call make_rpm_target,fedora32))
+
+# 1: pkg filename
+# 2: distro (freebsd12,freebsd13,...)
+# 3: "-trial" for trial
+# 4: dependency (to make trial depend on full)
+define make_freebsd_pkg_target
+$(BUILD_DIR)/$(2)/$(1): freebsd-port/Makefile.in $(COMMON_SRC_DEPS) $(4)
+	$$(call make_carla,/usr,sudo,/lib/zrythm)
+	rm -rf /usr/ports/audio/zrythm
+	mkdir -p /usr/ports/audio/zrythm
+	cp -R freebsd-port/* /usr/ports/audio/zrythm/
+	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/g' /usr/ports/audio/zrythm/Makefile
+	sed -i -e 's/@ZRYTHM_TARBALL@/$(ZRYTHM_TARBALL)/g' /usr/ports/audio/zrythm/distinfo
+	cd /usr/ports/audio/zrythm && make install clean
+endef
+
+$(eval $(call make_freebsd_pkg_target,$(FREEBSD_PKG_FILE),freebsd12,,))
+$(eval $(call make_freebsd_pkg_target,$(FREEBSD_PKG_FILE),freebsd12,-trial,))
+$(call make_distro_target,freebsd12,FREEBSD)
 
 # create AppImage target
 # arg 1: '-trial' if trial
