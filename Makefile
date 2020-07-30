@@ -77,7 +77,7 @@ FEDORA_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.fc$(FEDORA_VERSION).x
 OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 FREEBSD_PKG_FILE=freebsd.mk
-FREEBSD_TRIAL_PKG_FILE=freebsd.mk
+FREEBSD_TRIAL_PKG_FILE=freebsd-trial.mk
 WINDOWS_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-setup.exe
 WINDOWS_TRIAL_INSTALLER=zrythm-trial-$(ZRYTHM_PKG_VERSION)-setup.exe
 WINDOWS_MSYS_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-ms-setup.exe
@@ -452,7 +452,8 @@ endef
 
 $(eval $(call make_freebsd_pkg_target,$(FREEBSD_PKG_FILE),freebsd12,,))
 $(eval $(call make_freebsd_pkg_target,$(FREEBSD_TRIAL_PKG_FILE),freebsd12,-trial,))
-$(call make_distro_target,freebsd12,FREEBSD)
+# FIXME
+#$(call make_distro_target,freebsd12,FREEBSD)
 
 # create AppImage target
 # arg 1: '-trial' if trial
