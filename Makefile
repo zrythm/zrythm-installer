@@ -71,9 +71,8 @@ ARCH_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1-x86_64.pkg.tar.zst
 ARCH_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1-x86_64.pkg.tar.zst
 DEBIAN_PKG_FILE=zrythm_$(ZRYTHM_PKG_VERSION)-1_amd64.deb
 DEBIAN_TRIAL_PKG_FILE=zrythm-trial_$(ZRYTHM_PKG_VERSION)-1_amd64.deb
-FEDORA_VERSION=version
-FEDORA_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.fc$(FEDORA_VERSION).x86_64.rpm
-FEDORA_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.fc$(FEDORA_VERSION).x86_64.rpm
+FEDORA_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.x86_64.rpm
+FEDORA_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.x86_64.rpm
 OPENSUSE_TUMBLEWEED_PKG_FILE=zrythm-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 OPENSUSE_TUMBLEWEED_TRIAL_PKG_FILE=zrythm-trial-$(ZRYTHM_PKG_VERSION)-1.opensuse-tumbleweed.x86_64.rpm
 FREEBSD_PKG_FILE=freebsd.mk
@@ -422,7 +421,7 @@ $(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
 		sed -i -e 's/-Dtrial_ver=false/-Dtrial_ver=true/' $(RPMBUILD_ROOT)/SPECS/zrythm.spec ; \
 	fi
 	rpmbuild -ba $(RPMBUILD_ROOT)/SPECS/zrythm.spec
-	cp $(RPMBUILD_ROOT)/RPMS/x86_64/$(1) $$@
+	cp $(RPMBUILD_ROOT)/RPMS/x86_64/zrythm-$(ZRYTHM_PKG_VERSION)-1.fc*.x86_64.rpm $$@
 endef
 
 # 1: distro (debian10,ubuntu1804,...)
