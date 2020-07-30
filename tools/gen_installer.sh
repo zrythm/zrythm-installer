@@ -12,7 +12,7 @@ zrythm_version=$1
 installer_zip=$2
 zplugins_version=$3
 trial=$4
-distros="archlinux debian10 debian11 ubuntu1804 ubuntu2004 ubuntu2010 fedora32"
+distros="archlinux debian10 debian11 ubuntu1804 ubuntu2004 ubuntu2010 fedora31 fedora32"
 
 rm -rf $installer_zip
 
@@ -52,8 +52,8 @@ get_package_filename () {
     "archlinux")
       search_str="ARCH"
       ;;
-    "fedora32")
-      search_str="FEDORA32"
+    "fedora"*)
+      search_str="FEDORA"
       ;;
   esac
   if is_trial ; then
@@ -75,7 +75,7 @@ get_dest_package_filename () {
     "archlinux")
       res="$prefix-1_x86_64.pkg.tar.zst"
       ;;
-    "fedora32")
+    "fedora"*)
       res="$prefix-1_x86_64.rpm"
   esac
   echo $res
