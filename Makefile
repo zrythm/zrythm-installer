@@ -284,7 +284,7 @@ define make_zplugins
 	cd $(BUILD_DIR) && tar xf $(ZPLUGINS_TARBALL)
 	cd $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION) && \
 		cd ext/Soundpipe && CC=$(3)gcc make && cd ../.. && \
-		../meson/meson.py build --buildtype=release \
+		../meson/meson.py build --buildtype=debugoptimized \
 		--prefix=/usr && \
 		DESTDIR=/tmp ninja -C build install
 	mkdir -p $(BUILD_DIR)/$(1)/zplugins

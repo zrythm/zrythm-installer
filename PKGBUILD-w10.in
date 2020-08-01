@@ -58,6 +58,7 @@ build() {
     -Dtrial_ver=false \
     -Dwindows_release=true -Dcarla=enabled \
     --buildtype=debugoptimized \
+    -Dextra_debug_info=true \
     "../zrythm-${pkgver}"
   ninja
 

@@ -31,7 +31,10 @@ class Zrythm < Formula
 
   def install
     mkdir "build" do
-      system "meson", *std_meson_args, "-Dtests=false", "-Dtrial_ver=false",
+      system "meson",
+        "--prefix=#{prefix}", "--libdir=#{lib}",
+        "--buildtype=debug", "-Dextra_debug_info=true",
+        "-Dtests=false", "-Dtrial_ver=false",
         "-Dcarla=enabled", "-Dffmpeg=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
         "-Dfallback_version=@VERSION@",
