@@ -44,10 +44,7 @@ ubuntu_20_04_str="Ubuntu 20.04"
 
 zenity_width=360
 have_zenity=0
-command -v zenity
-if [ $? -eq 0 ]; then
-  have_zenity=1
-fi
+command -v zenity && have_zenity=1 || true
 
 if [[ "$ID" = *"debian"* ]]; then
   if [[ "$VERSION_ID" = *"10"* ]]; then
