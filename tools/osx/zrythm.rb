@@ -13,7 +13,6 @@ class Zrythm < Formula
   depends_on "libyaml"
   depends_on "gtk+3"
   depends_on "guile"
-  depends_on "ffmpeg"
   depends_on "fftw"
   depends_on "libsamplerate"
   depends_on "lilv"
@@ -35,7 +34,7 @@ class Zrythm < Formula
         "--prefix=#{prefix}", "--libdir=#{lib}",
         "--buildtype=debug", "-Dextra_debug_info=true",
         "-Dtests=false", "-Dtrial_ver=false",
-        "-Dcarla=enabled", "-Dffmpeg=enabled",
+        "-Dcarla=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
         "-Dfallback_version=@VERSION@",
         # manpage fails

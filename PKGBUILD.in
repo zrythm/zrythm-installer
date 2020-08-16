@@ -27,7 +27,7 @@ build() {
   PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig \
     meson build --prefix=/usr -Dtests=false \
     -Dmanpage=true \
-    -Dbuildtype=debugoptimized -Dffmpeg=enabled \
+    -Dbuildtype=debugoptimized \
     -Dsdl=enabled -Drtaudio=enabled \
     -Drtmidi=enabled -Dcarla=enabled \
     -Dfallback_version=@VERSION@ \

@@ -201,7 +201,7 @@ define make_osx
 		rm -rf build && \
 		PKG_CONFIG_PATH=$(1)/lib/zrythm/lib/pkgconfig \
 		meson build -Dsdl=enabled -Drtaudio=auto \
-		  -Drtmidi=auto -Dffmpeg=enabled \
+		  -Drtmidi=auto \
 			-Dmac_release=true -Dtrial_ver=$(2) \
 			-Djack=disabled -Dgraphviz=enabled \
 			-Dcarla=enabled -Dmanpage=false \
@@ -325,7 +325,6 @@ define prepare_debian
 	cp debian.rules $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules
 	sed -i -e 's/@VERSION@/$(ZRYTHM_PKG_VERSION)/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules
 	if [ "$$(hostname)" = "linuxmint193" ] ; then \
-			sed -i -e 's/-Dffmpeg=enabled/-Dffmpeg=disabled/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules; \
 			sed -i -e 's/ninja test/echo test/' $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/rules; \
 		fi
 	echo "3.0 (quilt)" > $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)/debian/source/format
@@ -470,7 +469,7 @@ $(BUILD_DIR)/Zrythm$(1)-$(ZRYTHM_PKG_VERSION)-x86_64.AppImage: $(BUILD_DIR)/$(ZR
 		cd /tmp/zrythm$(1)-appimg && tar xf $(ZRYTHM_PKG_TARBALL) && \
 		cd zrythm-$(ZRYTHM_PKG_VERSION) && \
 		$$$$MESON_PATH/meson.py build -Dsdl=enabled -Drtaudio=auto \
-		  -Drtmidi=auto -Dffmpeg=enabled \
+		  -Drtmidi=auto \
 			-Dguile=enabled \
 			-Dtrial_ver=$(2) --prefix=/usr && \
 		ninja -C build && DESTDIR=$(APPIMAGE_APPDIR) ninja -C build install && \
