@@ -1,0 +1,35 @@
+# Maintainer: Alexandros Theodotou <alex at zrythm dot org>
+_realname=lsp-dsp-lib
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=0.5.6
+pkgrel=1
+arch=('any')
+pkgdesc='lsp dsp lib'
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+options=('strip' 'staticlibs')
+license=("LGPL3")
+url="https://github.com/sadko4u/lsp-dsp-lib"
+source=("https://github.com/sadko4u/$_realname/archive/lsp-dsp-lib-$pkgver.zip")
+sha256sums=('SKIP')
+
+prepare() {
+  rm -rf ${_realname}-${pkgver}
+  mv ${_realname}-${_realname} -${pkgver} ${_realname}-${pkgver}
+  cd ${_realname}-${pkgver}
+}
+
+build() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  make config
+  make fetch
+  make
+}
+
+package() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  make DESTDIR=${pkgdir} PREFIX=${MINGW_PREFIX} install
+}

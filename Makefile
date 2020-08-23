@@ -566,6 +566,7 @@ install-lilv-dep-%:
 	$(call install_lilv_dep,sratom)
 	$(call install_lilv_dep,lilv)
 	$(call install_lilv_dep,jack2)
+	$(call install_lilv_dep,lsp-dsp-lib)
 
 # arg 1: .pkg.tar filename
 # arg 2: '-trial' if trial
