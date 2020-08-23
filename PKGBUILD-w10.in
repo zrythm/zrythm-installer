@@ -50,7 +50,7 @@ build() {
   ${MINGW_PREFIX}/bin/meson \
     -Dsdl=enabled \
     -Drtaudio=auto \
-    -Drtmidi=auto \
+    -Drtmidi=auto -Dstatic_lsp_dsp=true \
     -Djack=enabled \
     -Dguile=disabled \
     -Dfallback_version=@VERSION@ \

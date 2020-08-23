@@ -309,10 +309,11 @@ $(1): $(BUILD_DIR)/$(1)/$($(2)_PKG_FILE) $(BUILD_DIR)/$(1)/$($(2)_TRIAL_PKG_FILE
 endef
 
 # 1: sudo or empty
+# 2: libdir
 define make_lsp_dsp_lib
 	cd $(BUILD_DIR) && tar xf $(LSP_DSP_LIB_TARBALL) && \
 		cd lsp-dsp-lib-$(LSP_DSP_LIB_TAG) && \
-		make config PREFIX=/usr || true
+		make config PREFIX=/usr LIBDIR=$(2) || true
 	cd $(BUILD_DIR)/lsp-dsp-lib-$(LSP_DSP_LIB_TAG) && make fetch && make && $(1) make install
 endef
 
@@ -349,7 +350,7 @@ endef
 define make_debian_pkg_target
 $(BUILD_DIR)/$(2)/$(1): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS) $(4)
 	$$(call make_carla,/usr,sudo,/lib/zrythm)
-	$$(call make_lsp_dsp_lib,sudo)
+	$$(call make_lsp_dsp_lib,sudo,/usr/lib)
 	$$(call prepare_debian,$(2))
 	if [ "$(3)" = "-trial" ]; then \
 		cd $(BUILD_DIR)/$(2)/$(ZRYTHM_DIR) && \
@@ -382,7 +383,7 @@ $(eval $(call make_debian_target,ubuntu2010))
 define make_arch_pkg_target
 $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
 	$$(call make_carla,/usr,sudo,/lib/zrythm)
-	$$(call make_lsp_dsp_lib,sudo)
+	$$(call make_lsp_dsp_lib,sudo,/usr/lib)
 	mkdir -p $(BUILD_ARCH_DIR)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
@@ -420,7 +421,7 @@ $(eval $(call make_arch_target,archlinux))
 define make_rpm_pkg_target
 $(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
 	$$(call make_carla,/usr,sudo,/lib/zrythm)
-	$$(call make_lsp_dsp_lib,sudo)
+	$$(call make_lsp_dsp_lib,sudo,/usr/lib64)
 	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
 	mkdir -p $(RPMBUILD_ROOT) && \
 		cd $(RPMBUILD_ROOT) && \
