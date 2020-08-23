@@ -313,7 +313,7 @@ endef
 define make_lsp_dsp_lib
 	cd $(BUILD_DIR) && tar xf $(LSP_DSP_LIB_TARBALL) && \
 		cd lsp-dsp-lib-$(LSP_DSP_LIB_TAG) && \
-		find . -type f -exec sed -i -e 's|$$(MAKEFLAGS)||g' {} \; \
+		find . -type f -exec sed -i -e 's|$$(MAKEFLAGS)||g' {} \;; \
 		make config PREFIX=/usr LIBDIR=$(2) && \
 		make fetch && make && $(1) make install
 endef
