@@ -312,7 +312,8 @@ endef
 define make_lsp_dsp_lib
 	cd $(BUILD_DIR) && tar xf $(LSP_DSP_LIB_TARBALL) && \
 		cd lsp-dsp-lib-$(LSP_DSP_LIB_TAG) && \
-		make config && make fetch && make && $(1) make install
+		make config || true
+	cd $(BUILD_DIR)/lsp-dsp-lib-$(LSP_DSP_LIB_TAG) && make fetch && make && $(1) make install
 endef
 
 # 1: distro name
