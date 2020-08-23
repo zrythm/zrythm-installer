@@ -16,14 +16,17 @@ sha256sums=('SKIP')
 
 prepare() {
   rm -rf ${_realname}-${pkgver}
-  mv ${_realname}-${_realname} -${pkgver} ${_realname}-${pkgver}
+  mv ${_realname}-${_realname}-${pkgver} ${_realname}-${pkgver}
   cd ${_realname}-${pkgver}
+
+  find . -type f -exec sed -i -e 's|$(MAKEFLAGS)||g' {} \;
 }
 
 build() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  make config
+  make config PREFIX=${MINGW_PREFIX}
+  cat ./.config.mk
   make fetch
   make
 }
@@ -31,5 +34,5 @@ build() {
 package() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  make DESTDIR=${pkgdir} PREFIX=${MINGW_PREFIX} install
+  make DESTDIR=${pkgdir} install
 }
