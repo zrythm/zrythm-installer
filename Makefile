@@ -43,6 +43,10 @@ CARLA_WINDOWS_BINARY_64_ZIP=carla-64-$(shell echo $(CARLA_VERSION) | head -c 7).
 CARLA_WINDOWS_BINARY_32_ZIP=carla-2.2.0-rc1-woe32.zip
 CARLA_WINDOWS_BINARY_64_URL=https://www.zrythm.org/downloads/carla/$(CARLA_WINDOWS_BINARY_64_ZIP)
 CARLA_WINDOWS_BINARY_32_URL=https://www.zrythm.org/downloads/carla/$(CARLA_WINDOWS_BINARY_32_ZIP)
+LSP_DSP_LIB_VERSION=0.5.6
+LSP_DSP_LIB_TAG=lsp-dsp-lib-$(LSP_DSP_LIB_VERSION)
+LSP_DSP_LIB_TARBALL=$(LSP_DSP_LIB_TAG).tar.gz
+LSP_DSP_LIB_URL=https://github.com/sadko4u/lsp-dsp-lib/archive/$(LSP_DSP_LIB_TARBALL)
 ARCH_MXE_ROOT=/home/ansible/Documents/git/mxe
 ARCH_MXE_64_STATIC_PREFIX=$(ARCH_MXE_ROOT)/usr/x86_64-w64-mingw32.static
 ARCH_MXE_64_SHARED_PREFIX=$(ARCH_MXE_ROOT)/usr/x86_64-w64-mingw32.shared
@@ -106,7 +110,7 @@ UNIX_INSTALLER_ZIP=zrythm-$(ZRYTHM_PKG_VERSION)-installer.zip
 UNIX_TRIAL_INSTALLER_ZIP=zrythm-trial-$(ZRYTHM_PKG_VERSION)-installer.zip
 GNU_LINUX_PKG_FILE=$(UNIX_INSTALLER_ZIP)
 GNU_LINUX_TRIAL_PKG_FILE=$(UNIX_TRIAL_INSTALLER_ZIP)
-COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/meson/meson.py $(BUILD_DIR)/$(CARLA_SOURCE_ZIP)
+COMMON_SRC_DEPS=$(BUILD_DIR)/$(ZPLUGINS_TARBALL) $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_DIR)/meson/meson.py $(BUILD_DIR)/$(CARLA_SOURCE_ZIP) $(BUILD_DIR)/$(LSP_DSP_LIB_TARBALL)
 OSX_INSTALL_PREFIX=/tmp/zrythm-osx
 OSX_INSTALL_TRIAL_PREFIX=/tmp/zrythm-trial-osx
 OSX_INSTALLER=zrythm-$(ZRYTHM_PKG_VERSION)-setup.dmg
@@ -304,6 +308,13 @@ $(call get_zsaw_manifest_target,$(1)): $(BUILD_DIR)/zplugins-v$(ZPLUGINS_VERSION
 $(1): $(BUILD_DIR)/$(1)/$($(2)_PKG_FILE) $(BUILD_DIR)/$(1)/$($(2)_TRIAL_PKG_FILE) $(call get_zsaw_manifest_target,$(1))
 endef
 
+# 1: sudo or empty
+define make_lsp_dsp_lib
+	cd $(BUILD_DIR) && tar xf $(LSP_DSP_LIB_TARBALL) && \
+		cd $(LSP_DSP_LIB_TAG) && \
+		make fetch && make config && make && $(1) make install
+endef
+
 # 1: distro name
 define prepare_debian
 	rm -rf $(BUILD_DIR)/$(1)/$(ZRYTHM_DIR)
@@ -337,6 +348,7 @@ endef
 define make_debian_pkg_target
 $(BUILD_DIR)/$(2)/$(1): debian.changelog.in debian.compat debian.control debian.copyright debian.rules $(COMMON_SRC_DEPS) $(4)
 	$$(call make_carla,/usr,sudo,/lib/zrythm)
+	$$(call make_lsp_dsp_lib,sudo)
 	$$(call prepare_debian,$(2))
 	if [ "$(3)" = "-trial" ]; then \
 		cd $(BUILD_DIR)/$(2)/$(ZRYTHM_DIR) && \
@@ -740,6 +752,10 @@ $(BUILD_DIR)/$(CARLA_SOURCE_ZIP):
 	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && wget $(CARLA_SOURCE_URL) && \
 		mv $(CARLA_VERSION).zip $(CARLA_SOURCE_ZIP)
+
+$(BUILD_DIR)/$(LSP_DSP_LIB_TARBALL):
+	mkdir -p $(BUILD_DIR)
+	cd $(BUILD_DIR) && wget $(LSP_DSP_LIB_URL)
 
 $(BUILD_DIR)/$(CARLA_WINDOWS_BINARY_64_ZIP):
 	mkdir -p $(BUILD_DIR)
