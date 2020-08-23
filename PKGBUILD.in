@@ -29,7 +29,7 @@ build() {
     -Dmanpage=true \
     -Dbuildtype=debugoptimized \
     -Dsdl=enabled -Drtaudio=enabled \
-    -Drtmidi=enabled -Dcarla=enabled \
+    -Drtmidi=enabled -Dcarla=enabled -Dlsp_dsp=enabled \
     -Dfallback_version=@VERSION@ \
     -Dtrial_ver=false
   ninja -C build

@@ -381,6 +381,7 @@ $(eval $(call make_debian_target,ubuntu2010))
 define make_arch_pkg_target
 $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
 	$$(call make_carla,/usr,sudo,/lib/zrythm)
+	$$(call make_lsp_dsp_lib,sudo)
 	mkdir -p $(BUILD_ARCH_DIR)
 	cp PKGBUILD.in $(BUILD_ARCH_DIR)/PKGBUILD
 	cp $(BUILD_DIR)/$(ZRYTHM_PKG_TARBALL) $(BUILD_ARCH_DIR)/
@@ -418,6 +419,7 @@ $(eval $(call make_arch_target,archlinux))
 define make_rpm_pkg_target
 $(BUILD_DIR)/$(2)/$(1): zrythm.spec.in $(COMMON_SRC_DEPS) $(4)
 	$$(call make_carla,/usr,sudo,/lib/zrythm)
+	$$(call make_lsp_dsp_lib,sudo)
 	rm -rf $(RPMBUILD_ROOT)/BUILDROOT/*
 	mkdir -p $(RPMBUILD_ROOT) && \
 		cd $(RPMBUILD_ROOT) && \
