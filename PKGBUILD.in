@@ -5,6 +5,7 @@ pkgrel=1
 pkgdesc='a highly automated and intuitive digital audio workstation'
 arch=('x86_64' 'i686')
 url="https://www.zrythm.org"
+options=('!strip')
 license=('AGPL3')
 depends=('gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
   'libyaml' 'libsamplerate' 'guile' 'gtksourceview4' 'alsa-lib'
@@ -27,7 +28,7 @@ build() {
   PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig \
     meson build --prefix=/usr -Dtests=false \
     -Dmanpage=true \
-    -Dbuildtype=debugoptimized \
+    -Dbuildtype=debugoptimized -Dextra_debug_info=true \
     -Dsdl=enabled -Drtaudio=enabled \
     -Drtmidi=enabled -Dcarla=enabled -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true \
     -Dfallback_version=@VERSION@ \
