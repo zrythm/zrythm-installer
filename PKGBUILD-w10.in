@@ -28,7 +28,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "guile"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-python3")
-options=('strip' '!staticlibs')
+options=('!strip' '!staticlibs')
 license=("AGPL3")
 url="https://www.zrythm.org"
 #install=${_realname}-${CARCH}.install
