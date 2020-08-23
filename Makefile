@@ -311,8 +311,8 @@ endef
 # 1: sudo or empty
 define make_lsp_dsp_lib
 	cd $(BUILD_DIR) && tar xf $(LSP_DSP_LIB_TARBALL) && \
-		cd $(LSP_DSP_LIB_TAG) && \
-		make fetch && make config && make && $(1) make install
+		cd lsp-dsp-lib-$(LSP_DSP_LIB_TAG) && \
+		make config && make fetch && make && $(1) make install
 endef
 
 # 1: distro name
