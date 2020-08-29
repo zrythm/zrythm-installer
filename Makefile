@@ -128,6 +128,7 @@ BREEZE_DARK_PATH=/Users/alex/.local/share/icons/breeze-dark
 MANUAL_ZIP_PATH=$(BUILD_DIR)/user-manual.zip
 BUILD_ZPLUGINS_DIR=$(BUILD_DIR)/zplugins
 ZSAW_MANIFEST_PATH=$(BUILD_DIR)/zplugins/ZSaw.lv2/manifest.ttl
+LOCALES=en fr de
 
 define start_vm
 	if sudo virsh list | grep -q " $(1) .*paused" ; then \
@@ -397,10 +398,10 @@ $(BUILD_DIR)/$(2)/$(1): PKGBUILD.in $(COMMON_SRC_DEPS) $(4)
 			cd zrythm-$(ZRYTHM_PKG_VERSION) && \
 			meson build && \
 			sed -i -e 's/latexpdf/latex/' doc/user/meson.build && \
-			ninja -C build latex-manual-en latex-manual-fr latex-manual-de && \
-			make -C build/doc/user/en/latex && \
-			make -C build/doc/user/fr/latex && \
-			make -C build/doc/user/de/latex ; \
+			for lang in $(LOCALES); do \
+				ninja -C build latex-manual-$$$$lang && \
+				make -C build/doc/user/$$$$lang/latex ; \
+			done ; \
 	fi
 	cd $(BUILD_ARCH_DIR) && makepkg -f
 	rm -rf $(BUILD_ARCH_DIR)/src/zrythm-$(ZRYTHM_VERSION)
