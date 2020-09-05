@@ -25,15 +25,20 @@ mingw_zrythm_pkgbuild = configure_file (
   )
 
 # install dependencies
+make_mingw_pkg_full_path = meson.build_root () / 'scripts/makw_mingw_pkg.sh'
 independent_dep_names = [ 'jack2', 'lsp-dsp-lib', ]
 independent_deps = []
 foreach dep_name : independent_dep_names
+  src_pkgbuild = 'PKGBUILD-' + dep_name + '-mingw'
   independent_deps += custom_target (
     'mingw-' + dep_name,
     output: dep_name + '.pkg.tar.zst',
-    input: 'PKGBUILD-' + dep_name + '-mingw',
+    input: [ make_mingw_pkg, src_pkgbuild, ],
     command: [
-      make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+      # does not work with @INPUT0@ and @INPUT1@
+      bash, '-c', make_mingw_pkg_full_path +
+      ' @OUTPUT@ ' +
+      meson.current_source_dir () / src_pkgbuild,
       ],
     install: false,
     )
@@ -43,8 +48,9 @@ lv2_pkg = custom_target (
   output: 'lv2.pkg.tar.zst',
   input: 'PKGBUILD-lv2-mingw',
   command: [
-    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
     ],
+  depends: make_mingw_pkg,
   install: false,
   )
 serd_pkg = custom_target (
@@ -52,9 +58,9 @@ serd_pkg = custom_target (
   output: 'serd.pkg.tar.zst',
   input: 'PKGBUILD-serd-mingw',
   command: [
-    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
     ],
-  depends: lv2_pkg,
+  depends: [ lv2_pkg, make_mingw_pkg, ],
   install: false,
   )
 sord_pkg = custom_target (
@@ -62,9 +68,9 @@ sord_pkg = custom_target (
   output: 'sord.pkg.tar.zst',
   input: 'PKGBUILD-sord-mingw',
   command: [
-    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
     ],
-  depends: serd_pkg,
+  depends: [ serd_pkg, make_mingw_pkg, ],
   install: false,
   )
 sratom_pkg = custom_target (
@@ -72,9 +78,9 @@ sratom_pkg = custom_target (
   output: 'sratom.pkg.tar.zst',
   input: 'PKGBUILD-sratom-mingw',
   command: [
-    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
     ],
-  depends: sord_pkg,
+  depends: [ sord_pkg, make_mingw_pkg, ],
   install: false,
   )
 lilv_pkg = custom_target (
@@ -82,9 +88,9 @@ lilv_pkg = custom_target (
   output: 'lilv.pkg.tar.zst',
   input: 'PKGBUILD-lilv-mingw',
   command: [
-    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
     ],
-  depends: sord_pkg,
+  depends: [ sratom_pkg, make_mingw_pkg, ],
   install: false,
   )
 

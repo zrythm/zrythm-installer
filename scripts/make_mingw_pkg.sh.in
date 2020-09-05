@@ -10,7 +10,7 @@ tempdir=`mktemp -d`
 cp $pkgbuild $tempdir/PKGBUILD
 pushd $tempdir
 MINGW_INSTALLS=mingw64 makepkg-mingw -fsi --noconfirm
-popd $tempdir
+popd
 
 cp $tempdir/*.pkg.tar.zst $out_file
 
