@@ -4,7 +4,7 @@
 pkg_type="$1"
 
 # "-trial" if trial
-trial="@DASH_TRIAL@"
+trial="$2"
 
 zrythm_pkg_ver=@ZRYTHM_PKG_VERSION@
 

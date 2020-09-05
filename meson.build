@@ -51,6 +51,7 @@ temp_zplugins_suffix = 'lib/lv2'
 temp_zplugins_dir = temp_zplugins_prefix / temp_zplugins_suffix
 temp_library_prefix = meson.build_root () / 'tmp_lib_prefix'
 temp_library_pkgconfig_path = temp_library_prefix / libdir / 'pkgconfig'
+dash_trial = build_trial ? '-trial' : ''
 
 global_conf = configuration_data ()
 global_conf.set ('PREFIX', prefix)
@@ -87,8 +88,7 @@ global_conf.set (
   'TEMP_CARLA_PREFIX', temp_carla_prefix)
 global_conf.set (
   'TEMP_CARLA_PKG_CONFIG_PATH', temp_carla_pkgconfig_path)
-global_conf.set (
-  'DASH_TRIAL', build_trial ? '-trial' : '')
+global_conf.set ('DASH_TRIAL', dash_trial)
 global_conf.set (
   'TRIAL_TRUE_FALSE', build_trial ? 'true' : 'false')
 global_conf.set (

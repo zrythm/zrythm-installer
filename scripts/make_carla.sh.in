@@ -1,6 +1,6 @@
 #!@BASH@
 
-set -x
+set -e
 
 # full path to carla source zip
 carla_source_zip="$1"

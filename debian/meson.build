@@ -38,7 +38,7 @@ debian_rules = configure_file (
   )
 
 debian_pkg_filename = run_command (
-  get_pkg_filename, 'DEBIAN').stdout ().strip ()
+  get_pkg_filename, 'DEBIAN', dash_trial).stdout ().strip ()
 debian_pkg = custom_target (
   'debian-pkg',
   output: debian_pkg_filename,

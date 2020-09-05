@@ -1,6 +1,6 @@
 #!@BASH@
 
-set -xe
+set -e
 
 out_pkg="$1"
 
@@ -34,7 +34,7 @@ echo "3.0 (native)" > $deb_src_dir/format
 tar -xzf $deb_source_tarball -C $tempdir
 
 pushd $deb_parent_dir
-debuild -us -uc 
+debuild -us -uc
 popd
 
 mv $tempdir/*.deb "$out_pkg"
