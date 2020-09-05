@@ -39,6 +39,18 @@ make_rpm_pkg = configure_file (
   configuration: scripts_conf,
   )
 
+make_arch_pkg = configure_file (
+  output: 'make_arch_pkg.sh',
+  input: 'make_arch_pkg.sh.in',
+  configuration: scripts_conf,
+  )
+
+make_user_manual = configure_file (
+  output: 'make_user_manual.sh',
+  input: 'make_user_manual.sh.in',
+  configuration: scripts_conf,
+  )
+
 make_carla = configure_file (
   output: 'make_carla.sh',
   input: 'make_carla.sh.in',

@@ -1,0 +1,24 @@
+#!@BASH@
+
+set -e
+
+out_pkg="$1"
+
+pkgbuild=$2
+zrythm_src_tarball="$3"
+zrythm_src_tarball_filename="$4"
+
+tempdir=`mktemp -d`
+
+cp $pkgbuild $tempdir/
+cp $zrythm_src_tarball $tempdir/
+
+# build manuals
+pushd $tempdir
+makepkg -f
+popd $tempdir
+
+ls $tempdir
+exit 1
+
+#rm -rf $tempdir

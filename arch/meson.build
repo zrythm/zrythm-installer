@@ -15,27 +15,28 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-rpm_conf = configuration_data ()
-rpm_conf.merge_from (global_conf)
-rpm_conf.set (
+arch_conf = configuration_data ()
+arch_conf.merge_from (global_conf)
+arch_conf.set (
   'BUILT_ZPLUGINS_DIR', zplugins_installation.full_path ())
 
-specfile = configure_file (
-  output: 'zrythm.spec',
-  input: 'zrythm.spec.in',
-  configuration: rpm_conf,
+pkgbuild = configure_file (
+  output: 'PKGBUILD',
+  input: 'PKGBUILD.in',
+  configuration: arch_conf,
   )
 
-rpm_pkg_filename = run_command (
-  get_pkg_filename, 'FEDORA', dash_trial).stdout ().strip ()
-rpm_pkg = custom_target (
-  'rpm-pkg',
-  output: rpm_pkg_filename,
+arch_pkg_filename = run_command (
+  get_pkg_filename, 'ARCH', dash_trial).stdout ().strip ()
+arch_pkg = custom_target (
+  'arch-pkg',
+  output: arch_pkg_filename,
   input: [
-    specfile, zrythm_src_tarball,
+    pkgbuild, zrythm_src_tarball,
     ],
   command: [
-    make_rpm_pkg, '@OUTPUT@', '@INPUT0@', '@INPUT1@',
+    make_arch_pkg, '@OUTPUT@', '@INPUT0@', '@INPUT1@',
+    zrythm_src_tarball_filename, arch_pkg_filename,
     ],
   depends: [
     carla_installation,
@@ -46,7 +47,25 @@ rpm_pkg = custom_target (
   install_dir: get_option ('prefix'),
   )
 
+if not build_trial
+  manual_deps = []
+  foreach lang : locales
+    filename = 'Zrythm-' + zrythm_pkg_ver + '-' + lang + '.pdf'
+    manual_deps += custom_target (
+      'user-manuals-' + lang,
+      output: filename,
+      input: zrythm_src_tarball,
+      command: [
+        make_user_manual, '@OUTPUT@', '@INPUT0@',
+        zrythm_src_tarball_filename, lang,
+        ],
+      install: true,
+      install_dir: get_option ('prefix') / 'manuals',
+      )
+  endforeach
+endif
+
 run_target (
-  'rpm',
+  'arch',
   command: [ 'echo', 'done' ],
-  depends: rpm_pkg)
+  depends: [ arch_pkg, manual_deps ])

@@ -52,6 +52,12 @@ temp_zplugins_dir = temp_zplugins_prefix / temp_zplugins_suffix
 temp_library_prefix = meson.build_root () / 'tmp_lib_prefix'
 temp_library_pkgconfig_path = temp_library_prefix / libdir / 'pkgconfig'
 dash_trial = build_trial ? '-trial' : ''
+locales = get_option ('locales')
+space_sep_locales = ''
+foreach locale : locales
+  space_sep_locales += locale + ' '
+endforeach
+space_sep_locales.strip ()
 
 global_conf = configuration_data ()
 global_conf.set ('PREFIX', prefix)
@@ -91,6 +97,8 @@ global_conf.set (
 global_conf.set ('DASH_TRIAL', dash_trial)
 global_conf.set (
   'TRIAL_TRUE_FALSE', build_trial ? 'true' : 'false')
+global_conf.set (
+  'SPACE_SEPARATED_LOCALES', space_sep_locales)
 global_conf.set (
   'MINGW_ZRYTHM_PKG_FILENAME', mingw_zrythm_pkg_filename)
 global_conf.set (
@@ -148,7 +156,15 @@ lsp_dsp_lib_installation = custom_target (
   install: false,
   )
 
+is_arch = distro.contains ('arch')
+if is_arch
+subdir ('arch')
+endif
 is_debian = distro.contains ('debian') or distro.contains ('ubuntu')
 if is_debian
 subdir ('debian')
+endif
+is_rpm = distro.contains ('fedora')
+if is_rpm
+subdir ('rpm')
 endif

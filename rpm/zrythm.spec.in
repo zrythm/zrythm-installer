@@ -95,7 +95,10 @@ ninja -C build
 DESTDIR="%{buildroot}/" ninja -C build install
 mkdir -p "%{buildroot}/usr/lib/zrythm/lib"
 rm -rf "%{buildroot}/usr/lib64/libcm_reproc.a"
-cp -R /usr/lib/zrythm/lib/carla %{buildroot}/usr/lib/zrythm/lib/
+cp -RLv @TEMP_CARLA_PREFIX@/@LIBDIR@/carla \
+  %{buildroot}/usr/lib/zrythm/lib/
+cp -RLv @BUILT_ZPLUGINS_DIR@/* \
+  %{buildroot}/usr/lib/zrythm/lib/lv2/
 %find_lang zrythm
 
 %files -f zrythm.lang

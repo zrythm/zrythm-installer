@@ -1,6 +1,6 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
-pkgname=zrythm
-pkgver=@VERSION@
+pkgname=zrythm@DASH_TRIAL@
+pkgver=@ZRYTHM_PKG_VERSION@
 pkgrel=1
 pkgdesc='a highly automated and intuitive digital audio workstation'
 arch=('x86_64' 'i686')
@@ -25,14 +25,15 @@ _rootdir="zrythm-${pkgver}"
 # FIXME reenable tests
 build() {
   cd $_rootdir
-  PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig \
-    meson build --prefix=/usr -Dtests=false \
+  @MESON_BIN@ build --prefix=/usr -Dtests=false \
+    -Dpkg_config_path=@TEMP_LIBRARY_PKG_CONFIG_PATH@:@TEMP_CARLA_PKG_CONFIG_PATH@ \
     -Dmanpage=true \
     -Dbuildtype=debugoptimized -Dextra_debug_info=true \
     -Dsdl=enabled -Drtaudio=enabled \
-    -Drtmidi=enabled -Dcarla=enabled -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true \
-    -Dfallback_version=@VERSION@ \
-    -Dtrial_ver=false
+    -Drtmidi=enabled -Dcarla=enabled \
+    -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true \
+    -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
+    -Dtrial_ver=@TRIAL_TRUE_FALSE@
   ninja -C build
 }
 
@@ -48,4 +49,8 @@ package() {
   DESTDIR="${pkgdir}/" ninja -C build install
   mkdir -p "${pkgdir}/usr/lib/zrythm/lib"
   cp -R /usr/lib/zrythm/lib/carla ${pkgdir}/usr/lib/zrythm/lib/
+  cp -RLv @TEMP_CARLA_PREFIX@/@LIBDIR@/carla \
+    ${pkgdir}/usr/lib/zrythm/lib/
+  cp -RLv @BUILT_ZPLUGINS_DIR@/* \
+    ${pkgdir}/usr/lib/zrythm/lib/lv2/
 }
