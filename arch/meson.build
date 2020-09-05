@@ -37,6 +37,7 @@ arch_pkg = custom_target (
   command: [
     make_arch_pkg, '@OUTPUT@', '@INPUT0@', '@INPUT1@',
     zrythm_src_tarball_filename, arch_pkg_filename,
+    '@PRIVATE_DIR@',
     ],
   depends: [
     carla_installation,
@@ -58,6 +59,7 @@ if not build_trial
       command: [
         make_user_manual, '@OUTPUT@', '@INPUT0@',
         zrythm_src_tarball_filename, lang,
+        '@PRIVATE_DIR@',
         ],
       install: true,
       install_dir: get_option ('prefix') / 'manuals',

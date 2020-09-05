@@ -47,8 +47,7 @@ package() {
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
   DESTDIR="${pkgdir}/" ninja -C build install
-  mkdir -p "${pkgdir}/usr/lib/zrythm/lib"
-  cp -R /usr/lib/zrythm/lib/carla ${pkgdir}/usr/lib/zrythm/lib/
+  mkdir -p "${pkgdir}/usr/lib/zrythm/lib/lv2"
   cp -RLv @TEMP_CARLA_PREFIX@/@LIBDIR@/carla \
     ${pkgdir}/usr/lib/zrythm/lib/
   cp -RLv @BUILT_ZPLUGINS_DIR@/* \
