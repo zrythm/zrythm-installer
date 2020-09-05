@@ -8,6 +8,8 @@ src_tarball="$2"
 # full paths to each package (pkg.tar.zst) to install
 packages="${@:3}"
 
+dash_trial="@DASH_TRIAL@"
+
 rm -rf $chroot_dir
 mkdir -p $chroot_dir/var/lib/pacman
 mkdir -p $chroot_dir/var/log
@@ -25,3 +27,5 @@ pacman -U $zrythm_pkg_tar \
 cp -R /mingw64/lib/carla "$chroot_dir/mingw64/lib/"
 glib-compile-schemas.exe \
   "$chroot_dir/mingw64/share/glib-2.0/schemas"
+
+cp $chroot_dir/mingw64/bin/zrythm.exe $chroot_dir/mingw64/bin/zrythm$dash_trial.exe || true

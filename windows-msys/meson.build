@@ -88,6 +88,31 @@ lilv_pkg = custom_target (
   install: false,
   )
 
+# get carla binary zips
+carla_bin_base_url = 'https://www.zrythm.org/downloads/carla/'
+filename = 'carla-2.2.0-rc1-woe32.zip'
+url = carla_bin_base_url + filename
+carla_woe32_binary_32_zip = custom_target (
+  'carla-woe32-binary-32-zip',
+  output: filename,
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+carla_short_git_ver = run_command (
+  'bash', '-c', 'echo ' + carla_git_ver + ' | head -c 7').stdout ().strip ()
+filename = 'carla-64-' + carla_short_git_ver + '.zip'
+url = carla_bin_base_url + filename
+carla_woe32_binary_64_zip = custom_target (
+  'carla-woe32-binary-64-zip',
+  output: filename,
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+
 mingw_install_carla_bins_target = custom_target (
   'mingw-install-carla',
   output: 'carla-installed',
@@ -106,9 +131,11 @@ mingw_zrythm_pkg = custom_target (
   output: 'zrythm' + dash_trial + '.pkg.tar.zst',
   input: [
     mingw_zrythm_pkgbuild, zrythm_src_tarball,
+    'gen_windows_installer.sh', 'installer.iss',
     ],
   command: [
-    make_zrythm_mingw_pkg, '@OUTPUT@', '@INPUT0@', '@INPUT1@',
+    make_zrythm_mingw_pkg, '@OUTPUT@', '@INPUT0@',
+    '@INPUT1@', '@INPUT2@', meson.source_root (),
     ],
   depends: [
     carla_installation,
@@ -126,12 +153,13 @@ windows_chroot_target = custom_target (
   input: [
     zrythm_src_tarball, independent_deps[0],
     independent_deps[1], lv2_pkg, serd_pkg, sord_pkg,
-    sratom_pkg, lilv_pkg,
+    sratom_pkg, lilv_pkg, mingw_zrythm_pkg,
     ],
   command: [
     make_windows_chroot, chroot_dir,
     '@INPUT0@', '@INPUT1@', '@INPUT2@',
-    '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@', '@INPUT7@',
+    '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
+    '@INPUT7@', '@INPUT8@',
     ],
   depends: [
     ],
@@ -144,15 +172,14 @@ windows_msys_installer = custom_target (
   'windows-msys-installer',
   output: windows_msys_installer_filename,
   input: [
-    specfile, zrythm_src_tarball,
+    mingw_zrythm_pkg, zrythm_src_tarball,
     ],
   command: [
-    make_windows_msys_pkg, '@OUTPUT@', '@INPUT0@', '@INPUT1@',
+    make_windows_installer, '@OUTPUT@', '@INPUT0@',
+    chroot_dir,
     ],
   depends: [
-    carla_installation,
-    lsp_dsp_lib_installation,
-    zplugins_installation,
+    windows_chroot_target,
     ],
   install: true,
   install_dir: get_option ('prefix'),

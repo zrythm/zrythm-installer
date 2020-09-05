@@ -58,6 +58,11 @@ foreach locale : locales
   space_sep_locales += locale + ' '
 endforeach
 space_sep_locales.strip ()
+is_arch = distro.contains ('arch')
+is_debian = distro.contains ('debian') or distro.contains ('ubuntu')
+is_nixos = distro.contains ('nixos')
+is_rpm = distro.contains ('fedora')
+is_windows_msys = distro.contains ('windows10-msys')
 
 global_conf = configuration_data ()
 global_conf.set ('PREFIX', prefix)
@@ -115,6 +120,8 @@ global_conf.set (
   'LILV_VERSION', get_option ('lilv-ver'))
 global_conf.set (
   'JACK_VERSION', get_option ('jack-ver'))
+global_conf.set (
+  'BREEZE_DARK_PATH', get_option ('breeze-dark-path'))
 
 subdir ('scripts')
 subdir ('sources')
@@ -156,22 +163,22 @@ lsp_dsp_lib_installation = custom_target (
   install: false,
   )
 
-is_arch = distro.contains ('arch')
 if is_arch
 subdir ('arch')
 endif
 
-is_debian = distro.contains ('debian') or distro.contains ('ubuntu')
 if is_debian
 subdir ('debian')
 endif
 
-is_nixos = distro.contains ('nixos')
 if is_nixos
 subdir ('nixos')
 endif
 
-is_rpm = distro.contains ('fedora')
 if is_rpm
 subdir ('rpm')
+endif
+
+if is_windows_msys
+subdir ('windows-msys')
 endif
