@@ -1,13 +1,13 @@
 #
-# Copyright (C) 2019 Alexandros Theodotou
+# Copyright (C) 2019-2020 Alexandros Theodotou
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
 # notice and this notice are preserved.  This file is offered as-is,
 # without any warranty.
 
-Name:          zrythm
-Version:       @VERSION@
+Name:          zrythm@DASH_TRIAL@
+Version:       @ZRYTHM_PKG_VERSION@
 Release:       1%{?dist}
 Summary: An highly automated, intuitive, Digital Audio Workstation (DAW)
 License:       AGPLv3+
@@ -88,7 +88,7 @@ and is designed to be intuitive to use.
 
 %build
 rm -rf build
-PKG_CONFIG_PATH=/usr/lib/zrythm/lib/pkgconfig meson build --prefix=/usr -Dtests=true -Dmanpage=true --buildtype=debugoptimized -Dsdl=enabled -Drtaudio=auto -Drtmidi=auto -Dtrial_ver=false -Dcarla=enabled -Dgraphviz=enabled -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true -Dfallback_version=@VERSION@
+@MESON_BIN@ build --prefix=/usr -Dpkg_config_path=@TEMP_LIBRARY_PKG_CONFIG_PATH@:@TEMP_CARLA_PKG_CONFIG_PATH@ -Dtests=true -Dmanpage=true --buildtype=debugoptimized -Dsdl=enabled -Drtaudio=auto -Drtmidi=auto -Dtrial_ver=@TRIAL_TRUE_FALSE@ -Dcarla=enabled -Dgraphviz=enabled -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_VERSION@
 ninja -C build
 
 %install

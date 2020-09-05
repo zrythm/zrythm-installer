@@ -33,6 +33,12 @@ make_debian_pkg = configure_file (
   configuration: scripts_conf,
   )
 
+make_rpm_pkg = configure_file (
+  output: 'make_rpm_pkg.sh',
+  input: 'make_rpm_pkg.sh.in',
+  configuration: scripts_conf,
+  )
+
 make_carla = configure_file (
   output: 'make_carla.sh',
   input: 'make_carla.sh.in',

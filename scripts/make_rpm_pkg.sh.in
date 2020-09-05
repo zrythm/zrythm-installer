@@ -1,0 +1,29 @@
+#!@BASH@
+
+set -e
+
+out_pkg="$1"
+
+specfile=$2
+zrythm_src_tarball="$3"
+
+rpmbuild_root=`mktemp -d`
+inner_dir="@ZRYTHM_INNER_DIR_NAME@"
+
+# prepare dirs
+rm -rf $rpmbuild_root/BUILDROOT/*
+mkdir -p $rpmbuild_root
+pushd $rpmbuild_root
+mkdir -p BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
+popd
+
+# copy files
+cp $specfile $rpmbuild_root/SPECS/zrythm.spec
+cp $zrythm_src_tarball $rpmbuild_root/SOURCES/
+
+rpmbuild -ba $rpmbuild_root/SPECS/zrythm.spec
+
+cp $rpmbuild_root/RPMS/x86_64/zrythm-@ZRYTHM_PKG_VERSION@-1.fc@.x86_64.rpm \
+  "$out_pkg"
+
+#rm -rf $rpmbuild_root
