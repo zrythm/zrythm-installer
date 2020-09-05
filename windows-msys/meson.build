@@ -140,24 +140,29 @@ mingw_install_carla_bins_target = custom_target (
     carla_woe32_binary_64_zip.full_path () +
     ' -d /mingw64/ && unzip -o ' +
     carla_woe32_binary_32_zip.full_path () +
-    ' -d /mingw64/lib/carla',
+    ' -d /mingw64/lib/carla' +
+    ' && touch @OUTPUT@'
     ],
   install: false,
   )
 
-output_file = 'zrythm' + dash_trial + '.pkg.tar.zst',
+output_file = 'zrythm' + dash_trial + '.pkg.tar.zst'
+mingw_zrythm_pkgbuild_full_path = meson.current_build_dir () / 'PKGBUILD'
 mingw_zrythm_pkg = custom_target (
   'mingw-zrythm-pkg',
   output: output_file,
   input: [
     mingw_zrythm_pkgbuild, zrythm_src_tarball,
+    zplugins_src_tarball,
     ],
   command: [
     bash, '-c',
     meson.build_root () / 'scripts/make_zrythm_mingw_pkg.sh ' +
     meson.current_build_dir () / output_file + ' ' +
-    mingw_zrythm_pkgbuild.full_path () + ' ' +
-    zrythm_src_tarball.full_path (),
+    mingw_zrythm_pkgbuild_full_path + ' ' +
+    zrythm_src_tarball.full_path () + ' ' +
+    zplugins_src_tarball.full_path () + ' ' +
+    '@PRIVATE_DIR@'
     ],
   depends: [
     mingw_install_carla_bins_target, lilv_pkg,
@@ -167,6 +172,7 @@ mingw_zrythm_pkg = custom_target (
   install_dir: get_option ('prefix'),
   )
 
+if false
 chroot_dir = '/tmp/zrythm' + dash_trial + '-chroot'
 windows_chroot_target = custom_target (
   'windows-chroot',
@@ -206,8 +212,9 @@ windows_msys_installer = custom_target (
   install: true,
   install_dir: get_option ('prefix'),
   )
+endif
 
 run_target (
   'windows-msys',
   command: [ 'echo', 'done' ],
-  depends: windows_msys_installer)
+  depends: mingw_zrythm_pkg)

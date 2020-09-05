@@ -25,6 +25,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
          "${MINGW_PACKAGE_PREFIX}-libyaml")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-gettext"
+             "${MINGW_PACKAGE_PREFIX}-cmake"
              "guile"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-python3")
@@ -65,13 +66,13 @@ build() {
   # build zplugins
   cd ${srcdir}
 
-  make -C "zplugins-v$_zplugins_ver/ext/Soundpipe" || true
-  make CC="$MINGW_PREFIX/bin/x86_64-w64-mingw32-gcc.exe" -C "zplugins-v$_zplugins_ver/ext/Soundpipe"
-
-  mkdir -p "$_zplugins_builddir" && cd "$_zplugins_builddir"
+  mkdir -p "$_zplugins_builddir"
+  cd "$_zplugins_builddir"
+  ls -l
   ${MINGW_PREFIX}/bin/meson \
     --buildtype=release \
-    "../zplugins-v${_zplugins_ver}"
+    "../zplugins-${_zplugins_ver}"
+  ninja
 }
 
 package() {

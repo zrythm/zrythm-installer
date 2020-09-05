@@ -32,9 +32,13 @@ zrythm_src_tarball = custom_target (
   output: zrythm_src_tarball_filename,
   input: orig_zrythm_src_tarball,
   command: [
-    'tar', 'xf', '@INPUT@', '&&',
-    'mv', orig_inner_dir_name, zrythm_inner_dir_name, '&&',
-    'tar', 'czf', '@OUTPUT@', zrythm_inner_dir_name,
+    bash, '-c',
+    'tar xf @INPUT@ && ' +
+    'mv ' + orig_inner_dir_name + ' ' +
+    zrythm_inner_dir_name + ' && ' +
+    'tar czf ' +
+    meson.current_build_dir () / zrythm_src_tarball_filename +
+    ' ' + zrythm_inner_dir_name,
     ],
   install: false,
   )

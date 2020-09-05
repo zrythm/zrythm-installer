@@ -6,13 +6,18 @@ out_file="$1"
 
 pkgbuild="$2"
 src_tarball="$3"
+zplugins_tarball="$4"
+private_dir="$5"
 
-tempdir=`mktemp -d`
-cp $pkgbuild $tempdir/PKGBUILD
-pushd $tempdir
-MINGW_INSTALLS=mingw64 makepkg-mingw -fsi --noconfirm
-popd $tempdir
+rm -rf $private_dir
+mkdir -p $private_dir
 
-cp $tempdir/*.pkg.tar.zst $out_file
+cp $pkgbuild $private_dir/PKGBUILD
+cp $src_tarball $private_dir/
+cp $zplugins_tarball $private_dir/
+pushd $private_dir
+MINGW_INSTALLS=mingw64 makepkg-mingw -fs --noconfirm
+popd
 
-rm -rf $tempdir
+cp $private_dir/*.pkg.tar.zst $out_file
+pacman -U $out_file --noconfirm --overwrite='*'
