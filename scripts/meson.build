@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-_scripts_conf = {
-  'SCRIPTS_DIR': meson.current_build_dir (),
-  'BASH': bash.full_path (),
-  }
 scripts_conf = configuration_data ()
 scripts_conf.merge_from (global_conf)
 scripts_conf.set ('SCRIPTS_DIR', meson.current_build_dir ())

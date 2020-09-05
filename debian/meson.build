@@ -15,22 +15,26 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
+debian_conf = configuration_data ()
+debian_conf.merge_from (global_conf)
+debian_conf.set ('BUILT_ZPLUGINS_DIR', zplugins_installation.full_path ())
+
 debian_changelog = configure_file (
-  output: 'changelog.in',
-  input: 'changelog',
-  configuration: global_conf,
+  output: 'changelog',
+  input: 'changelog.in',
+  configuration: debian_conf,
   )
 
 debian_control = configure_file (
-  output: 'control.in',
-  input: 'control',
-  configuration: global_conf,
+  output: 'control',
+  input: 'control.in',
+  configuration: debian_conf,
   )
 
 debian_rules = configure_file (
-  output: 'rules.in',
-  input: 'rules',
-  configuration: global_conf,
+  output: 'rules',
+  input: 'rules.in',
+  configuration: debian_conf,
   )
 
 debian_pkg_filename = run_command (
@@ -39,12 +43,14 @@ debian_pkg = custom_target (
   'debian-pkg',
   output: debian_pkg_filename,
   input: [
+    debian_zrythm_src_tarball_gzipped,
     debian_changelog, debian_rules,
     'compat', debian_control, 'copyright',
     ],
   command: [
     make_debian_pkg, '@OUTPUT@', '@INPUT0@', '@INPUT1@',
     '@INPUT2@', '@INPUT3@', '@INPUT4@',
+    '@INPUT5@', debian_pkg_filename,
     ],
   depends: [
     debian_zrythm_src_tarball_gzipped,

@@ -15,12 +15,26 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-url = 'https://git.zrythm.org/cgit/zrythm/snapshot/zrythm-' + zrythm_git_ver + '.tar.gz'
+orig_inner_dir_name = 'zrythm-' + zrythm_git_ver
+orig_zrythm_src_tarball_filename = orig_inner_dir_name + '.tar.gz'
+url = 'https://git.zrythm.org/cgit/zrythm/snapshot/' + orig_zrythm_src_tarball_filename
+orig_zrythm_src_tarball = custom_target (
+  'orig-zrythm-source-tarball',
+  output: orig_zrythm_src_tarball_filename,
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+
 zrythm_src_tarball = custom_target (
   'zrythm-source-tarball',
   output: zrythm_src_tarball_filename,
+  input: orig_zrythm_src_tarball,
   command: [
-    'wget', url, '-O', '@OUTPUT@',
+    'tar', 'xf', '@INPUT@', '&&',
+    'mv', orig_inner_dir_name, zrythm_inner_dir_name, '&&',
+    'tar', 'czf', '@OUTPUT@', zrythm_inner_dir_name,
     ],
   install: false,
   )
@@ -33,8 +47,8 @@ debian_zrythm_src_tarball = custom_target (
     'rm', '-rf', '@OUTPUT@', '&&',
     # rezip because gzip says not valid gzip format
     'tar', 'xf', '@INPUT@', '&&',
-    'tar', 'cf', '@OUTPUT@', 'zrythm-' + zrythm_git_ver, '&&',
-    'rm', '-rf', 'zrythm-' + zrythm_pkg_ver,
+    'tar', 'cf', '@OUTPUT@', zrythm_inner_dir_name, '&&',
+    'rm', '-rf', zrythm_inner_dir_name,
     ],
   install: false,
   )

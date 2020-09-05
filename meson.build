@@ -16,7 +16,7 @@
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
 project (
-  'zrythm-installer',
+  'zrythm-installer', [ 'c' ],
   version: '0.1',
   meson_version: '>=0.55.0',
   license: 'AGPL-3-or-later',
@@ -36,14 +36,15 @@ zplugins_ver = get_option ('zplugins-ver')
 carla_git_ver = get_option ('carla-git-ver')
 lsp_dsp_lib_ver = get_option ('lsp-dsp-lib-ver')
 build_trial = get_option ('build-trial')
-zrythm_src_tarball_filename = 'zrythm-' + zrythm_pkg_ver + '.tar.gz'
+zrythm_inner_dir_name = 'zrythm-' + zrythm_pkg_ver
+zrythm_src_tarball_filename = zrythm_inner_dir_name + '.tar.gz'
 zplugins_src_tarball_filename = 'zplugins-' + zplugins_ver + '.tar.gz'
 mingw_prefix = 'mingw-w64-x86_64-'
 mingw_zrythm_pkg_filename = mingw_prefix + 'zrythm-' + zrythm_pkg_ver + '-1-any.pkg.tar.zst'
 mingw_zrythm_trial_pkg_filename = mingw_prefix + 'zrythm-trial-' + zrythm_pkg_ver + '-1-any.pkg.tar.zst'
 debian_src_tarball_filename = 'zrythm_' + zrythm_pkg_ver + '.orig.tar.gz'
 temp_carla_prefix = meson.build_root () / 'tmp_carla_prefix'
-temp_carla_pkgconfig_path = meson.build_root () / 'tmp_carla_prefix'
+temp_carla_pkgconfig_path = temp_carla_prefix / libdir / 'pkgconfig'
 temp_zplugins_prefix = meson.build_root () / 'tmp_zplugins_prefix'
 temp_zplugins_suffix = 'lib/lv2'
 temp_zplugins_dir = temp_zplugins_prefix / temp_zplugins_suffix
@@ -61,9 +62,16 @@ global_conf.set (
 global_conf.set (
   'CC', cc.get_id ())
 global_conf.set (
+  'LIBDIR', libdir)
+global_conf.set (
   'ZRYTHM_GIT_VERSION', zrythm_git_ver)
 global_conf.set (
   'ZRYTHM_PKG_VERSION', zrythm_pkg_ver)
+global_conf.set (
+  'ZRYTHM_SOURCE_TARBALL_FILENAME', 
+  zrythm_src_tarball_filename)
+global_conf.set (
+  'ZRYTHM_INNER_DIR_NAME', zrythm_inner_dir_name)
 global_conf.set (
   'ZPLUGINS_VER', zplugins_ver)
 global_conf.set (
@@ -107,8 +115,8 @@ carla_installation = custom_target (
   output: 'carla-native-plugin.pc',
   input: carla_src_zip,
   command: [
-    make_carla, 'sudo', '@INPUT@', carla_git_ver, '&&',
-    'cp', temp_lib_zrythm_dir + '/lib/pkgconfig/carla-native-plugin.pc', '@OUTPUT@',
+    make_carla, '@INPUT@', carla_git_ver, '&&',
+    'cp', temp_carla_pkgconfig_path / 'carla-native-plugin.pc', '@OUTPUT@',
     ],
   install: false,
   )
