@@ -30,6 +30,6 @@ override_dh_auto_install:
 	mkdir -p ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/lv2
 	cp -RLv @TEMP_CARLA_PREFIX@/@LIBDIR@/carla \
 		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/
-	cp -RLv @BUILT_ZPLUGINS_DIR@ \
-		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/lv2
+	cp -RLv @BUILT_ZPLUGINS_DIR@/* \
+		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/lv2/
 	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/carla/libcarla_native-plugin.so ] ; then exit 1 ; fi
