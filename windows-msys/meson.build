@@ -25,7 +25,7 @@ mingw_zrythm_pkgbuild = configure_file (
   )
 
 # install dependencies
-make_mingw_pkg_full_path = meson.build_root () / 'scripts/makw_mingw_pkg.sh'
+make_mingw_pkg_full_path = meson.build_root () / 'scripts/make_mingw_pkg.sh'
 independent_dep_names = [ 'jack2', 'lsp-dsp-lib', ]
 independent_deps = []
 foreach dep_name : independent_dep_names
@@ -43,54 +43,64 @@ foreach dep_name : independent_dep_names
     install: false,
     )
 endforeach
+src_pkgbuild = 'PKGBUILD-lv2-mingw'
 lv2_pkg = custom_target (
   'mingw-lv2',
   output: 'lv2.pkg.tar.zst',
-  input: 'PKGBUILD-lv2-mingw',
+  input: [ src_pkgbuild, make_mingw_pkg, ],
   command: [
-    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
+    bash, '-c', make_mingw_pkg_full_path +
+    ' @OUTPUT@ ' +
+    meson.current_source_dir () / src_pkgbuild,
     ],
-  depends: make_mingw_pkg,
   install: false,
   )
+src_pkgbuild = 'PKGBUILD-serd-mingw'
 serd_pkg = custom_target (
   'mingw-serd',
   output: 'serd.pkg.tar.zst',
-  input: 'PKGBUILD-serd-mingw',
+  input: [ src_pkgbuild, make_mingw_pkg, ],
   command: [
-    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
+    bash, '-c', make_mingw_pkg_full_path +
+    ' @OUTPUT@ ' +
+    meson.current_source_dir () / src_pkgbuild,
     ],
-  depends: [ lv2_pkg, make_mingw_pkg, ],
   install: false,
   )
+src_pkgbuild = 'PKGBUILD-sord-mingw'
 sord_pkg = custom_target (
   'mingw-sord',
   output: 'sord.pkg.tar.zst',
-  input: 'PKGBUILD-sord-mingw',
+  input: [ src_pkgbuild, make_mingw_pkg, ],
   command: [
-    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
+    bash, '-c', make_mingw_pkg_full_path +
+    ' @OUTPUT@ ' +
+    meson.current_source_dir () / src_pkgbuild,
     ],
-  depends: [ serd_pkg, make_mingw_pkg, ],
   install: false,
   )
+src_pkgbuild = 'PKGBUILD-sratom-mingw'
 sratom_pkg = custom_target (
   'mingw-sratom',
   output: 'sratom.pkg.tar.zst',
-  input: 'PKGBUILD-sratom-mingw',
+  input: [ src_pkgbuild, make_mingw_pkg, ],
   command: [
-    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
+    bash, '-c', make_mingw_pkg_full_path +
+    ' @OUTPUT@ ' +
+    meson.current_source_dir () / src_pkgbuild,
     ],
-  depends: [ sord_pkg, make_mingw_pkg, ],
   install: false,
   )
+src_pkgbuild = 'PKGBUILD-lilv-mingw'
 lilv_pkg = custom_target (
   'mingw-lilv',
   output: 'lilv.pkg.tar.zst',
-  input: 'PKGBUILD-lilv-mingw',
+  input: [ src_pkgbuild, make_mingw_pkg, ],
   command: [
-    bash, '-c', make_mingw_pkg_full_path + ' @OUTPUT@ @INPUT@',
+    bash, '-c', make_mingw_pkg_full_path +
+    ' @OUTPUT@ ' +
+    meson.current_source_dir () / src_pkgbuild,
     ],
-  depends: [ sratom_pkg, make_mingw_pkg, ],
   install: false,
   )
 
@@ -126,27 +136,32 @@ mingw_install_carla_bins_target = custom_target (
     carla_woe32_binary_64_zip, carla_woe32_binary_32_zip,
     ],
   command: [
-    'unzip', '-o', '@INPUT0@', '-d', '/mingw64/', '&&',
-    'unzip', '-o', '@INPUT1@', '-d', '/mingw64/lib/carla',
+    bash, '-c', 'unzip -o ' +
+    carla_woe32_binary_64_zip.full_path () +
+    ' -d /mingw64/ && unzip -o ' +
+    carla_woe32_binary_32_zip.full_path () +
+    ' -d /mingw64/lib/carla',
     ],
   install: false,
   )
 
+output_file = 'zrythm' + dash_trial + '.pkg.tar.zst',
 mingw_zrythm_pkg = custom_target (
   'mingw-zrythm-pkg',
-  output: 'zrythm' + dash_trial + '.pkg.tar.zst',
+  output: output_file,
   input: [
     mingw_zrythm_pkgbuild, zrythm_src_tarball,
-    'gen_windows_installer.sh', 'installer.iss',
     ],
   command: [
-    make_zrythm_mingw_pkg, '@OUTPUT@', '@INPUT0@',
-    '@INPUT1@', '@INPUT2@', meson.source_root (),
+    bash, '-c',
+    meson.build_root () / 'scripts/make_zrythm_mingw_pkg.sh ' +
+    meson.current_build_dir () / output_file + ' ' +
+    mingw_zrythm_pkgbuild.full_path () + ' ' +
+    zrythm_src_tarball.full_path (),
     ],
   depends: [
-    carla_installation,
-    lsp_dsp_lib_installation,
-    zplugins_installation,
+    mingw_install_carla_bins_target, lilv_pkg,
+    independent_deps,
     ],
   install: true,
   install_dir: get_option ('prefix'),
@@ -160,9 +175,10 @@ windows_chroot_target = custom_target (
     zrythm_src_tarball, independent_deps[0],
     independent_deps[1], lv2_pkg, serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg, mingw_zrythm_pkg,
+    'gen_windows_installer.sh', 'installer.iss',
     ],
   command: [
-    make_windows_chroot, chroot_dir,
+    bash, '-c', make_windows_chroot, chroot_dir,
     '@INPUT0@', '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
     '@INPUT7@', '@INPUT8@',
@@ -178,7 +194,7 @@ windows_msys_installer = custom_target (
   'windows-msys-installer',
   output: windows_msys_installer_filename,
   input: [
-    mingw_zrythm_pkg, zrythm_src_tarball,
+    bash, '-c', mingw_zrythm_pkg, zrythm_src_tarball,
     ],
   command: [
     make_windows_installer, '@OUTPUT@', '@INPUT0@',
