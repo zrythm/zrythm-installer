@@ -1,7 +1,5 @@
 #!@BASH@
 
-set -x
-
 # tarball
 tarball="$1"
 
@@ -24,3 +22,4 @@ $meson_bin build --buildtype=debugoptimized \
   --prefix=$prefix
 ninja -C build
 ninja -C build install
+rm -rf $tempdir

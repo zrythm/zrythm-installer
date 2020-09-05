@@ -1,0 +1,16 @@
+#!@BASH@
+
+tarball=$1
+
+lsp_dsp_lib_ver="@LSP_DSP_LIB_VER@"
+temp_lib_prefix="@TEMP_LIBRARY_PREFIX@"
+
+export CC=@CC@
+
+tempdir=`mktemp -d`
+tar xf $tarball -C $tempdir
+ls -l "$tempdir"
+cd "$tempdir/lsp-dsp-lib"
+make config PREFIX=$temp_lib_prefix
+make -j4 && make install
+rm -rf $tempdir

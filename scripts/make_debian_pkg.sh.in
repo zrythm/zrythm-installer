@@ -1,10 +1,27 @@
 #!@BASH@
 
-while getopts ":o:n:m:e:" arg; do
-  case $arg in
-    o) out_pkg=$OPTARG;;
-    n) Name=$OPTARG;;
-    m) Manufacturing_date=$OPTARG;;
-    e) Expire_date=$OPTARG;;
-  esac
-done
+out_pkg="$1"
+
+deb_changelog=$2
+deb_rules=$3
+deb_compat=$4
+deb_control=$5
+deb_copyright=$6
+
+tempdir=`mktemp -d`
+deb_dir="$tempdir/debian"
+deb_src_dir="$deb_dir/source"
+mkdir -p $deb_src_dir
+
+# prepare
+cp $deb_changelog $deb_dir/changelog
+cp $deb_compat $deb_dir/compat
+cp $deb_control $deb_dir/control
+cp $deb_copyright $deb_dir/copyright
+cp $deb_rules $deb_dir/rules
+echo "3.0 (quilt)" > $deb_src_dir/format
+
+cd $tempdir
+debuild -us -uc
+
+rm -rf $tempdir

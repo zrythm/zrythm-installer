@@ -1,7 +1,7 @@
-Source: zrythm
+Source: zrythm@DASH_TRIAL@
 Maintainer: Alexandros Theodotou <alex@zrythm.org>
 Section: sound
-Build-Depends: debhelper (>=9), 
+Build-Depends: debhelper (>=9),
                desktop-file-utils,
                gettext,
                guile-2.2-dev,
@@ -31,9 +31,9 @@ Build-Depends: debhelper (>=9),
 Standards-Version: 3.9.8
 Homepage: https://www.zrythm.org/
 
-Package: zrythm
+Package: zrythm@DASH_TRIAL@
 Architecture: any
-Depends: ${shlibs:Depends}, 
+Depends: ${shlibs:Depends},
          ${misc:Depends},
          fonts-dseg, xdg-utils, breeze-icon-theme
 Description: a highly automated and intuitive digital audio workstation

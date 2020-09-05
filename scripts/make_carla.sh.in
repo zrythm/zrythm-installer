@@ -12,6 +12,8 @@ carla_source_zip="$3"
 # carla git version
 carla_git_ver="$4"
 
+export CC=@CC@
+
 export PKG_CONFIG_PATH=$prefix/lib/pkgconfig
 if pkg-config --atleast-version=2.1 carla-native-plugin ; then
   echo "latest carla installed" ;

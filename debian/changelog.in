@@ -1,4 +1,4 @@
-zrythm (@VERSION@-1) unstable; urgency=medium
+zrythm@DASH_TRIAL@ (@ZRYTHM_PKG_VERSION@-1) unstable; urgency=medium
 
   * Move from OBS
 

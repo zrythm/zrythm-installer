@@ -1,0 +1,32 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	mkdir -p debian/build
+	cd debian/build && \
+		PATH=$$PATH:/home/build/.local/bin \
+		@MESON_BIN@ --prefix=/usr ../..  \
+		-Dpkg_config_path=@TEMP_LIBRARY_PKG_CONFIG_PATH@:@TEMP_CARLA_PKG_CONFIG_PATH@ \
+		-Dtests=true -Ddseg_font=false -Dmanpage=true \
+		-Dbuildtype=debugoptimized -Dlsp_dsp=enabled \
+		-Dstatic_lsp_dsp=true -Dsdl=enabled \
+		-Dfallback_version=@ZRYTHM_PKG_VERSION@ \
+		-Drtaudio=auto -Drtmidi=auto -Dguile=enabled \
+		-Dcarla=enabled -Dgraphviz=enabled \
+		-Dtrial_ver=@TRIAL_TRUE_FALSE@
+
+override_dh_auto_build:
+	cd debian/build && ninja -v
+
+override_dh_auto_test:
+	echo test # cd debian/build && ninja test
+
+override_dh_auto_install:
+	cd debian/build && \
+		DESTDIR=${CURDIR}/debian/zrythm@DASH_TRIAL@ ninja install
+	mkdir -p ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib
+	cp -RLv @TEMP_CARLA_PREFIX@/lib/carla \
+		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/
+	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/carla/libcarla_native-plugin.so ] ; then exit -1 ; fi

@@ -22,6 +22,8 @@ project (
   license: 'AGPL-3-or-later',
   )
 
+cc = meson.get_compiler ('c')
+
 bash = find_program ('bash')
 meson_bin = find_program ('meson')
 
@@ -32,6 +34,7 @@ zrythm_git_ver = get_option ('zrythm-git-ver')
 zrythm_pkg_ver = get_option ('zrythm-pkg-ver')
 zplugins_ver = get_option ('zplugins-ver')
 carla_git_ver = get_option ('carla-git-ver')
+lsp_dsp_lib_ver = get_option ('lsp-dsp-lib-ver')
 build_trial = get_option ('build-trial')
 zrythm_src_tarball_filename = 'zrythm-' + zrythm_pkg_ver + '.tar.gz'
 zplugins_src_tarball_filename = 'zplugins-' + zplugins_ver + '.tar.gz'
@@ -39,7 +42,8 @@ mingw_prefix = 'mingw-w64-x86_64-'
 mingw_zrythm_pkg_filename = mingw_prefix + 'zrythm-' + zrythm_pkg_ver + '-1-any.pkg.tar.zst'
 mingw_zrythm_trial_pkg_filename = mingw_prefix + 'zrythm-trial-' + zrythm_pkg_ver + '-1-any.pkg.tar.zst'
 debian_src_tarball_filename = 'zrythm_' + zrythm_pkg_ver + '.orig.tar.gz'
-temp_lib_zrythm_dir = meson.build_root () / 'tmp' / libdir / 'zrythm'
+temp_carla_prefix = meson.build_root () / 'tmp_carla_prefix'
+temp_carla_pkgconfig_path = meson.build_root () / 'tmp_carla_prefix'
 temp_zplugins_prefix = meson.build_root () / 'tmp_zplugins_prefix'
 temp_zplugins_suffix = 'lib/lv2'
 temp_zplugins_dir = temp_zplugins_prefix / temp_zplugins_suffix
@@ -55,13 +59,29 @@ global_conf.set (
 global_conf.set (
   'MESON_SOURCE_ROOT', meson.source_root ())
 global_conf.set (
+  'CC', cc.get_id ())
+global_conf.set (
   'ZRYTHM_GIT_VERSION', zrythm_git_ver)
 global_conf.set (
   'ZRYTHM_PKG_VERSION', zrythm_pkg_ver)
 global_conf.set (
   'ZPLUGINS_VER', zplugins_ver)
 global_conf.set (
+  'CARLA_GIT_VER', carla_git_ver)
+global_conf.set (
+  'LSP_DSP_LIB_VER', lsp_dsp_lib_ver)
+global_conf.set (
+  'TEMP_LIBRARY_PREFIX', temp_library_prefix)
+global_conf.set (
+  'TEMP_LIBRARY_PKG_CONFIG_PATH', temp_library_pkgconfig_path)
+global_conf.set (
+  'TEMP_CARLA_PREFIX', temp_carla_prefix)
+global_conf.set (
+  'TEMP_CARLA_PKG_CONFIG_PATH', temp_carla_pkgconfig_path)
+global_conf.set (
   'DASH_TRIAL', build_trial ? '-trial' : '')
+global_conf.set (
+  'TRIAL_TRUE_FALSE', build_trial ? 'true' : 'false')
 global_conf.set (
   'MINGW_ZRYTHM_PKG_FILENAME', mingw_zrythm_pkg_filename)
 global_conf.set (
@@ -87,18 +107,18 @@ carla_installation = custom_target (
   output: 'carla-native-plugin.pc',
   input: carla_src_zip,
   command: [
-    make_carla, temp_lib_zrythm_dir, 'sudo', '@INPUT@', carla_git_ver, '&&',
+    make_carla, 'sudo', '@INPUT@', carla_git_ver, '&&',
     'cp', temp_lib_zrythm_dir + '/lib/pkgconfig/carla-native-plugin.pc', '@OUTPUT@',
     ],
   install: false,
   )
 
-# this is the parent dir
 zplugins_installation = custom_target (
   'zplugins-installation',
   output: 'built_zplugins',
   input: zplugins_src_tarball,
   command: [
+    'rm', '-rf', '@OUTPUT@', '&&',
     make_zplugins, zplugins_src_tarball,
     temp_zplugins_prefix, temp_zplugins_suffix, '&&',
     'mv', temp_zplugins_prefix / temp_zplugins_suffix,
@@ -107,25 +127,16 @@ zplugins_installation = custom_target (
   install: false,
   )
 
-debian_pkg_filename = run_command (
-  get_pkg_filename, 'DEBIAN').stdout ().strip ()
-debian_pkg = custom_target (
-  'debian-pkg',
-  output: debian_pkg_filename,
+lsp_dsp_lib_installation = custom_target (
+  'lsp-dsp-lib-installation',
+  output: 'lsp-dsp-lib.pc',
+  input: lsp_dsp_lib_src_tarball,
   command: [
-    make_debian_pkg, '-o', '@OUTPUT@',
+    make_lsp_dsp_lib, '@INPUT@', '&&',
+    'cp', temp_library_pkgconfig_path / 'lsp-dsp-lib.pc',
+    '@OUTPUT@',
     ],
-  depends: [
-    debian_zrythm_src_tarball_gzipped,
-    #carla_installation,
-    zrythm_src_tarball,
-    zplugins_installation,
-    ],
-  install: true,
-  install_dir: get_option ('prefix'),
+  install: false,
   )
 
-run_target (
-  'debian',
-  command: [ 'echo', 'done' ],
-  depends: debian_pkg)
+subdir ('debian')

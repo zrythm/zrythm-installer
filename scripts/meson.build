@@ -43,6 +43,12 @@ make_carla = configure_file (
   configuration: scripts_conf,
   )
 
+make_lsp_dsp_lib = configure_file (
+  output: 'make_lsp_dsp_lib.sh',
+  input: 'make_lsp_dsp_lib.sh.in',
+  configuration: scripts_conf,
+  )
+
 get_pkg_filename = configure_file (
   output: 'get_pkg_filename.sh',
   input: 'get_pkg_filename.sh.in',
