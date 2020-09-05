@@ -27,6 +27,12 @@ make_windows_chroot = configure_file (
   configuration: scripts_conf,
   )
 
+make_windows_installer = configure_file (
+  output: 'make_windows_installer.sh',
+  input: 'make_windows_installer.sh.in',
+  configuration: scripts_conf,
+  )
+
 make_debian_pkg = configure_file (
   output: 'make_debian_pkg.sh',
   input: 'make_debian_pkg.sh.in',
@@ -54,6 +60,18 @@ make_nixos_pkg = configure_file (
 make_user_manual = configure_file (
   output: 'make_user_manual.sh',
   input: 'make_user_manual.sh.in',
+  configuration: scripts_conf,
+  )
+
+make_mingw_pkg = configure_file (
+  output: 'make_mingw_pkg.sh',
+  input: 'make_mingw_pkg.sh.in',
+  configuration: scripts_conf,
+  )
+
+make_zrythm_mingw_pkg = configure_file (
+  output: 'make_zrythm_mingw_pkg.sh',
+  input: 'make_zrythm_mingw_pkg.sh.in',
   configuration: scripts_conf,
   )
 

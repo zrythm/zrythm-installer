@@ -13,6 +13,7 @@ deb_control=$6
 deb_copyright=$7
 
 inner_dir="@ZRYTHM_INNER_DIR_NAME@"
+dash_trial="@DASH_TRIAL@"
 
 tempdir=`mktemp -d`
 deb_parent_dir=$tempdir/$inner_dir
@@ -37,6 +38,6 @@ pushd $deb_parent_dir
 debuild -us -uc
 popd
 
-mv $tempdir/*.deb "$out_pkg"
+mv "$tempdir/zrythm$dash_trial"_*.deb "$out_pkg"
 
 #rm -rf $tempdir

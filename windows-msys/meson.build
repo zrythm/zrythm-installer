@@ -1,0 +1,164 @@
+# Copyright (C) 2020 Alexandros Theodotou <alex at zrythm dot org>
+#
+# This file is part of Zrythm
+#
+# Zrythm is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Zrythm is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+windows_msys_conf = configuration_data ()
+windows_msys_conf.merge_from (global_conf)
+
+mingw_zrythm_pkgbuild = configure_file (
+  output: 'PKGBUILD',
+  input: 'PKGBUILD-w10.in',
+  configuration: windows_msys_conf,
+  )
+
+# install dependencies
+independent_dep_names = [ 'jack2', 'lsp-dsp-lib', ]
+independent_deps = []
+foreach dep_name : independent_dep_names
+  independent_deps += custom_target (
+    'mingw-' + dep_name,
+    output: dep_name + '.pkg.tar.zst',
+    input: 'PKGBUILD-' + dep_name + '-mingw',
+    command: [
+      make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+      ],
+    install: false,
+    )
+endforeach
+lv2_pkg = custom_target (
+  'mingw-lv2',
+  output: 'lv2.pkg.tar.zst',
+  input: 'PKGBUILD-lv2-mingw',
+  command: [
+    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    ],
+  install: false,
+  )
+serd_pkg = custom_target (
+  'mingw-serd',
+  output: 'serd.pkg.tar.zst',
+  input: 'PKGBUILD-serd-mingw',
+  command: [
+    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    ],
+  depends: lv2_pkg,
+  install: false,
+  )
+sord_pkg = custom_target (
+  'mingw-sord',
+  output: 'sord.pkg.tar.zst',
+  input: 'PKGBUILD-sord-mingw',
+  command: [
+    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    ],
+  depends: serd_pkg,
+  install: false,
+  )
+sratom_pkg = custom_target (
+  'mingw-sratom',
+  output: 'sratom.pkg.tar.zst',
+  input: 'PKGBUILD-sratom-mingw',
+  command: [
+    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    ],
+  depends: sord_pkg,
+  install: false,
+  )
+lilv_pkg = custom_target (
+  'mingw-lilv',
+  output: 'lilv.pkg.tar.zst',
+  input: 'PKGBUILD-lilv-mingw',
+  command: [
+    make_mingw_pkg, '@OUTPUT@', '@INPUT@',
+    ],
+  depends: sord_pkg,
+  install: false,
+  )
+
+mingw_install_carla_bins_target = custom_target (
+  'mingw-install-carla',
+  output: 'carla-installed',
+  input: [
+    carla_woe32_binary_64_zip, carla_woe32_binary_32_zip,
+    ],
+  command: [
+    'unzip', '-o', '@INPUT0@', '-d', '/mingw64/', '&&',
+    'unzip', '-o', '@INPUT1@', '-d', '/mingw64/lib/carla',
+    ],
+  install: false,
+  )
+
+mingw_zrythm_pkg = custom_target (
+  'mingw-zrythm-pkg',
+  output: 'zrythm' + dash_trial + '.pkg.tar.zst',
+  input: [
+    mingw_zrythm_pkgbuild, zrythm_src_tarball,
+    ],
+  command: [
+    make_zrythm_mingw_pkg, '@OUTPUT@', '@INPUT0@', '@INPUT1@',
+    ],
+  depends: [
+    carla_installation,
+    lsp_dsp_lib_installation,
+    zplugins_installation,
+    ],
+  install: true,
+  install_dir: get_option ('prefix'),
+  )
+
+chroot_dir = '/tmp/zrythm' + dash_trial + '-chroot'
+windows_chroot_target = custom_target (
+  'windows-chroot',
+  output: 'zrythm-test',
+  input: [
+    zrythm_src_tarball, independent_deps[0],
+    independent_deps[1], lv2_pkg, serd_pkg, sord_pkg,
+    sratom_pkg, lilv_pkg,
+    ],
+  command: [
+    make_windows_chroot, chroot_dir,
+    '@INPUT0@', '@INPUT1@', '@INPUT2@',
+    '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@', '@INPUT7@',
+    ],
+  depends: [
+    ],
+  install: false,
+  )
+
+windows_msys_installer_filename = run_command (
+  get_pkg_filename, 'WINDOWS_MSYS', dash_trial).stdout ().strip ()
+windows_msys_installer = custom_target (
+  'windows-msys-installer',
+  output: windows_msys_installer_filename,
+  input: [
+    specfile, zrythm_src_tarball,
+    ],
+  command: [
+    make_windows_msys_pkg, '@OUTPUT@', '@INPUT0@', '@INPUT1@',
+    ],
+  depends: [
+    carla_installation,
+    lsp_dsp_lib_installation,
+    zplugins_installation,
+    ],
+  install: true,
+  install_dir: get_option ('prefix'),
+  )
+
+run_target (
+  'windows-msys',
+  command: [ 'echo', 'done' ],
+  depends: windows_msys_installer)

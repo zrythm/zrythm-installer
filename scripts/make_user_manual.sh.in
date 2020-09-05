@@ -24,6 +24,6 @@ sed -i -e 's/latexpdf/latex/' doc/user/meson.build
 ninja -C build latex-manual-$lang ;
 make -C build/doc/user/$lang/latex ;
 
-cp build/doc/user/$lang/*.pdf $out_file
+cp build/doc/user/$lang/latex/Zrythm.pdf $out_file
 
 #rm -rf $tempdir

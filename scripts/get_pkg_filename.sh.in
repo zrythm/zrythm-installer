@@ -13,7 +13,7 @@ case "$pkg_type" in
     echo "zrythm${trial}-$zrythm_pkg_ver-1-x86_64.pkg.tar.zst"
     ;;
   "DEBIAN")
-    echo "zrythm${trial}_$zrythm_pkg_ver-1_amd64.deb"
+    echo "zrythm${trial}_${zrythm_pkg_ver}_amd64.deb"
     ;;
   "FEDORA")
     echo "zrythm${trial}-$zrythm_pkg_ver-1.x86_64.rpm"

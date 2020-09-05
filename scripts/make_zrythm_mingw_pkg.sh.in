@@ -1,0 +1,18 @@
+#!@BASH@
+
+set -e
+
+out_file="$1"
+
+pkgbuild="$2"
+src_tarball="$3"
+
+tempdir=`mktemp -d`
+cp $pkgbuild $tempdir/PKGBUILD
+pushd $tempdir
+MINGW_INSTALLS=mingw64 makepkg-mingw -fsi --noconfirm
+popd $tempdir
+
+cp $tempdir/*.pkg.tar.zst $out_file
+
+rm -rf $tempdir

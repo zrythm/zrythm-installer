@@ -1,11 +1,11 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
-_realname=zrythm
-_zplugins_ver=@ZPLUGINS_VERSION@
+_realname=zrythm@DASH_TRIAL@
+_zplugins_ver=@ZPLUGINS_VER@
 _zrythm_builddir="build-zrythm-${MINGW_CHOST}"
 _zplugins_builddir="build-zplugins-${MINGW_CHOST}"
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=@VERSION@
+pkgver=@ZRYTHM_PKG_VERSION@
 pkgrel=2
 arch=('any')
 pkgdesc='a highly automated and intuitive digital audio workstation (mingw-w64)'
@@ -55,7 +55,7 @@ build() {
     -Dguile=disabled \
     -Dfallback_version=@VERSION@ \
     -Dmanpage=false \
-    -Dtrial_ver=false \
+    -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dwindows_release=true -Dcarla=enabled \
     --buildtype=debugoptimized \
     -Dextra_debug_info=true \
