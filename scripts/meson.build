@@ -45,6 +45,12 @@ make_arch_pkg = configure_file (
   configuration: scripts_conf,
   )
 
+make_nixos_pkg = configure_file (
+  output: 'make_nixos_pkg.sh',
+  input: 'make_nixos_pkg.sh.in',
+  configuration: scripts_conf,
+  )
+
 make_user_manual = configure_file (
   output: 'make_user_manual.sh',
   input: 'make_user_manual.sh.in',

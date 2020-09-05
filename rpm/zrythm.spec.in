@@ -93,7 +93,7 @@ ninja -C build
 
 %install
 DESTDIR="%{buildroot}/" ninja -C build install
-mkdir -p "%{buildroot}/usr/lib/zrythm/lib"
+mkdir -p "%{buildroot}/usr/lib/zrythm/lib/lv2"
 rm -rf "%{buildroot}/usr/lib64/libcm_reproc.a"
 cp -RLv @TEMP_CARLA_PREFIX@/@LIBDIR@/carla \
   %{buildroot}/usr/lib/zrythm/lib/

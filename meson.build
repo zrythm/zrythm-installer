@@ -160,10 +160,17 @@ is_arch = distro.contains ('arch')
 if is_arch
 subdir ('arch')
 endif
+
 is_debian = distro.contains ('debian') or distro.contains ('ubuntu')
 if is_debian
 subdir ('debian')
 endif
+
+is_nixos = distro.contains ('nixos')
+if is_nixos
+subdir ('nixos')
+endif
+
 is_rpm = distro.contains ('fedora')
 if is_rpm
 subdir ('rpm')
