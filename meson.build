@@ -25,11 +25,12 @@ project (
 cc = meson.get_compiler ('c')
 
 bash = find_program ('bash')
-meson_bin = find_program ('meson')
+meson_bin = get_option ('meson-path')
 
 prefix = get_option ('prefix')
 libdir = get_option ('libdir')
 
+distro = get_option ('distro')
 zrythm_git_ver = get_option ('zrythm-git-ver')
 zrythm_pkg_ver = get_option ('zrythm-pkg-ver')
 zplugins_ver = get_option ('zplugins-ver')
@@ -54,7 +55,7 @@ temp_library_pkgconfig_path = temp_library_prefix / libdir / 'pkgconfig'
 global_conf = configuration_data ()
 global_conf.set ('PREFIX', prefix)
 global_conf.set (
-  'MESON_BIN', meson_bin.full_path ())
+  'MESON_BIN', meson_bin)
 global_conf.set (
   'MESON_BUILD_ROOT', meson.build_root ())
 global_conf.set (
@@ -68,7 +69,7 @@ global_conf.set (
 global_conf.set (
   'ZRYTHM_PKG_VERSION', zrythm_pkg_ver)
 global_conf.set (
-  'ZRYTHM_SOURCE_TARBALL_FILENAME', 
+  'ZRYTHM_SOURCE_TARBALL_FILENAME',
   zrythm_src_tarball_filename)
 global_conf.set (
   'ZRYTHM_INNER_DIR_NAME', zrythm_inner_dir_name)
@@ -147,4 +148,7 @@ lsp_dsp_lib_installation = custom_target (
   install: false,
   )
 
+is_debian = distro.contains ('debian') or distro.contains ('ubuntu')
+if is_debian
 subdir ('debian')
+endif

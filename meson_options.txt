@@ -16,6 +16,11 @@
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
 option (
+  'meson-path', type: 'string',
+  value: 'meson',
+  description: 'Full path to meson or meson.py')
+
+option (
   'zrythm-git-ver', type: 'string',
   value: 'master',
   description: 'Git tag/commit')
@@ -96,3 +101,8 @@ option (
   'jack-ver', type: 'string',
   value: '1.9.14.r1',
   description: 'JACK version')
+
+option (
+  'breeze-dark-path', type: 'string',
+  value: '',
+  description: 'Breeze dark icons path')
