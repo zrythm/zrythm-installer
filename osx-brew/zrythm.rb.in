@@ -1,9 +1,9 @@
-class Zrythm < Formula
+class Zrythm@DASH_TRIAL@ < Formula
   desc "Digital audio workstation"
   homepage "https://www.zrythm.org"
-  url "https://git.zrythm.org/cgit/zrythm/snapshot/@TARBALL_FILENAME@"
-  sha256 "@SHA256@"
-  version "@VERSION@"
+  url "@ZRYTHM_ORIG_SRC_TARBALL_URL@"
+  sha256 "@ZRYTHM_BREW_SHA256@"
+  version "@ZRYTHM_PKG_VERSION@"
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
@@ -33,10 +33,10 @@ class Zrythm < Formula
       system "meson",
         "--prefix=#{prefix}", "--libdir=#{lib}",
         "--buildtype=debug", "-Dextra_debug_info=true",
-        "-Dtests=false", "-Dtrial_ver=false",
+        "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
         "-Dcarla=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
-        "-Dfallback_version=@VERSION@",
+        "-Dfallback_version=@ZRYTHM_PKG_VERSION@",
         # manpage fails
         "-Dmanpage=false",
         ".."

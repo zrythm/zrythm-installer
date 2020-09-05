@@ -1,6 +1,6 @@
-Thank you for trying out Zrythm!
+Thank you for @SUPPORTING_TEXT@ Zrythm!
 
-This is Zrythm v@VERSION@ (trial).
+This is Zrythm@DASH_TRIAL@ v@ZRYTHM_PKG_VERSION@.
 
 To install Zrythm, open a terminal and
 navigate to this directory, then run
@@ -10,7 +10,7 @@ instructions:
   ./installer.sh
 
 If you experience any problems, please
-email alex@_AT_@zrythm.org
+email alex@EMAIL_AT_SYM@zrythm.org
 
 This installer is offered as-is, without
 any warranty.

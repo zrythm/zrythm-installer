@@ -25,6 +25,7 @@ project (
 cc = meson.get_compiler ('c')
 
 bash = find_program ('bash')
+wget = find_program ('wget')
 meson_bin = get_option ('meson-path')
 
 prefix = get_option ('prefix')
@@ -37,6 +38,9 @@ zplugins_ver = get_option ('zplugins-ver')
 carla_git_ver = get_option ('carla-git-ver')
 lsp_dsp_lib_ver = get_option ('lsp-dsp-lib-ver')
 build_trial = get_option ('build-trial')
+orig_inner_dir_name = 'zrythm-' + zrythm_git_ver
+orig_zrythm_src_tarball_filename = orig_inner_dir_name + '.tar.gz'
+orig_zrythm_src_tarball_url = 'https://git.zrythm.org/cgit/zrythm/snapshot/' + orig_zrythm_src_tarball_filename
 zrythm_inner_dir_name = 'zrythm-' + zrythm_pkg_ver
 zrythm_src_tarball_filename = zrythm_inner_dir_name + '.tar.gz'
 zplugins_src_tarball_filename = 'zplugins-' + zplugins_ver + '.tar.gz'
@@ -58,11 +62,13 @@ foreach locale : locales
   space_sep_locales += locale + ' '
 endforeach
 space_sep_locales.strip ()
+breeze_dark_path = get_option ('breeze-dark-path')
 is_arch = distro.contains ('arch')
 is_debian = distro.contains ('debian') or distro.contains ('ubuntu')
 is_nixos = distro.contains ('nixos')
 is_rpm = distro.contains ('fedora')
 is_windows_msys = distro.contains ('windows10-msys')
+is_osx_brew = distro.contains ('osx-brew')
 
 global_conf = configuration_data ()
 global_conf.set ('PREFIX', prefix)
@@ -72,6 +78,8 @@ global_conf.set (
   'MESON_BUILD_ROOT', meson.build_root ())
 global_conf.set (
   'MESON_SOURCE_ROOT', meson.source_root ())
+global_conf.set (
+  'BASH', bash.full_path ())
 global_conf.set (
   'CC', cc.get_id ())
 global_conf.set (
@@ -85,6 +93,14 @@ global_conf.set (
   zrythm_src_tarball_filename)
 global_conf.set (
   'ZRYTHM_INNER_DIR_NAME', zrythm_inner_dir_name)
+global_conf.set (
+  'ZRYTHM_ORIG_INNER_DIR_NAME', orig_inner_dir_name)
+global_conf.set (
+  'ZRYTHM_ORIG_SRC_TARBALL_FILENAME',
+  orig_zrythm_src_tarball_filename)
+global_conf.set (
+  'ZRYTHM_ORIG_SRC_TARBALL_URL',
+  orig_zrythm_src_tarball_url)
 global_conf.set (
   'ZPLUGINS_VER', zplugins_ver)
 global_conf.set (
@@ -121,7 +137,10 @@ global_conf.set (
 global_conf.set (
   'JACK_VERSION', get_option ('jack-ver'))
 global_conf.set (
-  'BREEZE_DARK_PATH', get_option ('breeze-dark-path'))
+  'BREEZE_DARK_PATH', breeze_dark_path)
+global_conf.set (
+  'SUPPORTING_TEXT', build_trial ? 'supporting' : 'trying out')
+global_conf.set ('EMAIL_AT_SYM', '@')
 
 subdir ('scripts')
 subdir ('sources')
@@ -183,4 +202,8 @@ endif
 
 if is_windows_msys
 subdir ('windows-msys')
+endif
+
+if is_osx_brew
+subdir ('osx-brew')
 endif

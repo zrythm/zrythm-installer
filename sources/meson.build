@@ -15,14 +15,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-orig_inner_dir_name = 'zrythm-' + zrythm_git_ver
-orig_zrythm_src_tarball_filename = orig_inner_dir_name + '.tar.gz'
-url = 'https://git.zrythm.org/cgit/zrythm/snapshot/' + orig_zrythm_src_tarball_filename
 orig_zrythm_src_tarball = custom_target (
   'orig-zrythm-source-tarball',
   output: orig_zrythm_src_tarball_filename,
   command: [
-    'wget', url, '-O', '@OUTPUT@',
+    'wget', orig_zrythm_src_tarball_url, '-O', '@OUTPUT@',
     ],
   install: false,
   )

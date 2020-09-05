@@ -1,0 +1,35 @@
+#!@BASH@
+
+set -ex
+
+out_file="$1"
+formula_file="$2"
+private_dir="$3"
+src_tarball="$4"
+
+dash_trial="@DASH_TRIAL@"
+formula_dir=/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
+cache_dir="`brew --cache`"
+
+rm -rf $private_dir
+mkdir -p $private_dir
+
+bottle_filename="`basename $out_file`"
+formula_filename="`basename $formula_file`"
+formula_name="${formula_filename%.*}"
+
+# copy formula file to where it needs to be
+cp $formula_file "$formula_dir/$formula_filename"
+
+# copy the source tarball to the cache
+formula_cache_file="`brew --cache -s $formula_name`"
+cp $src_tarball $formula_cache_file
+
+# build bottle
+pushd $private_dir
+brew unlink $formula_name || true
+brew install --verbose --debug --build-bottle $formula_name
+brew bottle $formula_name
+ls -l
+popd
+cp $private_dir/*.catalina.bottle.tar.gz $out_file

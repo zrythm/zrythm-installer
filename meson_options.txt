@@ -104,5 +104,5 @@ option (
 
 option (
   'breeze-dark-path', type: 'string',
-  value: '',
+  value: '/Users/alex/.local/share/icons/breeze-dark',
   description: 'Breeze dark icons path')

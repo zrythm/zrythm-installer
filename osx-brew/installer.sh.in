@@ -19,9 +19,8 @@
 
 set -e
 
-zrythm_ver="@VERSION@"
-carla_ver="@CARLA_VERSION@"
-zplugins_ver="@ZPLUGINS_VERSION@"
+zrythm_ver="@ZRYTHM_PKG_VERSION@"
+carla_ver="@CARLA_BOTTLE_VER@"
 
 show_error () {
   echo "$1" >&2

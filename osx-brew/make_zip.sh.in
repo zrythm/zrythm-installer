@@ -1,0 +1,33 @@
+#!@BASH@
+
+set -ex
+
+out_file="$1"
+zrythm_formula_file=$2
+carla_bottle_file=$3
+installer_sh_file=$4
+readme_file=$5
+private_dir=$6
+
+dash_trial="@DASH_TRIAL@"
+
+inner_dir_name="${out_file%.*}"
+inner_dir_name="`basename $inner_dir_name`"
+inner_dir=$private_dir/$inner_dir_name
+
+rm -rf $private_dir
+mkdir -p $inner_dir/bin
+mkdir -p $inner_dir/formulae
+mkdir -p $inner_dir/icons
+mkdir -p $inner_dir/src
+
+cp $installer_sh_file $inner_dir/installer.sh
+cp $readme_file $inner_dir/README
+cp $carla_bottle_file $inner_dir/bin/carla-git.catalina.bottle.tar.gz
+cp $zrythm_formula_file $inner_dir/formulae/
+cp -r /tmp/breeze-dark $inner_dir/icons/
+pushd $private_dir
+zip -r $inner_dir_name.zip $inner_dir_name
+popd
+
+cp $inner_dir.zip $out_file
