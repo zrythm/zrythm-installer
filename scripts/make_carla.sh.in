@@ -1,0 +1,22 @@
+#!@BASH@
+
+# prefix to install in
+prefix="$1"
+
+# sudo or empty
+sudo_or_empty="$2"
+
+# full path to carla source zip
+carla_source_zip="$3"
+
+# carla git version
+carla_git_ver="$4"
+
+export PKG_CONFIG_PATH=$prefix/lib/pkgconfig
+if pkg-config --atleast-version=2.1 carla-native-plugin ; then
+  echo "latest carla installed" ;
+fi
+tempdir=`mktemp -d`
+unzip -o "$carla_source_zip" -d "$tempdir"
+cd "$tempdir/Carla-$carla_git_ver"
+make -j4 && $sudo_or_empty make install PREFIX="$prefix"

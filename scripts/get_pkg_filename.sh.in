@@ -1,0 +1,30 @@
+#!@BASH@
+
+# package type (DEBIAN, FEDORA, etc.)
+pkg_type="$1"
+
+# "-trial" if trial
+trial="@DASH_TRIAL@"
+
+zrythm_pkg_ver=@ZRYTHM_PKG_VERSION@
+
+case "$pkg_type" in
+  "ARCH")
+    echo "zrythm${trial}-$zrythm_pkg_ver-1-x86_64.pkg.tar.zst"
+    ;;
+  "DEBIAN")
+    echo "zrythm${trial}_$zrythm_pkg_ver-1_amd64.deb"
+    ;;
+  "FEDORA")
+    echo "zrythm${trial}-$zrythm_pkg_ver-1.x86_64.rpm"
+    ;;
+  "GNU_LINUX")
+    echo "zrythm${trial}-$zrythm_pkg_ver-installer.zip"
+    ;;
+  "OSX_BREW")
+    echo "zrythm${trial}-$zrythm_pkg_ver-osx-installer.zip"
+    ;;
+  "WINDOWS_MSYS")
+    echo "zrythm${trial}-$zrythm_pkg_ver-ms-setup.exe"
+    ;;
+esac

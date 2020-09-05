@@ -1,0 +1,98 @@
+# Copyright (C) 2020 Alexandros Theodotou <alex at zrythm dot org>
+#
+# This file is part of Zrythm
+#
+# Zrythm is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Zrythm is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+option (
+  'zrythm-git-ver', type: 'string',
+  value: 'master',
+  description: 'Git tag/commit')
+
+option (
+  'zrythm-pkg-ver', type: 'string',
+  value: '1',
+  description: 'Version to use in packages')
+
+option (
+  'build-trial', type: 'boolean',
+  value: false,
+  description: 'Whether to build trial packages')
+
+option (
+  'zplugins-ver', type: 'string',
+  value: '0.1.3',
+  description: 'Zplugins version')
+
+option (
+  'carla-git-ver', type: 'string',
+  value: '6a783076e89b878339190aeb60477d21a9596068',
+  description: 'Carla version')
+
+option (
+  'lsp-dsp-lib-ver', type: 'string',
+  value: '0.5.8',
+  description: 'LSP DSP lib version')
+
+option (
+  'rcedit-ver', type: 'string',
+  value: '1.1.1',
+  description: 'RCEdit version')
+
+option (
+  'carla-bottle-ver', type: 'string',
+  value: '0.1.2',
+  description: 'RCEdit version')
+
+option (
+  'locales', type: 'array',
+  choices : [
+    'en', 'de', 'fr', 'it', 'ja', 'pt',
+    ],
+  description: 'Locales for the manual')
+
+option (
+  'distro', type: 'string',
+  value: 'debian10',
+  description: 'Distro to build')
+
+option (
+  'lv2-ver', type: 'string',
+  value: '1.18.0',
+  description: 'LV2 version')
+
+option (
+  'serd-ver', type: 'string',
+  value: '0.30.4',
+  description: 'Serd version')
+
+option (
+  'sord-ver', type: 'string',
+  value: '0.16.4',
+  description: 'Sord version')
+
+option (
+  'sratom-ver', type: 'string',
+  value: '0.6.4',
+  description: 'Sratom version')
+
+option (
+  'lilv-ver', type: 'string',
+  value: '0.24.8',
+  description: 'Lilv version')
+
+option (
+  'jack-ver', type: 'string',
+  value: '1.9.14.r1',
+  description: 'JACK version')

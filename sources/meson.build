@@ -1,0 +1,71 @@
+# Copyright (C) 2020 Alexandros Theodotou <alex at zrythm dot org>
+#
+# This file is part of Zrythm
+#
+# Zrythm is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Zrythm is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+url = 'https://git.zrythm.org/cgit/zrythm/snapshot/zrythm-' + zrythm_git_ver + '.tar.gz'
+zrythm_src_tarball = custom_target (
+  'zrythm-source-tarball',
+  output: zrythm_src_tarball_filename,
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+
+debian_zrythm_src_tarball = custom_target (
+  'debian-zrythm-source-tarball',
+  output: debian_src_tarball_filename.split ('.gz')[0],
+  input: zrythm_src_tarball,
+  command: [
+    'rm', '-rf', '@OUTPUT@', '&&',
+    # rezip because gzip says not valid gzip format
+    'tar', 'xf', '@INPUT@', '&&',
+    'tar', 'cf', '@OUTPUT@', 'zrythm-' + zrythm_git_ver, '&&',
+    'rm', '-rf', 'zrythm-' + zrythm_pkg_ver,
+    ],
+  install: false,
+  )
+
+debian_zrythm_src_tarball_gzipped = custom_target (
+  'debian-zrythm-source-tarball-gzipped',
+  output: debian_src_tarball_filename,
+  input: debian_zrythm_src_tarball,
+  command: [
+    'rm', '-rf', '@OUTPUT@', '&&',
+    'gzip', '@INPUT@',
+    ],
+  install: false,
+  )
+
+url = 'https://github.com/falkTX/Carla/archive/' + carla_git_ver + '.zip'
+carla_src_zip = custom_target (
+  'carla-source-tarball',
+  output: 'Carla-' + carla_git_ver + '.zip',
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+
+url = 'https://git.zrythm.org/cgit/zplugins/snapshot/zplugins-' + zplugins_ver + '.tar.gz'
+zplugins_src_tarball = custom_target (
+  'zplugins-source-tarball',
+  output: zplugins_src_tarball_filename,
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )

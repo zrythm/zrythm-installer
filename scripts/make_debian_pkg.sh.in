@@ -1,0 +1,10 @@
+#!@BASH@
+
+while getopts ":o:n:m:e:" arg; do
+  case $arg in
+    o) out_pkg=$OPTARG;;
+    n) Name=$OPTARG;;
+    m) Manufacturing_date=$OPTARG;;
+    e) Expire_date=$OPTARG;;
+  esac
+done
