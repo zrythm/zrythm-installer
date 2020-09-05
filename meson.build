@@ -131,8 +131,9 @@ carla_installation = custom_target (
   output: 'carla-native-plugin.pc',
   input: carla_src_zip,
   command: [
-    make_carla, '@INPUT@', carla_git_ver, '&&',
-    'cp', temp_carla_pkgconfig_path / 'carla-native-plugin.pc', '@OUTPUT@',
+    make_carla, '@INPUT@', carla_git_ver, '@PRIVATE_DIR@', '&&',
+    'cp', temp_carla_pkgconfig_path / 'carla-native-plugin.pc',
+    '@OUTPUT@',
     ],
   install: false,
   )
@@ -144,7 +145,8 @@ zplugins_installation = custom_target (
   command: [
     'rm', '-rf', '@OUTPUT@', '&&',
     make_zplugins, zplugins_src_tarball,
-    temp_zplugins_prefix, temp_zplugins_suffix, '&&',
+    temp_zplugins_prefix, temp_zplugins_suffix,
+    '@PRIVATE_DIR@', '&&',
     'mv', temp_zplugins_prefix / temp_zplugins_suffix,
     '@OUTPUT@'
     ],

@@ -9,17 +9,19 @@ prefix="$2"
 # lv2 dir suffix after the prefix, eg 'lib/lv2'
 lv2_dir="$3"
 
+private_dir="$4"
+
 meson_bin="@MESON_BIN@"
 zplugins_ver="@ZPLUGINS_VER@"
 
 echo `pwd`
 
 rm -rf "$prefix/$lv2_dir"
-tempdir=`mktemp -d`
-tar xf $tarball -C $tempdir
-cd $tempdir/zplugins-$zplugins_ver
+rm -rf $private_dir
+mkdir -p $private_dir
+tar xf $tarball -C $private_dir
+cd $private_dir/zplugins-$zplugins_ver
 $meson_bin build --buildtype=debugoptimized \
   --prefix=$prefix
 ninja -C build
 ninja -C build install
-rm -rf $tempdir
