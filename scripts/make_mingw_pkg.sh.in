@@ -1,6 +1,6 @@
 #!@BASH@
 
-set -e
+set -x
 
 out_file="$1"
 
