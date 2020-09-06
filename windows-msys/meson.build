@@ -157,8 +157,10 @@ mingw_zrythm_pkg = custom_target (
     zrythm_src_tarball, zplugins_src_tarball,
     ],
   command: [
-    bash, '-c', '@INPUT0@ "$1" "$2" "$3" "$4"', '_ignored',
-    '@OUTPUT@', '@INPUT1@', '@INPUT2@', '@PRIVATE_DIR@',
+    bash, '-c',
+    '@INPUT0@ "$1" "$2" "$3" "$4" "$5"', '_ignored',
+    '@OUTPUT@', '@INPUT1@', '@INPUT2@',
+    '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
     mingw_install_carla_bins_target, lilv_pkg,
