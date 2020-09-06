@@ -1,5 +1,7 @@
 #!@BASH@
 
+set -e
+
 # chroot dir
 chroot_dir="$1"
 
@@ -7,6 +9,7 @@ src_tarball="$2"
 
 # full paths to each package (pkg.tar.zst) to install
 packages="${@:3}"
+packages_array=($packages)
 
 dash_trial="@DASH_TRIAL@"
 
@@ -19,11 +22,9 @@ pacman -S \
   filesystem bash pacman \
   mingw-w64-x86_64-gtksourceview4 \
   --noconfirm --needed --root $chroot_dir
-for pkg in "$packages"; do
+for pkg in "${packages_array[@]}"; do
   pacman -U "$pkg" --noconfirm --needed --root $chroot_dir
 done
-pacman -U $zrythm_pkg_tar \
-  --noconfirm --needed --root $chroot_dir
 cp -R /mingw64/lib/carla "$chroot_dir/mingw64/lib/"
 glib-compile-schemas.exe \
   "$chroot_dir/mingw64/share/glib-2.0/schemas"

@@ -168,8 +168,7 @@ mingw_zrythm_pkg = custom_target (
     mingw_install_carla_bins_target, lilv_pkg,
     independent_deps,
     ],
-  install: true,
-  install_dir: get_option ('prefix'),
+  install: false,
   )
 
 chroot_dir = '/tmp/zrythm' + dash_trial + '-chroot'
@@ -180,30 +179,49 @@ windows_chroot_target = custom_target (
     zrythm_src_tarball, independent_deps[0],
     independent_deps[1], lv2_pkg, serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg, mingw_zrythm_pkg,
+    make_windows_chroot,
     ],
   command: [
-    bash, '-c', make_windows_chroot, chroot_dir,
-    '@INPUT0@', '@INPUT1@', '@INPUT2@',
-    '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
-    '@INPUT7@', '@INPUT8@',
+    bash, '-c',
+    meson.build_root () / 'scripts/make_windows_chroot.sh ' +
+    chroot_dir + ' ' +
+    zrythm_src_tarball.full_path () + ' ' +
+    independent_deps[0].full_path () + ' ' +
+    independent_deps[1].full_path () + ' ' +
+    lv2_pkg.full_path () + ' ' +
+    serd_pkg.full_path () + ' ' +
+    sord_pkg.full_path () + ' ' +
+    sratom_pkg.full_path () + ' ' +
+    lilv_pkg.full_path () + ' ' +
+    mingw_zrythm_pkg.full_path () +
+    ' && touch @OUTPUT@'
     ],
   depends: [
     ],
   install: false,
   )
 
-if false
 windows_msys_installer_filename = run_command (
-  get_pkg_filename, 'WINDOWS_MSYS', dash_trial).stdout ().strip ()
+  bash, '-c',
+  meson.build_root () / 'scripts/get_pkg_filename.sh' +
+  ' WINDOWS_MSYS ' + dash_trial).stdout ().strip ()
 windows_msys_installer = custom_target (
   'windows-msys-installer',
   output: windows_msys_installer_filename,
   input: [
-    bash, '-c', mingw_zrythm_pkg, zrythm_src_tarball,
+    make_windows_installer, zrythm_src_tarball,
+    'installer.iss', 'copy-dll-deps.sh',
+    rcedit_x64_exe,
     ],
   command: [
-    make_windows_installer, '@OUTPUT@', '@INPUT0@',
-    chroot_dir,
+    bash, '-c',
+    meson.build_root () / 'scripts/make_windows_installer.sh' +
+    ' @OUTPUT@ ' + zrythm_src_tarball.full_path () + ' ' +
+    chroot_dir + ' ' +
+    meson.current_source_dir () / 'installer.iss' +
+    ' @PRIVATE_DIR@ ' +
+    meson.current_source_dir () / 'copy-dll-deps.sh' + ' ' +
+    rcedit_x64_exe.full_path ()
     ],
   depends: [
     windows_chroot_target,
@@ -211,9 +229,3 @@ windows_msys_installer = custom_target (
   install: true,
   install_dir: get_option ('prefix'),
   )
-endif
-
-run_target (
-  'windows-msys',
-  command: [ 'echo', 'done' ],
-  depends: windows_chroot_target)

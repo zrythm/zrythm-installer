@@ -146,6 +146,8 @@ global_conf.set (
   'PACKAGES_DIR', get_option ('packages-dir'))
 global_conf.set (
   'PDF_DIR', get_option ('pdf-dir'))
+global_conf.set (
+  'MANUALS_ZIP_FILE', get_option ('manuals-zip-file'))
 
 subdir ('scripts')
 subdir ('sources')

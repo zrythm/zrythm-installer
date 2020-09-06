@@ -33,9 +33,9 @@ zrythm_src_tarball = custom_target (
     'tar xf @INPUT@ && ' +
     'mv ' + orig_inner_dir_name + ' ' +
     zrythm_inner_dir_name + ' && ' +
-    'tar czf ' +
+    'tar czf \'' +
     meson.current_build_dir () / zrythm_src_tarball_filename +
-    ' ' + zrythm_inner_dir_name,
+    '\' ' + zrythm_inner_dir_name,
     ],
   install: false,
   )
@@ -91,6 +91,19 @@ lsp_dsp_lib_src_tarball = custom_target (
   output: 'lsp-dsp-lib-' + lsp_dsp_lib_ver + '.tar.gz',
   command: [
     'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+
+filename = 'rcedit-x64.exe'
+url = 'https://github.com/electron/rcedit/releases/download/v1.1.1/' + filename
+rcedit_x64_exe = custom_target (
+  'rcedit-x64-exe',
+  output: filename,
+  command: [
+    bash, '-c',
+    'wget ' + url + ' -O \'@OUTPUT@\' && ' +
+    'chmod +x \'@OUTPUT@\''
     ],
   install: false,
   )

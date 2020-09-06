@@ -1,6 +1,6 @@
 #!@BASH@
 
-set -ex
+set -e
 
 out_file="$1"
 formula_file="$2"
@@ -27,8 +27,11 @@ cp $src_tarball $formula_cache_file
 
 # build bottle
 pushd $private_dir
+echo "unlinking $formula_name..."
 brew unlink $formula_name || true
-brew install --verbose --debug --build-bottle $formula_name
+echo "installing $formula_name..."
+brew install --verbose --debug --build-bottle $formula_name || true
+echo "bottling $formula_name..."
 brew bottle $formula_name
 ls -l
 popd
