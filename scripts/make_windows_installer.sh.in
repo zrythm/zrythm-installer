@@ -17,6 +17,7 @@ meson_src_root="@MESON_SOURCE_ROOT@"
 manuals_zip="@MANUALS_ZIP_FILE@"
 zrythm_inner_dir_name="@ZRYTHM_INNER_DIR_NAME@"
 breeze_dark_path="@BREEZE_DARK_PATH@"
+zrythm_src_tarball_filename="@ZRYTHM_SOURCE_TARBALL_FILENAME@"
 
 mingw_prefix="$chroot_dir/mingw64"
 app_name="Zrythm$dash_trial"
@@ -42,7 +43,11 @@ mkdir -p $dist_plugins_dir
 
 # create sources distribution
 echo "TODO" > $dist_dir/THIRDPARTY_INFO
-tar xf $zrythm_src_tarball -C $installer_dir/
+cp $zrythm_src_tarball $installer_dir/
+pushd $installer_dir
+tar xf $zrythm_src_tarball_filename
+rm $zrythm_src_tarball_filename
+popd
 mv $installer_dir/$zrythm_inner_dir_name $src_dir
 cp $src_dir/AUTHORS $dist_dir/
 cp $src_dir/COPYING* $dist_dir/
