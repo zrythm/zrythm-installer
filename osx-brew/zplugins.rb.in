@@ -1,0 +1,31 @@
+class ZPlugins < Formula
+  desc "Zrythm plugin collection"
+  homepage "https://www.zrythm.org"
+  url "@ZPLUGINS_TARBALL_URL@"
+  sha256 "@ZPLUGINS_BREW_SHA256@"
+  version "@ZPLUGINS_VER@"
+
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
+  depends_on "pkg-config" => :build
+  depends_on "guile"
+  depends_on "fftw"
+  depends_on "libsamplerate"
+  depends_on "lilv"
+  depends_on "librsvg"
+  depends_on "rubberband"
+  depends_on "jack"
+
+  def install
+    mkdir "build" do
+      system "meson",
+        "--prefix=#{prefix}", "--libdir=#{lib}",
+        "--buildtype=debug", "-Dextra_debug_info=true",
+        "-Dlv2dir=lib/zrythm/lib/lv2",
+        "-Dtests=false",
+        ".."
+      system "ninja", "-v"
+      system "ninja", "install", "-v"
+    end
+  end
+end

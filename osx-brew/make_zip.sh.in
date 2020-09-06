@@ -7,7 +7,8 @@ zrythm_formula_file=$2
 carla_bottle_file=$3
 installer_sh_file=$4
 readme_file=$5
-private_dir=$6
+zplugins_bottle_file=$6
+private_dir=$7
 
 dash_trial="@DASH_TRIAL@"
 
@@ -24,6 +25,7 @@ mkdir -p $inner_dir/src
 cp $installer_sh_file $inner_dir/installer.sh
 cp $readme_file $inner_dir/README
 cp $carla_bottle_file $inner_dir/bin/carla-git.catalina.bottle.tar.gz
+cp $zplugins_bottle_file $inner_dir/bin/zplugins.catalina.bottle.tar.gz
 cp $zrythm_formula_file $inner_dir/formulae/
 cp -r /tmp/breeze-dark $inner_dir/icons/
 pushd $private_dir

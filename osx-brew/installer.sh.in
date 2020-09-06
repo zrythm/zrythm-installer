@@ -21,6 +21,7 @@ set -e
 
 zrythm_ver="@ZRYTHM_PKG_VERSION@"
 carla_ver="@CARLA_BOTTLE_VER@"
+zplugins_ver="@ZPLUGINS_VER@"
 
 show_error () {
   echo "$1" >&2
@@ -57,7 +58,8 @@ fi
 if [ $proceed -ne 0 ]; then
   echo "Unpacking..."
   tar xf bin/carla-git*.catalina.bottle.tar.gz -C /usr/local/Cellar
-  brew unlink carla-git || true
+  tar xf bin/zplugins*.catalina.bottle.tar.gz -C /usr/local/Cellar
+  brew unlink zplugins || true
   brew unlink zrythm || true
   brew unlink zrythm-trial || true
 
@@ -67,12 +69,17 @@ if [ $proceed -ne 0 ]; then
   brew unlink carla-git && \
     brew link --overwrite carla-git && \
     brew switch carla-git $carla_ver
+  brew switch zplugins $zplugins_ver || true
+  brew unlink zplugins && \
+    brew link --overwrite zplugins && \
+    brew switch zplugins $zplugins_ver
 
   # install deps
   echo "Installing deps..."
   carla_deps="$(brew info carla-git | grep Required | sed -e "s/Required: //" | sed -e "s/, / /g")"
+  zplugins_deps="$(brew info zplugins | grep Required | sed -e "s/Required: //" | sed -e "s/, / /g")"
   brew upgrade
-  brew install $carla_deps || true
+  brew install $carla_deps $zplugins_deps || true
 
   # fix paths
   echo "Fixing paths..."

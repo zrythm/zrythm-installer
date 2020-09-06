@@ -27,6 +27,7 @@ class Zrythm@DASH_TRIAL@ < Formula
   depends_on "carla-git"
   depends_on "jack"
   depends_on "qjackctl"
+  depends_on "zplugins"
 
   def install
     mkdir "build" do

@@ -19,7 +19,10 @@ osx_brew_conf = configuration_data ()
 osx_brew_conf.merge_from (global_conf)
 carla_bottle_ver = '0.1.2'
 carla_bottle_filename = 'carla-git--' + carla_bottle_ver + '.catalina.bottle.tar.gz'
+zplugins_bottle_filename = 'zplugins--' + zplugins_ver + '.catalina.bottle.tar.gz'
 zrythm_bottle_filename = 'zrythm' + dash_trial + '--' + zrythm_pkg_ver + '.catalina.bottle.tar.gz'
+osx_brew_conf.set (
+  'ZPLUGINS_BOTTLE_FILENAME', zplugins_bottle_filename)
 osx_brew_conf.set (
   'ZRYTHM_BOTTLE_FILENAME', zrythm_bottle_filename)
 osx_brew_conf.set (
@@ -32,6 +35,12 @@ carla_brew_src_sum = run_command (
   ' | awk \'{print $1;}\'').stdout (). strip ()
 osx_brew_conf.set (
   'CARLA_BREW_SHA256', carla_brew_src_sum)
+zplugins_brew_src_sum = run_command (
+  bash, '-c', 'openssl sha256 -r ' +
+  zplugins_src_tarball.full_path () +
+  ' | awk \'{print $1;}\'').stdout (). strip ()
+osx_brew_conf.set (
+  'ZPLUGINS_BREW_SHA256', zplugins_brew_src_sum)
 zrythm_brew_src_sum = run_command (
   bash, '-c', 'openssl sha256 -r ' +
   orig_zrythm_src_tarball.full_path () +
@@ -84,6 +93,11 @@ carla_formula = configure_file (
   input: 'carla-git.rb.in',
   configuration: osx_brew_conf,
   )
+zplugins_formula = configure_file (
+  output: 'zplugins.rb',
+  input: 'zplugins.rb.in',
+  configuration: osx_brew_conf,
+  )
 zrythm_formula = configure_file (
   output: 'zrythm' + dash_trial + '.rb',
   input: 'zrythm.rb.in',
@@ -104,19 +118,35 @@ carla_bottle = custom_target (
     ],
   install: false,
   )
+zplugins_bottle = custom_target (
+  'osx-zplugins-bottle',
+  output: zplugins_bottle_filename,
+  input: [
+    make_bottle_sh, zplugins_formula,
+    zplugins_src_tarball,
+    ],
+  command: [
+    make_bottle_sh, '@OUTPUT@',
+    '@INPUT1@', '@PRIVATE_DIR@',
+    '@INPUT2@',
+    ],
+  install: false,
+  )
 zrythm_bottle = custom_target (
   'osx-zrythm-bottle',
   output: zrythm_bottle_filename,
   input: [
     make_bottle_sh, zrythm_formula,
-    carla_bottle, orig_zrythm_src_tarball,
+    orig_zrythm_src_tarball,
     ],
   command: [
     make_bottle_sh, '@OUTPUT@',
     '@INPUT1@', '@PRIVATE_DIR@',
-    '@INPUT3@',
+    '@INPUT2@',
     ],
-  depends: make_breeze_icons,
+  depends: [
+    make_breeze_icons, carla_bottle, zplugins_bottle,
+    ]
   install: false,
   )
 
@@ -126,13 +156,14 @@ installer_zip = custom_target (
   input: [
     make_zip_sh, zrythm_formula,
     carla_bottle, installer_sh,
-    readme, zrythm_bottle,
+    readme, zplugins_bottle,
     ],
   command: [
     make_zip_sh, '@OUTPUT@',
     '@INPUT1@', '@INPUT2@', '@INPUT3@', '@INPUT4@',
-    '@PRIVATE_DIR@',
+    '@INPUT5@', '@PRIVATE_DIR@',
     ],
+  depends: [ zrythm_bottle, ]
   install: true,
   install_dir: get_option ('prefix'),
   )
