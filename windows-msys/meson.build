@@ -172,7 +172,6 @@ mingw_zrythm_pkg = custom_target (
   install_dir: get_option ('prefix'),
   )
 
-if false
 chroot_dir = '/tmp/zrythm' + dash_trial + '-chroot'
 windows_chroot_target = custom_target (
   'windows-chroot',
@@ -181,7 +180,6 @@ windows_chroot_target = custom_target (
     zrythm_src_tarball, independent_deps[0],
     independent_deps[1], lv2_pkg, serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg, mingw_zrythm_pkg,
-    'gen_windows_installer.sh', 'installer.iss',
     ],
   command: [
     bash, '-c', make_windows_chroot, chroot_dir,
@@ -194,6 +192,7 @@ windows_chroot_target = custom_target (
   install: false,
   )
 
+if false
 windows_msys_installer_filename = run_command (
   get_pkg_filename, 'WINDOWS_MSYS', dash_trial).stdout ().strip ()
 windows_msys_installer = custom_target (
@@ -217,4 +216,4 @@ endif
 run_target (
   'windows-msys',
   command: [ 'echo', 'done' ],
-  depends: mingw_zrythm_pkg)
+  depends: windows_chroot_target)
