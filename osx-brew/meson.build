@@ -126,7 +126,7 @@ installer_zip = custom_target (
   input: [
     make_zip_sh, zrythm_formula,
     carla_bottle, installer_sh,
-    readme,
+    readme, zrythm_bottle,
     ],
   command: [
     make_zip_sh, '@OUTPUT@',

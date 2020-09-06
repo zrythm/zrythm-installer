@@ -1,0 +1,42 @@
+#!@BASH@
+
+# distro (eg, debian10)
+distro="$1"
+
+# "-trial" if trial
+trial="$2"
+
+zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
+get_pkg_filename_sh="@GET_PKG_FILENAME_SH_PATH@"
+
+distro_to_pkg_type () {
+  distro=$1
+  case "$distro" in
+    "archlinux")
+      echo "ARCH"
+      ;;
+    "debian"* | "ubuntu"* )
+      echo "DEBIAN"
+      ;;
+    "fedora"*)
+      echo "FEDORA"
+      ;;
+    "windows10")
+      echo "WINDOWS"
+      ;;
+    "windows10-msys")
+      echo "WINDOWS_MSYS"
+      ;;
+    "osx" | "macos"*)
+      echo "OSX"
+      ;;
+    "osx-brew-zip")
+      echo "OSX_BREW_ZIP"
+      ;;
+    "gnu-linux")
+      echo "GNU_LINUX"
+      ;;
+  esac
+}
+pkg_type=$(distro_to_pkg_type $distro)
+$get_pkg_filename_sh $pkg_type

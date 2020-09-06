@@ -69,6 +69,7 @@ is_nixos = distro.contains ('nixos')
 is_rpm = distro.contains ('fedora')
 is_windows_msys = distro.contains ('windows10-msys')
 is_osx_brew = distro.contains ('osx-brew')
+is_gnu_linux = distro.contains ('gnu-linux')
 
 global_conf = configuration_data ()
 global_conf.set ('PREFIX', prefix)
@@ -141,6 +142,10 @@ global_conf.set (
 global_conf.set (
   'SUPPORTING_TEXT', build_trial ? 'supporting' : 'trying out')
 global_conf.set ('EMAIL_AT_SYM', '@')
+global_conf.set (
+  'PACKAGES_DIR', get_option ('packages-dir'))
+global_conf.set (
+  'PDF_DIR', get_option ('pdf-dir'))
 
 subdir ('scripts')
 subdir ('sources')
@@ -206,4 +211,8 @@ endif
 
 if is_osx_brew
 subdir ('osx-brew')
+endif
+
+if is_gnu_linux
+subdir ('gnu-linux')
 endif

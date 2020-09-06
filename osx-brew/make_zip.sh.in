@@ -1,6 +1,6 @@
 #!@BASH@
 
-set -ex
+set -e
 
 out_file="$1"
 zrythm_formula_file=$2

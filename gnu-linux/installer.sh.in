@@ -19,10 +19,9 @@
 
 set -e
 
-zrythm_ver="@VERSION@"
-zplugins_ver="@ZPLUGINS_VERSION@"
+zrythm_ver="@ZRYTHM_PKG_VERSION@"
 architecture="amd64"
-trial="@TRIAL@"
+trial="@DASH_TRIAL@"
 
 distro_identifier=""
 
@@ -79,7 +78,7 @@ fi
 
 # ---- Detect arch systems ----
 
-arch_str="Arch GNU/Linux"
+arch_str="Arch Linux"
 
 if [[ "$ID" = "arch" ]] || [[ "$ID_LIKE" = *"arch"* ]]; then
   echo "found $arch_str"
@@ -170,30 +169,4 @@ if [ $proceed -ne 0 ]; then
       "pacman -U --noconfirm \"$prefix-1_${architecture}.pkg.tar.zst\"" && \
       print_install_success
   fi
-fi
-
-proceed=0
-proceed_txt="Proceed with the installation of ZPlugins v$zplugins_ver?"
-if [ $have_zenity -ne 0 ]; then
-  zenity --question --text="$proceed_txt" --width $zenity_width
-  if [ $? -eq 0 ]; then
-    proceed=1
-  fi
-else
-  read -p "$proceed_txt (type Y or y): " -n 1 -r
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    proceed=1
-  fi
-fi
-
-# install plugins
-if [ $proceed -ne 0 ]; then
-  ask_for_root_pw;
-  libdir="lib"
-  if [[ $distro_identifier = "fedora"* ]]; then
-    libdir="lib64"
-  fi
-  sudo /bin/sh -c \
-    "cp -R \"bin/$zplugins/\"* /usr/$libdir/lv2/"
-  print_install_success
 fi

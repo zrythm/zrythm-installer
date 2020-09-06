@@ -1,6 +1,6 @@
-Thank you for supporting Zrythm!
+Thank you for @SUPPORTING_TEXT@ Zrythm!
 
-This is Zrythm v@VERSION@.
+This is Zrythm v@ZRYTHM_PKG_VERSION@.
 
 To install Zrythm, open a terminal and
 navigate to this directory, then run
@@ -13,7 +13,7 @@ If you prefer to install the packages
 manually, you can find them inside `bin`.
 
 If you experience any problems, please
-email alex@_AT_@zrythm.org
+email alex@EMAIL_AT_SYM@zrythm.org
 
 This installer is offered as-is, without
 any warranty.
