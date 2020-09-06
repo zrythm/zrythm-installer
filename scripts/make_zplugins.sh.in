@@ -1,27 +1,30 @@
 #!@BASH@
 
-# tarball
-tarball="$1"
+set -ex
+
+out_file="$1"
+tarball="$2"
 
 # prefix to install at, eg '/usr'
-prefix="$2"
+#prefix="$3"
 
-# lv2 dir suffix after the prefix, eg 'lib/lv2'
-lv2_dir="$3"
-
-private_dir="$4"
+private_dir="$3"
 
 meson_bin="@MESON_BIN@"
 zplugins_ver="@ZPLUGINS_VER@"
 
+inner_dir_name=zplugins-$zplugins_ver
+full_private_dir="`pwd`/$private_dir"
+
 echo `pwd`
 
-rm -rf "$prefix/$lv2_dir"
 rm -rf $private_dir
+rm -rf $out_file
 mkdir -p $private_dir
+mkdir -p $out_file
 tar xf $tarball -C $private_dir
-cd $private_dir/zplugins-$zplugins_ver
+pushd $private_dir/$inner_dir_name
 $meson_bin build --buildtype=debugoptimized \
-  --prefix=$prefix
-ninja -C build
-ninja -C build install
+  --prefix=/ -Dlv2dir=
+popd
+DESTDIR="`pwd`/$out_file" ninja -C $private_dir/$inner_dir_name/build install

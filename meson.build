@@ -50,9 +50,6 @@ mingw_zrythm_trial_pkg_filename = mingw_prefix + 'zrythm-trial-' + zrythm_pkg_ve
 debian_src_tarball_filename = 'zrythm_' + zrythm_pkg_ver + '.orig.tar.gz'
 temp_carla_prefix = meson.build_root () / 'tmp_carla_prefix'
 temp_carla_pkgconfig_path = temp_carla_prefix / libdir / 'pkgconfig'
-temp_zplugins_prefix = meson.build_root () / 'tmp_zplugins_prefix'
-temp_zplugins_suffix = 'lib/lv2'
-temp_zplugins_dir = temp_zplugins_prefix / temp_zplugins_suffix
 temp_library_prefix = meson.build_root () / 'tmp_lib_prefix'
 temp_library_pkgconfig_path = temp_library_prefix / libdir / 'pkgconfig'
 dash_trial = build_trial ? '-trial' : ''
@@ -152,6 +149,9 @@ global_conf.set (
 global_conf.set (
   'GET_PKG_FILENAME_SH_PATH',
   meson.build_root () / 'scripts/get_pkg_filename.sh')
+global_conf.set (
+  'BUILT_ZPLUGINS_DIR',
+  meson.current_build_dir () / 'built_zplugins')
 
 subdir ('scripts')
 subdir ('sources')
@@ -173,18 +173,16 @@ zplugins_installation = custom_target (
   output: 'built_zplugins',
   input: zplugins_src_tarball,
   command: [
-    'rm', '-rf', '@OUTPUT@', '&&',
-    make_zplugins, zplugins_src_tarball,
-    temp_zplugins_prefix, temp_zplugins_suffix,
-    '@PRIVATE_DIR@', '&&',
-    'mv', temp_zplugins_prefix / temp_zplugins_suffix,
-    '@OUTPUT@'
+    make_zplugins, '@OUTPUT@', zplugins_src_tarball,
+    '@PRIVATE_DIR@',
     ],
   install: false,
   )
 
-global_conf.set (
-  'BUILT_ZPLUGINS_DIR', zplugins_installation.full_path ())
+run_target (
+  'zplugins',
+  command: [ 'echo', 'done' ],
+  depends: zplugins_installation)
 
 lsp_dsp_lib_installation = custom_target (
   'lsp-dsp-lib-installation',
