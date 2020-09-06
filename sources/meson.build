@@ -33,9 +33,9 @@ zrythm_src_tarball = custom_target (
     'tar xf @INPUT@ && ' +
     'mv ' + orig_inner_dir_name + ' ' +
     zrythm_inner_dir_name + ' && ' +
-    'tar czf \'' +
+    'tar czf ' +
     meson.current_build_dir () / zrythm_src_tarball_filename +
-    '\' ' + zrythm_inner_dir_name,
+    ' ' + zrythm_inner_dir_name + ' --force-local'
     ],
   install: false,
   )
