@@ -15,93 +15,64 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-scripts_conf = configuration_data ()
-scripts_conf.merge_from (global_conf)
-scripts_conf.set ('GET_PKG_FILENAME_SH_PATH', meson.current_build_dir () / 'get_pkg_filename.sh')
-
 # configure each script
-make_windows_chroot = configure_file (
-  output: 'make_windows_chroot.sh',
-  input: 'make_windows_chroot.sh.in',
-  configuration: scripts_conf,
-  )
-
-make_windows_installer = configure_file (
-  output: 'make_windows_installer.sh',
-  input: 'make_windows_installer.sh.in',
-  configuration: scripts_conf,
-  )
 
 make_debian_pkg = configure_file (
   output: 'make_debian_pkg.sh',
   input: 'make_debian_pkg.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 make_rpm_pkg = configure_file (
   output: 'make_rpm_pkg.sh',
   input: 'make_rpm_pkg.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 make_arch_pkg = configure_file (
   output: 'make_arch_pkg.sh',
   input: 'make_arch_pkg.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 make_nixos_pkg = configure_file (
   output: 'make_nixos_pkg.sh',
   input: 'make_nixos_pkg.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 make_user_manual = configure_file (
   output: 'make_user_manual.sh',
   input: 'make_user_manual.sh.in',
-  configuration: scripts_conf,
-  )
-
-make_mingw_pkg = configure_file (
-  output: 'make_mingw_pkg.sh',
-  input: 'make_mingw_pkg.sh.in',
-  configuration: scripts_conf,
-  )
-
-make_zrythm_mingw_pkg = configure_file (
-  output: 'make_zrythm_mingw_pkg.sh',
-  input: 'make_zrythm_mingw_pkg.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 make_carla = configure_file (
   output: 'make_carla.sh',
   input: 'make_carla.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 make_lsp_dsp_lib = configure_file (
   output: 'make_lsp_dsp_lib.sh',
   input: 'make_lsp_dsp_lib.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 get_pkg_filename = configure_file (
   output: 'get_pkg_filename.sh',
   input: 'get_pkg_filename.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 get_pkg_filename_from_distro = configure_file (
   output: 'get_pkg_filename_from_distro.sh',
   input: 'get_pkg_filename_from_distro.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
 
 make_zplugins = configure_file (
   output: 'make_zplugins.sh',
   input: 'make_zplugins.sh.in',
-  configuration: scripts_conf,
+  configuration: global_conf,
   )
-
-built_scripts_dir = meson.current_build_dir ()

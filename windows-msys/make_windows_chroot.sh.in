@@ -2,13 +2,15 @@
 
 set -e
 
-# chroot dir
-chroot_dir="$1"
+out_file="$1"
 
-src_tarball="$2"
+# chroot dir
+chroot_dir="$2"
+
+src_tarball="$3"
 
 # full paths to each package (pkg.tar.zst) to install
-packages="${@:3}"
+packages="${@:4}"
 packages_array=($packages)
 
 dash_trial="@DASH_TRIAL@"
@@ -30,3 +32,5 @@ glib-compile-schemas.exe \
   "$chroot_dir/mingw64/share/glib-2.0/schemas"
 
 cp $chroot_dir/mingw64/bin/zrythm.exe $chroot_dir/mingw64/bin/zrythm$dash_trial.exe || true
+
+touch $out_file

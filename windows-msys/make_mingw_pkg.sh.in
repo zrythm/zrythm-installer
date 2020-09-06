@@ -1,0 +1,18 @@
+#!@BASH@
+
+set -x
+
+out_file="$1"
+
+pkgbuild="$2"
+private_dir="$3"
+
+rm -rf $private_dir
+mkdir -p $private_dir
+cp $pkgbuild $private_dir/PKGBUILD
+pushd $private_dir
+MINGW_INSTALLS=mingw64 makepkg-mingw -fs --noconfirm
+popd
+pacman -U $private_dir/*.pkg.tar.zst --noconfirm --overwrite='*'
+
+cp $private_dir/*.pkg.tar.zst $out_file
