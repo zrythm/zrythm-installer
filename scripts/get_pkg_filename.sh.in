@@ -21,7 +21,7 @@ case "$pkg_type" in
   "GNU_LINUX")
     echo "zrythm${trial}-$zrythm_pkg_ver-installer.zip"
     ;;
-  "OSX_BREW")
+  "OSX_BREW_ZIP")
     echo "zrythm${trial}-$zrythm_pkg_ver-osx-installer.zip"
     ;;
   "WINDOWS_MSYS")
