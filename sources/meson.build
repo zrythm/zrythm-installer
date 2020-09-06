@@ -33,13 +33,14 @@ zrythm_src_tarball = custom_target (
     'private_dir=@PRIVATE_DIR@ && ' +
     'rm -rf $private_dir && ' +
     'mkdir -p $private_dir && ' +
-    'tar xf ' + orig_zrythm_src_tarball.full_path () +
-    ' -C $private_dir && ' +
+    'cp ' + orig_zrythm_src_tarball.full_path () + ' $private_dir/ && ' +
     'pushd $private_dir && ' +
+    'tar xf ' + orig_zrythm_src_tarball_filename + ' && ' +
     'mv ' + orig_inner_dir_name + ' ' +
     zrythm_inner_dir_name + ' && ' +
-    'tar czf tmp.tar.gz ' + zrythm_inner_dir_name + ' && ' +
-    'popd && cp "$private_dir/tmp.tar.gz" ' +
+    'tar czf tmp.tar.gz ' + zrythm_inner_dir_name +
+    ' && popd && ' +
+    'cp "$private_dir/tmp.tar.gz" ' +
     meson.current_build_dir () / zrythm_src_tarball_filename
     ],
   install: false,
