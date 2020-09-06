@@ -65,6 +65,7 @@ serd_pkg = custom_target (
     ' @OUTPUT@ ' +
     meson.current_source_dir () / src_pkgbuild,
     ],
+  depends: lv2_pkg,
   install: false,
   )
 src_pkgbuild = 'PKGBUILD-sord-mingw'
@@ -77,6 +78,7 @@ sord_pkg = custom_target (
     ' @OUTPUT@ ' +
     meson.current_source_dir () / src_pkgbuild,
     ],
+  depends: serd_pkg,
   install: false,
   )
 src_pkgbuild = 'PKGBUILD-sratom-mingw'
@@ -89,6 +91,7 @@ sratom_pkg = custom_target (
     ' @OUTPUT@ ' +
     meson.current_source_dir () / src_pkgbuild,
     ],
+  depends: sord_pkg,
   install: false,
   )
 src_pkgbuild = 'PKGBUILD-lilv-mingw'
@@ -101,6 +104,7 @@ lilv_pkg = custom_target (
     ' @OUTPUT@ ' +
     meson.current_source_dir () / src_pkgbuild,
     ],
+  depends: sratom_pkg,
   install: false,
   )
 
