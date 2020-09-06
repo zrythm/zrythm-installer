@@ -183,6 +183,9 @@ zplugins_installation = custom_target (
   install: false,
   )
 
+global_conf.set (
+  'BUILT_ZPLUGINS_DIR', zplugins_installation.full_path ())
+
 lsp_dsp_lib_installation = custom_target (
   'lsp-dsp-lib-installation',
   output: 'lsp-dsp-lib.pc',

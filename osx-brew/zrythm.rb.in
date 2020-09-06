@@ -43,6 +43,7 @@ class Zrythm@DASH_TRIAL@ < Formula
       system "ninja", "-v"
       system "ninja", "install", "-v"
       system "cp", "-r", "/tmp/breeze-dark", "#{share}/icons/breeze-dark"
+      system "cp", "-RLv" "@BUILT_ZPLUGINS_DIR@/*", "#{lib}/zrythm/lib/lv2/"
     end
   end
 
