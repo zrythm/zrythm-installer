@@ -116,7 +116,7 @@ zrythm_bottle = custom_target (
     '@INPUT1@', '@PRIVATE_DIR@',
     '@INPUT3@',
     ],
-  depends: make_breeze_icons, zplugins_installation,
+  depends: [ make_breeze_icons, zplugins_installation, ],
   install: false,
   )
 
