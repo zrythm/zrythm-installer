@@ -17,7 +17,6 @@
 
 scripts_conf = configuration_data ()
 scripts_conf.merge_from (global_conf)
-scripts_conf.set ('SCRIPTS_DIR', meson.current_build_dir ())
 scripts_conf.set ('GET_PKG_FILENAME_SH_PATH', meson.current_build_dir () / 'get_pkg_filename.sh')
 
 # configure each script

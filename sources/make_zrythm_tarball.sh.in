@@ -1,0 +1,21 @@
+#!@BASH@
+
+set -e
+
+out_file="$1"
+orig_tarball="$2"
+private_dir="$3"
+
+orig_tarball_filename="@ZRYTHM_ORIG_SRC_TARBALL_FILENAME@"
+orig_inner_dir_name="@ZRYTHM_ORIG_INNER_DIR_NAME@"
+new_inner_dir_name="@ZRYTHM_INNER_DIR_NAME@"
+
+rm -rf $private_dir
+mkdir -p $private_dir
+cp $orig_tarball $private_dir/
+pushd $private_dir
+tar xf $orig_tarball_filename
+mv $orig_inner_dir_name $new_inner_dir_name
+tar czf tmp.tar.gz $new_inner_dir_name
+popd
+cp "$private_dir/tmp.tar.gz" "$out_file"

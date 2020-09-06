@@ -15,6 +15,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
+# configure script
+make_zrythm_tarball = configure_file (
+  output: 'make_zrythm_tarball.sh',
+  input: 'make_zrythm_tarball.sh.in',
+  configuration: global_conf,
+  )
+
 orig_zrythm_src_tarball = custom_target (
   'orig-zrythm-source-tarball',
   output: orig_zrythm_src_tarball_filename,
@@ -27,24 +34,20 @@ orig_zrythm_src_tarball = custom_target (
 zrythm_src_tarball = custom_target (
   'zrythm-source-tarball',
   output: zrythm_src_tarball_filename,
-  input: orig_zrythm_src_tarball,
+  input: [
+    make_zrythm_tarball, orig_zrythm_src_tarball,
+    ],
   command: [
-    bash, '-c',
-    'private_dir=@PRIVATE_DIR@ && ' +
-    'rm -rf $private_dir && ' +
-    'mkdir -p $private_dir && ' +
-    'cp ' + orig_zrythm_src_tarball.full_path () + ' $private_dir/ && ' +
-    'pushd $private_dir && ' +
-    'tar xf ' + orig_zrythm_src_tarball_filename + ' && ' +
-    'mv ' + orig_inner_dir_name + ' ' +
-    zrythm_inner_dir_name + ' && ' +
-    'tar czf tmp.tar.gz ' + zrythm_inner_dir_name +
-    ' && popd && ' +
-    'cp "$private_dir/tmp.tar.gz" ' +
-    meson.current_build_dir () / zrythm_src_tarball_filename
+    bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
+    '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@'
     ],
   install: false,
   )
+
+run_target (
+  'zrythm-src-tarball',
+  command: [ 'echo', 'done' ],
+  depends: zrythm_src_tarball)
 
 debian_zrythm_src_tarball = custom_target (
   'debian-zrythm-source-tarball',
