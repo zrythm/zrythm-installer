@@ -218,3 +218,21 @@ endif
 if is_gnu_linux
 subdir ('gnu-linux')
 endif
+
+summary ({
+  'prefix': prefix,
+  'libdir': libdir,
+  'Breeze dark path': get_option ('breeze-dark-path'),
+  'Packages dir': get_option ('packages-dir'),
+  'PDF dir': get_option ('pdf-dir'),
+  }, section: 'Directories')
+
+summary ({
+  'Meson path': get_option ('meson-path'),
+  'Git version': get_option ('zrythm-git-ver'),
+  'Package version': get_option ('zrythm-pkg-ver'),
+  'Build trial': get_option ('build-trial').to_string (),
+  'ZPlugins version': get_option ('zplugins-ver'),
+  'Locales': ' '.join (get_option ('locales')),
+  'Distro': get_option ('distro'),
+  }, section: 'General')
