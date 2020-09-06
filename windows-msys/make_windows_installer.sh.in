@@ -167,6 +167,12 @@ cp "$mingw_prefix/bin/gspawn-win64-helper-console.exe" "$dist_bindir/"
 
 # ******************************
 
+echo "checking if binary works..."
+$dist_bindir/zrythm.exe --version
+echo "return code: $?"
+
+# ******************************
+
 cp "$inno_installer_iss" "$dist_dir"/installer.iss
 pushd $dist_dir
 ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
