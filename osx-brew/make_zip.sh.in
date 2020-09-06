@@ -10,6 +10,7 @@ readme_file=$5
 private_dir=$6
 
 dash_trial="@DASH_TRIAL@"
+manuals_zip="@MANUALS_ZIP_FILE@"
 
 inner_dir_name="${out_file%.*}"
 inner_dir_name="`basename $inner_dir_name`"
@@ -26,6 +27,12 @@ cp $readme_file $inner_dir/README
 cp $carla_bottle_file $inner_dir/bin/carla-git.catalina.bottle.tar.gz
 cp $zrythm_formula_file $inner_dir/formulae/
 cp -r /tmp/breeze-dark $inner_dir/icons/
+
+if [ "$dash_trial" != "-trial" ]; then
+  echo "adding user manuals" ;
+  unzip -o $manuals_zip -d $inner_dir/ ;
+fi
+
 pushd $private_dir
 zip -r $inner_dir_name.zip $inner_dir_name
 popd
