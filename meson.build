@@ -140,7 +140,8 @@ global_conf.set (
 global_conf.set (
   'BREEZE_DARK_PATH', breeze_dark_path)
 global_conf.set (
-  'SUPPORTING_TEXT', build_trial ? 'supporting' : 'trying out')
+  'SUPPORTING_TEXT',
+  build_trial ? 'trying out' : 'supporting')
 global_conf.set ('EMAIL_AT_SYM', '@')
 global_conf.set (
   'PACKAGES_DIR', get_option ('packages-dir'))
