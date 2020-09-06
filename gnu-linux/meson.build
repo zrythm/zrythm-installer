@@ -43,10 +43,10 @@ installer_zip = custom_target (
   'gnu-linux-installer-zip',
   output: installer_zip_filename,
   input: [
-    make_zip_sh, installer_sh, readme,
+    make_installer_zip_sh, installer_sh, readme,
     ],
   command: [
-    make_zip_sh, '@OUTPUT@', '@PRIVATE_DIR@',
+    make_installer_zip_sh, '@OUTPUT@', '@PRIVATE_DIR@',
     '@INPUT1@', '@INPUT2@',
     ],
   install: true,
