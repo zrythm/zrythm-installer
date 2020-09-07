@@ -69,9 +69,7 @@ build() {
     -Dtests=false \
     "../zrythm-${pkgver}"
   ninja
-  cp /mingw64/lib/carla/*.dll ./src/
-  mv src/libcarla_native-plugin.dll \
-    src/CarlaNativePlugin.dll
+  cp /mingw64/lib/carla/libcarla-host-plugin.dll ./src/
   popd
 
   # build zplugins
@@ -88,7 +86,7 @@ build() {
 check() {
   pushd $_zrythm_builddir
   ninja test
-  src/zrythm.exe --version || true
+  src/zrythm.exe --version
   popd
 
   pushd "$_zplugins_builddir"

@@ -59,6 +59,7 @@ foreach locale : locales
 endforeach
 space_sep_locales.strip ()
 breeze_dark_path = get_option ('breeze-dark-path')
+trial_true_false = build_trial ? 'true' : 'false'
 is_arch = distro.contains ('arch')
 is_debian = distro.contains ('debian') or distro.contains ('ubuntu')
 is_nixos = distro.contains ('nixos')
@@ -112,13 +113,9 @@ global_conf.set (
   'CARLA_PREFIX', carla_prefix)
 global_conf.set ('DASH_TRIAL', dash_trial)
 global_conf.set (
-  'TRIAL_TRUE_FALSE', build_trial ? 'true' : 'false')
+  'TRIAL_TRUE_FALSE', trial_true_false)
 global_conf.set (
   'SPACE_SEPARATED_LOCALES', space_sep_locales)
-global_conf.set (
-  'MINGW_ZRYTHM_PKG_FILENAME', mingw_zrythm_pkg_filename)
-global_conf.set (
-  'MINGW_ZRYTHM_TRIAL_PKG_FILENAME', mingw_zrythm_trial_pkg_filename)
 global_conf.set (
   'LV2_VERSION', get_option ('lv2-ver'))
 global_conf.set (

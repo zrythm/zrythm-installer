@@ -11,13 +11,13 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
 options=('strip' 'staticlibs')
 license=("GPL2")
 url="https://github.com/sadko4u/lsp-dsp-lib"
-source=("Carla-2.2.0-RC2.tar.gz")
+source=("Carla-@CARLA_GIT_VER@.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
   ls
   rm -rf ${_realname}-${pkgver}
-  mv "Carla-2.2.0-RC2" ${_realname}-${pkgver}
+  mv "Carla-@CARLA_GIT_VER@" ${_realname}-${pkgver}
   cd ${_realname}-${pkgver}
 
   make features

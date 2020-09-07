@@ -16,11 +16,36 @@
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
 windows_msys_conf = configuration_data ()
-windows_msys_conf.merge_from (global_conf)
+windows_msys_conf.set (
+  'BASH', bash.full_path ())
+windows_msys_conf.set (
+  'DASH_TRIAL', dash_trial)
+windows_msys_conf.set (
+  'ZPLUGINS_VER', zplugins_ver)
+windows_msys_conf.set (
+  'ZRYTHM_PKG_VERSION', zrythm_pkg_ver)
+windows_msys_conf.set (
+  'TRIAL_TRUE_FALSE', trial_true_false)
+windows_msys_conf.set (
+  'CARLA_GIT_VER', carla_git_ver)
+windows_msys_conf.set (
+  'ZRYTHM_INNER_DIR_NAME', zrythm_inner_dir_name)
+windows_msys_conf.set (
+  'MANUALS_ZIP_FILE', get_option ('manuals-zip-file'))
+windows_msys_conf.set (
+  'BREEZE_DARK_PATH', breeze_dark_path)
+windows_msys_conf.set (
+  'ZRYTHM_SOURCE_TARBALL_FILENAME',
+  zrythm_src_tarball_filename)
 
 mingw_zrythm_pkgbuild = configure_file (
   output: 'PKGBUILD',
   input: 'PKGBUILD-w10.in',
+  configuration: windows_msys_conf,
+  )
+mingw_carla_pkgbuild = configure_file (
+  output: 'PKGBUILD-carla-mingw',
+  input: 'PKGBUILD-carla-mingw.in',
   configuration: windows_msys_conf,
   )
 
@@ -28,40 +53,40 @@ mingw_zrythm_pkgbuild = configure_file (
 make_windows_chroot = configure_file (
   output: 'make_windows_chroot.sh',
   input: 'make_windows_chroot.sh.in',
-  configuration: global_conf,
+  configuration: windows_msys_conf,
   )
 collect_dlls = configure_file (
   output: 'collect_dlls.sh',
   input: 'collect_dlls.sh.in',
-  configuration: global_conf,
+  configuration: windows_msys_conf,
   )
 make_dist_dir = configure_file (
   output: 'make_dist_dir.sh',
   input: 'make_dist_dir.sh.in',
-  configuration: global_conf,
+  configuration: windows_msys_conf,
   )
 make_windows_installer = configure_file (
   output: 'make_windows_installer.sh',
   input: 'make_windows_installer.sh.in',
-  configuration: global_conf,
+  configuration: windows_msys_conf,
   )
 make_mingw_pkg = configure_file (
   output: 'make_mingw_pkg.sh',
   input: 'make_mingw_pkg.sh.in',
-  configuration: global_conf,
+  configuration: windows_msys_conf,
   )
 make_zrythm_mingw_pkg = configure_file (
   output: 'make_zrythm_mingw_pkg.sh',
   input: 'make_zrythm_mingw_pkg.sh.in',
-  configuration: global_conf,
+  configuration: windows_msys_conf,
   )
 install_carla = configure_file (
   output: 'install_carla.sh',
   input: 'install_carla.sh.in',
-  configuration: global_conf,
+  configuration: windows_msys_conf,
   )
 
-filename = 'Carla-2.2.0-RC2.tar.gz'
+filename = 'Carla-' + carla_git_ver + '.tar.gz'
 url = 'https://www.zrythm.org/downloads/carla/' + filename
 carla_zip_windows = custom_target (
   'carla-zip-windows',
@@ -74,7 +99,8 @@ carla_zip_windows = custom_target (
   )
 
 make_mingw_pkg_cmd = [
-  bash, '-c', '@INPUT0@ "$1" "$2" "$3" "$4"',
+  bash, '-c', '@INPUT0@ "$1" "$2" "$3" "$4" ' +
+  '"$5"',
   '_ignored',
   '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
   'mingw64', 'x86_64',
@@ -138,7 +164,7 @@ carla_packages += custom_target (
   'mingw-carla-' + arch,
   output: 'carla' + arch + '.pkg.tar.zst',
   input: [
-    make_mingw_pkg, 'PKGBUILD-carla-mingw',
+    make_mingw_pkg, mingw_carla_pkgbuild,
     carla_zip_windows,
     ],
   command: [
@@ -235,11 +261,10 @@ mingw_install_carla_bins_target = custom_target (
   input: [
     install_carla,
     carla_woe32_binary_32_zip,
-    '',
     ],
   command: [
-    bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
-    '@OUTPUT@', '@INPUT1@', '@INPUT2@'
+    bash, '-c', '@INPUT0@ "$1" "$2"', '_ignored',
+    '@OUTPUT@', '@INPUT1@',
     ],
   console: true,
   install: false,
