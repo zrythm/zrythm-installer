@@ -48,10 +48,9 @@ mingw_prefix = 'mingw-w64-x86_64-'
 mingw_zrythm_pkg_filename = mingw_prefix + 'zrythm-' + zrythm_pkg_ver + '-1-any.pkg.tar.zst'
 mingw_zrythm_trial_pkg_filename = mingw_prefix + 'zrythm-trial-' + zrythm_pkg_ver + '-1-any.pkg.tar.zst'
 debian_src_tarball_filename = 'zrythm_' + zrythm_pkg_ver + '.orig.tar.gz'
-temp_carla_prefix = meson.build_root () / 'tmp_carla_prefix'
-temp_carla_pkgconfig_path = temp_carla_prefix / libdir / 'pkgconfig'
-temp_library_prefix = meson.build_root () / 'tmp_lib_prefix'
-temp_library_pkgconfig_path = temp_library_prefix / libdir / 'pkgconfig'
+carla_prefix = '/usr/lib/zrythm'
+library_prefix = meson.build_root () / 'lib_prefix'
+library_pkgconfig_path = library_prefix / libdir / 'pkgconfig'
 dash_trial = build_trial ? '-trial' : ''
 locales = get_option ('locales')
 space_sep_locales = ''
@@ -106,13 +105,11 @@ global_conf.set (
 global_conf.set (
   'LSP_DSP_LIB_VER', lsp_dsp_lib_ver)
 global_conf.set (
-  'TEMP_LIBRARY_PREFIX', temp_library_prefix)
+  'LIBRARY_PREFIX', library_prefix)
 global_conf.set (
-  'TEMP_LIBRARY_PKG_CONFIG_PATH', temp_library_pkgconfig_path)
+  'LIBRARY_PKG_CONFIG_PATH', library_pkgconfig_path)
 global_conf.set (
-  'TEMP_CARLA_PREFIX', temp_carla_prefix)
-global_conf.set (
-  'TEMP_CARLA_PKG_CONFIG_PATH', temp_carla_pkgconfig_path)
+  'CARLA_PREFIX', carla_prefix)
 global_conf.set ('DASH_TRIAL', dash_trial)
 global_conf.set (
   'TRIAL_TRUE_FALSE', build_trial ? 'true' : 'false')
@@ -158,15 +155,16 @@ subdir ('sources')
 
 carla_installation = custom_target (
   'carla-installation',
-  output: 'carla-native-plugin.pc',
+  output: 'carla-prefix',
   input: carla_src_zip,
   command: [
-    make_carla, '@INPUT@', carla_git_ver, '@PRIVATE_DIR@', '&&',
-    'cp', temp_carla_pkgconfig_path / 'carla-native-plugin.pc',
-    '@OUTPUT@',
+    make_carla, '@OUTPUT@', '@INPUT@', '@PRIVATE_DIR@',
+    carla_prefix,
     ],
+  console: true,
   install: false,
   )
+carla_pkgconfig_path = carla_installation.full_path () / carla_prefix / 'lib/pkgconfig'
 
 zplugins_installation = custom_target (
   'zplugins-installation',
@@ -176,6 +174,7 @@ zplugins_installation = custom_target (
     make_zplugins, '@OUTPUT@', zplugins_src_tarball,
     '@PRIVATE_DIR@',
     ],
+  console: true,
   install: false,
   )
 
@@ -190,7 +189,7 @@ lsp_dsp_lib_installation = custom_target (
   input: lsp_dsp_lib_src_tarball,
   command: [
     make_lsp_dsp_lib, '@INPUT@', '&&',
-    'cp', temp_library_pkgconfig_path / 'lsp-dsp-lib.pc',
+    'cp', library_pkgconfig_path / 'lsp-dsp-lib.pc',
     '@OUTPUT@',
     ],
   install: false,

@@ -61,9 +61,23 @@ install_carla = configure_file (
   configuration: global_conf,
   )
 
+filename = 'Carla-2.2.0-RC2.tar.gz'
+url = 'https://www.zrythm.org/downloads/carla/' + filename
+carla_zip_windows = custom_target (
+  'carla-zip-windows',
+  output: filename,
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  console: true,
+  install: false,
+  )
+
 make_mingw_pkg_cmd = [
-  bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
+  bash, '-c', '@INPUT0@ "$1" "$2" "$3" "$4"',
+  '_ignored',
   '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
+  'mingw64', 'x86_64',
   ]
 
 # sources
@@ -101,19 +115,44 @@ rcedit_x64_exe = custom_target (
   )
 
 # install dependencies
-independent_dep_names = [ 'jack2', 'lsp-dsp-lib', ]
+independent_dep_names = [
+  'jack2', 'lsp-dsp-lib'
+  ]
 independent_deps = []
 foreach dep_name : independent_dep_names
   independent_deps += custom_target (
     'mingw-' + dep_name,
     output: dep_name + '.pkg.tar.zst',
     input: [
-      make_mingw_pkg, 'PKGBUILD-' + dep_name + '-mingw',
+      make_mingw_pkg,
+      'PKGBUILD-' + dep_name + '-mingw',
       ],
     command: make_mingw_pkg_cmd,
     console: true,
     install: false,
     )
+endforeach
+carla_packages = []
+foreach arch : [ '64' ]
+carla_packages += custom_target (
+  'mingw-carla-' + arch,
+  output: 'carla' + arch + '.pkg.tar.zst',
+  input: [
+    make_mingw_pkg, 'PKGBUILD-carla-mingw',
+    carla_zip_windows,
+    ],
+  command: [
+    bash, '-c',
+    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6"',
+    '_ignored',
+    '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
+    'mingw' + arch,
+    arch == '64' ? 'x86_64' : 'i686',
+    '@INPUT2@',
+    ],
+  console: true,
+  install: false,
+  )
 endforeach
 lv2_pkg = custom_target (
   'mingw-lv2',
@@ -173,6 +212,8 @@ carla_woe32_binary_32_zip = custom_target (
   console: true,
   install: false,
   )
+
+if false
 carla_short_git_ver = run_command (
   'bash', '-c', 'echo ' + carla_git_ver + ' | head -c 7').stdout ().strip ()
 filename = 'carla-64-' + carla_short_git_ver + '.zip'
@@ -186,13 +227,15 @@ carla_woe32_binary_64_zip = custom_target (
   console: true,
   install: false,
   )
+endif
 
 mingw_install_carla_bins_target = custom_target (
   'mingw-install-carla',
   output: 'carla-installed',
   input: [
-    install_carla, carla_woe32_binary_64_zip,
+    install_carla,
     carla_woe32_binary_32_zip,
+    '',
     ],
   command: [
     bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
@@ -235,17 +278,20 @@ windows_chroot_target = custom_target (
   input: [
     make_windows_chroot, zrythm_src_tarball,
     independent_deps[0],
-    independent_deps[1], lv2_pkg, serd_pkg, sord_pkg,
+    independent_deps[1],
+    carla_packages[0],
+    lv2_pkg, serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg, mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',
-    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" ' +
-    '"$9" "${10}" "${11}"',
+    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
+    '"$7" "$8" "$9" "${10}" "${11}" "${12}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
     '@INPUT7@', '@INPUT8@', '@INPUT9@',
+    '@INPUT10@',
     ],
   console: true,
   install: false,

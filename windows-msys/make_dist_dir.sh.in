@@ -146,7 +146,6 @@ main () {
   echo "packaging binaries"
   orig_zrythm_exe="$mingw_prefix/bin/zrythm$dash_trial.exe"
   zrythm_exe="$dist_bindir/zrythm.exe"
-  "$orig_zrythm_exe" --version
   cp "$orig_zrythm_exe" "$zrythm_exe"
   "$zrythm_exe" --version
   cp $mingw_prefix/bin/carla*.exe "$dist_bindir/"

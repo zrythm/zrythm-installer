@@ -19,6 +19,10 @@ rpm_conf = configuration_data ()
 rpm_conf.merge_from (global_conf)
 rpm_conf.set (
   'BUILT_ZPLUGINS_DIR', zplugins_installation.full_path ())
+rpm_conf.set (
+  'CARLA_DESTDIR', carla_installation.full_path ())
+rpm_conf.set (
+  'CARLA_PKG_CONFIG_PATH', carla_pkgconfig_path)
 
 specfile = configure_file (
   output: 'zrythm.spec',

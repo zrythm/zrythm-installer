@@ -1,12 +1,12 @@
 #!@BASH@
 
-set -e
+set -ex
 
-# full path to carla source zip
-carla_source_zip="$1"
-private_dir="$2"
+out_dir="$1"
+carla_source_zip="$2"
+private_dir="$3"
+prefix="$4"
 
-prefix="@TEMP_CARLA_PREFIX@"
 carla_git_ver="@CARLA_GIT_VER@"
 
 export CC=@CC@
@@ -16,8 +16,11 @@ if pkg-config --atleast-version=2.1 carla-native-plugin ; then
   echo "latest carla installed" ;
 fi
 
+pwd
 rm -rf $private_dir
 mkdir -p $private_dir
 unzip -o "$carla_source_zip" -d "$private_dir"
 cd "$private_dir/Carla-$carla_git_ver"
-make -j4 && make install PREFIX="$prefix" LIBDIR=$prefix/@LIBDIR@
+make features
+make -j4
+make install DESTDIR="$out_dir" PREFIX="$prefix" LIBDIR=$prefix/lib

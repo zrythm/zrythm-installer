@@ -88,14 +88,14 @@ and is designed to be intuitive to use.
 
 %build
 rm -rf build
-@MESON_BIN@ build --prefix=/usr -Dpkg_config_path=@TEMP_LIBRARY_PKG_CONFIG_PATH@:@TEMP_CARLA_PKG_CONFIG_PATH@ -Dtests=true -Dmanpage=true --buildtype=debugoptimized -Dsdl=enabled -Drtaudio=auto -Drtmidi=auto -Dtrial_ver=@TRIAL_TRUE_FALSE@ -Dcarla=enabled -Dgraphviz=enabled -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_VERSION@
+@MESON_BIN@ build --prefix=/usr -Dpkg_config_path=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ -Dtests=true -Dmanpage=true --buildtype=debugoptimized -Dsdl=enabled -Drtaudio=auto -Drtmidi=auto -Dtrial_ver=@TRIAL_TRUE_FALSE@ -Dcarla=enabled -Dgraphviz=enabled -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_VERSION@
 ninja -C build
 
 %install
 DESTDIR="%{buildroot}/" ninja -C build install
 mkdir -p "%{buildroot}/usr/lib/zrythm/lib/lv2"
 rm -rf "%{buildroot}/usr/lib64/libcm_reproc.a"
-cp -RLv @TEMP_CARLA_PREFIX@/@LIBDIR@/carla \
+cp -RLv @CARLA_DESTDIR@/@CARLA_PREFIX@/lib/carla \
   %{buildroot}/usr/lib/zrythm/lib/
 cp -RLv @BUILT_ZPLUGINS_DIR@/* \
   %{buildroot}/usr/lib/zrythm/lib/lv2/

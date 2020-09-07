@@ -5,7 +5,7 @@ set -e
 tarball=$1
 
 lsp_dsp_lib_ver="@LSP_DSP_LIB_VER@"
-temp_lib_prefix="@TEMP_LIBRARY_PREFIX@"
+temp_lib_prefix="@LIBRARY_PREFIX@"
 
 export CC=@CC@
 
@@ -14,5 +14,6 @@ tar xf $tarball -C $tempdir
 ls -l "$tempdir"
 cd "$tempdir/lsp-dsp-lib"
 make config PREFIX=$temp_lib_prefix LIBDIR=$temp_lib_prefix/@LIBDIR@
-make -j4 && make install
+make -j4
+make install
 rm -rf $tempdir
