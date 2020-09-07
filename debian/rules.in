@@ -33,4 +33,4 @@ override_dh_auto_install:
 		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/
 	cp -RLv @BUILT_ZPLUGINS_DIR@/* \
 		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/lv2/
-	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/carla/libcarla-host-plugin.so ] ; then exit 1 ; fi
+	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/carla/libcarla_host-plugin.so ] ; then exit 1 ; fi

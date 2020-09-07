@@ -11,19 +11,22 @@ deb_rules=$4
 deb_compat=$5
 deb_control=$6
 deb_copyright=$7
+private_dir="$8"
 
 inner_dir="@ZRYTHM_INNER_DIR_NAME@"
 dash_trial="@DASH_TRIAL@"
 
-tempdir=`mktemp -d`
-deb_parent_dir=$tempdir/$inner_dir
+rm -rf "$private_dir"
+mkdir -p "$private_dir"
+
+deb_parent_dir=$private_dir/$inner_dir
 deb_dir="$deb_parent_dir/debian"
 deb_src_dir="$deb_dir/source"
 mkdir -p $deb_parent_dir
 mkdir -p $deb_src_dir
 
 # prepare
-cp $deb_source_tarball $tempdir/
+cp $deb_source_tarball $private_dir/
 cp $deb_changelog $deb_dir/changelog
 cp $deb_compat $deb_dir/compat
 cp $deb_control $deb_dir/control
@@ -32,12 +35,10 @@ cp $deb_rules $deb_dir/rules
 echo "3.0 (native)" > $deb_src_dir/format
 
 # add tarball contents
-tar -xzf $deb_source_tarball -C $tempdir
+tar -xzf $deb_source_tarball -C $private_dir
 
 pushd $deb_parent_dir
 debuild -us -uc
 popd
 
-mv "$tempdir/zrythm$dash_trial"_*.deb "$out_pkg"
-
-#rm -rf $tempdir
+mv "$private_dir/zrythm$dash_trial"_*.deb "$out_pkg"

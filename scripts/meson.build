@@ -17,12 +17,6 @@
 
 # configure each script
 
-make_debian_pkg = configure_file (
-  output: 'make_debian_pkg.sh',
-  input: 'make_debian_pkg.sh.in',
-  configuration: global_conf,
-  )
-
 make_rpm_pkg = configure_file (
   output: 'make_rpm_pkg.sh',
   input: 'make_rpm_pkg.sh.in',

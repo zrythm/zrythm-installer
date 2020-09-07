@@ -66,6 +66,11 @@ debian_rules = configure_file (
   input: 'rules.in',
   configuration: debian_conf,
   )
+make_debian_pkg = configure_file (
+  output: 'make_debian_pkg.sh',
+  input: 'make_debian_pkg.sh.in',
+  configuration: debian_conf,
+  )
 
 # sources
 debian_zrythm_src_tarball = custom_target (
