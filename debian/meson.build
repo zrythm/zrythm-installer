@@ -15,24 +15,49 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
+# configure files
 debian_changelog = configure_file (
   output: 'changelog',
   input: 'changelog.in',
   configuration: global_conf,
   )
-
 debian_control = configure_file (
   output: 'control',
   input: 'control.in',
   configuration: global_conf,
   )
-
 debian_rules = configure_file (
   output: 'rules',
   input: 'rules.in',
   configuration: global_conf,
   )
 
+# sources
+debian_zrythm_src_tarball = custom_target (
+  'debian-zrythm-source-tarball',
+  output: debian_src_tarball_filename.split ('.gz')[0],
+  input: zrythm_src_tarball,
+  command: [
+    'rm', '-rf', '@OUTPUT@', '&&',
+    # rezip because gzip says not valid gzip format
+    'tar', 'xf', '@INPUT@', '&&',
+    'tar', 'cf', '@OUTPUT@', zrythm_inner_dir_name, '&&',
+    'rm', '-rf', zrythm_inner_dir_name,
+    ],
+  install: false,
+  )
+debian_zrythm_src_tarball_gzipped = custom_target (
+  'debian-zrythm-source-tarball-gzipped',
+  output: debian_src_tarball_filename,
+  input: debian_zrythm_src_tarball,
+  command: [
+    'rm', '-rf', '@OUTPUT@', '&&',
+    'gzip', '@INPUT@',
+    ],
+  install: false,
+  )
+
+# package
 debian_pkg_filename = run_command (
   get_pkg_filename, 'DEBIAN', dash_trial).stdout ().strip ()
 debian_pkg = custom_target (

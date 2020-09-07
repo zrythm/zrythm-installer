@@ -9,6 +9,11 @@ src_tarball="$3"
 zplugins_tarball="$4"
 private_dir="$5"
 
+dash_trial="@DASH_TRIAL@"
+
+pkgname="mingw-w64-x86_64-zrythm$dash_trial"
+pacman -R $pkgname --noconfirm || true
+
 rm -rf $private_dir
 mkdir -p $private_dir
 

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-# configure script
+# configure scripts
 make_zrythm_tarball = configure_file (
   output: 'make_zrythm_tarball.sh',
   input: 'make_zrythm_tarball.sh.in',
@@ -49,30 +49,6 @@ run_target (
   command: [ 'echo', 'done' ],
   depends: zrythm_src_tarball)
 
-debian_zrythm_src_tarball = custom_target (
-  'debian-zrythm-source-tarball',
-  output: debian_src_tarball_filename.split ('.gz')[0],
-  input: zrythm_src_tarball,
-  command: [
-    'rm', '-rf', '@OUTPUT@', '&&',
-    # rezip because gzip says not valid gzip format
-    'tar', 'xf', '@INPUT@', '&&',
-    'tar', 'cf', '@OUTPUT@', zrythm_inner_dir_name, '&&',
-    'rm', '-rf', zrythm_inner_dir_name,
-    ],
-  install: false,
-  )
-
-debian_zrythm_src_tarball_gzipped = custom_target (
-  'debian-zrythm-source-tarball-gzipped',
-  output: debian_src_tarball_filename,
-  input: debian_zrythm_src_tarball,
-  command: [
-    'rm', '-rf', '@OUTPUT@', '&&',
-    'gzip', '@INPUT@',
-    ],
-  install: false,
-  )
 
 url = 'https://github.com/falkTX/Carla/archive/' + carla_git_ver + '.zip'
 carla_src_zip = custom_target (
@@ -100,19 +76,6 @@ lsp_dsp_lib_src_tarball = custom_target (
   output: 'lsp-dsp-lib-' + lsp_dsp_lib_ver + '.tar.gz',
   command: [
     'wget', url, '-O', '@OUTPUT@',
-    ],
-  install: false,
-  )
-
-filename = 'rcedit-x64.exe'
-url = 'https://github.com/electron/rcedit/releases/download/v1.1.1/' + filename
-rcedit_x64_exe = custom_target (
-  'rcedit-x64-exe',
-  output: filename,
-  command: [
-    bash, '-c',
-    'wget ' + url + ' -O \'@OUTPUT@\' && ' +
-    'chmod +x \'@OUTPUT@\''
     ],
   install: false,
   )

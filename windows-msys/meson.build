@@ -30,6 +30,11 @@ make_windows_chroot = configure_file (
   input: 'make_windows_chroot.sh.in',
   configuration: global_conf,
   )
+make_dist_dir = configure_file (
+  output: 'make_dist_dir.sh',
+  input: 'make_dist_dir.sh.in',
+  configuration: global_conf,
+  )
 make_windows_installer = configure_file (
   output: 'make_windows_installer.sh',
   input: 'make_windows_installer.sh.in',
@@ -53,8 +58,40 @@ install_carla = configure_file (
 
 make_mingw_pkg_cmd = [
   bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
-  '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@'
+  '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
   ]
+
+# sources
+inno_extract_ver = '1.9'
+filename = 'innoextract-' + inno_extract_ver + '-windows.zip'
+url = 'https://github.com/dscharrer/innoextract/releases/download/' + inno_extract_ver + '/' + filename
+inno_extract_zip = custom_target (
+  'inno-extract-zip',
+  output: filename,
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+#inno_extract = custom_target (
+  #'inno-extract-exe',
+  #output: 'innoextract.exe',
+  #input: inno_extract_ver,
+  #command: [
+    #bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
+    #'@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@'
+filename = 'rcedit-x64.exe'
+url = 'https://github.com/electron/rcedit/releases/download/v1.1.1/' + filename
+rcedit_x64_exe = custom_target (
+  'rcedit-x64-exe',
+  output: filename,
+  command: [
+    bash, '-c',
+    'wget ' + url + ' -O \'@OUTPUT@\' && ' +
+    'chmod +x \'@OUTPUT@\''
+    ],
+  install: false,
+  )
 
 # install dependencies
 independent_dep_names = [ 'jack2', 'lsp-dsp-lib', ]
@@ -73,7 +110,9 @@ endforeach
 lv2_pkg = custom_target (
   'mingw-lv2',
   output: 'lv2.pkg.tar.zst',
-  input: [ make_mingw_pkg, 'PKGBUILD-lv2-mingw', ],
+  input: [
+    make_mingw_pkg, 'PKGBUILD-lv2-mingw',
+    ],
   command: make_mingw_pkg_cmd,
   install: false,
   )
@@ -169,6 +208,11 @@ mingw_zrythm_pkg = custom_target (
   install: false,
   )
 
+run_target (
+  'install-zrythm-mingw-pkg',
+  command: [ 'echo', 'done' ],
+  depends: mingw_zrythm_pkg)
+
 chroot_dir = '/tmp/zrythm' + dash_trial + '-chroot'
 windows_chroot_target = custom_target (
   'windows-chroot',
@@ -191,15 +235,11 @@ windows_chroot_target = custom_target (
   install: false,
   )
 
-windows_msys_installer_filename = run_command (
-  bash, '-c',
-  meson.build_root () / 'scripts/get_pkg_filename.sh' +
-  ' WINDOWS_MSYS ' + dash_trial).stdout ().strip ()
-windows_msys_installer = custom_target (
-  'windows-msys-installer',
-  output: windows_msys_installer_filename,
+installer_dist_dir = custom_target (
+  'windows-installer-dist-dir',
+  output: 'installer-dist',
   input: [
-    make_windows_installer, zrythm_src_tarball,
+    make_dist_dir, zrythm_src_tarball,
     'installer.iss', 'copy-dll-deps.sh',
     rcedit_x64_exe,
     ],
@@ -212,6 +252,23 @@ windows_msys_installer = custom_target (
     ],
   depends: [
     windows_chroot_target,
+    ],
+  install: false,
+  )
+
+windows_msys_installer_filename = run_command (
+  bash, '-c',
+  meson.build_root () / 'scripts/get_pkg_filename.sh' +
+  ' WINDOWS_MSYS ' + dash_trial).stdout ().strip ()
+windows_msys_installer = custom_target (
+  'windows-msys-installer',
+  output: windows_msys_installer_filename,
+  input: [
+    make_windows_installer, installer_dist_dir,
+    ],
+  command: [
+    bash, '-c',
+    '@INPUT0@ "$1" "$2"', '_ignored', '@OUTPUT@', '@INPUT1@',
     ],
   install: true,
   install_dir: get_option ('prefix'),

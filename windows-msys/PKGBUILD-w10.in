@@ -37,7 +37,9 @@ source=("zrythm-$pkgver.tar.gz" "zplugins-$_zplugins_ver.tar.gz")
 sha256sums=('SKIP' 'SKIP')
 
 prepare() {
-  cd "${srcdir}"/zrythm-${pkgver}
+  pushd "${srcdir}"/zrythm-${pkgver}
+  sed -i -e "s|\['benchmarks/dsp', true\]|#|g" tests/meson.build
+  popd
 }
 
 build() {
@@ -45,7 +47,8 @@ build() {
   [[ -d "$_zplugins_builddir" ]] && rm -rf "$_zplugins_builddir"
 
   # build zrythm
-  mkdir -p $_zrythm_builddir && cd $_zrythm_builddir
+  mkdir -p $_zrythm_builddir
+  pushd $_zrythm_builddir
   sed -i -e '94s/translator/"invalid"/' \
     ${srcdir}/zrythm-${pkgver}/scripts/gen-translators-list.scm
   ${MINGW_PREFIX}/bin/meson \
@@ -60,19 +63,34 @@ build() {
     -Dwindows_release=true -Dcarla=enabled \
     --buildtype=debugoptimized \
     -Dextra_debug_info=true \
+    -Dtests=false \
     "../zrythm-${pkgver}"
   ninja
+  cp /mingw64/lib/carla/*.dll ./src/
+  mv src/libcarla_native-plugin.dll \
+    src/CarlaNativePlugin.dll
+  popd
 
   # build zplugins
-  cd ${srcdir}
-
   mkdir -p "$_zplugins_builddir"
-  cd "$_zplugins_builddir"
+  pushd "$_zplugins_builddir"
   ls -l
   ${MINGW_PREFIX}/bin/meson \
     --buildtype=release \
     "../zplugins-${_zplugins_ver}"
   ninja
+  popd
+}
+
+check() {
+  pushd $_zrythm_builddir
+  ninja test
+  src/zrythm.exe --version || true
+  popd
+
+  pushd "$_zplugins_builddir"
+  ninja test
+  popd
 }
 
 package() {

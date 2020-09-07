@@ -3,177 +3,13 @@
 set -ex
 
 out_file="$1"
-zrythm_src_tarball="$2"
-chroot_dir="$3"
-inno_installer_iss="$4"
-private_dir="$5"
-copy_dll_deps_sh="$6"
-rcedit_x64_exe="$7"
+dist_dir="$2"
 
-inner_dir="@ZRYTHM_INNER_DIR_NAME@"
 dash_trial="@DASH_TRIAL@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
-meson_src_root="@MESON_SOURCE_ROOT@"
-manuals_zip="@MANUALS_ZIP_FILE@"
-zrythm_inner_dir_name="@ZRYTHM_INNER_DIR_NAME@"
-breeze_dark_path="@BREEZE_DARK_PATH@"
-zrythm_src_tarball_filename="@ZRYTHM_SOURCE_TARBALL_FILENAME@"
 
-mingw_prefix="$chroot_dir/mingw64"
 app_name="Zrythm$dash_trial"
 
-installer_dir=$private_dir/installer
-src_dir=$installer_dir/src
-dist_dir=$installer_dir/dist
-dist_bindir=$dist_dir/bin
-dist_libdir=$dist_dir/lib
-dist_sharedir=$dist_dir/share
-dist_etcdir=$dist_dir/etc
-dist_plugins_dir=$dist_dir/plugins
-install_data="install -m 644"
-glib_schemas_dir_suffix=share/glib-2.0/schemas
-
-# make the dirs
-rm -rf $private_dir
-mkdir -p $dist_bindir
-mkdir -p $dist_libdir
-mkdir -p $dist_sharedir
-mkdir -p $dist_etcdir
-mkdir -p $dist_plugins_dir
-
-# create sources distribution
-echo "TODO" > $dist_dir/THIRDPARTY_INFO
-cp $zrythm_src_tarball $installer_dir/
-pushd $installer_dir
-tar xf $zrythm_src_tarball_filename
-rm $zrythm_src_tarball_filename
-popd
-mv $installer_dir/$zrythm_inner_dir_name $src_dir
-cp $src_dir/AUTHORS $dist_dir/
-cp $src_dir/COPYING* $dist_dir/
-cp $src_dir/README.md $dist_dir/README.txt
-cp $src_dir/CONTRIBUTING.md $dist_dir/
-cp $src_dir/THANKS $dist_dir/
-cp $src_dir/TRANSLATORS $dist_dir/
-cp $src_dir/CHANGELOG.md $dist_dir/
-cp $src_dir/data/windows/zrythm.ico $dist_dir/zrythm.ico
-
-# copy plugins from the chroot dir
-cp -R $chroot_dir/mingw64/lib/lv2/Z*.lv2 $dist_dir/plugins/
-# remove some plugins if trial ver
-if [ "$dash_trial" == "-trial" ]; then \
-  rm -rf $dist_dir/plugins/ZChordz*.lv2 ; \
-  rm -rf $dist_dir/plugins/ZLFO*.lv2 ; \
-fi
-
-mkdir -p $dist_dir/$glib_schemas_dir_suffix
-glib-compile-schemas $mingw_prefix/$glib_schemas_dir_suffix
-cp $mingw_prefix/$glib_schemas_dir_suffix/* $dist_dir/$glib_schemas_dir_suffix/
-
-# ******************************
-echo "Copying dlls..."
-
-$copy_dll_deps_sh \
-  --infile "$mingw_prefix/bin/zrythm$dash_trial.exe" \
-  --destdir $dist_bindir/ \
-  --recursivesrcdir "$mingw_prefix/bin" \
-  --srcdir "$mingw_prefix/bin" \
-  --objdump "/mingw64/bin/objdump.exe" \
-  --copy
-
-# some dlls need to be copied manually
-cp $mingw_prefix/bin/librsvg-2-2.dll $dist_bindir/
-cp $mingw_prefix/lib/carla/*.dll $dist_bindir/
-
-# for an unknown reason it doesn't work unless it
-# is named CarlaNativePlugin.dll
-mv $dist_bindir/libcarla_native-plugin.dll \
-  $dist_bindir/CarlaNativePlugin.dll
-
-# ******************************
-
-# ******************************
-if [ "$dash_trial" != "-trial" ]; then
-  echo "packaging user manuals" ;
-  unzip -o $manuals_zip -d $dist_dir/ ;
-fi
-
-# ******************************
-
-# ******************************
-
-cp -R $mingw_prefix/etc/fonts $dist_etcdir
-# ******************************
-
-# ******************************
-echo "packaging breeze icons"
-mkdir -p "$dist_sharedir/icons"
-# the icons are preinstalled here
-cp -R "$breeze_dark_path" "$dist_sharedir/icons"/breeze-dark
-
-echo "packaging existing hicolor icons"
-cp -R "$mingw_prefix/share/icons/hicolor" "$dist_sharedir/icons/"
-# ******************************
-
-# ******************************
-echo "packaging gtksourceview files"
-cp -R $mingw_prefix/share/gtksourceview-4 $dist_sharedir/
-# ******************************
-
-# ******************************
-echo "packaging locales"
-cp -R $mingw_prefix/share/locale $dist_sharedir/
-# ******************************
-
-# ******************************
-echo "packaging other assets"
-cp -R $mingw_prefix/share/zrythm $dist_sharedir/
-# ******************************
-
-# ******************************
-echo "packaging fonts"
-cp -R $mingw_prefix/share/fonts $dist_sharedir/
-# ******************************
-
-# ******************************
-echo "packaging gdk pixbuf loaders"
-pixbuf_dir="lib/gdk-pixbuf-2.0/2.10.0"
-mkdir -p "$dist_dir/$pixbuf_dir/loaders"
-cp "$mingw_prefix/$pixbuf_dir/loaders/"*.dll \
-  "$dist_dir/$pixbuf_dir/loaders/"
-gdk_pixbuf_module_dir="$mingw_prefix/$pixbuf_dir/loaders" \
-  $mingw_prefix/bin/gdk-pixbuf-query-loaders.exe \
-  $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-svg.dll \
-  $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-jpeg.dll \
-  $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-gif.dll \
-  $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-bmp.dll \
-  $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-tiff.dll \
-  $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-png.dll > \
-  "$dist_dir/$pixbuf_dir/loaders.cache"
-sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
-  "$dist_dir/$pixbuf_dir/loaders.cache"
-# ******************************
-
-# ******************************
-echo "packaging binaries"
-cp "$mingw_prefix/bin/zrythm$dash_trial.exe" "$dist_bindir/zrythm.exe"
-cp $mingw_prefix/bin/carla*.exe "$dist_bindir/"
-if [ -f "$mingw_prefix/bin/gdbus.exe" ]; then
-  cp "$mingw_prefix/bin/gdbus.exe" "$dist_bindir/"
-fi
-$rcedit_x64_exe "$dist_bindir/zrythm.exe" --set-icon  "$dist_dir/zrythm.ico"
-cp "$mingw_prefix/bin/gspawn-win64-helper.exe" "$dist_bindir/"
-cp "$mingw_prefix/bin/gspawn-win64-helper-console.exe" "$dist_bindir/"
-
-# ******************************
-
-echo "checking if binary works..."
-$dist_bindir/zrythm.exe --version
-echo "return code: $?"
-
-# ******************************
-
-cp "$inno_installer_iss" "$dist_dir"/installer.iss
 pushd $dist_dir
 ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
   "//DAppName=$app_name" "//DAppVersion=$zrythm_pkg_ver" \
@@ -182,4 +18,5 @@ pushd $dist_dir
   installer.iss
 popd
 
-cp "$dist_dir/Output/Zrythm$dash_trial $zrythm_pkg_ver.exe" $out_file
+mv "$dist_dir/Output/Zrythm$dash_trial $zrythm_pkg_ver.exe" \
+  "$out_file"

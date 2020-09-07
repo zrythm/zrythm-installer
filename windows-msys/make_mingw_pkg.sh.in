@@ -1,11 +1,20 @@
 #!@BASH@
 
-set -x
+set -ex
 
 out_file="$1"
 
 pkgbuild="$2"
 private_dir="$3"
+
+pkgname="`basename $pkgbuild`"
+pkgname=${pkgname#"PKGBUILD-"}
+pkgname=${pkgname%"-mingw"}
+
+while test -f /var/lib/pacman/db.lck; do
+  sleep 1
+done
+pacman -R mingw-w64-x86_64-$pkgname --noconfirm || true
 
 rm -rf $private_dir
 mkdir -p $private_dir
@@ -13,6 +22,9 @@ cp $pkgbuild $private_dir/PKGBUILD
 pushd $private_dir
 MINGW_INSTALLS=mingw64 makepkg-mingw -fs --noconfirm
 popd
+while test -f /var/lib/pacman/db.lck; do
+  sleep 1
+done
 pacman -U $private_dir/*.pkg.tar.zst --noconfirm --overwrite='*'
 
 cp $private_dir/*.pkg.tar.zst $out_file
