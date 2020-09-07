@@ -19,6 +19,11 @@ arch_conf = configuration_data ()
 arch_conf.merge_from (global_conf)
 arch_conf.set (
   'BUILT_ZPLUGINS_DIR', zplugins_installation.full_path ())
+arch_conf.set (
+  'CARLA_PKG_CONFIG_PATH', carla_pkgconfig_path)
+arch_conf.set (
+  'CARLA_FULL_BINS_PATH',
+  carla_installation.full_path () + carla_prefix / 'lib/carla')
 
 pkgbuild = configure_file (
   output: 'PKGBUILD',

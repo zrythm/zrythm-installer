@@ -26,14 +26,15 @@ _rootdir="zrythm-${pkgver}"
 build() {
   cd $_rootdir
   @MESON_BIN@ build --prefix=/usr -Dtests=false \
-    -Dpkg_config_path=@TEMP_LIBRARY_PKG_CONFIG_PATH@:@TEMP_CARLA_PKG_CONFIG_PATH@ \
+    -Dpkg_config_path=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
     -Dmanpage=true \
     -Dbuildtype=debugoptimized -Dextra_debug_info=true \
     -Dsdl=enabled -Drtaudio=enabled \
     -Drtmidi=enabled -Dcarla=enabled \
     -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true \
     -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
-    -Dtrial_ver=@TRIAL_TRUE_FALSE@
+    -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
+    -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
   ninja -C build
 }
 
@@ -48,7 +49,7 @@ package() {
     -t "${pkgdir}/usr/share/doc/zrythm/"
   DESTDIR="${pkgdir}/" ninja -C build install
   mkdir -p "${pkgdir}/usr/lib/zrythm/lib/lv2"
-  cp -RLv @TEMP_CARLA_PREFIX@/@LIBDIR@/carla \
+  cp -RLv @CARLA_FULL_BINS_PATH@ \
     ${pkgdir}/usr/lib/zrythm/lib/
   cp -RLv @BUILT_ZPLUGINS_DIR@/* \
     ${pkgdir}/usr/lib/zrythm/lib/lv2/
