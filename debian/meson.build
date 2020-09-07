@@ -37,7 +37,7 @@ debian_conf.set (
   carla_installation.full_path ())
 debian_conf.set (
   'CARLA_PKG_CONFIG_PATH',
-  carla_installation.full_path () + carla_prefix / 'lib/pkgconfig')
+  carla_pkgconfig_path)
 debian_conf.set (
   'CARLA_PREFIX', carla_prefix)
 debian_conf.set (

@@ -108,7 +108,7 @@ global_conf.set (
 global_conf.set (
   'LIBRARY_PREFIX', library_prefix)
 global_conf.set (
-  'LIBRARY_PKG_CONFIG_PATH', 
+  'LIBRARY_PKG_CONFIG_PATH',
   library_pkgconfig_path)
 global_conf.set (
   'CARLA_PREFIX', carla_prefix)
@@ -159,7 +159,7 @@ carla_installation = custom_target (
   console: true,
   install: false,
   )
-carla_pkgconfig_path = carla_installation.full_path () / carla_prefix / 'lib/pkgconfig'
+carla_pkgconfig_path = carla_installation.full_path () + carla_prefix / 'lib/pkgconfig'
 
 zplugins_installation = custom_target (
   'zplugins-installation',

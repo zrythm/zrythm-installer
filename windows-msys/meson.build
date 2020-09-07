@@ -228,7 +228,7 @@ lilv_pkg = custom_target (
 
 # get carla binary zips
 carla_bin_base_url = 'https://www.zrythm.org/downloads/carla/'
-filename = 'carla-2.2.0-rc1-woe32.zip'
+filename = 'carla-2.2.0-rc2-woe32.zip'
 url = carla_bin_base_url + filename
 carla_woe32_binary_32_zip = custom_target (
   'carla-woe32-binary-32-zip',

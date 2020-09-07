@@ -23,6 +23,9 @@ rpm_conf.set (
   'CARLA_DESTDIR', carla_installation.full_path ())
 rpm_conf.set (
   'CARLA_PKG_CONFIG_PATH', carla_pkgconfig_path)
+rpm_conf.set (
+  'CARLA_FULL_BINS_PATH',
+  carla_installation.full_path () + carla_prefix / 'lib/carla')
 
 specfile = configure_file (
   output: 'zrythm.spec',
