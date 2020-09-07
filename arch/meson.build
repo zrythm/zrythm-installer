@@ -44,6 +44,7 @@ arch_pkg = custom_target (
     lsp_dsp_lib_installation,
     zplugins_installation,
     ],
+  console: true,
   install: true,
   install_dir: get_option ('prefix'),
   )

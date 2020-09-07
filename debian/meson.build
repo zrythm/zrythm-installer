@@ -80,6 +80,7 @@ debian_pkg = custom_target (
     zrythm_src_tarball,
     zplugins_installation,
     ],
+  console: true,
   install: true,
   install_dir: get_option ('prefix'),
   )

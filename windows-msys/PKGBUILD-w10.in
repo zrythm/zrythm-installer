@@ -54,8 +54,11 @@ build() {
   ${MINGW_PREFIX}/bin/meson \
     -Dsdl=enabled \
     -Drtaudio=auto \
-    -Drtmidi=auto -Dstatic_lsp_dsp=true \
-    -Djack=enabled \
+    -Drtmidi=auto \
+    -Dlsp_dsp=enabled \
+    -Dstatic_deps=true \
+    -Dstatic_lsp_dsp=true \
+    -Djack=disabled \
     -Dguile=disabled \
     -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
     -Dmanpage=false \

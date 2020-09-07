@@ -1,0 +1,39 @@
+#!@BASH@
+
+set -ex
+
+out_dir="$1"
+copy_dll_deps_sh="$2"
+chroot_dir="$3"
+
+dash_trial="@DASH_TRIAL@"
+
+mingw_prefix="$chroot_dir/mingw64"
+
+rm -rf $out_dir
+mkdir -p $out_dir
+
+main () {
+  echo "Copying dlls..."
+
+  $copy_dll_deps_sh \
+    --infile "$mingw_prefix/bin/zrythm$dash_trial.exe" \
+    --destdir $out_dir/ \
+    --recursivesrcdir "$mingw_prefix/bin" \
+    --srcdir "$mingw_prefix/bin" \
+    --objdump "/mingw64/bin/objdump.exe" \
+    --copy
+
+  # some dlls need to be copied manually
+  cp $mingw_prefix/bin/librsvg-2-2.dll $out_dir/
+  cp $mingw_prefix/lib/carla/*.dll $out_dir/
+
+  # for an unknown reason it doesn't work unless it
+  # is named CarlaNativePlugin.dll
+  mv $out_dir/libcarla_native-plugin.dll \
+    $out_dir/CarlaNativePlugin.dll
+
+  # ******************************
+}
+
+main 1>&2

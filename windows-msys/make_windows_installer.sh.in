@@ -4,19 +4,47 @@ set -ex
 
 out_file="$1"
 dist_dir="$2"
+inno_installer_iss="$3"
 
 dash_trial="@DASH_TRIAL@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
 
 app_name="Zrythm$dash_trial"
 
-pushd $dist_dir
-~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
-  "//DAppName=$app_name" "//DAppVersion=$zrythm_pkg_ver" \
-  "//DAppInfoVersion=${zrythm_pkg_ver:0:7}" \
-  "//DPluginsDir=plugins" \
-  installer.iss
-popd
+verify_bin_file () {
+  bin_file="$1"
+  ok_text="$2"
+  echo "verifying zrythm binary $bin_file..."
+  temp_file=`mktemp`
+  $bin_file --version > $temp_file 2>&1 || true
+  output="`cat $temp_file`"
+  echo "$output"
+  if [[ "$output" = *"$ok_text"* ]]; then
+    echo "ok"
+  else
+    echo "fail"
+    rm "$temp_file"
+    exit 1
+  fi
+  rm "$temp_file"
+  exit 0
+}
 
-mv "$dist_dir/Output/Zrythm$dash_trial $zrythm_pkg_ver.exe" \
-  "$out_file"
+main () {
+  # verify installation
+  (verify_bin_file "$dist_dir/bin/zrythm.exe" "built with ")
+
+  cp $inno_installer_iss $dist_dir/installer.iss
+  pushd $dist_dir
+  ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
+    "//DAppName=$app_name" "//DAppVersion=$zrythm_pkg_ver" \
+    "//DAppInfoVersion=${zrythm_pkg_ver:0:7}" \
+    "//DPluginsDir=plugins" \
+    installer.iss
+  popd
+
+  mv "$dist_dir/Output/Zrythm$dash_trial $zrythm_pkg_ver.exe" \
+    "$out_file"
+}
+
+main 1>&2

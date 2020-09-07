@@ -30,6 +30,11 @@ make_windows_chroot = configure_file (
   input: 'make_windows_chroot.sh.in',
   configuration: global_conf,
   )
+collect_dlls = configure_file (
+  output: 'collect_dlls.sh',
+  input: 'collect_dlls.sh.in',
+  configuration: global_conf,
+  )
 make_dist_dir = configure_file (
   output: 'make_dist_dir.sh',
   input: 'make_dist_dir.sh.in',
@@ -71,6 +76,7 @@ inno_extract_zip = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
+  console: true,
   install: false,
   )
 #inno_extract = custom_target (
@@ -90,6 +96,7 @@ rcedit_x64_exe = custom_target (
     'wget ' + url + ' -O \'@OUTPUT@\' && ' +
     'chmod +x \'@OUTPUT@\''
     ],
+  console: true,
   install: false,
   )
 
@@ -104,6 +111,7 @@ foreach dep_name : independent_dep_names
       make_mingw_pkg, 'PKGBUILD-' + dep_name + '-mingw',
       ],
     command: make_mingw_pkg_cmd,
+    console: true,
     install: false,
     )
 endforeach
@@ -114,6 +122,7 @@ lv2_pkg = custom_target (
     make_mingw_pkg, 'PKGBUILD-lv2-mingw',
     ],
   command: make_mingw_pkg_cmd,
+  console: true,
   install: false,
   )
 serd_pkg = custom_target (
@@ -130,6 +139,7 @@ sord_pkg = custom_target (
   input: [ make_mingw_pkg, 'PKGBUILD-sord-mingw', ],
   command: make_mingw_pkg_cmd,
   depends: serd_pkg,
+  console: true,
   install: false,
   )
 sratom_pkg = custom_target (
@@ -146,6 +156,7 @@ lilv_pkg = custom_target (
   input: [ make_mingw_pkg, 'PKGBUILD-lilv-mingw', ],
   command: make_mingw_pkg_cmd,
   depends: sratom_pkg,
+  console: true,
   install: false,
   )
 
@@ -159,6 +170,7 @@ carla_woe32_binary_32_zip = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
+  console: true,
   install: false,
   )
 carla_short_git_ver = run_command (
@@ -171,6 +183,7 @@ carla_woe32_binary_64_zip = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
+  console: true,
   install: false,
   )
 
@@ -185,6 +198,7 @@ mingw_install_carla_bins_target = custom_target (
     bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
     '@OUTPUT@', '@INPUT1@', '@INPUT2@'
     ],
+  console: true,
   install: false,
   )
 
@@ -205,6 +219,7 @@ mingw_zrythm_pkg = custom_target (
     mingw_install_carla_bins_target, lilv_pkg,
     independent_deps,
     ],
+  console: true,
   install: false,
   )
 
@@ -232,6 +247,26 @@ windows_chroot_target = custom_target (
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
     '@INPUT7@', '@INPUT8@', '@INPUT9@',
     ],
+  console: true,
+  install: false,
+  )
+
+dll_dir = custom_target (
+  'windows-msys-dll-dir',
+  output: 'dlls',
+  input: [
+    collect_dlls, 'copy-dll-deps.sh',
+    ],
+  command: [
+    bash, '-c',
+    '@INPUT0@ "$1" "$2" "$3"',
+    '_ignored',
+    '@OUTPUT@', '@INPUT1@', chroot_dir,
+    ],
+  depends: [
+    windows_chroot_target,
+    ],
+  console: true,
   install: false,
   )
 
@@ -240,19 +275,18 @@ installer_dist_dir = custom_target (
   output: 'installer-dist',
   input: [
     make_dist_dir, zrythm_src_tarball,
-    'installer.iss', 'copy-dll-deps.sh',
-    rcedit_x64_exe,
+    'copy-dll-deps.sh',
+    rcedit_x64_exe, dll_dir,
     ],
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7"',
     '_ignored',
-    '@OUTPUT@', '@INPUT1@', chroot_dir, '@INPUT2@',
-    '@PRIVATE_DIR@', '@INPUT3@', '@INPUT4@',
+    '@OUTPUT@', '@INPUT1@', chroot_dir,
+    '@PRIVATE_DIR@', '@INPUT2@', '@INPUT3@',
+    '@INPUT4@',
     ],
-  depends: [
-    windows_chroot_target,
-    ],
+  console: true,
   install: false,
   )
 
@@ -265,11 +299,14 @@ windows_msys_installer = custom_target (
   output: windows_msys_installer_filename,
   input: [
     make_windows_installer, installer_dist_dir,
+    'installer.iss',
     ],
   command: [
     bash, '-c',
-    '@INPUT0@ "$1" "$2"', '_ignored', '@OUTPUT@', '@INPUT1@',
+    '@INPUT0@ "$1" "$2" "$3"', '_ignored',
+    '@OUTPUT@', '@INPUT1@', '@INPUT2@',
     ],
+  console: true,
   install: true,
   install_dir: get_option ('prefix'),
   )

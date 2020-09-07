@@ -28,6 +28,7 @@ orig_zrythm_src_tarball = custom_target (
   command: [
     'wget', orig_zrythm_src_tarball_url, '-O', '@OUTPUT@',
     ],
+  console: true,
   install: false,
   )
 
@@ -41,6 +42,7 @@ zrythm_src_tarball = custom_target (
     bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
     '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@'
     ],
+  console: true,
   install: false,
   )
 
@@ -57,6 +59,7 @@ carla_src_zip = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
+  console: true,
   install: false,
   )
 
@@ -67,6 +70,7 @@ zplugins_src_tarball = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
+  console: true,
   install: false,
   )
 
@@ -77,5 +81,6 @@ lsp_dsp_lib_src_tarball = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
+  console: true,
   install: false,
   )

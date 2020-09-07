@@ -102,6 +102,7 @@ carla_bottle = custom_target (
     '@INPUT1@', '@PRIVATE_DIR@',
     '@INPUT2@',
     ],
+  console: true,
   install: false,
   )
 zrythm_bottle = custom_target (
@@ -117,6 +118,7 @@ zrythm_bottle = custom_target (
     '@INPUT3@',
     ],
   depends: [ make_breeze_icons, zplugins_installation, ],
+  console: true,
   install: false,
   )
 
@@ -133,6 +135,7 @@ installer_zip = custom_target (
     '@INPUT1@', '@INPUT2@', '@INPUT3@', '@INPUT4@',
     '@PRIVATE_DIR@',
     ],
+  console: true,
   install: true,
   install_dir: get_option ('prefix'),
   )
