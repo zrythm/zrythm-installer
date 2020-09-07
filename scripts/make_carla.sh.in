@@ -2,7 +2,7 @@
 
 set -ex
 
-out_dir="$1"
+out_dir="`pwd`/$1"
 carla_source_zip="$2"
 private_dir="$3"
 prefix="$4"
@@ -24,3 +24,6 @@ cd "$private_dir/Carla-$carla_git_ver"
 make features
 make -j4
 make install DESTDIR="$out_dir" PREFIX="$prefix" LIBDIR=$prefix/lib
+sudo cp -Rv "$out_dir/$prefix"/* "$prefix"/
+
+ls -l "$out_dir"

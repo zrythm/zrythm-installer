@@ -108,7 +108,8 @@ global_conf.set (
 global_conf.set (
   'LIBRARY_PREFIX', library_prefix)
 global_conf.set (
-  'LIBRARY_PKG_CONFIG_PATH', library_pkgconfig_path)
+  'LIBRARY_PKG_CONFIG_PATH', 
+  library_pkgconfig_path)
 global_conf.set (
   'CARLA_PREFIX', carla_prefix)
 global_conf.set ('DASH_TRIAL', dash_trial)
@@ -143,9 +144,6 @@ global_conf.set (
 global_conf.set (
   'GET_PKG_FILENAME_SH_PATH',
   meson.build_root () / 'scripts/get_pkg_filename.sh')
-global_conf.set (
-  'BUILT_ZPLUGINS_DIR',
-  meson.current_build_dir () / 'built_zplugins')
 
 subdir ('scripts')
 subdir ('sources')
@@ -233,6 +231,7 @@ summary ({
   'Git version': get_option ('zrythm-git-ver'),
   'Package version': get_option ('zrythm-pkg-ver'),
   'Build trial': get_option ('build-trial').to_string (),
+  'Carla version': get_option ('carla-git-ver'),
   'ZPlugins version': get_option ('zplugins-ver'),
   'Locales': ' '.join (get_option ('locales')),
   'Distro': get_option ('distro'),

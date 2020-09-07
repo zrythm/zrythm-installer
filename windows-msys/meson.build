@@ -141,23 +141,6 @@ rcedit_x64_exe = custom_target (
   )
 
 # install dependencies
-independent_dep_names = [
-  'jack2', 'lsp-dsp-lib'
-  ]
-independent_deps = []
-foreach dep_name : independent_dep_names
-  independent_deps += custom_target (
-    'mingw-' + dep_name,
-    output: dep_name + '.pkg.tar.zst',
-    input: [
-      make_mingw_pkg,
-      'PKGBUILD-' + dep_name + '-mingw',
-      ],
-    command: make_mingw_pkg_cmd,
-    console: true,
-    install: false,
-    )
-endforeach
 carla_packages = []
 foreach arch : [ '64' ]
 carla_packages += custom_target (
@@ -179,6 +162,24 @@ carla_packages += custom_target (
   console: true,
   install: false,
   )
+endforeach
+independent_dep_names = [
+  'jack2', 'lsp-dsp-lib'
+  ]
+independent_deps = []
+foreach dep_name : independent_dep_names
+  independent_deps += custom_target (
+    'mingw-' + dep_name,
+    output: dep_name + '.pkg.tar.zst',
+    input: [
+      make_mingw_pkg,
+      'PKGBUILD-' + dep_name + '-mingw',
+      ],
+    command: make_mingw_pkg_cmd,
+    depends: carla_packages[0],
+    console: true,
+    install: false,
+    )
 endforeach
 lv2_pkg = custom_target (
   'mingw-lv2',

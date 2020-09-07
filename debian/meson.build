@@ -14,22 +14,57 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+debian_conf = configuration_data ()
+debian_conf.set (
+  'MESON_BIN', meson_bin)
+debian_conf.set (
+  'BASH', bash.full_path ())
+debian_conf.set (
+  'DASH_TRIAL', dash_trial)
+debian_conf.set (
+  'ZPLUGINS_VER', zplugins_ver)
+debian_conf.set (
+  'ZRYTHM_PKG_VERSION', zrythm_pkg_ver)
+debian_conf.set (
+  'TRIAL_TRUE_FALSE', trial_true_false)
+debian_conf.set (
+  'ZRYTHM_INNER_DIR_NAME', zrythm_inner_dir_name)
+debian_conf.set (
+  'ZRYTHM_SOURCE_TARBALL_FILENAME',
+  zrythm_src_tarball_filename)
+debian_conf.set (
+  'CARLA_DESTDIR',
+  carla_installation.full_path ())
+debian_conf.set (
+  'CARLA_PKG_CONFIG_PATH',
+  carla_installation.full_path () + carla_prefix / 'lib/pkgconfig')
+debian_conf.set (
+  'CARLA_PREFIX', carla_prefix)
+debian_conf.set (
+  'CARLA_FULL_BINS_PATH', carla_installation.full_path () + carla_prefix / 'lib/carla')
+debian_conf.set (
+  'BUILT_ZPLUGINS_DIR',
+  zplugins_installation.full_path ())
+debian_conf.set ('LIBDIR', libdir)
+debian_conf.set (
+  'LIBRARY_PKG_CONFIG_PATH',
+  library_pkgconfig_path)
 
 # configure files
 debian_changelog = configure_file (
   output: 'changelog',
   input: 'changelog.in',
-  configuration: global_conf,
+  configuration: debian_conf,
   )
 debian_control = configure_file (
   output: 'control',
   input: 'control.in',
-  configuration: global_conf,
+  configuration: debian_conf,
   )
 debian_rules = configure_file (
   output: 'rules',
   input: 'rules.in',
-  configuration: global_conf,
+  configuration: debian_conf,
   )
 
 # sources
