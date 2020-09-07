@@ -69,7 +69,7 @@ build() {
     -Dtests=false \
     "../zrythm-${pkgver}"
   ninja
-  cp /mingw64/lib/carla/libcarla-host-plugin.dll ./src/
+  cp /mingw64/lib/carla/libcarla_host-plugin.dll ./src/
   popd
 
   # build zplugins
