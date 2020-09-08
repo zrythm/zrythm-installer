@@ -90,7 +90,6 @@ carla_zip_windows = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
-  console: true,
   install: false,
   )
 
@@ -112,7 +111,6 @@ inno_extract_zip = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
-  console: true,
   install: false,
   )
 #inno_extract = custom_target (
@@ -132,7 +130,6 @@ rcedit_x64_exe = custom_target (
     'wget ' + url + ' -O \'@OUTPUT@\' && ' +
     'chmod +x \'@OUTPUT@\''
     ],
-  console: true,
   install: false,
   )
 
@@ -173,7 +170,6 @@ foreach dep_name : independent_dep_names
       ],
     command: make_mingw_pkg_cmd,
     depends: carla_packages[0],
-    console: true,
     install: false,
     )
 endforeach
@@ -184,7 +180,6 @@ lv2_pkg = custom_target (
     make_mingw_pkg, 'PKGBUILD-lv2-mingw',
     ],
   command: make_mingw_pkg_cmd,
-  console: true,
   install: false,
   )
 serd_pkg = custom_target (
@@ -201,7 +196,6 @@ sord_pkg = custom_target (
   input: [ make_mingw_pkg, 'PKGBUILD-sord-mingw', ],
   command: make_mingw_pkg_cmd,
   depends: serd_pkg,
-  console: true,
   install: false,
   )
 sratom_pkg = custom_target (
@@ -218,7 +212,6 @@ lilv_pkg = custom_target (
   input: [ make_mingw_pkg, 'PKGBUILD-lilv-mingw', ],
   command: make_mingw_pkg_cmd,
   depends: sratom_pkg,
-  console: true,
   install: false,
   )
 
@@ -232,7 +225,6 @@ carla_woe32_binary_32_zip = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
-  console: true,
   install: false,
   )
 
@@ -263,7 +255,6 @@ mingw_install_carla_bins_target = custom_target (
     bash, '-c', '@INPUT0@ "$1" "$2"', '_ignored',
     '@OUTPUT@', '@INPUT1@',
     ],
-  console: true,
   install: false,
   )
 
