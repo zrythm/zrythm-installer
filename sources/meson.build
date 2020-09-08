@@ -106,3 +106,8 @@ breeze_icons = custom_target (
     ],
   install: false,
   )
+
+run_target (
+  'gen-breeze-icons',
+  command: [ 'echo', 'done' ],
+  depends: breeze_icons)
