@@ -31,8 +31,6 @@ windows_msys_conf.set (
 windows_msys_conf.set (
   'ZRYTHM_INNER_DIR_NAME', zrythm_inner_dir_name)
 windows_msys_conf.set (
-  'MANUALS_ZIP_FILE', get_option ('manuals-zip-file'))
-windows_msys_conf.set (
   'BREEZE_DARK_PATH', breeze_icons.full_path ())
 windows_msys_conf.set (
   'ZRYTHM_SOURCE_TARBALL_FILENAME',
@@ -342,6 +340,11 @@ dll_dir = custom_target (
   install: false,
   )
 
+run_target (
+  'windows-msys-prepare',
+  command: [ 'echo', 'done' ],
+  depends: dll_dir)
+
 installer_dist_dir = custom_target (
   'windows-installer-dist-dir',
   output: 'installer-dist',
@@ -349,14 +352,15 @@ installer_dist_dir = custom_target (
     make_dist_dir, zrythm_src_tarball,
     'copy-dll-deps.sh',
     rcedit_x64_exe, dll_dir,
+    get_option ('manuals-zip-file')
     ],
   command: [
     bash, '-c',
-    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7"',
+    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8"',
     '_ignored',
     '@OUTPUT@', '@INPUT1@', chroot_dir,
     '@PRIVATE_DIR@', '@INPUT2@', '@INPUT3@',
-    '@INPUT4@',
+    '@INPUT4@', '@INPUT5@',
     ],
   console: true,
   install: false,
