@@ -21,6 +21,11 @@ make_zrythm_tarball = configure_file (
   input: 'make_zrythm_tarball.sh.in',
   configuration: global_conf,
   )
+make_breeze_icons = configure_file (
+  output: 'make_breeze_icons.sh',
+  input: 'make_breeze_icons.sh.in',
+  configuration: global_conf,
+  )
 
 orig_zrythm_src_tarball = custom_target (
   'orig-zrythm-source-tarball',
@@ -28,7 +33,6 @@ orig_zrythm_src_tarball = custom_target (
   command: [
     'wget', orig_zrythm_src_tarball_url, '-O', '@OUTPUT@',
     ],
-  console: true,
   install: false,
   )
 
@@ -42,7 +46,6 @@ zrythm_src_tarball = custom_target (
     bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
     '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@'
     ],
-  console: true,
   install: false,
   )
 
@@ -59,7 +62,6 @@ carla_src_zip = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
-  console: true,
   install: false,
   )
 
@@ -70,7 +72,6 @@ zplugins_src_tarball = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
-  console: true,
   install: false,
   )
 
@@ -81,6 +82,27 @@ lsp_dsp_lib_src_tarball = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
-  console: true,
+  install: false,
+  )
+
+breeze_icons_zip = custom_target (
+  'breeze-icons-zip',
+  output: 'breeze-icons.zip',
+  command: [
+    'wget',
+    'https://github.com/KDE/breeze-icons/archive/master.zip',
+    '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+
+breeze_icons = custom_target (
+  'breeze-icons',
+  output: 'breeze-dark',
+  input: [ make_breeze_icons, breeze_icons_zip, ],
+  command: [
+    bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
+    '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
+    ],
   install: false,
   )

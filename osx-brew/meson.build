@@ -17,7 +17,7 @@
 
 osx_brew_conf = configuration_data ()
 osx_brew_conf.merge_from (global_conf)
-carla_bottle_ver = '0.1.2'
+carla_bottle_ver = '0.1.3'
 carla_bottle_filename = 'carla-git--' + carla_bottle_ver + '.catalina.bottle.tar.gz'
 zrythm_bottle_filename = 'zrythm' + dash_trial + '--' + zrythm_pkg_ver + '.catalina.bottle.tar.gz'
 osx_brew_conf.set (
@@ -41,18 +41,11 @@ osx_brew_conf.set (
 installer_zip_filename = 'zrythm' + dash_trial + '-' + zrythm_pkg_ver + '-osx-installer.zip'
 osx_brew_conf.set (
   'OSX_INSTALLER_ZIP_FILENAME', installer_zip_filename)
-
-make_breeze_icons = custom_target (
-  'osx-breeze-icons',
-  output: 'breeze-dark',
-  input: breeze_dark_path,
-  command: [
-    'rm', '-rf', '@OUTPUT@', '&&',
-    'cp', '-R', '@INPUT@', '@OUTPUT@', '&&',
-    'cp', '-R', '@INPUT@', '/tmp/breeze-dark',
-    ],
-  install: false,
-  )
+osx_brew_conf.set (
+  'BREEZE_DARK', breeze_icons.full_path ())
+osx_brew_conf.set (
+  'BUILT_ZPLUGINS_DIR',
+  zplugins_installation.full_path ())
 
 # configure scripts
 make_bottle_sh = configure_file (
@@ -117,7 +110,7 @@ zrythm_bottle = custom_target (
     '@INPUT1@', '@PRIVATE_DIR@',
     '@INPUT3@',
     ],
-  depends: [ make_breeze_icons, zplugins_installation, ],
+  depends: [ breeze_icons, zplugins_installation, ],
   console: true,
   install: false,
   )

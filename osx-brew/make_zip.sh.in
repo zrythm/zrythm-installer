@@ -1,6 +1,6 @@
 #!@BASH@
 
-set -e
+set -ex
 
 out_file="$1"
 zrythm_formula_file=$2
@@ -11,6 +11,7 @@ private_dir=$6
 
 dash_trial="@DASH_TRIAL@"
 manuals_zip="@MANUALS_ZIP_FILE@"
+breeze_dark="@BREEZE_DARK@"
 
 inner_dir_name="${out_file%.*}"
 inner_dir_name="`basename $inner_dir_name`"
@@ -26,7 +27,7 @@ cp $installer_sh_file $inner_dir/installer.sh
 cp $readme_file $inner_dir/README
 cp $carla_bottle_file $inner_dir/bin/carla-git.catalina.bottle.tar.gz
 cp $zrythm_formula_file $inner_dir/formulae/
-cp -r /tmp/breeze-dark $inner_dir/icons/
+cp -r "$breeze_dark" $inner_dir/icons/
 
 if [ "$dash_trial" != "-trial" ]; then
   echo "adding user manuals" ;

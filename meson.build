@@ -58,7 +58,6 @@ foreach locale : locales
   space_sep_locales += locale + ' '
 endforeach
 space_sep_locales.strip ()
-breeze_dark_path = get_option ('breeze-dark-path')
 trial_true_false = build_trial ? 'true' : 'false'
 is_arch = distro.contains ('arch')
 is_debian = distro.contains ('debian') or distro.contains ('ubuntu')
@@ -129,8 +128,6 @@ global_conf.set (
   'LILV_VERSION', get_option ('lilv-ver'))
 global_conf.set (
   'JACK_VERSION', get_option ('jack-ver'))
-global_conf.set (
-  'BREEZE_DARK_PATH', breeze_dark_path)
 global_conf.set (
   'SUPPORTING_TEXT',
   build_trial ? 'trying out' : 'supporting')
@@ -221,7 +218,6 @@ endif
 summary ({
   'prefix': prefix,
   'libdir': libdir,
-  'Breeze dark path': get_option ('breeze-dark-path'),
   'Packages dir': get_option ('packages-dir'),
   'PDF dir': get_option ('pdf-dir'),
   }, section: 'Directories')
