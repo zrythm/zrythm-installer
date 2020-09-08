@@ -33,7 +33,7 @@ windows_msys_conf.set (
 windows_msys_conf.set (
   'MANUALS_ZIP_FILE', get_option ('manuals-zip-file'))
 windows_msys_conf.set (
-  'BREEZE_DARK_PATH', breeze_dark_path)
+  'BREEZE_DARK_PATH', breeze_icons.full_path ())
 windows_msys_conf.set (
   'ZRYTHM_SOURCE_TARBALL_FILENAME',
   zrythm_src_tarball_filename)

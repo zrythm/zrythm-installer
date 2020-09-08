@@ -134,6 +134,13 @@ installer_zip = custom_target (
   )
 
 run_target (
+  'osx-brew-prepare',
+  command: [ 'echo', 'done' ],
+  depends: [
+    carla_bottle, zrythm_src_tarball, breeze_icons,
+    ])
+
+run_target (
   'osx-brew',
   command: [ 'echo', 'done' ],
   depends: installer_zip)
