@@ -13,4 +13,7 @@ rm -rf $private_dir
 #out_dir_parent="`dirname $out_dir_parent`"
 
 unzip "$breeze_zip" -d $private_dir
-cp -rL $private_dir/breeze-icons-master/icons-dark $out_dir
+
+# osx doesn't support -rL
+cp -rL $private_dir/breeze-icons-master/icons-dark $out_dir || \
+  cp -RL $private_dir/breeze-icons-master/icons-dark $out_dir
