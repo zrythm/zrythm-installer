@@ -36,7 +36,7 @@ windows_msys_conf.set (
 
 mingw_zrythm_pkgbuild = configure_file (
   output: 'PKGBUILD',
-  input: 'PKGBUILD-w10.in',
+  input: 'PKGBUILD.in',
   configuration: windows_msys_conf,
   )
 mingw_carla_pkgbuild = configure_file (
