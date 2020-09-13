@@ -15,7 +15,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
          "${MINGW_PACKAGE_PREFIX}-libsndfile"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
          "${MINGW_PACKAGE_PREFIX}-lilv"
-         "${MINGW_PACKAGE_PREFIX}-jack2"
+         "${MINGW_PACKAGE_PREFIX}-jack2-bin"
          "${MINGW_PACKAGE_PREFIX}-gtksourceview4"
          "${MINGW_PACKAGE_PREFIX}-graphviz"
          "${MINGW_PACKAGE_PREFIX}-dlfcn"
@@ -58,7 +58,7 @@ build() {
     -Dlsp_dsp=enabled \
     -Dstatic_deps=true \
     -Dstatic_lsp_dsp=true \
-    -Djack=disabled \
+    -Djack=enabled \
     -Dguile=disabled \
     -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
     -Dmanpage=false \
