@@ -1,9 +1,9 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
 _realname=jack2
-_commit=81ac3d06d43a5b955baf881bfcc06f1da68b4221
+_commit=1b6cba1ad07dbf515ccde8a7a55126c3887dd75c
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.9.14-1
+pkgver=1.9.14.1
 pkgrel=1
 arch=('any')
 pkgdesc='jack2'
@@ -24,6 +24,7 @@ prepare() {
 
   [[ -x ./waf ]] || /usr/bin/python ./bootstrap.py
   sed -i 's:bin/env python$:bin/env python:' waf
+  sed -i 's12,14d' common/wscript
 }
 
 build() {
@@ -40,6 +41,7 @@ build() {
     --prefix=${MINGW_PREFIX} \
     --check-c-compiler=gcc \
     --check-cxx-compiler=g++ \
+    --portaudio=no \
     --static
   /usr/bin/python ./waf build
 }
