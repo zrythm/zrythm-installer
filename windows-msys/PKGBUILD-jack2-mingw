@@ -11,7 +11,7 @@ depends=("$MINGW_PACKAGE_PREFIX-portaudio")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-python3")
-options=('strip' 'staticlibs')
+options=('strip')
 license=("GPL2")
 url="https://www.zrythm.org"
 source=("https://github.com/jackaudio/$_realname/archive/$_commit.zip")
@@ -41,6 +41,11 @@ build() {
     --check-c-compiler=gcc \
     --check-cxx-compiler=g++
   /usr/bin/python ./waf build
+}
+
+check() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  build/jackd.exe --version
 }
 
 package() {
