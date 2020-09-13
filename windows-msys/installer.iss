@@ -39,12 +39,11 @@ Name: "plugins"; Description: "Bundled LV2 plugins"; \
 
 [Tasks]
 Name: desktopicon; Description: "Create a &desktop icon"; \
-  GroupDescription: "Additional icons:"; Components: zrythm; \
-  Flags: unchecked
+  GroupDescription: "Additional icons:"; Components: zrythm
 Name: quicklaunchicon; \
   Description: "Create a &Quick Launch icon"; \
   GroupDescription: "Additional icons:"; \
-  Components: zrythm; Flags: unchecked
+  Components: zrythm
 
 [Files]
 Source: "bin\*"; DestDir: "{app}\bin"; \
