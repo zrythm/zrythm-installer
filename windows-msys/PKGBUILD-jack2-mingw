@@ -24,7 +24,6 @@ prepare() {
 
   [[ -x ./waf ]] || /usr/bin/python ./bootstrap.py
   sed -i 's:bin/env python$:bin/env python:' waf
-  sed -i 's12,14d' common/wscript
 }
 
 build() {
@@ -40,15 +39,13 @@ build() {
   /usr/bin/python3 ./waf configure \
     --prefix=${MINGW_PREFIX} \
     --check-c-compiler=gcc \
-    --check-cxx-compiler=g++ \
-    --portaudio=no \
-    --static
-  /usr/bin/python ./waf build
+    --check-cxx-compiler=g++
+  /usr/bin/python ./waf build -v
 }
 
 check() {
   cd "${srcdir}/${_realname}-${pkgver}"
-  build/jackd.exe --version
+  #build/jackd.exe --version
 }
 
 package() {
