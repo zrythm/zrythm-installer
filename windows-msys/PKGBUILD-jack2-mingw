@@ -1,9 +1,9 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
 _realname=jack2
-_commit=5f1b2be0dc509469a072041643c3e45bfa406b9a
+_commit=81ac3d06d43a5b955baf881bfcc06f1da68b4221
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.9.14.r1
+pkgver=1.9.14-1
 pkgrel=1
 arch=('any')
 pkgdesc='jack2'
