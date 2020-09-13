@@ -1,6 +1,6 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
 _realname=jack2
-_commit=1b6cba1ad07dbf515ccde8a7a55126c3887dd75c
+_commit=5f1b2be0dc509469a072041643c3e45bfa406b9a
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=1.9.14.1

@@ -1,0 +1,40 @@
+# Maintainer: Alexandros Theodotou <alex at zrythm dot org>
+_realname=jack2
+_commit=81ac3d06d43a5b955baf881bfcc06f1da68b4221
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=1.9.14.1
+pkgrel=1
+arch=('any')
+pkgdesc='jack2'
+depends=("$MINGW_PACKAGE_PREFIX-portaudio")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-python3")
+options=('strip' 'staticlibs')
+license=("GPL2")
+url="https://www.zrythm.org"
+source=("https://www.zrythm.org/downloads/jack2-dev-tools-$_commit.zip")
+sha256sums=('SKIP')
+
+prepare() {
+  rm -rf ${_realname}-${pkgver}
+  mkdir -p ${_realname}-${pkgver}
+  mv include ${_realname}-${pkgver}/
+  mv lib ${_realname}-${pkgver}/
+}
+
+build() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+}
+
+check() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+}
+
+package() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  mkdir -p "${pkgdir}/${MINGW_PREFIX}"
+  cp -R ./* "${pkgdir}/${MINGW_PREFIX}"/
+}
