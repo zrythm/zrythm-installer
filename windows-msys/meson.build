@@ -152,7 +152,6 @@ carla_packages += custom_target (
     arch == '64' ? 'x86_64' : 'i686',
     '@INPUT2@',
     ],
-  console: true,
   install: false,
   )
 endforeach
@@ -239,7 +238,6 @@ carla_woe32_binary_64_zip = custom_target (
   command: [
     'wget', url, '-O', '@OUTPUT@',
     ],
-  console: true,
   install: false,
   )
 endif
@@ -325,7 +323,6 @@ dll_dir = custom_target (
   depends: [
     windows_chroot_target,
     ],
-  console: true,
   install: false,
   )
 
