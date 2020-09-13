@@ -338,7 +338,6 @@ installer_dist_dir = custom_target (
     make_dist_dir, zrythm_src_tarball,
     'copy-dll-deps.sh',
     rcedit_x64_exe, dll_dir,
-    get_option ('manuals-zip-file'),
     breeze_icons,
     ],
   command: [
@@ -347,7 +346,7 @@ installer_dist_dir = custom_target (
     '_ignored',
     '@OUTPUT@', '@INPUT1@', chroot_dir,
     '@PRIVATE_DIR@', '@INPUT2@', '@INPUT3@',
-    '@INPUT4@', '@INPUT5@', '@INPUT6@',
+    '@INPUT4@', get_option ('manuals-zip-file'), '@INPUT5@',
     ],
   console: true,
   install: false,
