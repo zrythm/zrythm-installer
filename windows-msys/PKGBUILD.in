@@ -58,7 +58,7 @@ build() {
     -Dlsp_dsp=enabled \
     -Dstatic_deps=true \
     -Dstatic_lsp_dsp=true \
-    -Djack=enabled \
+    -Djack=disabled \
     -Dguile=disabled \
     -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
     -Dmanpage=false \
