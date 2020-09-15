@@ -54,8 +54,8 @@ arch_pkg = custom_target (
   install_dir: get_option ('prefix'),
   )
 
+manual_deps = []
 if not build_trial
-  manual_deps = []
   foreach lang : locales
     filename = 'Zrythm-' + zrythm_pkg_ver + '-' + lang + '.pdf'
     manual_deps += custom_target (
