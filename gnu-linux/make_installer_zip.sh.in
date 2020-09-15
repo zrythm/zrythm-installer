@@ -16,6 +16,7 @@ zip_inner_dir_name="${zip_filename%.*}"
 zip_inner_dir="$private_dir/$zip_inner_dir_name"
 zrythm_version="@ZRYTHM_PKG_VERSION@"
 pdf_dir="@PDF_DIR@"
+dash_trial="@DASH_TRIAL@"
 
 rm -rf $out_file
 rm -rf $private_dir
@@ -33,7 +34,7 @@ get_package_filename () {
 
 # returns the filename to be placed inside "bin"
 get_dest_package_filename () {
-  prefix="zrythm-$zrythm_version"
+  prefix="zrythm$dash_trial-$zrythm_version"
   distro=$1
   res=""
   case "$distro" in
@@ -51,7 +52,7 @@ get_dest_package_filename () {
 
 copy_package () {
   distro=$1
-  src_pkg_filename="$(get_package_filename $distro)"
+  src_pkg_filename="$(get_package_filename $distro $dash_trial)"
   dest_pkg_filename="$(get_dest_package_filename $distro)"
   distro_bin_dir="$zip_inner_dir/bin/$distro"
   mkdir -p "$distro_bin_dir"

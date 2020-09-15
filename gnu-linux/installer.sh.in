@@ -149,7 +149,7 @@ else
 fi
 
 # install packages
-prefix="bin/$distro_identifier/zrythm-$zrythm_ver"
+prefix="bin/$distro_identifier/zrythm$dash_trial-$zrythm_ver"
 if [ $proceed -ne 0 ]; then
   if [[ $distro_identifier = "ubuntu"* ]] || [[ $distro_identifier = "debian"* ]]; then
     ask_for_root_pw;

@@ -38,7 +38,7 @@ readme = configure_file (
   )
 
 installer_zip_filename = run_command (
-  get_pkg_filename_from_distro, get_option ('distro')).stdout ().strip ()
+  get_pkg_filename_from_distro, get_option ('distro'), dash_trial).stdout ().strip ()
 installer_zip = custom_target (
   'gnu-linux-installer-zip',
   output: installer_zip_filename,
