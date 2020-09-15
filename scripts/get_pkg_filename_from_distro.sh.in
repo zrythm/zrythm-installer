@@ -39,4 +39,4 @@ distro_to_pkg_type () {
   esac
 }
 pkg_type=$(distro_to_pkg_type $distro)
-$get_pkg_filename_sh $pkg_type
+$get_pkg_filename_sh $pkg_type $trial
