@@ -1,3 +1,3 @@
 [submodule "ext/cerbero"]
 	path = ext/cerbero
-	url = git://anongit.freedesktop.org/gstreamer/cerbero
+	url = git://git.zrythm.org/git/cerbero.git
