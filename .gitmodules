@@ -1,0 +1,3 @@
+[submodule "ext/cerbero"]
+	path = ext/cerbero
+	url = git://anongit.freedesktop.org/gstreamer/cerbero
