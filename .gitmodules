@@ -1,3 +1,4 @@
 [submodule "ext/cerbero"]
 	path = ext/cerbero
-	url = git://git.zrythm.org/git/cerbero.git
+	url = https://git.zrythm.org/git/cerbero.git
+  branch = zrythm
