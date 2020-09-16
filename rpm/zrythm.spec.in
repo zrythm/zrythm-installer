@@ -11,6 +11,7 @@ Version:       @ZRYTHM_PKG_VERSION@
 Release:       1%{?dist}
 Summary: An highly automated, intuitive, Digital Audio Workstation (DAW)
 License:       AGPLv3+
+Group:         Productivity/Multimedia/Sound/Editors and Convertors
 URL:           https://www.zrythm.org
 Source0:       https://www.zrythm.org/releases/zrythm-%{version}.tar.gz
 BuildRequires: gcc-c++ gcc pkgconfig

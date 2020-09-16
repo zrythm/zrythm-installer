@@ -56,7 +56,7 @@ build() {
     -Drtaudio=auto \
     -Drtmidi=auto \
     -Dlsp_dsp=enabled \
-    -Dstatic_deps=true \
+    -Dstatic_deps=false \
     -Dstatic_lsp_dsp=true \
     -Djack=disabled \
     -Dguile=disabled \
