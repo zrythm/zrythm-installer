@@ -19,6 +19,7 @@ formula_filename="`basename $formula_file`"
 formula_name="${formula_filename%.*}"
 
 # copy formula file to where it needs to be
+cat $formula_file
 cp $formula_file "$formula_dir/$formula_filename"
 
 # copy the source tarball to the cache

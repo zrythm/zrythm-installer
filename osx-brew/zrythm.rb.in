@@ -1,4 +1,4 @@
-class Zrythm@DASH_TRIAL@ < Formula
+class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   desc "Digital audio workstation"
   homepage "https://www.zrythm.org"
   url "@ZRYTHM_ORIG_SRC_TARBALL_URL@"

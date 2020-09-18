@@ -21,6 +21,10 @@ carla_bottle_ver = '0.1.3'
 carla_bottle_filename = 'carla-git--' + carla_bottle_ver + '.catalina.bottle.tar.gz'
 zrythm_bottle_filename = 'zrythm' + dash_trial + '--' + zrythm_pkg_ver + '.catalina.bottle.tar.gz'
 osx_brew_conf.set (
+  'DASH_TRIAL', dash_trial)
+osx_brew_conf.set (
+  'TRIAL_INITIAL_UPPERCASE', build_trial ? 'Trial' : '')
+osx_brew_conf.set (
   'ZRYTHM_BOTTLE_FILENAME', zrythm_bottle_filename)
 osx_brew_conf.set (
   'CARLA_BOTTLE_VER', carla_bottle_ver)
