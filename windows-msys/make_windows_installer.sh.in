@@ -35,10 +35,11 @@ main () {
   (verify_bin_file "$dist_dir/bin/zrythm.exe" "built with ")
 
   cp $inno_installer_iss $dist_dir/installer.iss
+  info_version=`echo "$zrythm_pkg_ver" | sed -e 's/^\([0-9]\+\.[0-9]\+\.[0-9]\+\)\..*$/\1/'`
   pushd $dist_dir
   ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
     "//DAppName=$app_name" "//DAppVersion=$zrythm_pkg_ver" \
-    "//DAppInfoVersion=${zrythm_pkg_ver:0:7}" \
+    "//DAppInfoVersion=$info_version" \
     "//DPluginsDir=plugins" \
     installer.iss
   popd
