@@ -39,7 +39,7 @@ class Zrythm@DASH_TRIAL@ < Formula
         "-Dfallback_version=@ZRYTHM_PKG_VERSION@",
         # manpage fails
         "-Dmanpage=false",
-        "-Dstatic_libs=true",
+        "-Dstatic_deps=true",
         ".."
       system "ninja", "-v"
       system "ninja", "install", "-v"

@@ -1,6 +1,6 @@
 #!@BASH@
 
-set -e
+set -ex
 
 out_file="$1"
 formula_file="$2"
