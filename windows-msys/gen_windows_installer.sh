@@ -29,33 +29,33 @@ set -e
 # $6 Plugins dir (containing *.lv2 bundles)
 # $7 "-trial" or nothing
 
-ZRYTHM_VERSION="$2"
+zrythm_version="$2"
 
-INNO_ISS=$4
-BUILD_DIR=$3
-MINGW_PREFIX=$1
-APP_NAME=$5
-PLUGINS_DIR=$6
-BREEZE_DARK_PATH=$7
+inno_iss=$4
+build_dir=$3
+mingw_prefix=$1
+app_name=$5
+plugins_dir=$6
+breeze_dark_path=$7
 manual_zip_path=$8
-TRIAL=$9
-DIST_DIR=$BUILD_DIR/dist # root of the distribution
-DIST_BINDIR=$DIST_DIR/bin
-DIST_LIBDIR=$DIST_DIR/lib
-DIST_SHAREDIR=$DIST_DIR/share
-DIST_ETCDIR=$DIST_DIR/etc
-INSTALL_DATA="install -m 644"
-GLIB_SCHEMAS_DIR_SUFFIX=share/glib-2.0/schemas
+trial=$9
+dist_dir=$build_dir/dist # root of the distribution
+dist_bindir=$dist_dir/bin
+dist_libdir=$dist_dir/lib
+dist_sharedir=$dist_dir/share
+dist_etcdir=$dist_dir/etc
+install_data="install -m 644"
+glib_schemas_dir_suffix=share/glib-2.0/schemas
 
-#rm -rf $BUILD_DIR
-mkdir -p $DIST_BINDIR
-mkdir -p $DIST_LIBDIR
-mkdir -p $DIST_SHAREDIR
-mkdir -p $DIST_ETCDIR
+#rm -rf $build_dir
+mkdir -p $dist_bindir
+mkdir -p $dist_libdir
+mkdir -p $dist_sharedir
+mkdir -p $dist_etcdir
 
-mkdir -p $DIST_DIR/$GLIB_SCHEMAS_DIR_SUFFIX
-sudo glib-compile-schemas $MINGW_PREFIX/$GLIB_SCHEMAS_DIR_SUFFIX
-cp $MINGW_PREFIX/$GLIB_SCHEMAS_DIR_SUFFIX/* $DIST_DIR/$GLIB_SCHEMAS_DIR_SUFFIX/
+mkdir -p $dist_dir/$glib_schemas_dir_suffix
+sudo glib-compile-schemas $mingw_prefix/$glib_schemas_dir_suffix
+cp $mingw_prefix/$glib_schemas_dir_suffix/* $dist_dir/$glib_schemas_dir_suffix/
 
 # ******************************
 echo "Copying dlls..."
@@ -115,135 +115,136 @@ DLLS=" \
 
 #for file in $DLLS; do
   #echo "copying $file"
-  #cp $MINGW_PREFIX/bin/$file $DIST_BINDIR/
+  #cp $mingw_prefix/bin/$file $dist_bindir/
 #done
-#cp $MINGW_PREFIX/bin/*.dll $DIST_BINDIR/
+#cp $mingw_prefix/bin/*.dll $dist_bindir/
 # --- end legacy ---
 
 tools/copy-dll-deps.sh \
-  --infile "$MINGW_PREFIX/bin/zrythm$TRIAL.exe" \
-  --destdir $DIST_BINDIR/ \
-  --recursivesrcdir "$MINGW_PREFIX/bin" \
-  --srcdir "$MINGW_PREFIX/bin" \
+  --infile "$mingw_prefix/bin/zrythm$trial.exe" \
+  --destdir $dist_bindir/ \
+  --recursivesrcdir "$mingw_prefix/bin" \
+  --srcdir "$mingw_prefix/bin" \
   --objdump "/mingw64/bin/objdump.exe" \
   --copy
 
 # some dlls need to be copied manually
-cp $MINGW_PREFIX/bin/librsvg-2-2.dll $DIST_BINDIR/
-cp $MINGW_PREFIX/lib/carla/*.dll $DIST_BINDIR/
+cp $mingw_prefix/bin/librsvg-2-2.dll $dist_bindir/
+cp $mingw_prefix/lib/carla/*.dll $dist_bindir/
 
 # for an unknown reason it doesn't work unless it
 # is named CarlaNativePlugin.dll
-mv $DIST_BINDIR/libcarla_native-plugin.dll \
-  $DIST_BINDIR/CarlaNativePlugin.dll
+mv $dist_bindir/libcarla_native-plugin.dll \
+  $dist_bindir/CarlaNativePlugin.dll
 
 # ******************************
 
 # ******************************
-if [ "$TRIAL" != "-trial" ]; then
+if [ "$trial" != "-trial" ]; then
   echo "packaging user manuals" ;
-  unzip -o $manual_zip_path -d $DIST_DIR/ ;
+  unzip -o $manual_zip_path -d $dist_dir/ ;
 fi
 
 # ******************************
 
 # ******************************
 #echo "packaging settings.ini"
-#mkdir -p $DIST_ETCDIR/gtk-3.0
+#mkdir -p $dist_etcdir/gtk-3.0
 #cp data/settings.ini $ETC_GTK_DIR/
 
-#cp -R $MINGW_PREFIX/etc/gtk-3.0 $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
-cp -R $MINGW_PREFIX/etc/fonts $DIST_ETCDIR
+#cp -R $mingw_prefix/etc/gtk-3.0 $mingw_prefix/etc/fonts $dist_etcdir
+cp -R $mingw_prefix/etc/fonts $dist_etcdir
 # ******************************
 
 # ******************************
 #echo "packaging glib schema"
 #SCHEMAS_DIR="$SHAREDIR/glib-2.0/schemas"
 #mkdir -p "$SCHEMAS_DIR"
-#cp "$BUILD_DIR/schemas/gschemas.compiled" \
+#cp "$build_dir/schemas/gschemas.compiled" \
   #"$SCHEMAS_DIR/"
 # ******************************
 
 # ******************************
 echo "packaging breeze icons"
-mkdir -p "$DIST_SHAREDIR/icons"
+mkdir -p "$dist_sharedir/icons"
 # the icons are preinstalled here
-cp -R "$BREEZE_DARK_PATH" "$DIST_SHAREDIR/icons"/breeze-dark
-#cp -R "$MINGW_PREFIX/share/icons/Adwaita" "$DIST_SHAREDIR/icons"/
+cp -R "$breeze_dark_path" "$dist_sharedir/icons"/breeze-dark
+#cp -R "$mingw_prefix/share/icons/Adwaita" "$dist_sharedir/icons"/
 #echo "packaging breeze icons"
-#cp -R "$MINGW_PREFIX/bin/data/icons/breeze-dark" "$DIST_SHAREDIR/icons/"
+#cp -R "$mingw_prefix/bin/data/icons/breeze-dark" "$dist_sharedir/icons/"
 echo "packaging existing hicolor icons"
-cp -R "$MINGW_PREFIX/share/icons/hicolor" "$DIST_SHAREDIR/icons/"
+cp -R "$mingw_prefix/share/icons/hicolor" "$dist_sharedir/icons/"
 # ******************************
 
 # ******************************
 echo "packaging gtksourceview files"
-cp -R $MINGW_PREFIX/share/gtksourceview-4 $DIST_SHAREDIR/
+cp -R $mingw_prefix/share/gtksourceview-4 $dist_sharedir/
 # ******************************
 
 # ******************************
 echo "packaging locales"
-cp -R $MINGW_PREFIX/share/locale $DIST_SHAREDIR/
+cp -R $mingw_prefix/share/locale $dist_sharedir/
 # ******************************
 
 # ******************************
 echo "packaging other assets"
-cp -R $MINGW_PREFIX/share/zrythm $DIST_SHAREDIR/
+cp -R $mingw_prefix/share/zrythm $dist_sharedir/
 # ******************************
 
 # ******************************
 echo "packaging fonts"
-cp -R $MINGW_PREFIX/share/fonts $DIST_SHAREDIR/
+cp -R $mingw_prefix/share/fonts $dist_sharedir/
 # ******************************
 
 # ******************************
 echo "packaging gdk pixbuf loaders"
 PIXBUF_DIR="lib/gdk-pixbuf-2.0/2.10.0"
-mkdir -p "$DIST_DIR/$PIXBUF_DIR/loaders"
-cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders/"*.dll \
-  "$DIST_DIR/$PIXBUF_DIR/loaders/"
-#cp "$MINGW_PREFIX/$PIXBUF_DIR/loaders.cache" \
-#  "$DIST_DIR/$PIXBUF_DIR/"
-GDK_PIXBUF_MODULEDIR="$MINGW_PREFIX/$PIXBUF_DIR/loaders" \
-  $MINGW_PREFIX/bin/gdk-pixbuf-query-loaders.exe \
-  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-svg.dll \
-  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-jpeg.dll \
-  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-gif.dll \
-  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-bmp.dll \
-  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-tiff.dll \
-  $MINGW_PREFIX/$PIXBUF_DIR/loaders/libpixbufloader-png.dll > \
-  "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
+mkdir -p "$dist_dir/$PIXBUF_DIR/loaders"
+cp "$mingw_prefix/$PIXBUF_DIR/loaders/"*.dll \
+  "$dist_dir/$PIXBUF_DIR/loaders/"
+#cp "$mingw_prefix/$PIXBUF_DIR/loaders.cache" \
+#  "$dist_dir/$PIXBUF_DIR/"
+GDK_PIXBUF_MODULEDIR="$mingw_prefix/$PIXBUF_DIR/loaders" \
+  $mingw_prefix/bin/gdk-pixbuf-query-loaders.exe \
+  $mingw_prefix/$PIXBUF_DIR/loaders/libpixbufloader-svg.dll \
+  $mingw_prefix/$PIXBUF_DIR/loaders/libpixbufloader-jpeg.dll \
+  $mingw_prefix/$PIXBUF_DIR/loaders/libpixbufloader-gif.dll \
+  $mingw_prefix/$PIXBUF_DIR/loaders/libpixbufloader-bmp.dll \
+  $mingw_prefix/$PIXBUF_DIR/loaders/libpixbufloader-tiff.dll \
+  $mingw_prefix/$PIXBUF_DIR/loaders/libpixbufloader-png.dll > \
+  "$dist_dir/$PIXBUF_DIR/loaders.cache"
 sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
-  "$DIST_DIR/$PIXBUF_DIR/loaders.cache"
+  "$dist_dir/$PIXBUF_DIR/loaders.cache"
 # ******************************
 
 # ******************************
 #echo "packaging immodules"
 #IMMODULES_DIR="lib/gtk-3.0/3.0.0"
-#mkdir -p "$DIST_DIR/$IMMODULES_DIR/immodules"
+#mkdir -p "$dist_dir/$IMMODULES_DIR/immodules"
 #cp "$PREFIX/$IMMODULES_DIR/immodules/"*.dll \
-  #"$DIST_DIR/$IMMODULES_DIR/immodules/"
-#cat /usr/x86_64-w64-mingw32/lib/gtk-3.0/3.0.0/immodules.cache | sed 's/\".*\/lib/lib/g' | sed 's/\/usr\/.*\/share/share/g' | sed 's/\//\\\\/g' > "$DIST_DIR/$IMMODULES_DIR/immodules.cache"
+  #"$dist_dir/$IMMODULES_DIR/immodules/"
+#cat /usr/x86_64-w64-mingw32/lib/gtk-3.0/3.0.0/immodules.cache | sed 's/\".*\/lib/lib/g' | sed 's/\/usr\/.*\/share/share/g' | sed 's/\//\\\\/g' > "$dist_dir/$IMMODULES_DIR/immodules.cache"
 # ******************************
 
 # ******************************
 echo "packaging binaries"
-cp "$MINGW_PREFIX/bin/zrythm$TRIAL.exe" "$DIST_BINDIR/zrythm.exe"
-cp $MINGW_PREFIX/bin/carla*.exe "$DIST_BINDIR/"
-if [ -f "$MINGW_PREFIX/bin/gdbus.exe" ]; then
-  cp "$MINGW_PREFIX/bin/gdbus.exe" "$DIST_BINDIR/"
+cp "$mingw_prefix/bin/zrythm$trial.exe" "$dist_bindir/zrythm.exe"
+cp $mingw_prefix/bin/carla*.exe "$dist_bindir/"
+if [ -f "$mingw_prefix/bin/gdbus.exe" ]; then
+  cp "$mingw_prefix/bin/gdbus.exe" "$dist_bindir/"
 fi
-chmod +x $BUILD_DIR/rcedit-x64.exe
-$BUILD_DIR/rcedit-x64.exe "$DIST_BINDIR/zrythm.exe" --set-icon  "$DIST_DIR/zrythm.ico"
-cp "$MINGW_PREFIX/bin/gspawn-win64-helper.exe" "$DIST_BINDIR/"
-cp "$MINGW_PREFIX/bin/gspawn-win64-helper-console.exe" "$DIST_BINDIR/"
-#cp "$MINGW_PREFIX/bin/gdbus.exe" "$DIST_BINDIR/"
+chmod +x $build_dir/rcedit-x64.exe
+$build_dir/rcedit-x64.exe "$dist_bindir/zrythm.exe" --set-icon  "$dist_dir/zrythm.ico"
+cp "$mingw_prefix/bin/gspawn-win64-helper.exe" "$dist_bindir/"
+cp "$mingw_prefix/bin/gspawn-win64-helper-console.exe" "$dist_bindir/"
+#cp "$mingw_prefix/bin/gdbus.exe" "$dist_bindir/"
 # ******************************
 
-cp "$INNO_ISS" "$DIST_DIR"/
-cd $DIST_DIR
+cp "$inno_iss" "$dist_dir"/
+info_version=`echo "$zrythm_version" | sed -e 's/^\([0-9]\+\.[0-9]\+\.[0-9]\+\)\..*$/\1/'`
+cd $dist_dir
 ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 6/ISCC.exe \
-  "//DAppName=$APP_NAME" "//DAppVersion=$ZRYTHM_VERSION" \
-  "//DAppInfoVersion=${ZRYTHM_VERSION:0:7}" \
-  "//DPluginsDir=$PLUGINS_DIR" \
+  "//DAppName=$app_name" "//DAppVersion=$zrythm_version" \
+  "//DAppInfoVersion=$info_version" \
+  "//DPluginsDir=$plugins_dir" \
   installer.iss
