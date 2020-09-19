@@ -135,7 +135,7 @@ print_install_success()
 }
 
 proceed=0
-proceed_txt="Proceed with the installation of Zrythm$TRIAL v$zrythm_ver?"
+proceed_txt="Proceed with the installation of Zrythm$trial v$zrythm_ver?"
 if [ $have_zenity -ne 0 ]; then
   zenity --question --text="$proceed_txt" --width $zenity_width
   if [ $? -eq 0 ]; then
@@ -149,7 +149,7 @@ else
 fi
 
 # install packages
-prefix="bin/$distro_identifier/zrythm$dash_trial-$zrythm_ver"
+prefix="bin/$distro_identifier/zrythm$trial-$zrythm_ver"
 if [ $proceed -ne 0 ]; then
   if [[ $distro_identifier = "ubuntu"* ]] || [[ $distro_identifier = "debian"* ]]; then
     ask_for_root_pw;
