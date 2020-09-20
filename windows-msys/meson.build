@@ -156,7 +156,7 @@ carla_packages += custom_target (
   )
 endforeach
 independent_dep_names = [
-  'jack2', 'lsp-dsp-lib'
+  'jack2-bin', 'lsp-dsp-lib'
   ]
 independent_deps = []
 foreach dep_name : independent_dep_names
