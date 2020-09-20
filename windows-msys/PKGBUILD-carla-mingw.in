@@ -10,7 +10,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 options=('strip' 'staticlibs')
 license=("GPL2")
-url="https://github.com/sadko4u/lsp-dsp-lib"
+url="https://github.com/falktx/carla"
 source=("Carla-@CARLA_GIT_VER@.tar.gz")
 sha256sums=('SKIP')
 
