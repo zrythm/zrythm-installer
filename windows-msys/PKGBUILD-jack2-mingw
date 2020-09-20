@@ -1,6 +1,6 @@
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
 _realname=jack2
-_commit=5f1b2be0dc509469a072041643c3e45bfa406b9a
+_commit=78c93766af1bc362a1a51643bb492cfaffce0ee1
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=1.9.14.1
@@ -45,7 +45,7 @@ build() {
 
 check() {
   cd "${srcdir}/${_realname}-${pkgver}"
-  #build/jackd.exe --version
+  build/jackd.exe --version
 }
 
 package() {
