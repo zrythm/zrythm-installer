@@ -15,6 +15,8 @@ mkdir -p $private_dir
 inner_dir="@ZRYTHM_INNER_DIR_NAME@"
 meson_bin="@MESON_BIN@"
 
+latex_build_dir=build/doc/user/_build/$lang/latex
+
 cp $zrythm_src_tarball $private_dir/
 
 # build manuals
@@ -23,10 +25,10 @@ tar xf $zrythm_src_tarball_filename
 pushd $inner_dir
 $meson_bin build
 sed -i -e 's/latexpdf/latex/' doc/user/meson.build
-ninja -C build latex-manual-$lang ;
-make -C build/doc/user/$lang/latex ;
+ninja -C build latex-manual-$lang
+make -C $latex_build_dir
 popd
 popd
 
-cp $private_dir/$inner_dir/build/doc/user/$lang/latex/Zrythm.pdf \
+cp $private_dir/$inner_dir/$latex_build_dir/Zrythm.pdf \
   $out_file
