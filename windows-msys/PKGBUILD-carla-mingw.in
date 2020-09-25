@@ -26,11 +26,11 @@ prepare() {
 build() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  make PREFIX=${MINGW_PREFIX} BUILDING_FOR_WINDOWS=true DEBUG=true
+  make PREFIX=${MINGW_PREFIX} BUILDING_FOR_WINDOWS=true DEBUG=false
 }
 
 package() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" BUILDING_FOR_WINDOWS=true DEBUG=true install
+  make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" BUILDING_FOR_WINDOWS=true DEBUG=false install
 }
