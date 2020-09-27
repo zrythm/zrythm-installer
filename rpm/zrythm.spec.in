@@ -98,6 +98,7 @@ PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
   -Dtrial_ver=@TRIAL_TRUE_FALSE@ -Dcarla=enabled \
   -Dgraphviz=enabled -Dlsp_dsp=enabled \
   -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
+  -Dinstaller_ver=true \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 ninja -C build
 

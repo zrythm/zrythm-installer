@@ -63,7 +63,7 @@ build() {
     -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
     -Dmanpage=false \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
-    -Dwindows_release=true -Dcarla=enabled \
+    -Dinstaller_ver=true -Dcarla=enabled \
     --buildtype=debugoptimized \
     -Dextra_debug_info=true \
     -Dtests=false \

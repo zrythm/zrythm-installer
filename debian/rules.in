@@ -17,6 +17,7 @@ override_dh_auto_configure:
 		-Drtaudio=auto -Drtmidi=auto -Dguile=enabled \
 		-Dcarla=enabled -Dgraphviz=enabled \
 		-Dtrial_ver=@TRIAL_TRUE_FALSE@ \
+		-Dinstaller_ver=true \
 		-Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 
 override_dh_auto_build:

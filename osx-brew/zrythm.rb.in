@@ -41,6 +41,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dmanpage=false",
         # TODO enable
         "-Dstatic_deps=false",
+        "-Dinstaller_ver=true",
         ".."
       system "ninja", "-v"
       system "ninja", "install", "-v"
