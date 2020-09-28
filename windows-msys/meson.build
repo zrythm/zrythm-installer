@@ -33,6 +33,9 @@ windows_msys_conf.set (
 windows_msys_conf.set (
   'ZRYTHM_SOURCE_TARBALL_FILENAME',
   zrythm_src_tarball_filename)
+windows_msys_conf.set (
+  'SUPPORTING_TEXT',
+  build_trial ? 'trying out' : 'supporting')
 
 mingw_zrythm_pkgbuild = configure_file (
   output: 'PKGBUILD',

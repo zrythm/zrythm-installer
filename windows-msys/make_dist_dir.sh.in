@@ -42,8 +42,14 @@ main () {
 
   rm -rf $out_dir
 
+  # create third party info
+  mingw_packages_commit=`git ls-remote https://github.com/msys2/MINGW-packages | grep HEAD | head -n1 | awk '{print $1;}'`
+  thirdparty_dir=$dist_dir/third_party
+  mkdir -p $thirdparty_dir
+  wget "https://github.com/msys2/MINGW-packages/archive/$mingw_packages_commit.zip" -P $thirdparty_dir/
+  echo "https://github.com/msys2/MINGW-packages/tree/$mingw_packages_commit" > $dist_dir/THIRDPARTY_INFO
+
   # create sources distribution
-  echo "TODO" > $dist_dir/THIRDPARTY_INFO
   cp $zrythm_src_tarball $installer_dir/
   pushd $installer_dir
   tar xf $zrythm_src_tarball_filename
@@ -52,7 +58,12 @@ main () {
   mv $installer_dir/$zrythm_inner_dir_name $src_dir
   cp $src_dir/AUTHORS $dist_dir/
   cp $src_dir/COPYING* $dist_dir/
-  cp $src_dir/README.md $dist_dir/README.txt
+  cat >> $dist_dir/INSTALLER_README.txt <<EOL
+Thank you for @SUPPORTING_TEXT@ Zrythm!
+
+This is Zrythm v@ZRYTHM_PKG_VERSION@.
+EOL
+  cp $src_dir/README.md $dist_dir/
   cp $src_dir/CONTRIBUTING.md $dist_dir/
   cp $src_dir/THANKS $dist_dir/
   cp $src_dir/TRANSLATORS $dist_dir/

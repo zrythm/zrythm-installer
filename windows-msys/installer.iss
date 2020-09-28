@@ -77,7 +77,12 @@ Source: "AUTHORS"; DestDir: "{app}"; \
   Components: zrythm
 Source: "THIRDPARTY_INFO"; DestDir: "{app}"; \
   Components: zrythm
-Source: "README.txt"; DestDir: "{app}"; Flags: isreadme; \
+Source: "third_party\*"; DestDir: "{app}\third_party"; \
+  Flags: ignoreversion recursesubdirs; \
+  Components: zrythm
+Source: "INSTALLER_README.txt"; DestDir: "{app}"; Flags: isreadme; \
+  Components: zrythm
+Source: "README.md"; DestDir: "{app}"; \
   Components: zrythm
 Source: "share\fonts\zrythm\DSEG14-Classic-MINI\DSEG14ClassicMini-Italic.ttf"; \
   DestDir: "{fonts}"; FontInstall: "DSEG14 Classic Mini-Italic (OpenType)"; \
