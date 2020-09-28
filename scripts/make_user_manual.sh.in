@@ -23,7 +23,7 @@ cp $zrythm_src_tarball $private_dir/
 pushd $private_dir
 tar xf $zrythm_src_tarball_filename
 pushd $inner_dir
-$meson_bin build
+$meson_bin build -Dstrict_sphinx_opts=false
 sed -i -e 's/latexpdf/latex/' doc/user/meson.build
 ninja -C build latex-manual-$lang
 make -C $latex_build_dir
