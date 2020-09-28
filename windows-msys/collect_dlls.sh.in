@@ -27,6 +27,8 @@ main () {
   # some dlls need to be copied manually
   cp $mingw_prefix/bin/librsvg-2-2.dll $out_dir/
   cp $mingw_prefix/lib/carla/libcarla_host-plugin.dll $out_dir/
+  cp $mingw_prefix/bin/libfftw3-3.dll $out_dir/
+  cp $mingw_prefix/bin/libfftw3f-3.dll $out_dir/
 
   # for an unknown reason it doesn't work unless it
   # is named CarlaNativePlugin.dll
