@@ -48,6 +48,8 @@ main () {
   mkdir -p $thirdparty_dir
   wget "https://github.com/msys2/MINGW-packages/archive/$mingw_packages_commit.zip" -P $thirdparty_dir/
   echo "https://github.com/msys2/MINGW-packages/tree/$mingw_packages_commit" > $dist_dir/THIRDPARTY_INFO
+  wget "https://github.com/falkTX/Carla/archive/@CARLA_GIT_VER@.zip" -P $thirdparty_dir/
+  echo "https://github.com/falkTX/Carla/tree/@CARLA_GIT_VER@.zip" >> $dist_dir/THIRDPARTY_INFO
 
   # create sources distribution
   cp $zrythm_src_tarball $installer_dir/
