@@ -216,6 +216,13 @@ lilv_pkg = custom_target (
   depends: sratom_pkg,
   install: false,
   )
+cairo_pkg = custom_target (
+  'mingw-cairo',
+  output: 'cairo.pkg.tar.zst',
+  input: [ make_mingw_pkg, 'PKGBUILD-cairo-mingw', ],
+  command: make_mingw_pkg_cmd,
+  install: false,
+  )
 
 # get carla binary zips
 carla_bin_base_url = 'https://www.zrythm.org/downloads/carla/'
@@ -274,7 +281,7 @@ mingw_zrythm_pkg = custom_target (
     ],
   depends: [
     mingw_install_carla_bins_target, lilv_pkg,
-    independent_deps,
+    cairo_pkg, independent_deps,
     ],
   console: true,
   install: false,
@@ -295,7 +302,8 @@ windows_chroot_target = custom_target (
     independent_deps[1],
     carla_packages[0],
     lv2_pkg, serd_pkg, sord_pkg,
-    sratom_pkg, lilv_pkg, mingw_zrythm_pkg,
+    sratom_pkg, lilv_pkg, cairo_pkg,
+    mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',

@@ -22,11 +22,13 @@ mkdir -p $chroot_dir/tmp
 pacman -Syu --root $chroot_dir
 pacman -S \
   filesystem bash pacman \
-  mingw-w64-x86_64-gtksourceview4 \
   --noconfirm --needed --root $chroot_dir
 for pkg in "${packages_array[@]}"; do
   pacman -U "$pkg" --noconfirm --needed --root $chroot_dir
 done
+pacman -S \
+  mingw-w64-x86_64-gtksourceview4 \
+  --noconfirm --needed --root $chroot_dir
 cp -R /mingw64/lib/carla "$chroot_dir/mingw64/lib/"
 glib-compile-schemas.exe \
   "$chroot_dir/mingw64/share/glib-2.0/schemas"

@@ -1,0 +1,72 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Contributor: Renato Silva <br.renatosilva@gmail.com>
+# Contributor: Alexandros Theodotou <alex at zrythm dot org>
+_realname=cairo
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+_commit='master'
+pkgver=1.17.5
+pkgrel=1
+pkgdesc="Cairo vector graphics library (mingw-w64)"
+arch=('any')
+url="https://cairographics.org/"
+license=(LGPL2.1 MPL1.1)
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-glib2"
+             "${MINGW_PACKAGE_PREFIX}-librsvg"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-gtk-doc"
+             "${MINGW_PACKAGE_PREFIX}-meson"
+             "${MINGW_PACKAGE_PREFIX}-ninja"
+             "git"
+            )
+depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
+         "${MINGW_PACKAGE_PREFIX}-freetype"
+         "${MINGW_PACKAGE_PREFIX}-fontconfig"
+         "${MINGW_PACKAGE_PREFIX}-lzo2"
+         "${MINGW_PACKAGE_PREFIX}-pixman"
+         "${MINGW_PACKAGE_PREFIX}-libpng"
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+        )
+optdepends=("${MINGW_PACKAGE_PREFIX}-glib2: libcairo-gobject")
+options=('strip' 'staticlibs')
+source=("https://gitlab.freedesktop.org/cairo/cairo/-/archive/${_commit}/cairo-${_commit}.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  mv "${srcdir}/${_realname}-${_commit}" "${srcdir}/${_realname}-${pkgver}"
+  cd "${srcdir}/${_realname}-${pkgver}"
+}
+
+build() {
+  rm -rf build-${MINGW_CHOST}
+  mkdir -p build-${MINGW_CHOST}
+  cd build-${MINGW_CHOST}
+
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+  ${MINGW_PREFIX}/bin/meson \
+    --prefix=${MINGW_PREFIX} \
+    --buildtype=plain \
+    --wrap-mode=nofallback \
+    --default-library=both \
+    -Dauto_features=enabled \
+    -Dxlib=disabled \
+    -Dxcb=disabled \
+    -Dgl-backend=disabled \
+    -Dtests=disabled \
+    -Dspectre=disabled \
+    -Dtee=enabled \
+    ../${_realname}-${pkgver}
+
+  meson compile
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  DESTDIR="${pkgdir}" meson install
+
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING"          "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING-LGPL-2.1" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING-LGPL-2.1"
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING-MPL-1.1"  "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING-MPL-1.1"
+}

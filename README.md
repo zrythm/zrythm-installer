@@ -1,13 +1,12 @@
 Zrythm installer scripts
 ========================
 
-These scripts assume each distro is available in
-each VM according to ansible-conf.ini.
+*This is a meta repo for managing Zrythm installer
+builds and is generally only useful for Zrythm
+maintainers.*
 
-# Create installer
-
-    export ANSIBLE_STDOUT_CALLBACK=debug
-    make -j2
+Licensed under the AGPLv3+. See the [COPYING](COPYING)
+file for details.
 
 # Note for windows
 Can use the following to spawn an MSYS2 shell from the
