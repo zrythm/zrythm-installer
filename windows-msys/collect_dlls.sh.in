@@ -30,11 +30,6 @@ main () {
   cp $mingw_prefix/bin/libfftw3-3.dll $out_dir/
   cp $mingw_prefix/bin/libfftw3f-3.dll $out_dir/
 
-  # for an unknown reason it doesn't work unless it
-  # is named CarlaNativePlugin.dll
-  #mv $out_dir/libcarla_native-plugin.dll \
-  #  $out_dir/CarlaNativePlugin.dll
-
   # ******************************
 }
 
