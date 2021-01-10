@@ -98,10 +98,17 @@ carla_zip_windows = custom_target (
 
 make_mingw_pkg_cmd = [
   bash, '-c', '@INPUT0@ "$1" "$2" "$3" "$4" ' +
-  '"$5"',
+  '"$5" "$6" "$7"',
   '_ignored',
   '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
-  'mingw64', 'x86_64',
+  'mingw64', 'x86_64', '', '',
+  ]
+make_mingw_pkg_cmd_full = [
+  bash, '-c', '@INPUT0@ "$1" "$2" "$3" "$4" ' +
+  '"$5" "$6" "$7"',
+  '_ignored',
+  '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
+  'mingw64', 'x86_64', '', '@INPUT2@',
   ]
 
 # sources
@@ -219,10 +226,16 @@ lilv_pkg = custom_target (
 cairo_pkg = custom_target (
   'mingw-cairo',
   output: 'cairo.pkg.tar.zst',
-  input: [ make_mingw_pkg, 'PKGBUILD-cairo-mingw', ],
-  command: make_mingw_pkg_cmd,
+  input: [
+    make_mingw_pkg, 'PKGBUILD-cairo-mingw',
+    'patches/add_assert_to_cairo_surface.patch', ],
+  command: make_mingw_pkg_cmd_full,
   install: false,
   )
+run_target (
+  'run-mingw-cairo',
+  command: [ 'echo', 'done' ],
+  depends: cairo_pkg)
 
 # get carla binary zips
 carla_bin_base_url = 'https://www.zrythm.org/downloads/carla/'

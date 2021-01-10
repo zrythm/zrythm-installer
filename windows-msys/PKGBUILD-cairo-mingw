@@ -30,12 +30,16 @@ depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
         )
 optdepends=("${MINGW_PACKAGE_PREFIX}-glib2: libcairo-gobject")
 options=('strip' 'staticlibs')
-source=("https://gitlab.freedesktop.org/cairo/cairo/-/archive/${_commit}/cairo-${_commit}.tar.gz")
-sha256sums=('SKIP')
+source=("https://gitlab.freedesktop.org/cairo/cairo/-/archive/${_commit}/cairo-${_commit}.tar.gz"
+  add_assert_to_cairo_surface.patch)
+sha256sums=('SKIP'
+  'SKIP')
 
 prepare() {
   mv "${srcdir}/${_realname}-${_commit}" "${srcdir}/${_realname}-${pkgver}"
   cd "${srcdir}/${_realname}-${pkgver}"
+
+  patch --ignore-whitespace -p1 -i ${srcdir}/add_assert_to_cairo_surface.patch
 }
 
 build() {

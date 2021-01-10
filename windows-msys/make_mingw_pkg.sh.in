@@ -9,6 +9,8 @@ private_dir="$3"
 arch="$4"
 arch_name="$5"
 tarball="$6"
+patches="${@:7}"
+patches_array=($patches)
 
 pkgname="`basename $pkgbuild`"
 pkgname=${pkgname#"PKGBUILD-"}
@@ -22,6 +24,11 @@ pacman -R "mingw-w64-$arch_name-$pkgname" --noconfirm || true
 rm -rf $private_dir
 mkdir -p $private_dir
 cp $pkgbuild $private_dir/PKGBUILD
+for patch in "${patches_array[@]}"; do
+  if ! [ "$patch" = "" ]; then
+    cp "$patch" $private_dir/
+  fi
+done
 if ! [ "$tarball" = "" ]; then
   cp "$tarball" $private_dir/
 fi
