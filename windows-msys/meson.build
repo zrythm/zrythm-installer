@@ -308,12 +308,12 @@ windows_chroot_target = custom_target (
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
-    '"$7" "$8" "$9" "${10}" "${11}" "${12}"',
+    '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
-    '@INPUT7@', '@INPUT8@', '@INPUT9@',
-    '@INPUT10@',
+    '@INPUT7@', '@INPUT8@', '@INPUT9@', '@INPUT10@',
+    '@INPUT11@',
     ],
   console: true,
   install: false,

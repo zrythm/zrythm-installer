@@ -26,7 +26,8 @@ pacman -S \
 for pkg in "${packages_array[@]}"; do
   pacman -U "$pkg" --noconfirm --needed --root $chroot_dir
 done
-ls -l $chroot_dir/mingw64/lib/lv2 # verify plugins exist
+# verify plugins exist
+ls -l $chroot_dir/mingw64/lib/lv2/Z*.lv2
 pacman -S \
   mingw-w64-x86_64-gtksourceview4 \
   mingw-w64-x86_64-fftw \
