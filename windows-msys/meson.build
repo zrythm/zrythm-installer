@@ -223,13 +223,21 @@ lilv_pkg = custom_target (
   depends: sratom_pkg,
   install: false,
   )
-cairo_pkg = custom_target (
-  'mingw-cairo',
+# for reference: this is how to apply patches
+cairo_pkg_with_patch = custom_target (
+  'mingw-cairo-with-patch',
   output: 'cairo.pkg.tar.zst',
   input: [
     make_mingw_pkg, 'PKGBUILD-cairo-mingw',
     'patches/add_assert_to_cairo_surface.patch', ],
   command: make_mingw_pkg_cmd_full,
+  install: false,
+  )
+cairo_pkg = custom_target (
+  'mingw-cairo',
+  output: 'cairo.pkg.tar.zst',
+  input: [ make_mingw_pkg, 'PKGBUILD-cairo-mingw', ],
+  command: make_mingw_pkg_cmd,
   install: false,
   )
 run_target (
