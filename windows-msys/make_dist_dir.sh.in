@@ -112,6 +112,10 @@ EOL
 
   echo "packaging existing hicolor icons"
   cp -R "$mingw_prefix/share/icons/hicolor" "$dist_sharedir/icons/"
+
+  echo "packaging Adwaita cursors"
+  mkdir -p "$dist_sharedir/icons/Adwaita"
+  cp -R "$mingw_prefix/share/icons/Adwaita/cursors" "$dist_sharedir/icons/Adwaita/"
   # ******************************
 
   # ******************************
