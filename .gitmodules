@@ -2,3 +2,6 @@
 	path = ext/cerbero
 	url = https://git.zrythm.org/git/cerbero.git
   branch = zrythm
+[submodule "ext/macos-installer-builder"]
+	path = ext/macos-installer-builder
+	url = https://github.com/KosalaHerath/macos-installer-builder.git
