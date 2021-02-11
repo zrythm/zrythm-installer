@@ -26,15 +26,22 @@ mkdir -p $out_file
 tar xf $tarball -C $private_dir
 pushd $private_dir/$inner_dir_name
 meson_opts="--prefix=/"
-if [ "$distro" = "osx-brew" ]; then
+if [[ "$distro" == "osx-brew"* ]]; then
   # set lv2 core spec path
   lv2_cellar=`brew info lv2 | sed '4q;d' | awk '{print $1;}'`
   meson_opts="$meson_opts -Dlv2_core_path=$lv2_cellar/lib"
+elif [[ "$distro" == "fedora"* ]]; then
+  meson_opts="$meson_opts -Dlv2_core_path=/usr/lib64/lv2"
 else
   meson_opts="$meson_opts -Dlv2_core_path=/usr/lib/lv2"
 fi
 $meson_bin build --buildtype=debugoptimized \
   $meson_opts
 popd
-ninja -C $private_dir/$inner_dir_name/build test
+
+# fedora's lv2_validate is broken
+if [[ "$distro" != "fedora"* ]]; then
+  ninja -C $private_dir/$inner_dir_name/build test
+fi
+
 DESTDIR="`pwd`/$out_file" ninja -C $private_dir/$inner_dir_name/build install

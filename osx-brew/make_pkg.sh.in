@@ -148,8 +148,8 @@ cp -rvf /usr/local/share/locale $share_dir/
 # copy thumbnailers
 cp -rvf /usr/local/share/thumbnailers $share_dir/
 
-# copy mime database
-cp -rvf /usr/local/share/mime $share_dir/
+# copy mime database if it exists
+cp -rvf /usr/local/share/mime $share_dir/ || true
 
 # copy gtk schemas
 for schema in `ls /usr/local/share/glib-2.0/schemas`; do
