@@ -50,6 +50,12 @@ osx_brew_conf.set (
   'OSX_INSTALLER_PKG_FILENAME', installer_pkg_filename)
 osx_brew_conf.set (
   'BREEZE_DARK', breeze_icons.full_path ())
+zrythm_product_ver = zrythm_pkg_ver
+if zrythm_product_ver.contains('-')
+  zrythm_product_ver = zrythm_product_ver.split('-')[0]
+endif
+osx_brew_conf.set (
+  'ZRYTHM_PRODUCT_VERSION', zrythm_product_ver)
 osx_brew_conf.set (
   'BUILT_ZPLUGINS_DIR',
   zplugins_installation.full_path ())
@@ -90,6 +96,21 @@ welcome_html = configure_file (
 postinstall_script = configure_file (
   output: 'postinstall',
   input: 'postinstall.in',
+  configuration: osx_brew_conf,
+  )
+conclusion_html = configure_file (
+  output: 'conclusion.html',
+  input: 'conclusion.html.in',
+  configuration: osx_brew_conf,
+  )
+uninstall_sh = configure_file (
+  output: 'uninstall.sh',
+  input: 'uninstall.sh.in',
+  configuration: osx_brew_conf,
+  )
+info_plist = configure_file (
+  output: 'Info.plist',
+  input: 'Info.plist.in',
   configuration: osx_brew_conf,
   )
 
@@ -137,29 +158,10 @@ zrythm_bottle = custom_target (
   install: false,
   )
 
-# previous zip-based installer
-installer_zip = custom_target (
-  'osx-installer-zip',
-  output: installer_zip_filename,
-  input: [
-    make_zip_sh, zrythm_formula,
-    carla_bottle, installer_sh,
-    readme, zrythm_bottle,
-    ],
-  command: [
-    make_zip_sh, '@OUTPUT@',
-    '@INPUT1@', '@INPUT2@', '@INPUT3@', '@INPUT4@',
-    '@PRIVATE_DIR@',
-    ],
-  console: true,
-  install: true,
-  install_dir: get_option ('prefix'),
-  )
-
-# .pkg installer
+# .pkg installer wrapped in a zip
 installer_pkg = custom_target (
   'osx-installer-pkg',
-  output: installer_pkg_filename,
+  output: installer_zip_filename,
   input: [
     make_pkg_sh, zrythm_formula,
     carla_bottle, installer_sh,
@@ -170,7 +172,8 @@ installer_pkg = custom_target (
     '@INPUT1@', '@INPUT2@', '@INPUT3@', '@INPUT4@',
     '@PRIVATE_DIR@',
     meson.source_root() / 'ext/macos-installer-builder',
-    welcome_html, postinstall_script,
+    welcome_html, postinstall_script, conclusion_html,
+    uninstall_sh, info_plist
     ],
   console: true,
   install: true,

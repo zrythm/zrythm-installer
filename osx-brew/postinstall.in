@@ -3,20 +3,46 @@
 echo "Post installation process finished"
 
 #Custermize this for your application
-#APPLICATION_FILE_PATH=bin/zrythm
+APPLICATION_FILE_PATH=bin/zrythm_launch
 
 #Parameters
-#PRODUCT_HOME=/Library/__PRODUCT__/__VERSION__
+product_version="@ZRYTHM_PRODUCT_VERSION@"
+PRODUCT_HOME=/Library/Zrythm/$product_version
 
-#echo "Post installation process started"
+echo "Post installation process started"
 
 #Change permissions in home directory
-#echo "Change permissions in product home"
-#cd ${PRODUCT_HOME}
-#chmod -R 755 .
-#[ -d /usr/local/bin ] || mkdir /usr/local/bin
+echo "Change permissions in product home"
+cd ${PRODUCT_HOME}
+chmod -R 755 .
+[ -d /usr/local/bin ] || mkdir /usr/local/bin
 
 #Add application shortcut to /usr/local/bin
-#rm -f /usr/local/bin/__PRODUCT__-__VERSION__
-#ln -s ${PRODUCT_HOME}/${APPLICATION_FILE_PATH} /usr/local/bin/__PRODUCT__-__VERSION__
-#echo "Post installation process finished"
+rm -f /usr/local/bin/Zrythm-@ZRYTHM_PRODUCT_VERSION@
+ln -s ${PRODUCT_HOME}/${APPLICATION_FILE_PATH} /usr/local/bin/Zrythm-@ZRYTHM_PRODUCT_VERSION@
+
+echo "Install fonts"
+our_fonts_dir=${PRODUCT_HOME}/share/fonts/zrythm
+for font in Bold BoldItalic Italic Light LightItalic Regular; do
+  full_font_name=DSEG14ClassicMini-$font.ttf
+  echo "installing font $full_font_name"
+  ln -s ${our_fonts_dir}/DSEG14-Classic-MINI/$full_font_name \
+    /Library/Fonts/$full_font_name
+  ln -s ${our_fonts_dir}/DSEG14-Classic-MINI/DSEG-LICENSE.txt \
+    /Library/Fonts/DSEG-LICENSE.txt
+done
+
+echo "Move LV2 plugins"
+dest_lv2_dir="/Library/Audio/Plug-Ins/LV2"
+dest_lv2_prefix="$dest_lv2_dir/Zrythm-$product_version"
+mkdir -p $dest_lv2_dir
+for plugin in `ls ${PRODUCT_HOME}/lib/zrythm/lib/lv2`; do
+  rm -rf $dest_lv2_prefix-$plugin
+  mv -vf ${PRODUCT_HOME}/lib/zrythm/lib/lv2/$plugin \
+    $dest_lv2_prefix-$plugin
+done
+
+echo "Move Zrythm.app"
+mv -vf ${PRODUCT_HOME}/Zrythm.app /Applications/
+
+echo "Post installation process finished"

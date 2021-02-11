@@ -11,45 +11,193 @@ private_dir=$6
 installer_builder_dir="$7"
 welcome_html="$8"
 postinstall_script="$9"
+conclusion_html="${10}"
+uninstall_sh="${11}"
+info_plist="${12}"
 
 dash_trial="@DASH_TRIAL@"
 manuals_zip="@MANUALS_ZIP_FILE@"
 breeze_dark="@BREEZE_DARK@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
+zrythm_product_ver="@ZRYTHM_PRODUCT_VERSION@"
 zrythm_bottle_name="zrythm$dash_trial"
 carla_bottle_ver="@CARLA_BOTTLE_VER@"
+built_zplugins_dir="@BUILT_ZPLUGINS_DIR@"
+meson_src_root="@MESON_SOURCE_ROOT@"
 
 inner_dir_name="${out_file%.*}"
 inner_dir_name="`basename $inner_dir_name`"
 inner_dir=$private_dir/$inner_dir_name
+application_dir=$inner_dir/macOS-x64/application
+bin_dir=$application_dir/bin
+share_dir=$application_dir/share
+lib_dir=$application_dir/lib
+etc_dir=$application_dir/etc
+darwin_dir=$inner_dir/macOS-x64/darwin
+darwin_resources_dir=$darwin_dir/Resources
+darwin_scripts_dir=$darwin_dir/scripts
+installed_prefix=/Library/Zrythm/$zrythm_product_ver
 
 rm -rf $private_dir
-mkdir -p $inner_dir
+mkdir -p $etc_dir
 
 # copy the template
 cp -rfv $installer_builder_dir/* $inner_dir/
 
 # copy the content of each formula (already installed)
 cp -rfv /usr/local/Cellar/carla-git/$carla_bottle_ver/* \
-  $inner_dir/macOS-x64/application/
+  $application_dir/
 cp -rfv /usr/local/Cellar/$zrythm_bottle_name/$zrythm_pkg_ver/* \
-  $inner_dir/macOS-x64/application/
+  $application_dir/
+
+# remove some unnecessary binaries
+rm -rf $bin_dir/*-e
+
+replace_path() {
+  local exe=$1
+  chmod +w $exe
+  echo "replacing path for $exe"
+  if [[ "$exe" == *".dylib" ]]; then
+    local new_id="@executable_path/../lib/`basename $exe`"
+    if [[ "$exe" == *".lv2"* ]]; then
+      new_id="/Library/Audio/Plug-Ins/LV2/Zrythm-$zrythm_product_ver-`basename $(dirname $exe)`/`basename $exe`"
+    fi
+    install_name_tool -id "$new_id" "$exe"
+  fi
+  local changes=""
+  for lib in `otool -L $exe | egrep "(/opt/|/local/)" | grep -v "/usr/lib" | awk '{print $1}'` ; do
+    if [ ! -f "$lib_dir/`basename $lib`" ]; then
+      cp -rfv $lib $lib_dir/
+    fi
+    replaced=""
+    if [[ "$exe" == *".lv2"* ]]; then
+      replaced="/Library/Zrythm/$zrythm_product_ver/lib"
+    else
+      replaced="@executable_path/../lib"
+    fi
+    replaced="$replaced/`basename $lib`"
+    changes="$changes -change $lib $replaced"
+    replace_path "$lib_dir/`basename $lib`"
+  done
+  if test "x$changes" != "x" ; then
+    install_name_tool $changes $exe
+  fi
+  chmod -w $exe
+}
+
+# copy librsvg
+cp -rfv /usr/local/lib/librsvg-2.2.dylib $lib_dir/
+
+# replace paths
+for exe in `ls $bin_dir`; do
+  replace_path $bin_dir/$exe
+done
+plugin_libs=`find "$lib_dir/zrythm/lib/lv2" -name "*.dylib" -exec printf '{} ' \;`
+for plugin_lib in $plugin_libs; do
+  replace_path $plugin_lib
+done
+replace_path $lib_dir/librsvg-2.2.dylib
+
+# copy the pixbuf loaders
+cp -rfv /usr/local/lib/gdk-pixbuf-2.0 $lib_dir/
+sed -i '' -E "s|/usr/local/lib|$installed_prefix/lib|g" $lib_dir/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
 # copy resources
-cp $welcome_html $inner_dir/macOS-x64/darwin/Resources/
-cp $postinstall_script $inner_dir/macOS-x64/darwin/scripts/
+cp -rvf $welcome_html $darwin_resources_dir/
+cp -rvf $conclusion_html $darwin_resources_dir/
+cp -rvf $postinstall_script $darwin_scripts_dir/
+cp -rvf $uninstall_sh $darwin_resources_dir/
+cp -rvf $application_dir/COPYING $darwin_resources_dir/LICENSE.txt
+cp -rvf $share_dir/zrythm/themes/icons/zrythm-dark/scalable/apps/zrythm-splash-png.png $darwin_resources_dir/banner.png
 
-#cp $readme_file $inner_dir/README
-#cp -r "$breeze_dark" $inner_dir/icons/
+cp $readme_file $application_dir/README
 
-#if [ "$dash_trial" != "-trial" ]; then
-  #echo "adding user manuals" ;
-  #unzip -o $manuals_zip -d $inner_dir/ ;
-#fi
+cat << EOF > $bin_dir/zrythm_launch
+#!/bin/bash
+export GSETTINGS_SCHEMA_DIR=$installed_prefix/share/glib-2.0/schemas
+export GDK_PIXBUF_MODULEDIR=$installed_prefix/lib/gdk-pixbuf-2.0/2.10.0/loaders
+export GDK_PIXBUF_MODULE_FILE=$installed_prefix/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+export DYLD_LIBRARY_PATH="$installed_prefix/lib"
+export GTK_DATA_PREFIX="$installed_prefix"
+export GTK_EXE_PREFIX="$installed_prefix"
+export GTK_PATH="$installed_prefix"
+export I18NDIR="$installed_prefix/share/locale"
+
+# set language
+lang_schema=/org/zrythm/Zrythm/preferences/ui/general/language
+defaults read zrythm \$lang_schema
+if [[ \$? == 0 ]]; then
+  preferences_lang=\`defaults read zrythm \$lang_schema\`
+  export LANG="\$preferences_lang"
+  export LC_MESSAGES="\$preferences_lang"
+fi
+$installed_prefix/bin/zrythm "\$@"
+EOF
+sed -i '' -E "s|/usr/local/lib|$installed_prefix/lib|g" $lib_dir/gdk-pixbuf-2.0/2.10.0/loaders.cache
+chmod +x $bin_dir/zrythm_launch
+
+# copy fonts
+cp -rvf /usr/local/etc/fonts $etc_dir/
+
+# copy gtksourceview files
+cp -rvf /usr/local/share/gtksourceview-4 $share_dir/
+
+# copy locales
+cp -rvf /usr/local/share/locale $share_dir/
+
+# copy thumbnailers
+cp -rvf /usr/local/share/thumbnailers $share_dir/
+
+# copy mime database
+cp -rvf /usr/local/share/mime $share_dir/
+
+# copy gtk schemas
+for schema in `ls /usr/local/share/glib-2.0/schemas`; do
+  if [[ "$schema" == *"org.gtk."* ]]; then
+    cp -rvf /usr/local/share/glib-2.0/schemas/$schema \
+      $share_dir/glib-2.0/schemas/
+  fi
+done
+
+# recompile schemas
+echo "Recompiling schemas..."
+/usr/local/bin/glib-compile-schemas $share_dir/glib-2.0/schemas
+
+# Create .app
+zrythm_app="$(pwd)/Zrythm.app"
+rm -rf $zrythm_app
+$meson_src_root/tools/osx/appify.sh $bin_dir/zrythm_launch Zrythm
+app_contents=$zrythm_app/Contents
+app_resources=$app_contents/Resources
+mkdir -p $app_resources
+cp -rfv $info_plist $app_contents/Info.plist
+cp -rfv $meson_src_root/tools/osx/zrythm.icns \
+  $app_resources/zrythm.icns
+mv $zrythm_app $application_dir/
 
 # run command to build installer
 pushd $inner_dir/macOS-x64
-./build-macos-x64.sh Zrythm $zrythm_pkg_ver
+# skip signing
+sed -i.bak -E 's|read -p.*|answer="n"|g' "build-macos-x64.sh"
+./build-macos-x64.sh Zrythm $zrythm_product_ver
 popd
 
-cp $inner_dir/macOS-x64/target/pkg/Zrythm-macos-installer-x64-$zrythm_pkg_ver.pkg  $out_file
+# --- prepare zip ---
+
+work_dir=`mktemp -d`
+mkdir $work_dir/$inner_dir_name
+cp $inner_dir/macOS-x64/target/pkg/Zrythm-macos-installer-x64-$zrythm_product_ver.pkg $work_dir/$inner_dir_name
+
+if [ "$dash_trial" != "-trial" ]; then
+  echo "adding user manuals" ;
+  if [ -f "$manuals_zip" ]; then
+    unzip -o $manuals_zip -d $work_dir/$inner_dir_name/ ;
+  else
+    echo "no user manuals found, skipping..."
+  fi
+fi
+pushd $work_dir
+zip -r $inner_dir_name.zip $inner_dir_name
+popd
+
+cp $work_dir/$inner_dir_name.zip $out_file

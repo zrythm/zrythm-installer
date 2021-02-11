@@ -12,6 +12,7 @@ private_dir="$3"
 
 meson_bin="@MESON_BIN@"
 zplugins_ver="@ZPLUGINS_VER@"
+distro="@DISTRO@"
 
 inner_dir_name=zplugins-$zplugins_ver
 full_private_dir="`pwd`/$private_dir"
@@ -24,7 +25,16 @@ mkdir -p $private_dir
 mkdir -p $out_file
 tar xf $tarball -C $private_dir
 pushd $private_dir/$inner_dir_name
+meson_opts="--prefix=/"
+if [ "$distro" = "osx-brew" ]; then
+  # set lv2 core spec path
+  lv2_cellar=`brew info lv2 | sed '4q;d' | awk '{print $1;}'`
+  meson_opts="$meson_opts -Dlv2_core_path=$lv2_cellar/lib"
+else
+  meson_opts="$meson_opts -Dlv2_core_path=/usr/lib/lv2"
+fi
 $meson_bin build --buildtype=debugoptimized \
-  --prefix=/ -Dlv2dir=
+  $meson_opts
 popd
+ninja -C $private_dir/$inner_dir_name/build test
 DESTDIR="`pwd`/$out_file" ninja -C $private_dir/$inner_dir_name/build install

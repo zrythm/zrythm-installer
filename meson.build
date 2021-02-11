@@ -17,7 +17,7 @@
 
 project (
   'zrythm-installer', [ 'c' ],
-  version: '0.1',
+  version: '0.1.1',
   meson_version: '>=0.55.0',
   license: 'AGPL-3-or-later',
   )
@@ -81,6 +81,8 @@ global_conf.set (
   'CC', cc.get_id ())
 global_conf.set (
   'LIBDIR', libdir)
+global_conf.set (
+  'DISTRO', distro)
 global_conf.set (
   'ZRYTHM_GIT_VERSION', zrythm_git_ver)
 global_conf.set (
