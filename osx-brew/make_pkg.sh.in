@@ -1,0 +1,55 @@
+#!@BASH@
+
+set -ex
+
+out_file="$1"
+zrythm_formula_file=$2
+carla_bottle_file=$3
+installer_sh_file=$4
+readme_file=$5
+private_dir=$6
+installer_builder_dir="$7"
+welcome_html="$8"
+postinstall_script="$9"
+
+dash_trial="@DASH_TRIAL@"
+manuals_zip="@MANUALS_ZIP_FILE@"
+breeze_dark="@BREEZE_DARK@"
+zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
+zrythm_bottle_name="zrythm$dash_trial"
+carla_bottle_ver="@CARLA_BOTTLE_VER@"
+
+inner_dir_name="${out_file%.*}"
+inner_dir_name="`basename $inner_dir_name`"
+inner_dir=$private_dir/$inner_dir_name
+
+rm -rf $private_dir
+mkdir -p $inner_dir
+
+# copy the template
+cp -rfv $installer_builder_dir/* $inner_dir/
+
+# copy the content of each formula (already installed)
+cp -rfv /usr/local/Cellar/carla-git/$carla_bottle_ver/* \
+  $inner_dir/macOS-x64/application/
+cp -rfv /usr/local/Cellar/$zrythm_bottle_name/$zrythm_pkg_ver/* \
+  $inner_dir/macOS-x64/application/
+
+# copy resources
+cp $welcome_html $inner_dir/macOS-x64/darwin/Resources/
+cp $postinstall_script $inner_dir/macOS-x64/darwin/scripts/
+
+#cp $readme_file $inner_dir/README
+#cp -r "$breeze_dark" $inner_dir/icons/
+
+#if [ "$dash_trial" != "-trial" ]; then
+  #echo "adding user manuals" ;
+  #unzip -o $manuals_zip -d $inner_dir/ ;
+#fi
+
+# run command to build installer
+pushd $inner_dir/macOS-x64
+./build-macos-x64.sh Zrythm $zrythm_pkg_ver
+popd
+
+cp $inner_dir/macOS-x64/target/pkg/Zrythm-macos-installer-x64-$zrythm_pkg_ver.pkg  $out_file

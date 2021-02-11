@@ -17,7 +17,7 @@
 
 osx_brew_conf = configuration_data ()
 osx_brew_conf.merge_from (global_conf)
-carla_bottle_ver = '0.1.3'
+carla_bottle_ver = '0.2.1'
 carla_bottle_filename = 'carla-git--' + carla_bottle_ver + '.catalina.bottle.tar.gz'
 zrythm_bottle_filename = 'zrythm' + dash_trial + '--' + zrythm_pkg_ver + '.catalina.bottle.tar.gz'
 osx_brew_conf.set (
@@ -43,8 +43,11 @@ zrythm_brew_src_sum = run_command (
 osx_brew_conf.set (
   'ZRYTHM_BREW_SHA256', zrythm_brew_src_sum)
 installer_zip_filename = 'zrythm' + dash_trial + '-' + zrythm_pkg_ver + '-osx-installer.zip'
+installer_pkg_filename = 'zrythm' + dash_trial + '-' + zrythm_pkg_ver + '-osx-installer.pkg'
 osx_brew_conf.set (
   'OSX_INSTALLER_ZIP_FILENAME', installer_zip_filename)
+osx_brew_conf.set (
+  'OSX_INSTALLER_PKG_FILENAME', installer_pkg_filename)
 osx_brew_conf.set (
   'BREEZE_DARK', breeze_icons.full_path ())
 osx_brew_conf.set (
@@ -62,6 +65,11 @@ make_zip_sh = configure_file (
   input: 'make_zip.sh.in',
   configuration: osx_brew_conf,
   )
+make_pkg_sh = configure_file (
+  output: 'make_pkg.sh',
+  input: 'make_pkg.sh.in',
+  configuration: osx_brew_conf,
+  )
 
 # configure installer script and README
 installer_sh = configure_file (
@@ -72,6 +80,16 @@ installer_sh = configure_file (
 readme = configure_file (
   output: 'README',
   input: 'README-osx.in',
+  configuration: osx_brew_conf,
+  )
+welcome_html = configure_file (
+  output: 'welcome.html',
+  input: 'welcome.html.in',
+  configuration: osx_brew_conf,
+  )
+postinstall_script = configure_file (
+  output: 'postinstall',
+  input: 'postinstall.in',
   configuration: osx_brew_conf,
   )
 
@@ -119,6 +137,7 @@ zrythm_bottle = custom_target (
   install: false,
   )
 
+# previous zip-based installer
 installer_zip = custom_target (
   'osx-installer-zip',
   output: installer_zip_filename,
@@ -137,6 +156,27 @@ installer_zip = custom_target (
   install_dir: get_option ('prefix'),
   )
 
+# .pkg installer
+installer_pkg = custom_target (
+  'osx-installer-pkg',
+  output: installer_pkg_filename,
+  input: [
+    make_pkg_sh, zrythm_formula,
+    carla_bottle, installer_sh,
+    readme, zrythm_bottle,
+    ],
+  command: [
+    make_pkg_sh, '@OUTPUT@',
+    '@INPUT1@', '@INPUT2@', '@INPUT3@', '@INPUT4@',
+    '@PRIVATE_DIR@',
+    meson.source_root() / 'ext/macos-installer-builder',
+    welcome_html, postinstall_script,
+    ],
+  console: true,
+  install: true,
+  install_dir: get_option ('prefix'),
+  )
+
 run_target (
   'osx-brew-prepare',
   command: [ 'echo', 'done' ],
@@ -147,4 +187,4 @@ run_target (
 run_target (
   'osx-brew',
   command: [ 'echo', 'done' ],
-  depends: installer_zip)
+  depends: installer_pkg)
