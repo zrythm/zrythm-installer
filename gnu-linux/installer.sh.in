@@ -55,13 +55,13 @@ if [[ "$ID" = *"debian"* ]]; then
 fi
 
 if [[ "$ID" = *"ubuntu"* ]]; then
-  if [[ "$VERSION_ID" = *"18.04"* ]]; then
+  if [[ "$VERSION_ID" = *"18.04"* ]] || [[ "$UBUNTU_CODENAME" = "bionic" ]]; then
     echo "found $ubuntu_18_04_str"
     distro_identifier="ubuntu1804"
-  elif [[ "$VERSION_ID" = *"20.04"* ]]; then
+  elif [[ "$VERSION_ID" = *"20.04"* ]] || [[ "$UBUNTU_CODENAME" = "focal" ]]; then
     echo "found $ubuntu_20_04_str"
     distro_identifier="ubuntu2004"
-  elif [[ "$VERSION_ID" = *"20.10"* ]]; then
+  elif [[ "$VERSION_ID" = *"20.10"* ]] || [[ "$UBUNTU_CODENAME" = "groovy" ]]; then
     echo "found $ubuntu_20_10_str"
     distro_identifier="ubuntu2010"
   fi
