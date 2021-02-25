@@ -57,6 +57,7 @@ build() {
     -Dgl-backend=disabled \
     -Dtests=disabled \
     -Dspectre=disabled \
+    -Dsymbol-lookup=disabled \
     -Dtee=enabled \
     ../${_realname}-${pkgver}
 
