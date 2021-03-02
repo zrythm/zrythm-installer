@@ -30,11 +30,13 @@ export GDK_PIXBUF_MODULEDIR="$bundle_lib/gdk-pixbuf-2.0/2.10.0/loaders"
 I18NDIR="$bundle_data/locale"
 
 # set language
-defaults read zrythm /org/zrythm/Zrythm/preferences/language
+cmd="defaults read zrythm /org/zrythm/Zrythm/preferences/ui/general/language"
+$cmd > /dev/null
 if [[ $? == 0 ]]; then
-  PREFERENCES_LANG=`defaults read zrythm /org/zrythm/Zrythm/preferences/language`
-  export LANG="$PREFERENCES_LANG"
-  export LC_MESSAGES="$PREFERENCES_LANG"
+  preferences_lang=`$cmd | sed -e "s|'||g"`
+  lang=`locale -a | grep $preferences_lang | head -n 1`
+  export LANG="$preferences_lang"
+  export LC_MESSAGES="$preferences_lang"
 fi
 
 # Strip out the argument added by the OS.

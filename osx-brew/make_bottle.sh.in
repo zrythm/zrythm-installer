@@ -31,9 +31,11 @@ pushd $private_dir
 echo "unlinking $formula_name..."
 brew unlink $formula_name || true
 echo "installing $formula_name..."
-brew install --verbose --debug --build-bottle $formula_name || true
-echo "bottling $formula_name..."
-brew bottle $formula_name
+brew install --verbose --debug $formula_name || true
+#echo "bottling $formula_name..."
+#brew bottle $formula_name
+#echo "bottled"
 ls -l
 popd
-cp $private_dir/*.catalina.bottle.tar.gz $out_file
+#cp $private_dir/*.catalina.bottle.tar.gz $out_file
+touch $out_file
