@@ -31,7 +31,7 @@ pushd $private_dir
 echo "unlinking $formula_name..."
 brew unlink $formula_name || true
 echo "installing $formula_name..."
-brew install --verbose --debug $formula_name || true
+brew install --verbose --debug --build-from-source $formula_name || true
 #echo "bottling $formula_name..."
 #brew bottle $formula_name
 #echo "bottled"
