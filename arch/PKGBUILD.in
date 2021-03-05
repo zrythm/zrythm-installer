@@ -7,7 +7,7 @@ arch=('x86_64' 'i686')
 url="https://www.zrythm.org"
 options=('!strip')
 license=('AGPL3')
-depends=('gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
+depends=('curl' 'gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
   'libyaml' 'libsamplerate' 'guile' 'gtksourceview4' 'alsa-lib'
   'fftw' 'graphviz' 'rtmidi' 'rtaudio' 'breeze-icons' 'zstd'
   'rubberband' 'xdg-utils' 'sdl2')
@@ -34,6 +34,7 @@ build() {
     -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true \
     -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
+    -Dphone_home=enabled \
     -Dinstaller_ver=true \
     -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
   ninja -C build

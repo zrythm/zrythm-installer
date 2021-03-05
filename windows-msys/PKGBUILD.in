@@ -61,6 +61,7 @@ build() {
     -Djack=enabled \
     -Dguile=disabled \
     -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
+    -Dphone_home=enabled \
     -Dmanpage=false \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dinstaller_ver=true -Dcarla=enabled \

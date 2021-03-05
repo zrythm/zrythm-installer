@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2020 Alexandros Theodotou
+# Copyright (C) 2019-2021 Alexandros Theodotou
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -17,6 +17,7 @@ Source0:       https://www.zrythm.org/releases/zrythm-%{version}.tar.gz
 BuildRequires: gcc-c++ gcc pkgconfig
 BuildRequires: gtk3-devel >= 3.24
 BuildRequires: python3
+BuildRequires: libcurl-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libyaml-devel
 BuildRequires: libsamplerate-devel
@@ -28,6 +29,7 @@ BuildRequires: portaudio-devel
 BuildRequires: help2man
 BuildRequires: SDL2-devel
 BuildRequires: graphviz-devel
+Requires: libcurl
 Requires: ladspa
 Requires: lv2
 Requires: xdg-utils
@@ -98,6 +100,7 @@ PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
   -Dtrial_ver=@TRIAL_TRUE_FALSE@ -Dcarla=enabled \
   -Dgraphviz=enabled -Dlsp_dsp=enabled \
   -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
+  -Dphone_home=enabled \
   -Dinstaller_ver=true \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 ninja -C build
