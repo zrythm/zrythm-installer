@@ -107,16 +107,15 @@ ninja -C build
 
 %install
 DESTDIR="%{buildroot}/" ninja -C build install
-mkdir -p "%{buildroot}/usr/lib/zrythm/lib/lv2"
-rm -rf "%{buildroot}/usr/lib64/libcm_reproc.a"
-for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-pllugin.so; do
+mkdir -p "%{buildroot}%{_libdir}/lv2"
+mkdir -p "%{buildroot}%{_libdir}/zrythm/carla"
+rm -rf "%{buildroot}%{_libdir}/libcm_reproc.a"
+for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-plugin.so; do
   cp -Lv "@CARLA_FULL_BINS_PATH@/$file" \
-    %{buildroot}/usr/lib/zrythm/carla/
+    %{buildroot}%{_libdir}/zrythm/carla/
 done
-cp -RLv @BUILT_ZPLUGINS_DIR@/* \
-  %{buildroot}/usr/lib/lv2/
-for f in `ls %{buildroot}/usr/lib/lv2`; do
-  mv $f "%{buildroot}/usr/lib/lv2/Zrythm-$f"
+for f in `ls @BUILT_ZPLUGINS_DIR@/lib/lv2`; do
+  cp -RLv "@BUILT_ZPLUGINS_DIR@/lib/lv2/$f" "%{buildroot}%{_libdir}/lv2/Zrythm-$f"
 done
 %find_lang zrythm
 
@@ -134,17 +133,16 @@ done
 %{_datadir}/zrythm
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
-%{_prefix}/lib/lv2/Zrythm-*
-%{_prefix}/lib/zrythm/carla/carla-discovery-native
-%{_prefix}/lib/zrythm/carla/carla-bridge-lv2-gtk2
-%{_prefix}/lib/zrythm/carla/carla-bridge-lv2-gtk3
-%{_prefix}/lib/zrythm/carla/carla-bridge-lv2-qt5
-%{_prefix}/lib/zrythm/carla/carla-bridge-lv2-x11
-%{_prefix}/lib/zrythm/carla/carla-bridge-native
-%{_prefix}/lib/zrythm/carla/libcarla_host-plugin.so
+%{_libdir}/lv2/Zrythm-*
+%{_libdir}/zrythm/carla/carla-discovery-native
+%{_libdir}/zrythm/carla/carla-bridge-lv2-gtk2
+%{_libdir}/zrythm/carla/carla-bridge-lv2-gtk3
+%{_libdir}/zrythm/carla/carla-bridge-lv2-qt5
+%{_libdir}/zrythm/carla/carla-bridge-lv2-x11
+%{_libdir}/zrythm/carla/carla-bridge-native
+%{_libdir}/zrythm/carla/libcarla_host-plugin.so
 %{_sysconfdir}/bash_completion.d/zrythm
 # _exec_prefix/lib64/**/*
-%{_prefix}/lib/zrythm
 
 %post
 %if ! 0%{?suse_version}

@@ -23,7 +23,7 @@ arch_conf.set (
   'CARLA_PKG_CONFIG_PATH', carla_pkgconfig_path)
 arch_conf.set (
   'CARLA_FULL_BINS_PATH',
-  carla_installation.full_path () + carla_prefix / 'lib/carla')
+  carla_installation.full_path () + carla_prefix / 'carla')
 
 pkgbuild = configure_file (
   output: 'PKGBUILD',

@@ -157,7 +157,7 @@ carla_installation = custom_target (
     ],
   install: false,
   )
-carla_pkgconfig_path = carla_installation.full_path () + carla_prefix / 'lib/pkgconfig'
+carla_pkgconfig_path = carla_installation.full_path () + carla_prefix / 'pkgconfig'
 
 zplugins_installation = custom_target (
   'zplugins-installation',

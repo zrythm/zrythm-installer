@@ -41,7 +41,7 @@ debian_conf.set (
 debian_conf.set (
   'CARLA_PREFIX', carla_prefix)
 debian_conf.set (
-  'CARLA_FULL_BINS_PATH', carla_installation.full_path () + carla_prefix / 'lib/carla')
+  'CARLA_FULL_BINS_PATH', carla_installation.full_path () + carla_prefix / 'carla')
 debian_conf.set (
   'BUILT_ZPLUGINS_DIR',
   zplugins_installation.full_path ())
