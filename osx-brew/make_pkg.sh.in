@@ -109,7 +109,7 @@ cp -rfv /usr/local/lib/librsvg-2.2.dylib $lib_dir/
 for exe in `ls $bin_dir`; do
   replace_path $bin_dir/$exe
 done
-plugin_libs=`find "$lib_dir/zrythm/lib/lv2" -name "*.dylib" -exec printf '{} ' \;`
+plugin_libs=`find "$lib_dir/lv2" -name "Z*.dylib" -exec printf '{} ' \;`
 for plugin_lib in $plugin_libs; do
   replace_path $plugin_lib
 done

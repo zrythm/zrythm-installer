@@ -63,6 +63,7 @@ option (
 option (
   'locales', type: 'array',
   choices : [
+    # TODO enable es
     'en', 'de', 'fr', 'it', 'ja', 'pt',
     ],
   description: 'Locales for the manual')

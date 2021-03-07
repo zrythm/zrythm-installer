@@ -153,12 +153,12 @@ installer_pkg = custom_target (
   output: installer_zip_filename,
   input: [
     make_pkg_sh, zrythm_formula,
-    carla_bottle, installer_sh,
+    carla_bottle,
     readme, zrythm_bottle,
     ],
   command: [
     make_pkg_sh, '@OUTPUT@',
-    '@INPUT1@', '@INPUT2@', '@INPUT3@', '@INPUT4@',
+    '@INPUT1@', '@INPUT2@', 'unused', '@INPUT3@',
     '@PRIVATE_DIR@',
     meson.source_root() / 'ext/macos-installer-builder',
     welcome_html, postinstall_script, conclusion_html,
