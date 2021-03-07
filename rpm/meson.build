@@ -27,6 +27,12 @@ rpm_conf.set (
   'CARLA_FULL_BINS_PATH',
   carla_installation.full_path () + carla_prefix / 'lib/carla')
 
+make_rpm_pkg = configure_file (
+  output: 'make_rpm_pkg.sh',
+  input: 'make_rpm_pkg.sh.in',
+  configuration: global_conf,
+  )
+
 specfile = configure_file (
   output: 'zrythm.spec',
   input: 'zrythm.spec.in',

@@ -163,7 +163,8 @@ EOL
   zrythm_exe="$dist_bindir/zrythm.exe"
   cp "$orig_zrythm_exe" "$zrythm_exe"
   "$zrythm_exe" --version
-  cp $mingw_prefix/bin/carla*.exe "$dist_bindir/"
+  mkdir -p "$dist_libdir/zrythm/carla"
+  cp $mingw_prefix/bin/carla*.exe "$dist_libdir/zrythm/carla/"
   if [ -f "$mingw_prefix/bin/gdbus.exe" ]; then
     cp "$mingw_prefix/bin/gdbus.exe" "$dist_bindir/"
   fi

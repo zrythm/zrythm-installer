@@ -36,9 +36,9 @@ echo "Move LV2 plugins"
 dest_lv2_dir="/Library/Audio/Plug-Ins/LV2"
 dest_lv2_prefix="$dest_lv2_dir/Zrythm-$product_version"
 mkdir -p $dest_lv2_dir
-for plugin in `ls ${PRODUCT_HOME}/lib/zrythm/lib/lv2`; do
+for plugin in `ls ${PRODUCT_HOME}/lib/lv2`; do
   rm -rf $dest_lv2_prefix-$plugin
-  mv -vf ${PRODUCT_HOME}/lib/zrythm/lib/lv2/$plugin \
+  mv -vf ${PRODUCT_HOME}/lib/lv2/$plugin \
     $dest_lv2_prefix-$plugin
 done
 

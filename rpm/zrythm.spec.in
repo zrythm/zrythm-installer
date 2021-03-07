@@ -109,20 +109,20 @@ ninja -C build
 DESTDIR="%{buildroot}/" ninja -C build install
 mkdir -p "%{buildroot}/usr/lib/zrythm/lib/lv2"
 rm -rf "%{buildroot}/usr/lib64/libcm_reproc.a"
-cp -RLv @CARLA_FULL_BINS_PATH@ \
-  %{buildroot}/usr/lib/zrythm/lib/
+for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-pllugin.so; do
+  cp -Lv "@CARLA_FULL_BINS_PATH@/$file" \
+    %{buildroot}/usr/lib/zrythm/carla/
+done
 cp -RLv @BUILT_ZPLUGINS_DIR@/* \
-  %{buildroot}/usr/lib/zrythm/lib/lv2/
+  %{buildroot}/usr/lib/lv2/
+for f in `ls %{buildroot}/usr/lib/lv2`; do
+  mv $f "%{buildroot}/usr/lib/lv2/Zrythm-$f"
+done
 %find_lang zrythm
 
 %files -f zrythm.lang
 %license COPYING
 %doc README.md CONTRIBUTING.md INSTALL.md CHANGELOG.md
-%{_bindir}/carla-discovery-native
-%{_bindir}/carla-bridge-lv2-gtk2
-%{_bindir}/carla-bridge-lv2-gtk3
-%{_bindir}/carla-bridge-lv2-qt5
-%{_bindir}/carla-bridge-native
 %{_bindir}/zrythm
 %{_bindir}/zrythm_launch
 %{_bindir}/zrythm_gdb
@@ -134,6 +134,14 @@ cp -RLv @BUILT_ZPLUGINS_DIR@/* \
 %{_datadir}/zrythm
 %{_datadir}/man/man1/zrythm.*
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
+%{_prefix}/lib/lv2/Zrythm-*
+%{_prefix}/lib/zrythm/carla/carla-discovery-native
+%{_prefix}/lib/zrythm/carla/carla-bridge-lv2-gtk2
+%{_prefix}/lib/zrythm/carla/carla-bridge-lv2-gtk3
+%{_prefix}/lib/zrythm/carla/carla-bridge-lv2-qt5
+%{_prefix}/lib/zrythm/carla/carla-bridge-lv2-x11
+%{_prefix}/lib/zrythm/carla/carla-bridge-native
+%{_prefix}/lib/zrythm/carla/libcarla_host-plugin.so
 %{_sysconfdir}/bash_completion.d/zrythm
 # _exec_prefix/lib64/**/*
 %{_prefix}/lib/zrythm

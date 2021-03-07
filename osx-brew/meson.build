@@ -66,23 +66,12 @@ make_bottle_sh = configure_file (
   input: 'make_bottle.sh.in',
   configuration: osx_brew_conf,
   )
-make_zip_sh = configure_file (
-  output: 'make_zip.sh',
-  input: 'make_zip.sh.in',
-  configuration: osx_brew_conf,
-  )
 make_pkg_sh = configure_file (
   output: 'make_pkg.sh',
   input: 'make_pkg.sh.in',
   configuration: osx_brew_conf,
   )
 
-# configure installer script and README
-installer_sh = configure_file (
-  output: 'installer.sh',
-  input: 'installer.sh.in',
-  configuration: osx_brew_conf,
-  )
 readme = configure_file (
   output: 'README',
   input: 'README-osx.in',

@@ -51,8 +51,13 @@ package() {
     -t "${pkgdir}/usr/share/doc/zrythm/"
   DESTDIR="${pkgdir}/" ninja -C build install
   mkdir -p "${pkgdir}/usr/lib/zrythm/lib/lv2"
-  cp -RLv @CARLA_FULL_BINS_PATH@ \
-    ${pkgdir}/usr/lib/zrythm/lib/
+  for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-pllugin.so; do
+    cp -Lv "@CARLA_FULL_BINS_PATH@/$file" \
+      ${pkgdir}/usr/lib/zrythm/carla/
+  done
   cp -RLv @BUILT_ZPLUGINS_DIR@/* \
-    ${pkgdir}/usr/lib/zrythm/lib/lv2/
+    ${pkdir}/usr/lib/lv2/
+  for f in `ls %{buildroot}/usr/lib/lv2`; do
+    mv $f "%{buildroot}/usr/lib/lv2/Zrythm-$f"
+  done
 }

@@ -30,9 +30,15 @@ override_dh_auto_test:
 override_dh_auto_install:
 	cd debian/build && \
 		DESTDIR=${CURDIR}/debian/zrythm@DASH_TRIAL@ ninja install
-	mkdir -p ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/lv2
-	cp -RLv @CARLA_FULL_BINS_PATH@ \
-		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/
+	mkdir -p ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/lv2
+	mkdir -p ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/carla
+	for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-pllugin.so; do
+		cp -Lv "@CARLA_FULL_BINS_PATH@/${file}" \
+			%{buildroot}/usr/lib/zrythm/carla/
+	done
 	cp -RLv @BUILT_ZPLUGINS_DIR@/* \
-		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/lv2/
-	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/lib/carla/libcarla_host-plugin.so ] ; then exit 1 ; fi
+		${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/lv2/
+	for f in `ls ${CURDIR}/usr/lib/lv2`; do
+		mv $f "${CURDIR}/usr/lib/lv2/Zrythm-$f"
+	done
+	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/carla/libcarla_host-plugin.so ] ; then exit 1 ; fi
