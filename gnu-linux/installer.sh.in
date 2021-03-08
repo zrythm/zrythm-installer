@@ -51,6 +51,8 @@ if [[ "$ID" = *"debian"* ]]; then
   elif [[ "$VERSION_ID" = *"11"* ]]; then
     echo "found $debian_11_str"
     distro_identifier="debian11"
+  elif [[ "$PRETTY_NAME" = "Debian GNU/Linux bullseye/sid" ]]; then
+    distro_identifier="debian11"
   fi
 fi
 
