@@ -50,6 +50,7 @@ package() {
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
   DESTDIR="${pkgdir}/" ninja -C build install
+  rm -rf "${pkgdir}/usr/lib/libcm_reproc.a"
   mkdir -p "${pkgdir}/usr/lib/zrythm/carla"
   mkdir -p "${pkgdir}/usr/lib/lv2"
   for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-plugin.so; do
