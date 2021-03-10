@@ -42,12 +42,12 @@ option (
 
 option (
   'carla-git-ver', type: 'string',
-  value: 'e5ff619c8be872fcc79f341f85975215fc53ed68',
+  value: 'a08ed288b27d134f5576a96337592491dc89a34a',
   description: 'Carla version')
 
 option (
   'lsp-dsp-lib-ver', type: 'string',
-  value: '0.5.8',
+  value: '0.5.12',
   description: 'LSP DSP lib version')
 
 option (
@@ -57,7 +57,7 @@ option (
 
 option (
   'carla-bottle-ver', type: 'string',
-  value: '0.1.4',
+  value: '0.1.5',
   description: 'Carla bottle version')
 
 option (
