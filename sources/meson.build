@@ -75,7 +75,7 @@ zplugins_src_tarball = custom_target (
   install: false,
   )
 
-url = 'https://github.com/sadko4u/lsp-dsp-lib/releases/download/lsp-dsp-lib-' + lsp_dsp_lib_ver + '/lsp-dsp-lib-' + lsp_dsp_lib_ver + '-src.tar.gz'
+url = 'https://github.com/sadko4u/lsp-dsp-lib/releases/download/' + lsp_dsp_lib_ver + '/lsp-dsp-lib-' + lsp_dsp_lib_ver + '-src.tar.gz'
 lsp_dsp_lib_src_tarball = custom_target (
   'lsp-dsp-lib-source-tarball',
   output: 'lsp-dsp-lib-' + lsp_dsp_lib_ver + '.tar.gz',
