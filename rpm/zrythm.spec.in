@@ -109,6 +109,8 @@ ninja -C build
 DESTDIR="%{buildroot}/" ninja -C build install
 mkdir -p "%{buildroot}%{_libdir}/lv2"
 mkdir -p "%{buildroot}%{_exec_prefix}/lib/zrythm/carla"
+rm -rf "%{buildroot}%{_includedir}"
+rm -rf "%{buildroot}%{_libdir}/libbacktrace"*
 rm -rf "%{buildroot}%{_libdir}/libcm_reproc.a"
 for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-plugin.so; do
   cp -Lv "@CARLA_FULL_BINS_PATH@/$file" \
