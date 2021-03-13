@@ -28,6 +28,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "carla-git"
   depends_on "jack"
   depends_on "qjackctl"
+  depends_on "pcre2"
 
   def install
     mkdir "build" do

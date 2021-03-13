@@ -17,15 +17,15 @@ class CarlaGit < Formula
   depends_on "fluid-synth"
   depends_on "liblo"
   depends_on "libmagic"
-  depends_on "pyqt"
-  depends_on "python@3.8"
+  depends_on "pyqt@5"
+  depends_on "python@3.9"
 
   def install
     system "make"
     system "make", "install", "PREFIX=#{prefix}"
 
     inreplace bin/"carla", "PYTHON=$(which python3 2>/dev/null)",
-                           "PYTHON=#{Formula["python@3.8"].opt_bin}/python3"
+                           "PYTHON=#{Formula["python@3.9"].opt_bin}/python3"
     system "cp", "#{lib}/carla/carla-discovery-native",
       "#{bin}/"
   end
