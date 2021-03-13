@@ -38,7 +38,7 @@ get_dest_package_filename () {
   distro=$1
   res=""
   case "$distro" in
-    "debian10" | "ubuntu"*)
+    "debian"* | "ubuntu"*)
       res="$prefix-1_amd64.deb"
       ;;
     "archlinux")
