@@ -56,6 +56,7 @@ darwin_scripts_dir=$darwin_dir/scripts
 installed_prefix=/Library/Zrythm/$zrythm_product_ver
 
 rm -rf $private_dir
+mkdir -p $lib_dir
 mkdir -p $etc_dir
 
 # copy the template
@@ -66,6 +67,10 @@ cp -rfv /usr/local/Cellar/carla-git/$carla_bottle_ver/* \
   $application_dir/
 cp -rfv /usr/local/Cellar/$zrythm_bottle_name/$zrythm_pkg_ver/* \
   $application_dir/
+
+# copy additional libs
+cp -rfv /usr/local/lib/libbrotlicommon*.dylib \
+  $lib_dir/
 
 # remove some unnecessary binaries
 rm -rf $bin_dir/*-e
@@ -114,6 +119,9 @@ for plugin_lib in $plugin_libs; do
   replace_path $plugin_lib
 done
 replace_path $lib_dir/librsvg-2.2.dylib
+for dylib in `ls $lib_dir/libbrotlicommon*.dylib`; do
+  replace_path $dylib
+done
 
 # copy the pixbuf loaders
 cp -rfv /usr/local/lib/gdk-pixbuf-2.0 $lib_dir/
