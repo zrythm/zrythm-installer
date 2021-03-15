@@ -31,6 +31,9 @@ override_dh_auto_test:
 override_dh_auto_install:
 	cd debian/build && \
 		DESTDIR=${CURDIR}/debian/zrythm@DASH_TRIAL@ ninja install
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/include"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/libbacktrace"*
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/libcm_reproc.a"
 	mkdir -p ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/lv2
 	mkdir -p ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/carla
 	for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-plugin.so; do \

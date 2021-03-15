@@ -50,6 +50,8 @@ package() {
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
   DESTDIR="${pkgdir}/" ninja -C build install
+  rm -rf "${pkgdir}/usr/include"
+  rm -rf "${pkgdir}/usr/lib/libbacktrace"*
   rm -rf "${pkgdir}/usr/lib/libcm_reproc.a"
   mkdir -p "${pkgdir}/usr/lib/zrythm/carla"
   mkdir -p "${pkgdir}/usr/lib/lv2"
