@@ -26,7 +26,7 @@ prepare() {
 build() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  make PREFIX=${MINGW_PREFIX} BUILDING_FOR_WINDOWS=true DEBUG=false
+  make LDFLAGS="-lssp" PREFIX=${MINGW_PREFIX} BUILDING_FOR_WINDOWS=true DEBUG=false
 }
 
 package() {
