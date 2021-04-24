@@ -97,8 +97,6 @@ fi
 
 # ---- Detect fedora/opensuse ----
 
-fedora_32_str="Fedora 32"
-
 if [[ "$ID" = "fedora" ]]; then
   architecture="x86_64"
   if [[ "$VERSION_ID" = *"32"* ]]; then
@@ -107,6 +105,9 @@ if [[ "$ID" = "fedora" ]]; then
   elif [[ "$VERSION_ID" = *"33"* ]]; then
     echo "found Fedora 33"
     distro_identifier="fedora33"
+  elif [[ "$VERSION_ID" = *"34"* ]]; then
+    echo "found Fedora 34"
+    distro_identifier="fedora34"
   fi
 fi
 
