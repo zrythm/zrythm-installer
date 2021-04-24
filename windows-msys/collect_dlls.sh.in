@@ -29,7 +29,6 @@ main () {
   cp $mingw_prefix/lib/carla/libcarla_host-plugin.dll $out_dir/
   cp $mingw_prefix/bin/libfftw3-3.dll $out_dir/
   cp $mingw_prefix/bin/libfftw3f-3.dll $out_dir/
-  cp $mingw_prefix/bin/libpcre2-8-0.dll $out_dir/
 
   # ******************************
 }
