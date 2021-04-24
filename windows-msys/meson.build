@@ -79,19 +79,33 @@ make_zrythm_mingw_pkg = configure_file (
   input: 'make_zrythm_mingw_pkg.sh.in',
   configuration: windows_msys_conf,
   )
-install_carla = configure_file (
-  output: 'install_carla.sh',
-  input: 'install_carla.sh.in',
-  configuration: windows_msys_conf,
-  )
 
 filename = 'Carla-' + carla_git_ver + '.tar.gz'
-url = 'https://www.zrythm.org/downloads/carla/' + filename
+url = 'https://github.com/falkTX/Carla/archive/' + carla_git_ver + '.zip'
+carla_zip_orig_src = custom_target (
+  'carla-zip-orig_src',
+  output: 'carla-zip-orig-src-' + carla_git_ver + '.zip',
+  command: [
+    bash, '-c', 'wget "$1" -O "$2"',
+    '_ignored',
+    url, '@OUTPUT@',
+    ],
+  install: false,
+  )
 carla_zip_windows = custom_target (
   'carla-zip-windows',
   output: filename,
+  input: carla_zip_orig_src,
   command: [
-    'wget', url, '-O', '@OUTPUT@',
+    bash, '-c',
+    'rm -rf "$3" && mkdir -p "$3" && cp "$1" "$3"/"$2" && ' +
+      'cd "$3" && rm -rf "$4" && unzip "$2" && ' +
+      'cd "$4" && pwd && make msys2fix && cd .. && ' +
+      'tar cvf "$2" "$4" && cd ../.. && mv "$3"/"$2" "$5" && ' +
+      'echo "done"',
+    '_ignored',
+    '@INPUT@', filename, '@PRIVATE_DIR@',
+    'Carla-' + carla_git_ver, '@OUTPUT@',
     ],
   install: false,
   )
@@ -145,8 +159,9 @@ rcedit_x64_exe = custom_target (
 
 # install dependencies
 carla_packages = []
-foreach arch : [ '64' ]
-carla_packages += custom_target (
+foreach arch : [ '64', '32' ]
+#foreach arch : [ '32' ]
+  carla_pkg_target = custom_target (
   'mingw-carla-' + arch,
   output: 'carla' + arch + '.pkg.tar.zst',
   input: [
@@ -164,6 +179,11 @@ carla_packages += custom_target (
     ],
   install: false,
   )
+carla_packages += carla_pkg_target
+run_target (
+  'mingw-carla-' + arch + '-build',
+  command: [ 'echo', 'done', ],
+  depends: carla_pkg_target)
 endforeach
 independent_dep_names = [
   'jack2-bin', 'lsp-dsp-lib'
@@ -178,7 +198,7 @@ foreach dep_name : independent_dep_names
       'PKGBUILD-' + dep_name + '-mingw',
       ],
     command: make_mingw_pkg_cmd,
-    depends: carla_packages[0],
+    depends: carla_packages,
     install: false,
     )
 endforeach
@@ -245,48 +265,6 @@ run_target (
   command: [ 'echo', 'done' ],
   depends: cairo_pkg)
 
-# get carla binary zips
-carla_bin_base_url = 'https://www.zrythm.org/downloads/carla/'
-filename = 'carla-2.2.0-rc2-woe32.zip'
-url = carla_bin_base_url + filename
-carla_woe32_binary_32_zip = custom_target (
-  'carla-woe32-binary-32-zip',
-  output: filename,
-  command: [
-    'wget', url, '-O', '@OUTPUT@',
-    ],
-  install: false,
-  )
-
-if false
-carla_short_git_ver = run_command (
-  'bash', '-c', 'echo ' + carla_git_ver + ' | head -c 7').stdout ().strip ()
-filename = 'carla-64-' + carla_short_git_ver + '.zip'
-url = carla_bin_base_url + filename
-carla_woe32_binary_64_zip = custom_target (
-  'carla-woe32-binary-64-zip',
-  output: filename,
-  command: [
-    'wget', url, '-O', '@OUTPUT@',
-    ],
-  install: false,
-  )
-endif
-
-mingw_install_carla_bins_target = custom_target (
-  'mingw-install-carla',
-  output: 'carla-installed',
-  input: [
-    install_carla,
-    carla_woe32_binary_32_zip,
-    ],
-  command: [
-    bash, '-c', '@INPUT0@ "$1" "$2"', '_ignored',
-    '@OUTPUT@', '@INPUT1@',
-    ],
-  install: false,
-  )
-
 mingw_zrythm_pkg = custom_target (
   'mingw-zrythm-pkg',
   output: 'zrythm' + dash_trial + '.pkg.tar.zst',
@@ -301,8 +279,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    mingw_install_carla_bins_target, lilv_pkg,
-    cairo_pkg, independent_deps,
+    lilv_pkg, cairo_pkg, independent_deps,
     ],
   console: true,
   install: false,
@@ -322,6 +299,7 @@ windows_chroot_target = custom_target (
     independent_deps[0],
     independent_deps[1],
     carla_packages[0],
+    carla_packages[1],
     lv2_pkg, serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg, cairo_pkg,
     mingw_zrythm_pkg,
@@ -329,12 +307,13 @@ windows_chroot_target = custom_target (
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
-    '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"',
+    '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" ' +
+    '"${14}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
     '@INPUT7@', '@INPUT8@', '@INPUT9@', '@INPUT10@',
-    '@INPUT11@',
+    '@INPUT11@', '@INPUT12@',
     ],
   console: true,
   install: false,

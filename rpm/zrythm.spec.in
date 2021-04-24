@@ -62,7 +62,7 @@ BuildRequires: guile22-devel
 BuildRequires: gtksourceview3-devel
 Requires: breeze-icon-theme
 Requires: gtksourceview3
-Requires:      jack-audio-connection-kit
+Requires: (jack-audio-connection-kit or pipewire-jack-audio-connection-kit)
 Requires:      rubberband fftw
 Requires:      libyaml
 Requires: libsamplerate

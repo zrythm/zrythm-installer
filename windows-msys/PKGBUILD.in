@@ -65,6 +65,7 @@ build() {
     -Dmanpage=false \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dinstaller_ver=true -Dcarla=enabled \
+    -Dcarla_binaries_dir_32bit='C:\msys64\mingw32\lib\carla' \
     --buildtype=debugoptimized \
     -Dextra_debug_info=true \
     -Dtests=false \
