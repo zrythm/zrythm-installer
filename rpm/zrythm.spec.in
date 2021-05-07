@@ -107,7 +107,7 @@ PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
 ninja -C build
 
 %install
-DESTDIR="%{buildroot}/" ninja -C build install
+@MESON_BIN@ install -C build --skip-subprojects --destdir="%{buildroot}/"
 mkdir -p "%{buildroot}%{_libdir}/lv2"
 mkdir -p "%{buildroot}%{_exec_prefix}/lib/zrythm/carla"
 rm -rf "%{buildroot}%{_includedir}"

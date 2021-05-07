@@ -47,7 +47,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dinstaller_ver=true",
         ".."
       system "ninja", "-v"
-      system "ninja", "install", "-v"
+      system "meson", "install", "--skip-subprojects"
       system "cp", "-r", "@BREEZE_DARK@", "#{share}/icons/breeze-dark"
       system "mkdir", "-p", "#{lib}/zrythm/carla"
       system "mkdir", "-p", "#{lib}/lv2"

@@ -49,7 +49,7 @@ package() {
   cd $_rootdir
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
-  DESTDIR="${pkgdir}/" ninja -C build install
+  @MESON_BIN@ install -C build --skip-subprojects --destdir="${pkgdir}/"
   rm -rf "${pkgdir}/usr/include"
   rm -rf "${pkgdir}/usr/lib/libbacktrace"*
   rm -rf "${pkgdir}/usr/lib/libcm_reproc.a"
