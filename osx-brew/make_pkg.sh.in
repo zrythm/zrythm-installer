@@ -137,6 +137,7 @@ cp -rvf $share_dir/zrythm/themes/icons/zrythm-dark/scalable/apps/zrythm-splash-p
 
 cp $readme_file $application_dir/README
 
+rm -f $bin_dir/zrythm_launch
 cat << EOF > $bin_dir/zrythm_launch
 #!/bin/bash
 export GSETTINGS_SCHEMA_DIR=$installed_prefix/share/glib-2.0/schemas
