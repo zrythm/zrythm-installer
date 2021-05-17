@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: zrythm
 Upstream-Contact: Alexandros Theodotou <alex@zrythm.org>
-Source: https://git.zrythm.org/cgit/zrythm
+Source: https://git.zrythm.org/zrythm/zrythm
 
 Files: *
 Copyright: Copyright 2018-2019 Alexandros Theodotou <alex@zrythm.org>

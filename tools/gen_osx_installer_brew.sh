@@ -12,12 +12,12 @@ if [ "$bottle_or_zip" = "bottle" ]; then
   bottle_filename="$(basename $bottle_file)"
   formula_file=$3
   tarball=$4
-  tarball_filename="$(git ls-remote https://git.zrythm.org/git/zrythm | grep HEAD | awk '{print $1}').tar.gz"
+  tarball_filename="$(git ls-remote https://git.zrythm.org/zrythm/zrythm | grep HEAD | awk '{print $1}').tar.gz"
   zrythm_version=$5
   carla_version=$6
   carla_bottle_ver=$7
 
-  wget https://git.zrythm.org/cgit/zrythm/snapshot/$tarball_filename
+  wget https://git.zrythm.org/zrythm/zrythm/archive/$tarball_filename
 
   # copy formula file to where it needs to be
   if [[ "$bottle_filename" == *"rial"* ]]; then

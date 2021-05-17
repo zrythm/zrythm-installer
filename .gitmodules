@@ -1,6 +1,6 @@
 [submodule "ext/cerbero"]
 	path = ext/cerbero
-	url = https://git.zrythm.org/git/cerbero.git
+	url = https://git.zrythm.org/alex/cerbero.git
   branch = zrythm
 [submodule "ext/macos-installer-builder"]
 	path = ext/macos-installer-builder

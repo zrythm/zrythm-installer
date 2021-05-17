@@ -65,7 +65,7 @@ carla_src_zip = custom_target (
   install: false,
   )
 
-url = 'https://git.zrythm.org/cgit/zplugins/snapshot/zplugins-' + zplugins_ver + '.tar.gz'
+url = 'https://git.zrythm.org/zrythm/zplugins/archive/v' + zplugins_ver + '.tar.gz'
 zplugins_src_tarball = custom_target (
   'zplugins-source-tarball',
   output: zplugins_src_tarball_filename,
