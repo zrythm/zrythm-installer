@@ -77,9 +77,11 @@ build() {
   popd
 
   # build zplugins
+  echo "building zplugins..."
   mkdir -p "$_zplugins_builddir"
   pushd "$_zplugins_builddir"
   ls -l
+  mv ../zplugins ../zplugins-${_zplugins_ver}
   ${MINGW_PREFIX}/bin/meson \
     --buildtype=release \
     "../zplugins-${_zplugins_ver}"
