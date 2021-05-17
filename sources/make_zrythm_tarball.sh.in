@@ -15,7 +15,7 @@ mkdir -p $private_dir
 cp $orig_tarball $private_dir/
 pushd $private_dir
 tar xf $orig_tarball_filename
-mv $orig_inner_dir_name $new_inner_dir_name
+mv zrythm $new_inner_dir_name
 tar czf tmp.tar.gz $new_inner_dir_name
 popd
 cp "$private_dir/tmp.tar.gz" "$out_file"
