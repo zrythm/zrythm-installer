@@ -16,6 +16,7 @@ dash_trial="@DASH_TRIAL@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
 zrythm_inner_dir_name="@ZRYTHM_INNER_DIR_NAME@"
 zrythm_src_tarball_filename="@ZRYTHM_SOURCE_TARBALL_FILENAME@"
+is_tag='@IS_TAG@'
 
 mingw_prefix="$chroot_dir/mingw64"
 app_name="Zrythm$dash_trial"
@@ -92,7 +93,7 @@ EOL
   # ******************************
 
   # ******************************
-  if [ "$dash_trial" != "-trial" ]; then
+  if [ "$dash_trial" != "-trial" ] && [ "$is_tag" = "true" ]; then
     echo "packaging user manuals" ;
     unzip -o $manuals_zip -d $dist_dir/ ;
   fi

@@ -36,6 +36,7 @@ windows_msys_conf.set (
 windows_msys_conf.set (
   'SUPPORTING_TEXT',
   build_trial ? 'trying out' : 'supporting')
+windows_msys_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
 
 mingw_zrythm_pkgbuild = configure_file (
   output: 'PKGBUILD',

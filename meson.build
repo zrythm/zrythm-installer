@@ -38,9 +38,10 @@ zplugins_ver = get_option ('zplugins-ver')
 carla_git_ver = get_option ('carla-git-ver')
 lsp_dsp_lib_ver = get_option ('lsp-dsp-lib-ver')
 build_trial = get_option ('build-trial')
+zrythm_https_repo = 'https://git.zrythm.org/zrythm/zrythm'
 orig_inner_dir_name = 'zrythm-' + zrythm_git_ver
 orig_zrythm_src_tarball_filename = orig_inner_dir_name + '.tar.gz'
-orig_zrythm_src_tarball_url = 'https://git.zrythm.org/zrythm/zrythm/archive/' + zrythm_git_ver + '.tar.gz'
+orig_zrythm_src_tarball_url = zrythm_https_repo + '/archive/' + zrythm_git_ver + '.tar.gz'
 zrythm_inner_dir_name = 'zrythm-' + zrythm_pkg_ver
 zrythm_src_tarball_filename = zrythm_inner_dir_name + '.tar.gz'
 zplugins_src_tarball_filename = 'zplugins-' + zplugins_ver + '.tar.gz'
@@ -83,6 +84,8 @@ global_conf.set (
   'LIBDIR', libdir)
 global_conf.set (
   'DISTRO', distro)
+global_conf.set (
+  'ZRYTHM_HTTPS_REPO', zrythm_https_repo)
 global_conf.set (
   'ZRYTHM_GIT_VERSION', zrythm_git_ver)
 global_conf.set (
@@ -146,6 +149,9 @@ global_conf.set (
 
 subdir ('scripts')
 subdir ('sources')
+
+latest_tag = run_command (get_latest_tag).stdout ().strip ()
+is_tag = run_command (is_tag_sh).stdout (). strip () == 'true'
 
 carla_installation = custom_target (
   'carla-installation',
@@ -225,6 +231,7 @@ summary ({
 summary ({
   'Meson path': get_option ('meson-path'),
   'Git version': get_option ('zrythm-git-ver'),
+  'Is tag': is_tag,
   'Package version': get_option ('zrythm-pkg-ver'),
   'Build trial': get_option ('build-trial').to_string (),
   'Carla version': get_option ('carla-git-ver'),

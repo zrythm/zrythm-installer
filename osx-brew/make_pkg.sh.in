@@ -41,6 +41,7 @@ zrythm_bottle_name="zrythm$dash_trial"
 carla_bottle_ver="@CARLA_BOTTLE_VER@"
 built_zplugins_dir="@BUILT_ZPLUGINS_DIR@"
 meson_src_root="@MESON_SOURCE_ROOT@"
+is_tag='@IS_TAG@'
 
 inner_dir_name="${out_file%.*}"
 inner_dir_name="`basename $inner_dir_name`"
@@ -214,7 +215,7 @@ work_dir=`mktemp -d`
 mkdir $work_dir/$inner_dir_name
 cp $inner_dir/macOS-x64/target/pkg/Zrythm-macos-installer-x64-$zrythm_product_ver.pkg $work_dir/$inner_dir_name
 
-if [ "$dash_trial" != "-trial" ]; then
+if [ "$dash_trial" != "-trial" ] && [ "$is_tag" = "true" ]; then
   echo "adding user manuals" ;
   if [ -f "$manuals_zip" ]; then
     unzip -o $manuals_zip -d $work_dir/$inner_dir_name/ ;

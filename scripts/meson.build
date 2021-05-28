@@ -17,6 +17,18 @@
 
 # configure each script
 
+get_latest_tag = configure_file (
+  output: 'get_latest_tag.sh',
+  input: 'get_latest_tag.sh.in',
+  configuration: global_conf,
+  )
+
+is_tag_sh = configure_file (
+  output: 'is_tag.sh',
+  input: 'is_tag.sh.in',
+  configuration: global_conf,
+  )
+
 make_arch_pkg = configure_file (
   output: 'make_arch_pkg.sh',
   input: 'make_arch_pkg.sh.in',

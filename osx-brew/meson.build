@@ -59,6 +59,7 @@ osx_brew_conf.set (
 osx_brew_conf.set (
   'BUILT_ZPLUGINS_DIR',
   zplugins_installation.full_path ())
+osx_brew_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
 
 # configure scripts
 make_bottle_sh = configure_file (
