@@ -91,6 +91,10 @@ and is designed to be intuitive to use.
 
 %build
 rm -rf build
+completions=false
+%if 0%{?fedora} >= 34
+completions=true
+%endif
 PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
   @MESON_BIN@ build \
   --prefix=/usr \
@@ -103,6 +107,7 @@ PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
   -Dextra_debug_info=true \
   -Dphone_home=enabled \
   -Dinstaller_ver=true \
+  -Dcompletions=$completions \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 ninja -C build
 
@@ -135,9 +140,11 @@ done
 %{_datadir}/icons/hicolor/scalable/apps/zrythm.svg
 %{_datadir}/zrythm
 %{_datadir}/man/man1/zrythm.*
+%if 0%{?fedora} >= 34
 %{_datadir}/bash-completion/completions
 %{_datadir}/zsh/site-functions
 %{_datadir}/fish/vendor_completions.d
+%endif
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
 %{_libdir}/lv2/Zrythm-*
 %{_exec_prefix}/lib/zrythm/carla/carla-discovery-native
@@ -147,7 +154,7 @@ done
 %{_exec_prefix}/lib/zrythm/carla/carla-bridge-lv2-x11
 %{_exec_prefix}/lib/zrythm/carla/carla-bridge-native
 %{_exec_prefix}/lib/zrythm/carla/libcarla_host-plugin.so
-#%{_sysconfdir}/bash_completion.d/zrythm
+# _sysconfdir/bash_completion.d/zrythm
 # _exec_prefix/lib64/**/*
 
 %post

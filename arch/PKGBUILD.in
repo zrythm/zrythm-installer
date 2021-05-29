@@ -36,6 +36,7 @@ build() {
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dphone_home=enabled \
     -Dinstaller_ver=true \
+    -Dcompletions=false \
     -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
   ninja -C build
 }
