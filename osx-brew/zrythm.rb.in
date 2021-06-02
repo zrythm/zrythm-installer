@@ -29,6 +29,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "jack"
   depends_on "qjackctl"
   depends_on "pcre2"
+  depends_on "xxhash"
 
   def install
     mkdir "build" do

@@ -10,7 +10,7 @@ license=('AGPL3')
 depends=('curl' 'gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
   'libyaml' 'libsamplerate' 'guile' 'gtksourceview4' 'alsa-lib'
   'fftw' 'graphviz' 'rtmidi' 'rtaudio' 'breeze-icons' 'zstd'
-  'rubberband' 'xdg-utils' 'sdl2')
+  'rubberband' 'xdg-utils' 'sdl2' 'xxhash')
 makedepends=(
   'python' 'gettext' 'sed'
   'ninja' 'help2man' 'python-sphinx'

@@ -26,6 +26,7 @@ Build-Depends: debhelper (>=9),
                libfftw3-dev,
                libsamplerate0-dev,
                libyaml-dev,
+               libxxhash-dev,
                ninja-build,
                portaudio19-dev,
                python3-sphinx
