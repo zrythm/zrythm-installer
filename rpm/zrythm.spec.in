@@ -142,7 +142,7 @@ done
 %{_datadir}/man/man1/zrythm.*
 %if 0%{?fedora} >= 34
 %{_datadir}/bash-completion/completions
-%{_datadir}/zsh/site-functions
+# _datadir/zsh/site-functions
 %{_datadir}/fish/vendor_completions.d
 %endif
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
