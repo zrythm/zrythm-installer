@@ -1,0 +1,128 @@
+version: 1
+
+AppDir:
+  path: @APPDIR_PATH@
+
+  app_info:
+    id: org.zrythm.Zrythm
+    name: zrythm@DASH_TRIAL@
+    icon: zrythm
+    version: @ZRYTHM_PKG_VERSION@
+    exec: usr/bin/zrythm
+    exec_args: --appimage-runtime-path=$APPDIR $@
+
+  apt:
+    arch: amd64
+    sources:
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal main'
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3b4fe6acc0b21f32'
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal universe'
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal-updates main'
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal-updates universe'
+
+    include:
+      # can also add paths to deb files here
+      - libglib2.0-0
+      - libgtk-3-0
+      - libgdk-pixbuf2.0-common
+      #- liblilv-0-0
+      - libpulse0
+      - libxcb-shm0
+      - libxcb1
+      - coreutils
+      - bash
+      - librsvg2-common
+      - gettext
+      - guile-2.2-libs
+      - libcurl3-gnutls
+      - libsndfile1
+      - libxcb-render0
+      - libasound2
+      - libgtksourceview-3.0-common
+      - libgtksourceview-3.0-1
+      - graphviz
+      - librubberband2
+      - libx11-6
+      - libfftw3-3
+      - libsamplerate0
+      - libyaml-0-2
+      - libxxhash0
+      - shared-mime-info
+      - breeze-icon-theme
+    exclude:
+      - dpkg
+
+  files:
+    include:
+      - /etc/mime.types
+      - /usr/lib/zrythm/carla/libcarla_host-plugin.so
+    exclude:
+      - usr/bin/gio*
+      - usr/bin/glib-compile-schemas
+      - usr/bin/glib-compile-resources
+      - usr/bin/gsettings
+      - usr/bin/gapplication
+      - usr/bin/gresource
+      - usr/bin/gobject-query
+      - usr/bin/gtester
+      - usr/share/icons/breeze
+      - usr/share/icons/ubuntu-*
+      - usr/share/icons/Humanity*
+      - usr/share/doc/lib*
+      - usr/share/doc/coreutils
+      - usr/share/doc/gettext-base
+      - usr/share/doc/adwaita-icon-theme
+      - bin/systemctl
+      - bin/cp
+      - bin/mv
+      - bin/vdir
+      - bin/ls
+      - bin/dir
+      - bin/date
+      - bin/touch
+      - usr/lib/x86_64-linux-gnu/guile/2.2/ccache
+
+  after_bundle:
+    # this is executed after the packages and files are added
+    - echo $APPDIR
+    - mv $APPDIR/usr/lib/zrythm/carla/libcarla_host-plugin.so $APPDIR/usr/lib/x86_64-linux-gnu/
+    - patchelf --remove-rpath $APPDIR/usr/bin/zrythm
+    - patchelf --replace-needed /usr/lib/zrythm/carla/libcarla_host-plugin.so libcarla_host-plugin.so $APPDIR/usr/bin/zrythm
+
+  after_runtime:
+    # workaround for missing libcrypt.so.1 (version 2) on arch based system
+    - echo $APPDIR
+    - mkdir -p $APPDIR/lib/x86_64-linux-gnu
+    - rm -f $APPDIR/lib/x86_64-linux-gnu/libcrypt.so.1 || true
+    - ln -s /usr/lib/libcrypt.so.2 $APPDIR/lib/x86_64-linux-gnu/libcrypt.so.1
+
+  test:
+    fedora:
+      image: fedora:32
+      command: "./AppRun --version"
+      use_host_x: True
+    archlinux:
+      image: archlinux
+      command: "./AppRun --version"
+      use_host_x: True
+    debian-sid:
+      image: debian:sid
+      command: "./AppRun --version"
+      use_host_x: True
+
+  runtime:
+    path_mappings:
+      - /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0:$APPDIR/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0
+      - /usr/lib/gdk-pixbuf-2.0:$APPDIR/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0
+      #- /usr/lib/zrythm:$APPDIR/usr/lib/zrythm
+    env:
+      GDK_PIXBUF_MODULEDIR: '${APPDIR}/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders'
+      GDK_PIXBUF_MODULE_FILE: '${APPDIR}/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache'
+      GTK_DATA_PREFIX: '${APPDIR}/usr'
+      GTK_EXE_PREFIX: '${APPDIR}/usr'
+      GTK_PATH: '${APPDIR}/usr'
+
+AppImage:
+  update-information: None
+  sign-key: None
+  arch: x86_64

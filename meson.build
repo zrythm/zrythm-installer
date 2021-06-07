@@ -67,6 +67,7 @@ is_rpm = distro.contains ('fedora')
 is_windows_msys = distro.contains ('windows10-msys')
 is_osx_brew = distro.contains ('osx-brew')
 is_gnu_linux = distro.contains ('gnu-linux')
+is_appimage = distro.contains ('appimage')
 
 global_conf = configuration_data ()
 global_conf.set ('PREFIX', prefix)
@@ -194,31 +195,35 @@ lsp_dsp_lib_installation = custom_target (
   )
 
 if is_arch
-subdir ('arch')
+  subdir ('arch')
 endif
 
 if is_debian
-subdir ('debian')
+  subdir ('debian')
 endif
 
 if is_nixos
-subdir ('nixos')
+  subdir ('nixos')
 endif
 
 if is_rpm
-subdir ('rpm')
+  subdir ('rpm')
 endif
 
 if is_windows_msys
-subdir ('windows-msys')
+  subdir ('windows-msys')
 endif
 
 if is_osx_brew
-subdir ('osx-brew')
+  subdir ('osx-brew')
 endif
 
 if is_gnu_linux
-subdir ('gnu-linux')
+  subdir ('gnu-linux')
+endif
+
+if is_appimage
+  subdir ('appimage')
 endif
 
 summary ({

@@ -18,6 +18,9 @@ case "$pkg_type" in
   "FEDORA")
     echo "zrythm${trial}-$zrythm_pkg_ver-1.x86_64.rpm"
     ;;
+  "APPIMAGE")
+    echo "zrythm${trial}-$zrythm_pkg_ver-x86_64.AppImage"
+    ;;
   "GNU_LINUX")
     echo "zrythm${trial}-$zrythm_pkg_ver-installer.zip"
     ;;

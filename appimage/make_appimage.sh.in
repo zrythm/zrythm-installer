@@ -1,0 +1,73 @@
+#!@BASH@
+
+set -xe
+
+# args:
+# 1: output package (.AppImage) path
+# 2: appimage-builder.yml path
+# 3: zrythm source tarball path
+# 4: private dir
+
+out_pkg="$1"
+appimage_builder_yml="$2"
+zrythm_src_tarball="$3"
+private_dir="$4"
+
+appdir_root="@APPDIR_PATH@"
+inner_dir="@ZRYTHM_INNER_DIR_NAME@"
+zrythm_src_tarball_filename="@ZRYTHM_SOURCE_TARBALL_FILENAME@"
+
+appimage_filename=`basename "$out_pkg"`
+
+rm -rf "$appdir_root"
+rm -rf "$private_dir"
+mkdir -p "$private_dir"
+cp "$appimage_builder_yml" "$private_dir"/
+cp "$zrythm_src_tarball" "$private_dir"/
+
+tar xf "$zrythm_src_tarball" -C "$private_dir"
+pushd "$private_dir"
+pushd "$inner_dir"
+
+# configure
+PATH="$PATH:/home/build/.local/bin" \
+@MESON_BIN@ build --prefix=/usr \
+  -Dpkg_config_path=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
+  -Dtests=true -Ddseg_font=true -Dmanpage=true \
+  -Dbuildtype=debugoptimized -Dlsp_dsp=enabled \
+  -Dstatic_lsp_dsp=true -Dsdl=enabled \
+  -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
+  -Drtaudio=auto -Drtmidi=auto -Dguile=enabled \
+  -Dcarla=enabled -Dgraphviz=enabled \
+  -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
+  -Dextra_debug_info=true \
+  -Dphone_home=enabled \
+  -Dinstaller_ver=true \
+  -Dappimage=true \
+  -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
+
+# build
+ninja -C build
+
+# install in AppDir
+DESTDIR="$appdir_root" ninja -C build install
+
+# also copy required lib
+cp "@CARLA_FULL_BINS_PATH@/libcarla_host-plugin.so" \
+  "$appdir_root"/usr/lib/zrythm/carla/
+
+popd # zrythm tarball inner dir
+
+# create appimage from AppDir
+appimage-builder --recipe ./appimage-builder.yml --skip-test
+
+# test that appimage works
+./"$appimage_filename" --version
+
+# run lint
+appimagelint "$appimage_filename"
+
+popd # private dir
+
+# copy AppImage from private dir to dest
+cp "$private_dir"/"$appimage_filename" "$out_pkg"
