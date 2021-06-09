@@ -136,7 +136,7 @@ done
 %{_bindir}/zrythm_launch
 %{_bindir}/zrythm_gdb
 %{_bindir}/zrythm_valgrind
-%{_datadir}/applications/zrythm.desktop
+%{_datadir}/applications/org.zrythm.Zrythm.desktop
 %{_datadir}/fonts/zrythm
 %{_datadir}/glib-2.0/schemas/*.xml
 %{_datadir}/icons/hicolor/scalable/apps/zrythm.svg
