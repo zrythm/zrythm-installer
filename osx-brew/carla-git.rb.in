@@ -7,7 +7,7 @@ class CarlaGit < Formula
   version "@CARLA_BOTTLE_VER@"
 
   bottle do
-    cellar :any
+    #cellar :any
     sha256 "0149197353ef0d86c25623d77688a0f3ce045263d76213e7174a3107d10222ea" => :catalina
     sha256 "097ebd9b6fbb10cbcf46cd10b58f8305159ef090d68ae8d89049f0c0b8998d9c" => :mojave
     sha256 "51ee66c8406766f33784fe139c292bad745ff43581164168f30f5ffa77171a06" => :high_sierra
