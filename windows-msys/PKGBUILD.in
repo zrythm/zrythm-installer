@@ -71,6 +71,7 @@ build() {
     -Dcarla_binaries_dir_32bit='C:\msys64\mingw32\lib\carla' \
     --buildtype=debugoptimized \
     -Dextra_debug_info=true \
+    -Db_lto=false \
     -Dtests=false \
     "../zrythm-${pkgver}"
   ninja
