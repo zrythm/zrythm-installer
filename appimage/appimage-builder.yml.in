@@ -25,7 +25,7 @@ AppDir:
       - libglib2.0-0
       - libgtk-3-0
       - libgdk-pixbuf2.0-common
-      #- liblilv-0-0
+      - liblilv-0-0
       - libpulse0
       - libxcb-shm0
       - libxcb1

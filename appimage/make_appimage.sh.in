@@ -44,7 +44,6 @@ PATH="$PATH:/home/build/.local/bin" \
   -Dphone_home=enabled \
   -Dinstaller_ver=true \
   -Dappimage=true \
-  -Dforce_fallback_for=serd-0,sord-0,sratom-0,lilv-0 \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 
 # build
