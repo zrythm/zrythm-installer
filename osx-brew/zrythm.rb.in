@@ -39,7 +39,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
         "-Dcarla=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
-        "-Dfallback_version=@ZRYTHM_PKG_VERSION@",
+        "-Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@",
         # manpage fails
         "-Dmanpage=false",
         # TODO enable

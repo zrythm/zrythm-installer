@@ -63,7 +63,7 @@ build() {
     -Dstatic_lsp_dsp=true \
     -Djack=enabled \
     -Dguile=disabled \
-    -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
+    -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
     -Dphone_home=enabled \
     -Dmanpage=false \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \

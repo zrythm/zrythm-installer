@@ -36,7 +36,7 @@ PATH="$PATH:/home/build/.local/bin" \
   -Dtests=true -Ddseg_font=true -Dmanpage=true \
   -Dbuildtype=debugoptimized -Dlsp_dsp=enabled \
   -Dstatic_lsp_dsp=true -Dsdl=enabled \
-  -Dfallback_version=@ZRYTHM_PKG_VERSION@ \
+  -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
   -Drtaudio=auto -Drtmidi=auto -Dguile=enabled \
   -Dcarla=enabled -Dgraphviz=enabled \
   -Dtrial_ver=@TRIAL_TRUE_FALSE@ \

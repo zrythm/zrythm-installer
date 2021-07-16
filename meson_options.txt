@@ -28,7 +28,12 @@ option (
 option (
   'zrythm-pkg-ver', type: 'string',
   value: '1',
-  description: 'Version to use in packages')
+  description: 'Version to use in package filenames')
+
+option (
+  'zrythm-pkg-semver', type: 'string',
+  value: '1',
+  description: 'Version to use for Zrythm program')
 
 option (
   'build-trial', type: 'boolean',

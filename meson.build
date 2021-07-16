@@ -34,6 +34,7 @@ libdir = get_option ('libdir')
 distro = get_option ('distro')
 zrythm_git_ver = get_option ('zrythm-git-ver')
 zrythm_pkg_ver = get_option ('zrythm-pkg-ver')
+zrythm_pkg_semver = get_option ('zrythm-pkg-semver')
 zplugins_ver = get_option ('zplugins-ver')
 carla_git_ver = get_option ('carla-git-ver')
 lsp_dsp_lib_ver = get_option ('lsp-dsp-lib-ver')
@@ -91,6 +92,8 @@ global_conf.set (
   'ZRYTHM_GIT_VERSION', zrythm_git_ver)
 global_conf.set (
   'ZRYTHM_PKG_VERSION', zrythm_pkg_ver)
+global_conf.set (
+  'ZRYTHM_PKG_SEMVER_VERSION', zrythm_pkg_semver)
 global_conf.set (
   'ZRYTHM_SOURCE_TARBALL_FILENAME',
   zrythm_src_tarball_filename)
