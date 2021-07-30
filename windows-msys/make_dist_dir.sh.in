@@ -34,8 +34,9 @@ zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
 zrythm_inner_dir_name="@ZRYTHM_INNER_DIR_NAME@"
 zrythm_src_tarball_filename="@ZRYTHM_SOURCE_TARBALL_FILENAME@"
 is_tag='@IS_TAG@'
+mingw_prefix='@MINGW_PREFIX@'
 
-mingw_prefix="$chroot_dir/mingw64"
+chroot_mingw_prefix="$chroot_dir$mingw_prefix"
 app_name="Zrythm$dash_trial"
 
 installer_dir=$private_dir/installer
@@ -91,7 +92,7 @@ EOL
   cp $src_dir/data/windows/zrythm.ico $dist_dir/zrythm.ico
 
   # copy plugins from the chroot dir
-  cp -R $chroot_dir/mingw64/lib/lv2/Z*.lv2 $dist_dir/plugins/
+  cp -R $chroot_mingw_prefix/lib/lv2/Z*.lv2 $dist_dir/plugins/
   # remove some plugins if trial ver
   if [ "$dash_trial" == "-trial" ]; then \
     rm -rf $dist_dir/plugins/ZChordz*.lv2 ; \
@@ -99,8 +100,8 @@ EOL
   fi
 
   mkdir -p $dist_dir/$glib_schemas_dir_suffix
-  glib-compile-schemas $mingw_prefix/$glib_schemas_dir_suffix
-  cp $mingw_prefix/$glib_schemas_dir_suffix/* $dist_dir/$glib_schemas_dir_suffix/
+  glib-compile-schemas $chroot_mingw_prefix/$glib_schemas_dir_suffix
+  cp $chroot_mingw_prefix/$glib_schemas_dir_suffix/* $dist_dir/$glib_schemas_dir_suffix/
 
   # ******************************
   echo "Copying dlls..."
@@ -119,7 +120,7 @@ EOL
 
   # ******************************
 
-  cp -R $mingw_prefix/etc/fonts $dist_etcdir
+  cp -R $chroot_mingw_prefix/etc/fonts $dist_etcdir
   # ******************************
 
   # ******************************
@@ -129,47 +130,47 @@ EOL
   cp -R "$breeze_dark_path" "$dist_sharedir/icons"/breeze-dark
 
   echo "packaging existing hicolor icons"
-  cp -R "$mingw_prefix/share/icons/hicolor" "$dist_sharedir/icons/"
+  cp -R "$chroot_mingw_prefix/share/icons/hicolor" "$dist_sharedir/icons/"
 
   echo "packaging Adwaita cursors"
   mkdir -p "$dist_sharedir/icons/Adwaita"
-  cp -R "$mingw_prefix/share/icons/Adwaita/cursors" "$dist_sharedir/icons/Adwaita/"
+  cp -R "$chroot_mingw_prefix/share/icons/Adwaita/cursors" "$dist_sharedir/icons/Adwaita/"
   # ******************************
 
   # ******************************
   echo "packaging gtksourceview files"
-  cp -R $mingw_prefix/share/gtksourceview-4 $dist_sharedir/
+  cp -R $chroot_mingw_prefix/share/gtksourceview-4 $dist_sharedir/
   # ******************************
 
   # ******************************
   echo "packaging locales"
-  cp -R $mingw_prefix/share/locale $dist_sharedir/
+  cp -R $chroot_mingw_prefix/share/locale $dist_sharedir/
   # ******************************
 
   # ******************************
   echo "packaging other assets"
-  cp -R $mingw_prefix/share/zrythm $dist_sharedir/
+  cp -R $chroot_mingw_prefix/share/zrythm $dist_sharedir/
   # ******************************
 
   # ******************************
   echo "packaging fonts"
-  cp -R $mingw_prefix/share/fonts $dist_sharedir/
+  cp -R $chroot_mingw_prefix/share/fonts $dist_sharedir/
   # ******************************
 
   # ******************************
   echo "packaging gdk pixbuf loaders"
   pixbuf_dir="lib/gdk-pixbuf-2.0/2.10.0"
   mkdir -p "$dist_dir/$pixbuf_dir/loaders"
-  cp "$mingw_prefix/$pixbuf_dir/loaders/"*.dll \
+  cp "$chroot_mingw_prefix/$pixbuf_dir/loaders/"*.dll \
     "$dist_dir/$pixbuf_dir/loaders/"
-  gdk_pixbuf_module_dir="$mingw_prefix/$pixbuf_dir/loaders" \
-    $mingw_prefix/bin/gdk-pixbuf-query-loaders.exe \
-    $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-svg.dll \
-    $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-jpeg.dll \
-    $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-gif.dll \
-    $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-bmp.dll \
-    $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-tiff.dll \
-    $mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-png.dll > \
+  gdk_pixbuf_module_dir="$chroot_mingw_prefix/$pixbuf_dir/loaders" \
+    $chroot_mingw_prefix/bin/gdk-pixbuf-query-loaders.exe \
+    $chroot_mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-svg.dll \
+    $chroot_mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-jpeg.dll \
+    $chroot_mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-gif.dll \
+    $chroot_mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-bmp.dll \
+    $chroot_mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-tiff.dll \
+    $chroot_mingw_prefix/$pixbuf_dir/loaders/libpixbufloader-png.dll > \
     "$dist_dir/$pixbuf_dir/loaders.cache"
   sed -i -e 's|.*loaders/|"lib\\\\gdk-pixbuf-2.0\\\\2.10.0\\\\loaders\\\\|g' \
     "$dist_dir/$pixbuf_dir/loaders.cache"
@@ -177,20 +178,20 @@ EOL
 
   # ******************************
   echo "packaging binaries"
-  orig_zrythm_exe="$mingw_prefix/bin/zrythm$dash_trial.exe"
+  orig_zrythm_exe="$chroot_mingw_prefix/bin/zrythm$dash_trial.exe"
   zrythm_exe="$dist_bindir/zrythm.exe"
   cp "$orig_zrythm_exe" "$zrythm_exe"
   "$zrythm_exe" --version
-  tree -L 4 "$mingw_prefix"
+  tree -L 4 "$chroot_mingw_prefix"
   mkdir -p "$dist_libdir/zrythm/carla"
-  cp $mingw_prefix/lib/zrythm/carla/carla*.exe "$dist_libdir/zrythm/carla/"
-  if [ -f "$mingw_prefix/bin/gdbus.exe" ]; then
-    cp "$mingw_prefix/bin/gdbus.exe" "$dist_bindir/"
+  cp $chroot_mingw_prefix/lib/zrythm/carla/carla*.exe "$dist_libdir/zrythm/carla/"
+  if [ -f "$chroot_mingw_prefix/bin/gdbus.exe" ]; then
+    cp "$chroot_mingw_prefix/bin/gdbus.exe" "$dist_bindir/"
   fi
   $rcedit_x64_exe "$zrythm_exe" --set-icon  "$dist_dir/zrythm.ico"
   "$zrythm_exe" --version
-  cp "$mingw_prefix/bin/gspawn-win64-helper.exe" "$dist_bindir/"
-  cp "$mingw_prefix/bin/gspawn-win64-helper-console.exe" "$dist_bindir/"
+  cp "$chroot_mingw_prefix/bin/gspawn-win64-helper.exe" "$dist_bindir/"
+  cp "$chroot_mingw_prefix/bin/gspawn-win64-helper-console.exe" "$dist_bindir/"
 
   # ******************************
 

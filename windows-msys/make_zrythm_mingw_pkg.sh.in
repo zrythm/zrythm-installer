@@ -19,6 +19,8 @@
 
 set -ex
 
+mingw_pkg_prefix="@MINGW_PKG_PREFIX@"
+
 out_file="$1"
 
 pkgbuild="$2"
@@ -28,7 +30,7 @@ private_dir="$5"
 
 dash_trial="@DASH_TRIAL@"
 
-pkgname="mingw-w64-x86_64-zrythm$dash_trial"
+pkgname="$mingw_pkg_prefix-zrythm$dash_trial"
 pacman -R $pkgname --noconfirm || true
 
 rm -rf $private_dir

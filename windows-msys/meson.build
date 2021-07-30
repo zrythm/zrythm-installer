@@ -36,6 +36,10 @@ windows_msys_conf.set (
 windows_msys_conf.set (
   'SUPPORTING_TEXT',
   build_trial ? 'trying out' : 'supporting')
+windows_msys_conf.set (
+  'MINGW_PKG_PREFIX', mingw_pkg_prefix)
+windows_msys_conf.set (
+  'MINGW_PREFIX', mingw_prefix)
 windows_msys_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
 
 mingw_zrythm_pkgbuild = configure_file (
@@ -113,17 +117,17 @@ carla_zip_windows = custom_target (
 
 make_mingw_pkg_cmd = [
   bash, '-c', '@INPUT0@ "$1" "$2" "$3" "$4" ' +
-  '"$5" "$6" "$7"',
+  '"$5" "$6"',
   '_ignored',
   '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
-  'mingw64', 'x86_64', '', '',
+  mingw_arch, '', '',
   ]
 make_mingw_pkg_cmd_full = [
   bash, '-c', '@INPUT0@ "$1" "$2" "$3" "$4" ' +
-  '"$5" "$6" "$7"',
+  '"$5" "$6"',
   '_ignored',
   '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
-  'mingw64', 'x86_64', '', '@INPUT2@',
+  mingw_arch, '', '@INPUT2@',
   ]
 
 # sources

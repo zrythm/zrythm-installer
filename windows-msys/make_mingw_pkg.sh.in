@@ -19,14 +19,15 @@
 
 set -ex
 
+mingw_pkg_prefix="@MINGW_PKG_PREFIX@"
+
 out_file="$1"
 
 pkgbuild="$2"
 private_dir="$3"
 arch="$4"
-arch_name="$5"
-tarball="$6"
-patches="${@:7}"
+tarball="$5"
+patches="${@:6}"
 patches_array=($patches)
 
 pkgname="`basename $pkgbuild`"
@@ -36,7 +37,7 @@ pkgname=${pkgname%"-mingw"}
 while test -f /var/lib/pacman/db.lck; do
   sleep 1
 done
-pacman -R "mingw-w64-$arch_name-$pkgname" --noconfirm || true
+pacman -R "$mingw_pkg_prefix-$pkgname" --noconfirm || true
 
 rm -rf $private_dir
 mkdir -p $private_dir
@@ -50,7 +51,7 @@ if ! [ "$tarball" = "" ]; then
   cp "$tarball" $private_dir/
 fi
 pushd $private_dir
-MINGW_INSTALLS="$arch" makepkg-mingw -fs --noconfirm
+MINGW_ARCH="$arch" makepkg-mingw -fs --noconfirm
 popd
 while test -f /var/lib/pacman/db.lck; do
   sleep 1

@@ -31,6 +31,10 @@ packages="${@:4}"
 packages_array=($packages)
 
 dash_trial="@DASH_TRIAL@"
+mingw_pkg_prefix="@MINGW_PKG_PREFIX@"
+mingw_prefix="@MINGW_PREFIX@"
+
+chroot_mingw_prefix="$chroot_dir$mingw_prefix"
 
 rm -rf $chroot_dir
 mkdir -p $chroot_dir/var/lib/pacman
@@ -44,16 +48,16 @@ for pkg in "${packages_array[@]}"; do
   pacman -U "$pkg" --noconfirm --needed --root $chroot_dir
 done
 # verify plugins exist
-ls -l $chroot_dir/mingw64/lib/lv2/Z*.lv2
+ls -l $chroot_dir$mingwprefix/lib/lv2/Z*.lv2
 pacman -S \
-  mingw-w64-x86_64-gtksourceview4 \
-  mingw-w64-x86_64-fftw \
-  mingw-w64-x86_64-adwaita-icon-theme \
+  "$mingw_pkg_prefix-gtksourceview4" \
+  "$mingw_pkg_prefix-fftw" \
+  "$mingw_pkg_prefix-adwaita-icon-theme" \
   --noconfirm --needed --root $chroot_dir
-cp -R /mingw64/lib/carla "$chroot_dir/mingw64/lib/"
+cp -R $mingw_prefix/lib/carla "$chroot_mingw_prefix/lib/"
 glib-compile-schemas.exe \
-  "$chroot_dir/mingw64/share/glib-2.0/schemas"
+  "$chroot_mingw_prefix/share/glib-2.0/schemas"
 
-cp $chroot_dir/mingw64/bin/zrythm.exe $chroot_dir/mingw64/bin/zrythm$dash_trial.exe || true
+cp $chroot_mingw_prefix/bin/zrythm.exe $chroot_mingw_prefix/bin/zrythm$dash_trial.exe || true
 
 touch $out_file
