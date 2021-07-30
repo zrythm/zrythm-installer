@@ -29,6 +29,7 @@ Build-Depends: debhelper (>=9),
                libxxhash-dev,
                ninja-build,
                portaudio19-dev,
+               vamp-plugin-sdk,
                python3-sphinx
 Standards-Version: 3.9.8
 Homepage: https://www.zrythm.org/

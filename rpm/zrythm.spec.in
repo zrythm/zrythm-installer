@@ -30,6 +30,7 @@ BuildRequires: help2man
 BuildRequires: SDL2-devel
 BuildRequires: graphviz-devel
 BuildRequires: xxhash-devel
+BuildRequires: vamp-plugin-sdk-devel
 Requires: libcurl
 Requires: ladspa
 Requires: lv2
@@ -37,6 +38,7 @@ Requires: xdg-utils
 Requires: SDL2
 Requires: graphviz
 Requires: xxhash
+Requires: vamp-plugin-sdk
 %if 0%{?suse_version}
 BuildRequires: jack-devel libX11-devel update-desktop-files
 BuildRequires: fftw3-threads-devel librubberband-devel
@@ -134,6 +136,7 @@ done
 %doc README.md CONTRIBUTING.md INSTALL.md CHANGELOG.md
 %{_bindir}/zrythm
 %{_bindir}/zrythm_launch
+%{_bindir}/zrythm_lv2apply
 %{_bindir}/zrythm_gdb
 %{_bindir}/zrythm_valgrind
 %{_datadir}/applications/org.zrythm.Zrythm.desktop

@@ -67,6 +67,7 @@ AppDir:
       - libxxhash0
       - shared-mime-info
       - breeze-icon-theme
+      - vamp-plugin-sdk
     exclude:
       - dpkg
 

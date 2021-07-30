@@ -37,9 +37,8 @@ fi
 debian_10_str="Debian GNU/Linux 10"
 debian_11_str="Debian GNU/Linux 11"
 ubuntu_18_04="Ubuntu 18.04"
-ubuntu_20_10_str="Ubuntu 20.10"
 ubuntu_20_04_str="Ubuntu 20.04"
-ubuntu_21_04_str="Ubuntu 21.04"
+ubuntu_21_10_str="Ubuntu 21.10"
 
 zenity_width=360
 have_zenity=0
@@ -64,9 +63,9 @@ if [[ "$ID" = *"ubuntu"* ]]; then
   elif [[ "$VERSION_ID" = *"20.04"* ]] || [[ "$UBUNTU_CODENAME" = "focal" ]]; then
     echo "found $ubuntu_20_04_str"
     distro_identifier="ubuntu2004"
-  elif [[ "$VERSION_ID" = *"20.10"* ]] || [[ "$UBUNTU_CODENAME" = "groovy" ]]; then
-    echo "found $ubuntu_20_10_str"
-    distro_identifier="ubuntu2010"
+  elif [[ "$VERSION_ID" = *"21.10"* ]] || [[ "$UBUNTU_CODENAME" = "impish" ]]; then
+    echo "found $ubuntu_21_10_str"
+    distro_identifier="ubuntu2110"
   fi
 elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
   if [[ "$UBUNTU_CODENAME" = *"bionic"* ]]; then
@@ -75,12 +74,9 @@ elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
   elif [[ "$UBUNTU_CODENAME" = *"focal"* ]]; then
     echo "found $ubuntu_20_04_str"
     distro_identifier="ubuntu2004"
-  elif [[ "$UBUNTU_CODENAME" = *"groovy"* ]]; then
-    echo "found $ubuntu_20_10_str"
-    distro_identifier="ubuntu2010"
-  elif [[ "$UBUNTU_CODENAME" = *"hirsute"* ]]; then
-    echo "found $ubuntu_20_11_str"
-    distro_identifier="debian11"
+  elif [[ "$UBUNTU_CODENAME" = *"impish"* ]]; then
+    echo "found $ubuntu_21_10_str"
+    distro_identifier="ubuntu2110"
   fi
 elif [[ "$ID" = *"trisquel"* ]]; then
   if [[ "$VERSION_ID" = *"9.0"* ]]; then
