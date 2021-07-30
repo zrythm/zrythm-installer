@@ -25,6 +25,8 @@ windows_msys_conf.set (
 windows_msys_conf.set (
   'ZRYTHM_PKG_VERSION', zrythm_pkg_ver)
 windows_msys_conf.set (
+  'ZRYTHM_PKG_SEMVER_VERSION', zrythm_pkg_semver)
+windows_msys_conf.set (
   'TRIAL_TRUE_FALSE', trial_true_false)
 windows_msys_conf.set (
   'CARLA_GIT_VER', carla_git_ver)
@@ -40,6 +42,8 @@ windows_msys_conf.set (
   'MINGW_PKG_PREFIX', mingw_pkg_prefix)
 windows_msys_conf.set (
   'MINGW_PREFIX', mingw_prefix)
+windows_msys_conf.set (
+  'MINGW_ARCH', mingw_arch)
 windows_msys_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
 
 mingw_zrythm_pkgbuild = configure_file (
@@ -164,11 +168,11 @@ rcedit_x64_exe = custom_target (
 
 # install dependencies
 carla_packages = []
-foreach arch : [ '64', '32' ]
+foreach arch : [ 'ucrt64', 'mingw32' ]
 #foreach arch : [ '32' ]
   carla_pkg_target = custom_target (
   'mingw-carla-' + arch,
-  output: 'carla' + arch + '.pkg.tar.zst',
+  output: 'carla-' + arch + '.pkg.tar.zst',
   input: [
     make_mingw_pkg, mingw_carla_pkgbuild,
     carla_zip_windows,
@@ -178,8 +182,7 @@ foreach arch : [ '64', '32' ]
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6"',
     '_ignored',
     '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
-    'mingw' + arch,
-    arch == '64' ? 'x86_64' : 'i686',
+    arch,
     '@INPUT2@',
     ],
   install: false,

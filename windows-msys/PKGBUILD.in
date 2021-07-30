@@ -85,6 +85,7 @@ build() {
     -Dphone_home=enabled \
     -Dmanpage=false \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
+    -Dvamp-static=true \
     -Dinstaller_ver=true -Dcarla=enabled \
     -Dcarla_binaries_dir_32bit='C:\msys64\mingw32\lib\carla' \
     --buildtype=debugoptimized \

@@ -19,6 +19,7 @@
 
 set -ex
 
+mingw_arch="@MINGW_ARCH@"
 mingw_pkg_prefix="@MINGW_PKG_PREFIX@"
 
 out_file="$1"
@@ -40,7 +41,7 @@ cp $pkgbuild $private_dir/PKGBUILD
 cp $src_tarball $private_dir/
 cp $zplugins_tarball $private_dir/
 pushd $private_dir
-MINGW_INSTALLS=mingw64 makepkg-mingw -fs --noconfirm
+MINGW_ARCH=$mingw_arch makepkg-mingw -fs --noconfirm
 popd
 
 cp $private_dir/*.pkg.tar.zst $out_file

@@ -44,7 +44,7 @@ prepare() {
 build() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  if [ "$MINGW_INSTALLS" = "mingw32" ]; then
+  if [ "$MINGW_ARCH" = "mingw32" ]; then
     make win32r PREFIX=${MINGW_PREFIX} BUILDING_FOR_WINDOWS=true DEBUG=false
   else
     make PREFIX=${MINGW_PREFIX} BUILDING_FOR_WINDOWS=true DEBUG=false
@@ -57,7 +57,7 @@ package() {
   mkdir -p "${pkgdir}/${MINGW_PREFIX}"/lib/carla
   install -D -m755 bin/*.exe "${pkgdir}/${MINGW_PREFIX}"/lib/carla/
 
-  if [ "$MINGW_INSTALLS" != "mingw32" ]; then
+  if [ "$MINGW_ARCH" != "mingw32" ]; then
     make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" BUILDING_FOR_WINDOWS=true DEBUG=false install
   fi
 }
