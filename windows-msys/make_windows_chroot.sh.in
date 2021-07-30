@@ -48,7 +48,7 @@ for pkg in "${packages_array[@]}"; do
   pacman -U "$pkg" --noconfirm --needed --root $chroot_dir
 done
 # verify plugins exist
-ls -l $chroot_dir$mingwprefix/lib/lv2/Z*.lv2
+ls -l $chroot_mingw_prefix/lib/lv2/Z*.lv2
 pacman -S \
   "$mingw_pkg_prefix-gtksourceview4" \
   "$mingw_pkg_prefix-fftw" \

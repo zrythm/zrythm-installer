@@ -72,7 +72,10 @@ build() {
   pushd $_zrythm_builddir
   sed -i -e '94s/translator/"invalid"/' \
     ${srcdir}/zrythm-${pkgver}/scripts/gen-translators-list.scm
+  echo "using prefix ${MINGW_PREFIX}"
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
   ${MINGW_PREFIX}/bin/meson \
+    --prefix=${MINGW_PREFIX} \
     -Dsdl=enabled \
     -Drtaudio=auto \
     -Drtmidi=auto \
@@ -85,7 +88,7 @@ build() {
     -Dphone_home=enabled \
     -Dmanpage=false \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
-    -Dvamp-static=true \
+    -Dvamp_static=true \
     -Dinstaller_ver=true -Dcarla=enabled \
     -Dcarla_binaries_dir_32bit='C:\msys64\mingw32\lib\carla' \
     --buildtype=debugoptimized \
@@ -93,7 +96,7 @@ build() {
     -Db_lto=false \
     -Dtests=false \
     "../zrythm-${pkgver}"
-  ninja
+  meson compile
   cp ${MINGW_PREFIX}/lib/carla/libcarla_host-plugin.dll ./src/
   popd
 
@@ -103,10 +106,12 @@ build() {
   pushd "$_zplugins_builddir"
   ls -l
   mv ../zplugins ../zplugins-${_zplugins_ver}
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
   ${MINGW_PREFIX}/bin/meson \
+    --prefix=${MINGW_PREFIX} \
     --buildtype=release \
     "../zplugins-${_zplugins_ver}"
-  ninja
+  meson compile
   popd
 }
 
@@ -122,15 +127,14 @@ check() {
 }
 
 package() {
-  destdir="${pkgdir}${MINGW_PREFIX}"
-
   pushd "$_zrythm_builddir"
-  ${MINGW_PREFIX}/bin/meson install \
-    --skip-subprojects --destdir="$destdir"
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/meson install \
+    --skip-subprojects
   install -Dm644 "${srcdir}/zrythm-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/zrythm/COPYING"
   popd
 
   pushd "$_zplugins_builddir"
-  DESTDIR="$destdir" ninja install
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/meson install \
+    --skip-subprojects
   popd
 }

@@ -64,6 +64,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dstatic_deps=false",
         "-Dphone_home=enabled",
         "-Dinstaller_ver=true",
+        "-Dvamp_static=true",
         ".."
       system "ninja", "-v"
       system "meson", "install", "--skip-subprojects"
