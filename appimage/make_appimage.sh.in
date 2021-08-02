@@ -58,7 +58,7 @@ PATH="$PATH:/home/build/.local/bin" \
   -Dcarla=enabled -Dgraphviz=enabled \
   -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
   -Dextra_debug_info=true \
-  -Dphone_home=enabled \
+  -Dcheck_updates=true \
   -Dinstaller_ver=true \
   -Dappimage=true \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@

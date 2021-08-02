@@ -85,7 +85,7 @@ build() {
     -Djack=enabled \
     -Dguile=disabled \
     -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
-    -Dphone_home=enabled \
+    -Dcheck_updates=true \
     -Dmanpage=false \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dvamp_static=true \

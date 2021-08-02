@@ -35,7 +35,7 @@ override_dh_auto_configure:
 		-Dcarla=enabled -Dgraphviz=enabled \
 		-Dtrial_ver=@TRIAL_TRUE_FALSE@ \
 		-Dextra_debug_info=true \
-		-Dphone_home=enabled \
+		-Dcheck_updates=true \
 		-Dinstaller_ver=true \
 		-Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 

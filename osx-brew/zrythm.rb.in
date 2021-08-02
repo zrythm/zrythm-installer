@@ -62,7 +62,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dmanpage=false",
         # TODO enable
         "-Dstatic_deps=false",
-        "-Dphone_home=enabled",
+        "-Dcheck_updates=true",
         "-Dinstaller_ver=true",
         "-Dvamp_static=true",
         ".."
