@@ -31,6 +31,7 @@ BuildRequires: SDL2-devel
 BuildRequires: graphviz-devel
 BuildRequires: xxhash-devel
 BuildRequires: vamp-plugin-sdk-devel
+BuildRequires: json-glib-devel
 Requires: libcurl
 Requires: ladspa
 Requires: lv2
@@ -39,6 +40,7 @@ Requires: SDL2
 Requires: graphviz
 Requires: xxhash
 Requires: vamp-plugin-sdk
+Requires: json-glib
 %if 0%{?suse_version}
 BuildRequires: jack-devel libX11-devel update-desktop-files
 BuildRequires: fftw3-threads-devel librubberband-devel

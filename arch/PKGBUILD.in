@@ -25,7 +25,7 @@ url="https://www.zrythm.org"
 options=('!strip')
 license=('AGPL3')
 depends=('curl' 'gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
-  'libyaml' 'libsamplerate' 'guile' 'gtksourceview4' 'alsa-lib'
+  'json-glib' 'libyaml' 'libsamplerate' 'guile' 'gtksourceview4' 'alsa-lib'
   'fftw' 'graphviz' 'rtmidi' 'rtaudio' 'breeze-icons' 'zstd'
   'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk')
 makedepends=(

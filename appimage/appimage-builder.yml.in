@@ -53,6 +53,7 @@ AppDir:
       - gettext
       - guile-2.2-libs
       - libcurl3-gnutls
+      - libjson-glib-dev
       - libsndfile1
       - libxcb-render0
       - libasound2
