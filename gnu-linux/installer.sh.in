@@ -74,6 +74,9 @@ elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
   elif [[ "$UBUNTU_CODENAME" = *"focal"* ]]; then
     echo "found $ubuntu_20_04_str"
     distro_identifier="ubuntu2004"
+  elif [[ "$UBUNTU_CODENAME" = *"hirsute"* ]]; then
+    echo "found $ubuntu_21_10_str"
+    distro_identifier="ubuntu2110"
   elif [[ "$UBUNTU_CODENAME" = *"impish"* ]]; then
     echo "found $ubuntu_21_10_str"
     distro_identifier="ubuntu2110"
