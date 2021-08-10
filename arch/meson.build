@@ -74,6 +74,11 @@ if not build_trial
 endif
 
 run_target (
+  'arch-pkg',
+  command: [ 'echo', 'done' ],
+  depends: [ arch_pkg ])
+
+run_target (
   'arch',
   command: [ 'echo', 'done' ],
   depends: [ arch_pkg, manual_deps ])
