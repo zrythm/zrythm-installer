@@ -101,13 +101,20 @@ AppDir:
       - bin/date
       - bin/touch
       - usr/lib/x86_64-linux-gnu/guile/2.2/ccache
+      - usr/lib/x86_64-linux-gnu/gconv
+      - usr/share/man
+      - usr/share/doc/*/README.*
+      - usr/share/doc/*/changelog.*
+      - usr/share/doc/*/NEWS.*
+      - usr/share/doc/*/TODO.*
+      - usr/include
 
   after_bundle:
     # this is executed after the packages and files are added
     - echo $APPDIR
     - cp $APPDIR/usr/lib/zrythm/carla/libcarla_host-plugin.so $APPDIR/usr/lib/x86_64-linux-gnu/
     - readelf -d $APPDIR/usr/bin/zrythm
-    #- patchelf --remove-rpath $APPDIR/usr/bin/zrythm
+    - patchelf --remove-rpath $APPDIR/usr/bin/zrythm
     - patchelf --replace-needed /usr/lib/zrythm/carla/libcarla_host-plugin.so libcarla_host-plugin.so $APPDIR/usr/bin/zrythm
     - readelf -d $APPDIR/usr/bin/zrythm
 
@@ -134,15 +141,17 @@ AppDir:
 
   runtime:
     path_mappings:
-      - /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0:$APPDIR/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0
-      - /usr/lib/gdk-pixbuf-2.0:$APPDIR/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0
-      - /usr/lib/zrythm:$APPDIR/usr/lib/zrythm
+      #- /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/:$APPDIR/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/
+      #- /usr/lib/gdk-pixbuf-2.0/:$APPDIR/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/
+      - /usr/lib/zrythm/:$APPDIR/usr/lib/zrythm/
     env:
+      APPDIR_LIBRARY_PATH: '$APPDIR/usr/lib/x86_64-linux-gnu:$APPDIR/lib/x86_64-linux-gnu:$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders:$APPDIR/usr/lib/x86_64-linux-gnu/pulseaudio'
       GDK_PIXBUF_MODULEDIR: '${APPDIR}/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders'
       GDK_PIXBUF_MODULE_FILE: '${APPDIR}/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache'
-      GTK_DATA_PREFIX: '${APPDIR}/usr'
+      GTK_DATA_PREFIX: '$APPDIR'
       GTK_EXE_PREFIX: '${APPDIR}/usr'
-      GTK_PATH: '${APPDIR}/usr'
+      GTK_PATH: '$APPDIR/usr/lib/gtk-3.0'
+      XDG_DATA_DIRS: $APPDIR/share:$XDG_DATA_DIRS
 
 AppImage:
   update-information: None
