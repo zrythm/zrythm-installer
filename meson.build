@@ -70,6 +70,8 @@ is_osx_brew = distro.contains ('osx-brew')
 is_gnu_linux = distro.contains ('gnu-linux')
 is_appimage = distro.contains ('appimage')
 
+meson_src_root = meson.source_root ()
+
 global_conf = configuration_data ()
 global_conf.set ('PREFIX', prefix)
 global_conf.set (
@@ -77,7 +79,7 @@ global_conf.set (
 global_conf.set (
   'MESON_BUILD_ROOT', meson.build_root ())
 global_conf.set (
-  'MESON_SOURCE_ROOT', meson.source_root ())
+  'MESON_SOURCE_ROOT', meson_src_root)
 global_conf.set (
   'BASH', bash.full_path ())
 global_conf.set (

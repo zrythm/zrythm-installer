@@ -38,7 +38,7 @@ prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
   #patch --ignore-whitespace -p1 -i ${srcdir}/add_assert_to_cairo_surface.patch
-  patch --ignore-whitespace -p1 -i ${srcdir}/cairo_remove_fortify_source.patch
+  patch --ignore-whitespace -p1 -i @MESON_SOURCE_ROOT@/windows-msys/patches/cairo_remove_fortify_source.patch
 }
 
 build() {

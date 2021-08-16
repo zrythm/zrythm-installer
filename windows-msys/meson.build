@@ -44,6 +44,8 @@ windows_msys_conf.set (
   'MINGW_PREFIX', mingw_prefix)
 windows_msys_conf.set (
   'MINGW_ARCH', mingw_arch)
+windows_msys_conf.set (
+  'MESON_SOURCE_ROOT', meson_src_root)
 windows_msys_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
 
 mingw_zrythm_pkgbuild = configure_file (
@@ -54,6 +56,11 @@ mingw_zrythm_pkgbuild = configure_file (
 mingw_carla_pkgbuild = configure_file (
   output: 'PKGBUILD-carla-mingw',
   input: 'PKGBUILD-carla-mingw.in',
+  configuration: windows_msys_conf,
+  )
+mingw_cairo_pkgbuild = configure_file (
+  output: 'PKGBUILD-cairo-mingw',
+  input: 'PKGBUILD-cairo-mingw.in',
   configuration: windows_msys_conf,
   )
 
@@ -264,7 +271,7 @@ lilv_pkg = custom_target (
 cairo_pkg = custom_target (
   'mingw-cairo',
   output: 'cairo.pkg.tar.zst',
-  input: [ make_mingw_pkg, 'PKGBUILD-cairo-mingw', ],
+  input: [ make_mingw_pkg, mingw_cairo_pkgbuild, ],
   command: make_mingw_pkg_cmd,
   install: false,
   )
