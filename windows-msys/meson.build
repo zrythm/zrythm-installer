@@ -46,6 +46,8 @@ windows_msys_conf.set (
   'MINGW_ARCH', mingw_arch)
 windows_msys_conf.set (
   'MESON_SOURCE_ROOT', meson_src_root)
+windows_msys_conf.set (
+  'LSP_DSP_LIB_VER', lsp_dsp_lib_ver)
 windows_msys_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
 
 mingw_zrythm_pkgbuild = configure_file (
@@ -61,6 +63,11 @@ mingw_carla_pkgbuild = configure_file (
 mingw_cairo_pkgbuild = configure_file (
   output: 'PKGBUILD-cairo-mingw',
   input: 'PKGBUILD-cairo-mingw.in',
+  configuration: windows_msys_conf,
+  )
+mingw_lsp_dsp_lib_pkgbuild = configure_file (
+  output: 'PKGBUILD-lsp-dsp-lib-mingw',
+  input: 'PKGBUILD-lsp-dsp-lib-mingw.in',
   configuration: windows_msys_conf,
   )
 
@@ -201,7 +208,7 @@ run_target (
   depends: carla_pkg_target)
 endforeach
 independent_dep_names = [
-  'jack2-bin', 'lsp-dsp-lib'
+  'jack2-bin',
   ]
 independent_deps = []
 foreach dep_name : independent_dep_names
@@ -258,16 +265,13 @@ lilv_pkg = custom_target (
   depends: sratom_pkg,
   install: false,
   )
-# for reference: this is how to apply patches
-#cairo_pkg_with_patch = custom_target (
-  #'mingw-cairo-with-patch',
-  #output: 'cairo.pkg.tar.zst',
-  #input: [
-    #make_mingw_pkg, 'PKGBUILD-cairo-mingw',
-    #'patches/add_assert_to_cairo_surface.patch', ],
-  #command: make_mingw_pkg_cmd_full,
-  #install: false,
-  #)
+lsp_dsp_lib_pkg = custom_target (
+  'mingw-lsp-dsp-lib',
+  output: 'lsp-dsp-lib.pkg.tar.zst',
+  input: [ make_mingw_pkg, mingw_lsp_dsp_lib_pkgbuild, ],
+  command: make_mingw_pkg_cmd,
+  install: false,
+  )
 cairo_pkg = custom_target (
   'mingw-cairo',
   output: 'cairo.pkg.tar.zst',
@@ -294,7 +298,8 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lilv_pkg, cairo_pkg, independent_deps,
+    lilv_pkg, cairo_pkg, lsp_dsp_lib_pkg,
+    independent_deps,
     ],
   console: true,
   install: false,
@@ -312,12 +317,11 @@ windows_chroot_target = custom_target (
   input: [
     make_windows_chroot, zrythm_src_tarball,
     independent_deps[0],
-    independent_deps[1],
     carla_packages[0],
     carla_packages[1],
     lv2_pkg, serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg, cairo_pkg,
-    mingw_zrythm_pkg,
+    lsp_dsp_lib_pkg, mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',
