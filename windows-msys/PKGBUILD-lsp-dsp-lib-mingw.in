@@ -28,12 +28,12 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
 options=('strip' 'staticlibs')
 license=("LGPL3")
 url="https://github.com/lsp-plugins/lsp-dsp-lib"
-source=("https://github.com/lsp-plugins/$_realname/archive/lsp-dsp-lib-$pkgver.zip")
+source=("https://github.com/lsp-plugins/$_realname/releases/download/$pkgver/$_realname-$pkgver-src.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
   rm -rf ${_realname}-${pkgver}
-  mv ${_realname}-${_realname}-${pkgver} ${_realname}-${pkgver}
+  mv ${_realname} ${_realname}-${pkgver}
   cd ${_realname}-${pkgver}
 
   find . -type f -exec sed -i -e 's|$(MAKEFLAGS)||g' {} \;
