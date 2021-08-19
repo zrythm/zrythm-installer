@@ -44,7 +44,7 @@ build() {
 
   make config PREFIX=${MINGW_PREFIX}
   cat ./.config.mk
-  make fetch
+  #make fetch
   make
 }
 
