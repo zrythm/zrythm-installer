@@ -49,6 +49,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-gettext"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "guile"
+             "${MINGW_PACKAGE_PREFIX}-iconv"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-python3")
 options=('!strip' '!staticlibs')
@@ -71,8 +72,14 @@ build() {
   # build zrythm
   mkdir -p $_zrythm_builddir
   pushd $_zrythm_builddir
-  sed -i -e '94s/translator/"invalid"/' \
-    ${srcdir}/zrythm-${pkgver}/scripts/gen-translators-list.scm
+
+  # replace non-ASCII characters in TRANSLATORS
+  sed -i -e 's|"|###|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
+  iconv -c -f utf-8 -t ascii//TRANSLIT ${srcdir}/zrythm-${pkgver}/TRANSLATORS > TRANSLATORS2 || true
+  rm ${srcdir}/zrythm-${pkgver}/TRANSLATORS
+  mv TRANSLATORS2 ${srcdir}/zrythm-${pkgver}/TRANSLATORS
+  sed -i -e 's|###|"|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
+
   echo "using prefix ${MINGW_PREFIX}"
   MSYS2_ARG_CONV_EXCL="--prefix=" \
   ${MINGW_PREFIX}/bin/meson \
