@@ -74,11 +74,10 @@ build() {
   pushd $_zrythm_builddir
 
   # replace non-ASCII characters in TRANSLATORS
-  sed -i -e 's|"|###|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
   iconv -c -f utf-8 -t ascii//TRANSLIT ${srcdir}/zrythm-${pkgver}/TRANSLATORS > TRANSLATORS2 || true
   rm ${srcdir}/zrythm-${pkgver}/TRANSLATORS
   mv TRANSLATORS2 ${srcdir}/zrythm-${pkgver}/TRANSLATORS
-  sed -i -e 's|###|"|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
+  sed -i -e 's|"|'\''|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
 
   echo "using prefix ${MINGW_PREFIX}"
   MSYS2_ARG_CONV_EXCL="--prefix=" \
