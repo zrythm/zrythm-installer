@@ -199,6 +199,7 @@ foreach arch : [ 'ucrt64', 'mingw32' ]
     arch,
     '@INPUT2@',
     ],
+  console: true,
   install: false,
   )
 carla_packages += carla_pkg_target
@@ -221,6 +222,7 @@ foreach dep_name : independent_dep_names
       ],
     command: make_mingw_pkg_cmd,
     depends: carla_packages,
+    console: true,
     install: false,
     )
 endforeach
@@ -231,6 +233,7 @@ lv2_pkg = custom_target (
     make_mingw_pkg, 'PKGBUILD-lv2-mingw',
     ],
   command: make_mingw_pkg_cmd,
+  console: true,
   install: false,
   )
 serd_pkg = custom_target (
@@ -239,6 +242,7 @@ serd_pkg = custom_target (
   input: [ make_mingw_pkg, 'PKGBUILD-serd-mingw', ],
   command: make_mingw_pkg_cmd,
   depends: lv2_pkg,
+  console: true,
   install: false,
   )
 sord_pkg = custom_target (
@@ -247,6 +251,7 @@ sord_pkg = custom_target (
   input: [ make_mingw_pkg, 'PKGBUILD-sord-mingw', ],
   command: make_mingw_pkg_cmd,
   depends: serd_pkg,
+  console: true,
   install: false,
   )
 sratom_pkg = custom_target (
@@ -255,6 +260,7 @@ sratom_pkg = custom_target (
   input: [ make_mingw_pkg, 'PKGBUILD-sratom-mingw', ],
   command: make_mingw_pkg_cmd,
   depends: sord_pkg,
+  console: true,
   install: false,
   )
 lilv_pkg = custom_target (
@@ -263,6 +269,7 @@ lilv_pkg = custom_target (
   input: [ make_mingw_pkg, 'PKGBUILD-lilv-mingw', ],
   command: make_mingw_pkg_cmd,
   depends: sratom_pkg,
+  console: true,
   install: false,
   )
 lsp_dsp_lib_pkg = custom_target (
@@ -270,6 +277,7 @@ lsp_dsp_lib_pkg = custom_target (
   output: 'lsp-dsp-lib.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_lsp_dsp_lib_pkgbuild, ],
   command: make_mingw_pkg_cmd,
+  console: true,
   install: false,
   )
 cairo_pkg = custom_target (
@@ -277,6 +285,7 @@ cairo_pkg = custom_target (
   output: 'cairo.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_cairo_pkgbuild, ],
   command: make_mingw_pkg_cmd,
+  console: true,
   install: false,
   )
 run_target (
@@ -353,6 +362,7 @@ dll_dir = custom_target (
   depends: [
     windows_chroot_target,
     ],
+  console: true,
   install: false,
   )
 
