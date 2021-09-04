@@ -37,7 +37,7 @@ pkgname=${pkgname%"-mingw"}
 while test -f /var/lib/pacman/db.lck; do
   sleep 1
 done
-pacman -R "$mingw_pkg_prefix-$pkgname" --noconfirm || true
+#pacman -R "$mingw_pkg_prefix-$pkgname" --noconfirm || true
 
 rm -rf $private_dir
 mkdir -p $private_dir
