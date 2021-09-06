@@ -47,6 +47,7 @@ main () {
   cp $chroot_mingw_prefix/lib/carla/libcarla_host-plugin.dll $out_dir/
   cp $chroot_mingw_prefix/bin/libfftw3-3.dll $out_dir/
   cp $chroot_mingw_prefix/bin/libfftw3f-3.dll $out_dir/
+  cp $chroot_mingw_prefix/bin/libjpeg-8.dll $out_dir/
 
   # ******************************
 }

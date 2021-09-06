@@ -28,7 +28,7 @@ arch=('any')
 pkgdesc='a highly automated and intuitive digital audio workstation (mingw-w64)'
 depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
          "${MINGW_PACKAGE_PREFIX}-cantarell-fonts"
-         "${MINGW_PACKAGE_PREFIX}-curl"
+         "${MINGW_PACKAGE_PREFIX}-curl-winssl"
          "${MINGW_PACKAGE_PREFIX}-rubberband"
          "${MINGW_PACKAGE_PREFIX}-libsndfile"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
