@@ -69,6 +69,7 @@ option (
   'locales', type: 'array',
   choices : [
     'en', 'es', 'de', 'fr', 'it', 'ja', 'pt',
+    'ru',
     ],
   description: 'Locales for the manual')
 
