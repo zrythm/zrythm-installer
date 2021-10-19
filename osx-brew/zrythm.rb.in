@@ -27,6 +27,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "pkg-config" => :build
   depends_on "help2man" => :build
   depends_on "cmake" => :build
+  depends_on "gnu-sed" => :build
   depends_on "curl"
   depends_on "libyaml"
   depends_on "gtk+3"
@@ -52,6 +53,12 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
 
   def install
     mkdir "build" do
+
+      # workaround for C++ 20 <version>
+      system "mv", "../VERSION", "../VERSION.txt"
+      system "gsed", "-i", "s|'VERSION'|'VERSION.txt'|", "../meson.build"
+
+      # configure
       system "meson",
         "--prefix=#{prefix}", "--libdir=#{lib}",
         "--buildtype=debugoptimized", "-Dextra_debug_info=true",
@@ -67,8 +74,21 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dinstaller_ver=true",
         "-Dvamp_static=true",
         ".."
+
+      # workaround for C++ 20 <version>
+      system "mv", "../subprojects/libaudec/VERSION", "../subprojects/libaudec/VERSION.txt"
+      system "gsed", "-i", "s|'VERSION'|'VERSION.txt'|", "../subprojects/libaudec/meson.build"
+
+      # build
       system "ninja", "-v"
+
+      # install
       system "meson", "install", "--skip-subprojects"
+
+      # move back
+      system "mv", "../VERSION.txt", "../VERSION"
+      system "mv", "../subprojects/libaudec/VERSION.txt", "../subprojects/libaudec/VERSION"
+
       system "cp", "-r", "@BREEZE_DARK@", "#{share}/icons/breeze-dark"
       system "mkdir", "-p", "#{lib}/zrythm/carla"
       system "mkdir", "-p", "#{lib}/lv2"
