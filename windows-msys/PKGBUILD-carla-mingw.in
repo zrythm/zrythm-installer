@@ -44,6 +44,9 @@ prepare() {
 build() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
+  export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++"
+  export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++"
+
   if [ "$MINGW_ARCH" = "mingw32" ]; then
     make win32r PREFIX=${MINGW_PREFIX} DEBUG=false
   else
