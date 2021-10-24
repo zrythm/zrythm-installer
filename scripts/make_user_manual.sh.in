@@ -42,7 +42,8 @@ tar xf $zrythm_src_tarball_filename
 pushd $inner_dir
 $meson_bin build -Dstrict_sphinx_opts=false
 sed -i -e 's/latexpdf/latex/' doc/user/meson.build
-ninja -C build latex-manual-$lang
+# run twice because pt fails for some reason
+ninja -C build latex-manual-$lang || ninja -C build latex-manual-$lang
 make -C $latex_build_dir
 popd
 popd
