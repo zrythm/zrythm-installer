@@ -30,13 +30,13 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "gnu-sed" => :build
   depends_on "curl"
   depends_on "libyaml"
-  depends_on "gtk+3"
   depends_on "guile"
   depends_on "fftw"
   depends_on "libsamplerate"
+  depends_on "libsass"
   depends_on "lilv"
   depends_on "librsvg"
-  depends_on "gtksourceview4"
+  depends_on "gtksourceview5"
   depends_on "graphviz"
   depends_on "rubberband"
   depends_on "sdl2"
@@ -63,6 +63,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "--prefix=#{prefix}", "--libdir=#{lib}",
         "--buildtype=debugoptimized", "-Dextra_debug_info=true",
         "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
+        "-Dgtk4:x11-backend=false",
         "-Dcarla=enabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
         "-Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@",
@@ -83,7 +84,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
       system "ninja", "-v"
 
       # install
-      system "meson", "install", "--skip-subprojects"
+      system "meson", "install", "--skip-subprojects=libaudec,libbacktrace,libcyaml,reproc,rtaudio,rtmidi,zstd"
 
       # move back
       system "mv", "../VERSION.txt", "../VERSION"
