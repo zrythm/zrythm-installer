@@ -61,7 +61,7 @@ PATH="$PATH:/home/build/.local/bin" \
   -Dcheck_updates=true \
   -Dinstaller_ver=true \
   -Dappimage=true \
-  --force-fallback-for=gdk-pixbuf,glib \
+  --force-fallback-for=glib,libadwaita \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 
 # build
