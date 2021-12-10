@@ -74,6 +74,9 @@ DESTDIR="$appdir_root" ninja -C build install
 cp "@CARLA_FULL_BINS_PATH@/libcarla_host-plugin.so" \
   "$appdir_root"/usr/lib/zrythm/carla/
 
+# copy all libs
+cp "$appdir_root"/usr/lib/*.so "$appdir_root"/usr/lib/zrythm/
+
 popd # zrythm tarball inner dir
 
 # create appimage from AppDir
