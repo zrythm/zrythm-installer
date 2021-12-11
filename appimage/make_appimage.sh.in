@@ -45,16 +45,6 @@ cp "$zrythm_src_tarball" "$private_dir"/
 tar xf "$zrythm_src_tarball" -C "$private_dir"
 pushd "$private_dir"
 
-# preinstall wayland-protocols
-pushd wayland
-git clone git://anongit.freedesktop.org/git/wayland/wayland-protocols
-pushd wayland-protocols
-/home/build/meson/meson.py build -Dprefix=/usr
-ninja -C build
-sudo ninja -C build install
-popd # wayland-protocols
-popd # wayland
-
 pushd "$inner_dir"
 
 # configure
@@ -72,7 +62,7 @@ PATH="$PATH:/home/build/.local/bin" \
   -Dcheck_updates=true \
   -Dinstaller_ver=true \
   -Dappimage=true \
-  --force-fallback-for=glib,libadwaita \
+  --force-fallback-for=libadwaita \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 
 # build
@@ -86,7 +76,7 @@ cp "@CARLA_FULL_BINS_PATH@/libcarla_host-plugin.so" \
   "$appdir_root"/usr/lib/zrythm/carla/
 
 # copy all libs
-cp "$appdir_root"/usr/lib/*.so "$appdir_root"/usr/lib/zrythm/
+cp "$appdir_root"/usr/lib/x86_64-linux-gnu/*.so* "$appdir_root"/usr/lib/zrythm/
 
 popd # zrythm tarball inner dir
 
