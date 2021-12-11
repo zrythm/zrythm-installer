@@ -78,6 +78,10 @@ cp "@CARLA_FULL_BINS_PATH@/libcarla_host-plugin.so" \
 # copy all libs
 cp "$appdir_root"/usr/lib/x86_64-linux-gnu/*.so* "$appdir_root"/usr/lib/zrythm/
 
+# copy pixbuf loaders
+cp -r "$appdir_root"/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0 "$appdir_root"/usr/lib/zrythm/gdk-pixbuf-2.0
+cat "$appdir_root"/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
+
 popd # zrythm tarball inner dir
 
 # create appimage from AppDir
