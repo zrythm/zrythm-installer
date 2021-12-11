@@ -42,7 +42,7 @@ AppDir:
       # can also add paths to deb files here
       #- libglib2.0-0
       #- libgtk-3-0
-      - libgdk-pixbuf2.0-common
+      #- libgdk-pixbuf2.0-common
       - liblilv-0-0
       - libjpeg-turbo8
       - libpulse0
@@ -51,16 +51,16 @@ AppDir:
       - libxcb1
       - coreutils
       - bash
-      - librsvg2-common
+      #- librsvg2-common
       - gettext
       - guile-2.2-libs
       - libcurl3-gnutls
-      - libjson-glib-dev
+      #- libjson-glib-dev
       - libsndfile1
       - libxcb-render0
       - libasound2
-      - libgtksourceview-3.0-common
-      - libgtksourceview-3.0-1
+      #- libgtksourceview-3.0-common
+      #- libgtksourceview-3.0-1
       - graphviz
       - librubberband2
       - libx11-6
@@ -152,7 +152,6 @@ AppDir:
       - /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0:$APPDIR/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0
     env:
       APPDIR_LIBRARY_PATH: '$APPDIR/usr/lib/zrythm:$APPDIR/usr/lib/x86_64-linux-gnu/zrythm:$APPDIR/usr/lib/x86_64-linux-gnu:$APPDIR/lib/x86_64-linux-gnu:$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu/pulseaudio'
-      GDK_PIXBUF_MODULEDIR: '${APPDIR}/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders'
       GDK_PIXBUF_MODULE_FILE: '${APPDIR}/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache'
       GTK_DATA_PREFIX: '$APPDIR'
       GTK_EXE_PREFIX: '${APPDIR}/usr'
