@@ -75,11 +75,18 @@ DESTDIR="$appdir_root" ninja -C build install
 cp "@CARLA_FULL_BINS_PATH@/libcarla_host-plugin.so" \
   "$appdir_root"/usr/lib/zrythm/carla/
 
-# copy all libs
+# copy all subproject libs
 cp "$appdir_root"/usr/lib/x86_64-linux-gnu/*.so* "$appdir_root"/usr/lib/zrythm/
 
-# copy pixbuf loaders
-cp -r "$appdir_root"/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0 "$appdir_root"/usr/lib/zrythm/gdk-pixbuf-2.0
+# copy all other libs
+cp -r /usr/lib/x86_64-linux-gnu/gtk-4.0 "$appdir_root"/usr/lib/zrythm/
+cp -r /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0 "$appdir_root"/usr/lib/zrythm/
+for libname in gtk epoxy graphene gdk freetype pango harfbuzz cairo pixman fontconfig fribidi json-glib gio gmodule gobject gthread glib; do
+  cp "/usr/lib/x86_64-linux-gnu/lib${libname}"*.so* "$appdir_root"/usr/lib/zrythm/
+done
+for libname in rsvg png; do
+  cp "/usr/lib/lib${libname}"*.so* "$appdir_root"/usr/lib/zrythm/
+done
 cat "$appdir_root"/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
 popd # zrythm tarball inner dir
