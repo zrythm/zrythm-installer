@@ -87,6 +87,7 @@ done
 for libname in rsvg png; do
   cp "/usr/lib/lib${libname}"*.so* "$appdir_root"/usr/lib/zrythm/
 done
+sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' "$appdir_root"/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 cat "$appdir_root"/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
 popd # zrythm tarball inner dir
