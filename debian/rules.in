@@ -73,7 +73,9 @@ override_dh_auto_install:
 		cp "/usr/lib/x86_64-linux-gnu/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
 	done
 	for libname in rsvg png; do \
-		cp "/usr/lib/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
+		if `ls "/usr/lib/lib$${libname}"*.so*`; then \
+			cp "/usr/lib/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
+		fi ; \
 	done
 	sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 	cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
