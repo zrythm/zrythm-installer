@@ -67,13 +67,13 @@ override_dh_auto_install:
 	# copy all subproject libs
 	mv ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib//x86_64-linux-gnu/*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
 	# copy all other libs
-	cp /usr/lib/x86_64-linux-gnu/gtk-4.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
-	cp /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
+	cp -r /usr/lib/x86_64-linux-gnu/gtk-4.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
+	cp -r /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
 	for libname in gtk epoxy graphene gdk freetype pango harfbuzz cairo pixman fontconfig fribidi json-glib gio gmodule gobject gthread glib; do \
-		cp "/usr/lib/x86_64-linux-gnu/lib${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
+		cp "/usr/lib/x86_64-linux-gnu/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
 	done
 	for libname in rsvg png; do \
-		cp "/usr/lib/lib${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
+		cp "/usr/lib/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
 	done
 	sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 	cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
