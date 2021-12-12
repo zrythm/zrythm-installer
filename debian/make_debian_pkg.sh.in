@@ -55,7 +55,7 @@ echo "3.0 (native)" > $deb_src_dir/format
 tar -xzf $deb_source_tarball -C $private_dir
 
 pushd $deb_parent_dir
-debuild --no-lintian -us -uc
+debuild -us -uc
 popd
 
 mv "$private_dir/zrythm$dash_trial"_*.deb "$out_pkg"
