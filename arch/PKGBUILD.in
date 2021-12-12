@@ -24,8 +24,8 @@ arch=('x86_64' 'i686')
 url="https://www.zrythm.org"
 options=('!strip')
 license=('AGPL3')
-depends=('curl' 'gtk3' 'lilv' 'libx11' 'jack' 'libsndfile'
-  'json-glib' 'libyaml' 'libsamplerate' 'guile' 'gtksourceview4' 'alsa-lib'
+depends=('curl' 'gtk4' 'lilv' 'libx11' 'jack' 'libsndfile'
+  'json-glib' 'libyaml' 'libsamplerate' 'guile' 'alsa-lib'
   'fftw' 'graphviz' 'rtmidi' 'rtaudio' 'breeze-icons' 'zstd'
   'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk')
 makedepends=(
@@ -70,10 +70,11 @@ package() {
   cd $_rootdir
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
-  @MESON_BIN@ install -C build --skip-subprojects --destdir="${pkgdir}/"
+  @MESON_BIN@ install -C build --skip-subprojects=gtksourceview5,libaudec,reproc,rtmidi,rtaudio,libcyaml --destdir="${pkgdir}/"
+	# copy all subproject libs
+	mv ${pkgdir}/usr/lib/*.so* ${pkgdir}/usr/lib/zrythm/
   rm -rf "${pkgdir}/usr/include"
   rm -rf "${pkgdir}/usr/lib/libbacktrace"*
-  rm -rf "${pkgdir}/usr/lib/libcm_reproc.a"
   mkdir -p "${pkgdir}/usr/lib/zrythm/carla"
   mkdir -p "${pkgdir}/usr/lib/lv2"
   for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-plugin.so; do
