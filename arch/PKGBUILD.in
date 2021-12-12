@@ -62,7 +62,7 @@ build() {
 
 check() {
   cd $_rootdir
-  ninja -C build test
+  @MESON_BIN@ test -C build --no-suite=gtksourceview5
   build/src/zrythm --version
 }
 
