@@ -157,6 +157,14 @@ mv "%{buildroot}%{_libdir}"/*.so* "%{buildroot}%{_libdir}"/zrythm/
 #sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 #cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 patchelf --add-rpath "%{_libdir}"/zrythm "%{buildroot}%{_bindir}"/zrythm
+# remove unused things
+rm "%{buildroot}%{_bindir}"/gtk*
+rm -rf "%{buildroot}%{_libdir}"/gtk-4.0
+rm -rf "%{buildroot}%{_libdir}"/pkgconfig
+rm -rf "%{buildroot}%{_datadir}"/gettext
+rm -rf "%{buildroot}%{_datadir}"/gtk-4.0
+rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/gtk*
+rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/libadwaita*
 %find_lang zrythm
 
 %files -f zrythm.lang
@@ -179,6 +187,7 @@ patchelf --add-rpath "%{_libdir}"/zrythm "%{buildroot}%{_bindir}"/zrythm
 %{_datadir}/fish/vendor_completions.d
 %endif
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
+%{_libdir}/zrythm/*
 %{_libdir}/lv2/Zrythm-*
 %{_exec_prefix}/lib/zrythm/carla/carla-discovery-native
 %{_exec_prefix}/lib/zrythm/carla/carla-bridge-lv2-gtk2
