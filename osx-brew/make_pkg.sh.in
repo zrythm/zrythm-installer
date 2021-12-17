@@ -167,7 +167,7 @@ chmod +x $bin_dir/zrythm_launch
 cp -rvf /usr/local/etc/fonts $etc_dir/
 
 # copy gtksourceview files
-cp -rvf /usr/local/share/gtksourceview-4 $share_dir/
+cp -rvf /usr/local/share/gtksourceview-5 $share_dir/
 
 # copy locales
 cp -rvf /usr/local/share/locale $share_dir/
