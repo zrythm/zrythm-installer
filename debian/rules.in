@@ -80,6 +80,15 @@ override_dh_auto_install:
 	sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 	cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 	patchelf --set-rpath /usr/lib/zrythm/carla:/usr/lib/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
+	patchelf --set-rpath /usr/lib/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/libadwaita-1.so.0
+	# remove unused things
+	rm "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/gtk*
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/x86_64-linux-gnu/gtk-4.0"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/x86_64-linux-gnu/pkgconfig"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gettext"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gtk-4.0"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/gtk*
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/libadwaita*
 
 override_dh_strip:
 	echo "hello"

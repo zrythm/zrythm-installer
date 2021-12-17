@@ -156,15 +156,18 @@ mv "%{buildroot}%{_libdir}"/*.so* "%{buildroot}%{_libdir}"/zrythm/
 #done
 #sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 #cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
-patchelf --add-rpath "%{_libdir}"/zrythm "%{buildroot}%{_bindir}"/zrythm
+patchelf --set-rpath "%{_libdir}/zrythm/carla:%{_libdir}/zrythm" "%{buildroot}%{_bindir}"/zrythm
 # remove unused things
 rm "%{buildroot}%{_bindir}"/gtk*
+rm "%{buildroot}%{_bindir}"/pango*
 rm -rf "%{buildroot}%{_libdir}"/gtk-4.0
 rm -rf "%{buildroot}%{_libdir}"/pkgconfig
+rm -rf "%{buildroot}%{_libdir}"/*.a
 rm -rf "%{buildroot}%{_datadir}"/gettext
 rm -rf "%{buildroot}%{_datadir}"/gtk-4.0
 rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/gtk*
 rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/libadwaita*
+rm -rf "%{buildroot}%{_datadir}"/man/man1/pango-view.1.gz
 %find_lang zrythm
 
 %files -f zrythm.lang
