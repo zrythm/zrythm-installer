@@ -26,7 +26,7 @@ pkgver=@ZRYTHM_PKG_VERSION@
 pkgrel=2
 arch=('any')
 pkgdesc='a highly automated and intuitive digital audio workstation (mingw-w64)'
-depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
+depends=("${MINGW_PACKAGE_PREFIX}-gtk4"
          "${MINGW_PACKAGE_PREFIX}-cantarell-fonts"
          "${MINGW_PACKAGE_PREFIX}-curl-winssl"
          "${MINGW_PACKAGE_PREFIX}-rubberband"
@@ -34,7 +34,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk3"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
          "${MINGW_PACKAGE_PREFIX}-lilv"
          "${MINGW_PACKAGE_PREFIX}-jack2-bin"
-         "${MINGW_PACKAGE_PREFIX}-gtksourceview4"
+         "${MINGW_PACKAGE_PREFIX}-gtksourceview5"
          "${MINGW_PACKAGE_PREFIX}-graphviz"
          "${MINGW_PACKAGE_PREFIX}-dlfcn"
          "${MINGW_PACKAGE_PREFIX}-fftw"

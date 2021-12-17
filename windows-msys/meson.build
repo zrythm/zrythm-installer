@@ -272,6 +272,10 @@ lilv_pkg = custom_target (
   console: true,
   install: false,
   )
+run_target (
+  'run-mingw-lilv',
+  command: [ 'echo', 'done' ],
+  depends: lilv_pkg)
 lsp_dsp_lib_pkg = custom_target (
   'mingw-lsp-dsp-lib',
   output: 'lsp-dsp-lib.pkg.tar.zst',

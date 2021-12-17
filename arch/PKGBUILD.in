@@ -84,4 +84,5 @@ package() {
   for f in `ls @BUILT_ZPLUGINS_DIR@/lib/lv2`; do
     cp -RLv "@BUILT_ZPLUGINS_DIR@/lib/lv2/$f" "${pkgdir}/usr/lib/lv2/Zrythm-$f"
   done
+  # TODO remove unused things
 }
