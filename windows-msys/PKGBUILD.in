@@ -103,7 +103,7 @@ build() {
     -Db_lto=false \
     -Dtests=false \
     "../zrythm-${pkgver}"
-  meson compile
+  ${MINGW_PREFIX}/bin/ninja -d explain
   cp ${MINGW_PREFIX}/lib/carla/libcarla_host-plugin.dll ./src/
   popd
 

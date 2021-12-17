@@ -82,7 +82,7 @@ override_dh_auto_install:
 	patchelf --set-rpath /usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/carla:/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
 	patchelf --set-rpath /usr/lib/$(DEB_HOST_MULTIARCH)/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/libadwaita-1.so.0
 	# remove unused things
-	rm "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/gtk*
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/gtk*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/gtk-4.0"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gettext"
