@@ -58,33 +58,33 @@ override_dh_auto_install:
 	mkdir -p ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/carla
 	for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-plugin.so; do \
 		cp -Lv "@CARLA_FULL_BINS_PATH@/$$file" \
-			${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/carla/ ; \
+			${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/carla/ ; \
 	done
 	for f in `ls @BUILT_ZPLUGINS_DIR@/lib/lv2`; do \
 		cp -RLv @BUILT_ZPLUGINS_DIR@/lib/lv2/$$f "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/lv2/Zrythm-$$f"; \
 	done
-	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/carla/libcarla_host-plugin.so ] ; then exit 1 ; fi
+	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/carla/libcarla_host-plugin.so ] ; then exit 1 ; fi
 	# copy all subproject libs
-	mv ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib//x86_64-linux-gnu/*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
+	mv ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/
 	# copy all other libs
 	#cp -r /usr/lib/x86_64-linux-gnu/gtk-4.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
-	cp -r /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
+	cp -r /usr/lib/$(DEB_HOST_MULTIARCH)/gdk-pixbuf-2.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/
 	for libname in gtk epoxy graphene gdk freetype pango harfbuzz cairo pixman fontconfig fribidi json-glib gio gmodule gobject gthread glib; do \
-		cp "/usr/lib/x86_64-linux-gnu/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
+		cp "/usr/lib/$(DEB_HOST_MULTIARCH)/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/ ; \
 	done
 	for libname in rsvg png; do \
-		if `ls "/usr/lib/lib$${libname}"*.so*`; then \
-			cp "/usr/lib/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
+		if `ls "/usr/lib/$(DEB_HOST_MULTIARCH)/lib$${libname}"*.so*`; then \
+			cp "/usr/lib/$(DEB_HOST_MULTIARCH)/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/ ; \
 		fi ; \
 	done
-	sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
-	cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
-	patchelf --set-rpath /usr/lib/zrythm/carla:/usr/lib/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
-	patchelf --set-rpath /usr/lib/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/libadwaita-1.so.0
+	sed -i 's|/usr/lib/$(DEB_HOST_MULTIARCH)/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
+	cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
+	patchelf --set-rpath /usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/carla:/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
+	patchelf --set-rpath /usr/lib/$(DEB_HOST_MULTIARCH)/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/libadwaita-1.so.0
 	# remove unused things
 	rm "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/gtk*
-	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/x86_64-linux-gnu/gtk-4.0"
-	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/x86_64-linux-gnu/pkgconfig"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/gtk-4.0"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gettext"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gtk-4.0"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/gtk*
