@@ -79,7 +79,7 @@ override_dh_auto_install:
 	done
 	sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 	cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
-	patchelf --add-rpath /usr/lib/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
+	patchelf --set-rpath /usr/lib/zrythm/carla:/usr/lib/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
 
 override_dh_strip:
 	echo "hello"
