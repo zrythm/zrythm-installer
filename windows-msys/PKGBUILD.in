@@ -97,7 +97,7 @@ build() {
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dvamp_static=true \
     -Dinstaller_ver=true -Dcarla=enabled \
-    -Dcarla_binaries_dir_32bit='C:\msys64\mingw32\lib\carla' \
+    -Dcarla_binaries_dir_32bit='/mingw32/lib/carla' \
     --buildtype=debugoptimized \
     -Dextra_debug_info=true \
     -Db_lto=false \

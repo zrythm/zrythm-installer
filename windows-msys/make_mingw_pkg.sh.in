@@ -58,4 +58,10 @@ while test -f /var/lib/pacman/db.lck; do
 done
 pacman -U $private_dir/*.pkg.tar.zst --noconfirm --overwrite='*'
 
+if [ "$arch" = "mingw32" ]; then
+  pacman -Ql "mingw-w64-i686-$pkgname"
+else
+  pacman -Ql "mingw-w64-ucrt-x86_64-$pkgname"
+fi
+
 cp $private_dir/*.pkg.tar.zst $out_file
