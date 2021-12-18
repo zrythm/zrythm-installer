@@ -84,5 +84,16 @@ package() {
   for f in `ls @BUILT_ZPLUGINS_DIR@/lib/lv2`; do
     cp -RLv "@BUILT_ZPLUGINS_DIR@/lib/lv2/$f" "${pkgdir}/usr/lib/lv2/Zrythm-$f"
   done
-  # TODO remove unused things
+  # remove unused things
+  rm -rf "${pkgdir}/usr/bin"/gtk*
+  rm -rf "${pkgdir}/usr/bin"/pango*
+  rm -rf "${pkgdir}/usr/lib"/gtk-4.0
+  rm -rf "${pkgdir}/usr/lib"/pkgconfig
+  rm -rf "${pkgdir}/usr/lib"/*.a
+  rm -rf "${pkgdir}/usr/share"/gettext
+  rm -rf "${pkgdir}/usr/share"/gtk-4.0
+  rm -rf "${pkgdir}/usr/share"/glib-2.0/schemas/org.gtk.gtk4*
+  rm -rf "${pkgdir}/usr/share"/locale/*/LC_MESSAGES/gtk*
+  rm -rf "${pkgdir}/usr/share"/locale/*/LC_MESSAGES/libadwaita*
+  rm -rf "${pkgdir}/usr/share"/man/man1/pango*
 }
