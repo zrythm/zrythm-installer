@@ -69,9 +69,6 @@ build() {
   [[ -d "$_zrythm_builddir" ]] && rm -rf "$_zrythm_builddir"
   [[ -d "$_zplugins_builddir" ]] && rm -rf "$_zplugins_builddir"
 
-  # touch all files
-  find zrythm-${pkgver} -type f -exec touch {} +
-
   # build zrythm
   mkdir -p $_zrythm_builddir
   pushd $_zrythm_builddir
@@ -106,6 +103,12 @@ build() {
     -Db_lto=false \
     -Dtests=false \
     "../zrythm-${pkgver}"
+
+  # touch all files
+  find ${srcdir}/zrythm-${pkgver} -type f -exec ls -l {} +
+  find ${srcdir}/zrythm-${pkgver} -type f -exec touch -d '2 years ago' {} +
+  find ${srcdir}/zrythm-${pkgver} -type f -exec ls -l {} +
+
   ${MINGW_PREFIX}/bin/ninja -d explain
   cp ${MINGW_PREFIX}/lib/carla/libcarla_host-plugin.dll ./src/
   popd

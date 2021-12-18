@@ -157,6 +157,7 @@ mv "%{buildroot}%{_libdir}"/*.so* "%{buildroot}%{_libdir}"/zrythm/
 #sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 #cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 patchelf --set-rpath "%{_libdir}/zrythm/carla:%{_libdir}/zrythm" "%{buildroot}%{_bindir}"/zrythm
+patchelf --replace-needed /usr/lib/zrythm/carla/libcarla_host-plugin.so libcarla_host-plugin.so "%{buildroot}%{_bindir}"/zrythm
 # remove unused things
 rm -rf "%{buildroot}%{_bindir}"/gtk*
 rm -rf "%{buildroot}%{_bindir}"/pango*
