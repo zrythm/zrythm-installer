@@ -69,6 +69,9 @@ build() {
   [[ -d "$_zrythm_builddir" ]] && rm -rf "$_zrythm_builddir"
   [[ -d "$_zplugins_builddir" ]] && rm -rf "$_zplugins_builddir"
 
+  # touch all files
+  find zrythm-${pkgver} -type f -exec touch {} +
+
   # build zrythm
   mkdir -p $_zrythm_builddir
   pushd $_zrythm_builddir
