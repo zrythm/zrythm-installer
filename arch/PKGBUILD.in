@@ -27,7 +27,8 @@ license=('AGPL3')
 depends=('curl' 'gtk4' 'lilv' 'libx11' 'jack' 'libsndfile'
   'json-glib' 'libyaml' 'libsamplerate' 'guile' 'alsa-lib'
   'fftw' 'graphviz' 'rtmidi' 'rtaudio' 'breeze-icons' 'zstd'
-  'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk')
+  'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk'
+  'wayland-protocols')
 makedepends=(
   'python' 'gettext' 'sed'
   'ninja' 'help2man' 'python-sphinx'
