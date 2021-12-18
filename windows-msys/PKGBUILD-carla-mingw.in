@@ -58,6 +58,7 @@ package() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
   mkdir -p "${pkgdir}/${MINGW_PREFIX}"/lib/carla
+  ls -l bin
   install -D -m755 bin/*.exe "${pkgdir}/${MINGW_PREFIX}"/lib/carla/
 
   if [ "$MINGW_ARCH" != "mingw32" ]; then
