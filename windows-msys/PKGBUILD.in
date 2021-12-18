@@ -104,11 +104,6 @@ build() {
     -Dtests=false \
     "../zrythm-${pkgver}"
 
-  # touch all files
-  find ${srcdir}/zrythm-${pkgver} -type f -exec ls -l {} +
-  find ${srcdir}/zrythm-${pkgver} -type f -exec touch -d '2 years ago' {} +
-  find ${srcdir}/zrythm-${pkgver} -type f -exec ls -l {} +
-
   ${MINGW_PREFIX}/bin/ninja -d explain
   cp ${MINGW_PREFIX}/lib/carla/libcarla_host-plugin.dll ./src/
   popd

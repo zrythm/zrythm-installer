@@ -1,0 +1,67 @@
+# Contributor: Alexandros Theodotou <alex at zrythm dot org>
+_realname=gtk4
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+_commit='12bb700c620c8a9a29947314ab35d0f2a22d795c'
+pkgver=4.5.0
+pkgrel=1
+pkgdesc="Cairo vector graphics library (mingw-w64)"
+arch=('any')
+url="https://cairographics.org/"
+license=(LGPL2.1 MPL1.1)
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-gobject-introspection"
+             "${MINGW_PACKAGE_PREFIX}-sassc"
+             "${MINGW_PACKAGE_PREFIX}-meson"
+             "${MINGW_PACKAGE_PREFIX}-gtk-doc")
+depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
+         "${MINGW_PACKAGE_PREFIX}-adwaita-icon-theme"
+         "${MINGW_PACKAGE_PREFIX}-cairo"
+         "${MINGW_PACKAGE_PREFIX}-gdk-pixbuf2"
+         "${MINGW_PACKAGE_PREFIX}-glib2"
+         "${MINGW_PACKAGE_PREFIX}-graphene"
+         "${MINGW_PACKAGE_PREFIX}-json-glib"
+         "${MINGW_PACKAGE_PREFIX}-libepoxy"
+         "${MINGW_PACKAGE_PREFIX}-pango"
+         "${MINGW_PACKAGE_PREFIX}-gtk-update-icon-cache"
+         "${MINGW_PACKAGE_PREFIX}-gst-plugins-bad-libs"
+         "${MINGW_PACKAGE_PREFIX}-ffmpeg"
+         "${MINGW_PACKAGE_PREFIX}-shared-mime-info")
+source=("https://gitlab.gnome.org/GNOME/gtk/-/archive/${_commit}/gtk-${_commit}.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  mv "${srcdir}/gtk-${_commit}" "${srcdir}/gtk-${pkgver}"
+  cd "${srcdir}/gtk-${pkgver}"
+}
+
+build() {
+  rm -rf build-${MINGW_CHOST}
+  mkdir -p build-${MINGW_CHOST}
+  cd build-${MINGW_CHOST}
+
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+  ${MINGW_PREFIX}/bin/meson \
+    --prefix=${MINGW_PREFIX} \
+    --buildtype=debug \
+    -Dbuild-examples=false \
+    -Dbuild-tests=false \
+    -Dman-pages=false \
+    -Dmacos-backend=false \
+    -Dx11-backend=false \
+    -Dwayland-backend=false \
+    -Dwin32-backend=true \
+    -Dintrospection=disabled \
+    ../gtk-${pkgver}
+
+  meson compile
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  DESTDIR="${pkgdir}" meson install
+
+  install -Dm644 "${srcdir}/gtk-${pkgver}/COPYING"          "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+}
