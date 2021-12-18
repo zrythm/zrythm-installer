@@ -81,6 +81,7 @@ override_dh_auto_install:
 	cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 	patchelf --set-rpath /usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/carla:/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
 	patchelf --set-rpath /usr/lib/$(DEB_HOST_MULTIARCH)/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/libadwaita-1.so.0
+	patchelf --replace-needed /usr/lib/zrythm/carla/libcarla_host-plugin.so libcarla_host-plugin.so ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
 	# remove unused things
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/gtk*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/gtk-4.0"
