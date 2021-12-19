@@ -1,0 +1,52 @@
+# Contributor: Alexandros Theodotou <alex at zrythm dot org>
+_realname=libadwaita
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+_commit='1171616701bf12a1c56bbad3f0e8821208d87029'
+pkgver=0.1
+pkgrel=1
+pkgdesc="Cairo vector graphics library (mingw-w64)"
+arch=('any')
+url="https://cairographics.org/"
+license=(LGPL2.1 MPL1.1)
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-gobject-introspection"
+             "${MINGW_PACKAGE_PREFIX}-sassc"
+             "${MINGW_PACKAGE_PREFIX}-meson"
+             "${MINGW_PACKAGE_PREFIX}-gtk-doc")
+depends=("${MINGW_PACKAGE_PREFIX}-gtk4")
+source=("https://gitlab.gnome.org/GNOME/libadwaita/-/archive/${_commit}/gtk-${_commit}.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  rm -rf /tmp/libadwaita-${pkgver}
+  mv "${srcdir}/libadwaita-${_commit}" /tmp/libadwaita-$pkgver
+}
+
+build() {
+  rm -rf /tmp/libadwaita-build-${MINGW_CHOST}
+  mkdir -p /tmp/libadwaita-build-${MINGW_CHOST}
+  cd /tmp/libadwaita-build-${MINGW_CHOST}
+
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+  ${MINGW_PREFIX}/bin/meson \
+    --prefix=${MINGW_PREFIX} \
+    --buildtype=debug \
+    -Dvapi=false \
+    -Dtests=false \
+    -Dexamples=false \
+    -Dintrospection=disabled \
+    -Ddefault_library=shared \
+    /tmp/libadwaita-${pkgver}
+
+  meson compile
+}
+
+package() {
+  cd /tmp/libadwaita-build-${MINGW_CHOST}
+
+  DESTDIR="${pkgdir}" meson install
+
+  install -Dm644 "/tmp/libadwaita-${pkgver}/COPYING"          "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+}
