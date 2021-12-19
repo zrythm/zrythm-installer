@@ -2,8 +2,8 @@
 _realname=gtk4
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_commit='12bb700c620c8a9a29947314ab35d0f2a22d795c'
-pkgver=4.5.0
+_commit='4.5.1'
+pkgver=4.5.1
 pkgrel=1
 pkgdesc="Cairo vector graphics library (mingw-w64)"
 arch=('any')
