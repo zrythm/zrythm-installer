@@ -32,14 +32,14 @@ source=("https://gitlab.gnome.org/GNOME/gtk/-/archive/${_commit}/gtk-${_commit}.
 sha256sums=('SKIP')
 
 prepare() {
-  mv "${srcdir}/gtk-${_commit}" "${srcdir}/gtk-${pkgver}"
-  cd "${srcdir}/gtk-${pkgver}"
+  rm -rf /tmp/gtk-${pkgver}
+  mv "${srcdir}/gtk-${_commit}" /tmp/gtk-$pkgver
 }
 
 build() {
-  rm -rf build-${MINGW_CHOST}
-  mkdir -p build-${MINGW_CHOST}
-  cd build-${MINGW_CHOST}
+  rm -rf /tmp/gtk4-build-${MINGW_CHOST}
+  mkdir -p /tmp/gtk4-build-${MINGW_CHOST}
+  cd /tmp/gtk4-build-${MINGW_CHOST}
 
   MSYS2_ARG_CONV_EXCL="--prefix=" \
   ${MINGW_PREFIX}/bin/meson \
@@ -53,15 +53,15 @@ build() {
     -Dwayland-backend=false \
     -Dwin32-backend=true \
     -Dintrospection=disabled \
-    ../gtk-${pkgver}
+    /tmp/gtk-${pkgver}
 
   meson compile
 }
 
 package() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  cd /tmp/gtk4-build-${MINGW_CHOST}
 
   DESTDIR="${pkgdir}" meson install
 
-  install -Dm644 "${srcdir}/gtk-${pkgver}/COPYING"          "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+  install -Dm644 "/tmp/gtk-${pkgver}/COPYING"          "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
 }
