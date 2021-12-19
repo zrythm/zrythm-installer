@@ -36,6 +36,7 @@ fi
 # ---- Detect debian based systems ----
 debian_10_str="Debian GNU/Linux 10"
 debian_11_str="Debian GNU/Linux 11"
+debian_12_str="Debian GNU/Linux 12"
 ubuntu_18_04="Ubuntu 18.04"
 ubuntu_20_04_str="Ubuntu 20.04"
 ubuntu_21_10_str="Ubuntu 21.10"
@@ -51,8 +52,12 @@ if [[ "$ID" = *"debian"* ]]; then
   elif [[ "$VERSION_ID" = *"11"* ]]; then
     echo "found $debian_11_str"
     distro_identifier="debian11"
-  elif [[ "$PRETTY_NAME" = "Debian GNU/Linux bullseye/sid" ]]; then
-    distro_identifier="debian11"
+  elif [[ "$VERSION_ID" = *"12"* ]]; then
+    echo "found $debian_12_str"
+    distro_identifier="debian12"
+  elif [[ "$PRETTY_NAME" = "Debian GNU/Linux bookworm/sid" ]]; then
+    echo "found $debian_12_str"
+    distro_identifier="debian12"
   fi
 fi
 
@@ -111,6 +116,9 @@ if [[ "$ID" = "fedora" ]]; then
   elif [[ "$VERSION_ID" = *"34"* ]]; then
     echo "found Fedora 34"
     distro_identifier="fedora34"
+  elif [[ "$VERSION_ID" = *"35"* ]]; then
+    echo "found Fedora 35"
+    distro_identifier="fedora35"
   fi
 fi
 
