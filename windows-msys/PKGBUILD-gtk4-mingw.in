@@ -64,4 +64,8 @@ package() {
   DESTDIR="${pkgdir}" meson install
 
   install -Dm644 "/tmp/gtk-${pkgver}/COPYING"          "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+
+  # reclaim space
+  rm -rf /tmp/gtk4-build-${MINGW_CHOST}
+  rm -rf /tmp/gtk-$pkgver
 }

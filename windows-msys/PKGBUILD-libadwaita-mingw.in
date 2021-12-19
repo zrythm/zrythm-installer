@@ -2,7 +2,7 @@
 _realname=libadwaita
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_commit='1171616701bf12a1c56bbad3f0e8821208d87029'
+_commit='1.0.0.beta.1'
 pkgver=0.1
 pkgrel=1
 pkgdesc="Cairo vector graphics library (mingw-w64)"
@@ -16,7 +16,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-gtk-doc")
 depends=("${MINGW_PACKAGE_PREFIX}-gtk4")
-source=("https://gitlab.gnome.org/GNOME/libadwaita/-/archive/${_commit}/gtk-${_commit}.tar.gz")
+source=("https://gitlab.gnome.org/GNOME/libadwaita/-/archive/${_commit}/libadwaita-${_commit}.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
@@ -49,4 +49,7 @@ package() {
   DESTDIR="${pkgdir}" meson install
 
   install -Dm644 "/tmp/libadwaita-${pkgver}/COPYING"          "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+
+  # reclaim space
+  rm -rf /tmp/libadwaita-build-${MINGW_CHOST}
 }

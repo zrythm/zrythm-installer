@@ -146,4 +146,8 @@ package() {
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/meson install \
     --skip-subprojects
   popd
+
+  # reclaim space
+  rm -rf "$_zrythm_builddir"
+  rm -rf "$_zplugins_builddir"
 }
