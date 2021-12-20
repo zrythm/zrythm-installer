@@ -26,7 +26,7 @@ options=('!strip')
 license=('AGPL3')
 depends=('curl' 'gtk4' 'lilv' 'libx11' 'jack' 'libsndfile'
   'json-glib' 'libyaml' 'libsamplerate' 'guile' 'alsa-lib'
-  'fftw' 'graphviz' 'rtmidi' 'rtaudio' 'breeze-icons' 'zstd'
+  'fftw' 'graphviz' 'breeze-icons' 'zstd'
   'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk'
   'wayland-protocols')
 makedepends=(
@@ -52,7 +52,7 @@ build() {
     -Drtmidi=enabled -Dcarla=enabled \
     -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true \
     -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
-    -Dforce_fallback_for=libadwaita \
+    -Dforce_fallback_for=rtmidi,rtaudio,libadwaita \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dcheck_updates=true \
     -Dinstaller_ver=true \
