@@ -124,6 +124,7 @@ PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
   -Dcheck_updates=true \
   -Dinstaller_ver=true \
   -Dcompletions=$completions \
+  -Dcarla_use_cv32_patchbay_variant=true \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 ninja -C build
 

@@ -103,6 +103,7 @@ build() {
     -Dextra_debug_info=true \
     -Db_lto=false \
     -Dtests=false \
+    -Dcarla_use_cv32_patchbay_variant=true \
     "../zrythm-${pkgver}"
 
   ${MINGW_PREFIX}/bin/ninja -d explain

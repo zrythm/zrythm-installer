@@ -74,6 +74,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dcheck_updates=true",
         "-Dinstaller_ver=true",
         "-Dvamp_static=true",
+        "-Dcarla_use_cv32_patchbay_variant=true",
         ".."
 
       # workaround for C++ 20 <version>

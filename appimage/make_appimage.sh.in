@@ -62,6 +62,7 @@ PATH="$PATH:/home/build/.local/bin" \
   -Dcheck_updates=true \
   -Dinstaller_ver=true \
   -Dappimage=true \
+  -Dcarla_use_cv32_patchbay_variant=true \
   --force-fallback-for=libadwaita \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 

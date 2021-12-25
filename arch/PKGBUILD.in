@@ -57,6 +57,7 @@ build() {
     -Dcheck_updates=true \
     -Dinstaller_ver=true \
     -Dcompletions=false \
+    -Dcarla_use_cv32_patchbay_variant=true \
     -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
   ninja -C build
 }

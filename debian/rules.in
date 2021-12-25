@@ -38,6 +38,7 @@ override_dh_auto_configure:
 		-Dextra_debug_info=true \
 		-Dcheck_updates=true \
 		-Dinstaller_ver=true \
+		-Dcarla_use_cv32_patchbay_variant=true \
 		-Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 
 override_dh_auto_build:
