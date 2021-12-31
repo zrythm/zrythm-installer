@@ -50,7 +50,7 @@ done
 # verify plugins exist
 ls -l $chroot_mingw_prefix/lib/lv2/Z*.lv2
 pacman -S \
-  "$mingw_pkg_prefix-gtksourceview4" \
+  "$mingw_pkg_prefix-gtksourceview5" \
   "$mingw_pkg_prefix-fftw" \
   "$mingw_pkg_prefix-adwaita-icon-theme" \
   --noconfirm --needed --root $chroot_dir

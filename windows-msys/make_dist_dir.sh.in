@@ -139,7 +139,7 @@ EOL
 
   # ******************************
   echo "packaging gtksourceview files"
-  cp -R $chroot_mingw_prefix/share/gtksourceview-4 $dist_sharedir/
+  cp -R $chroot_mingw_prefix/share/gtksourceview-5 $dist_sharedir/
   # ******************************
 
   # ******************************
