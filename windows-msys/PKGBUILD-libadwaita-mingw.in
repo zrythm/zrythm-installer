@@ -2,7 +2,7 @@
 _realname=libadwaita
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_commit='1.0.0.beta.1'
+_commit='1.0.0'
 pkgver=0.1
 pkgrel=1
 pkgdesc="Cairo vector graphics library (mingw-w64)"
