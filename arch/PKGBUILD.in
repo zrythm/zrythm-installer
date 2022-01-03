@@ -72,11 +72,9 @@ package() {
   cd $_rootdir
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
-  @MESON_BIN@ install -C build --skip-subprojects=gtksourceview5,libaudec,reproc,rtmidi,rtaudio,libcyaml --destdir="${pkgdir}/"
+  @MESON_BIN@ install -C build --skip-subprojects=libaudec,reproc,rtmidi,rtaudio,libcyaml --destdir="${pkgdir}/"
 	# copy all subproject libs
 	mv ${pkgdir}/usr/lib/*.so* ${pkgdir}/usr/lib/zrythm/
-  rm -rf "${pkgdir}/usr/include"
-  rm -rf "${pkgdir}/usr/lib/libbacktrace"*
   mkdir -p "${pkgdir}/usr/lib/zrythm/carla"
   mkdir -p "${pkgdir}/usr/lib/lv2"
   for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-plugin.so; do
@@ -86,7 +84,12 @@ package() {
   for f in `ls @BUILT_ZPLUGINS_DIR@/lib/lv2`; do
     cp -RLv "@BUILT_ZPLUGINS_DIR@/lib/lv2/$f" "${pkgdir}/usr/lib/lv2/Zrythm-$f"
   done
+  if `ls "${pkgdir}/usr/share/gtksourceview-5"`; then
+    mv "${pkgdir}/usr/share/gtksourceview-5" "${pkgdir}/usr/share/zrythm/gtksourceview-5" ;
+  fi
   # remove unused things
+  rm -rf "${pkgdir}/usr/include"
+  rm -rf "${pkgdir}/usr/lib/libbacktrace"*
   rm -rf "${pkgdir}/usr/bin"/gtk*
   rm -rf "${pkgdir}/usr/bin"/pango*
   rm -rf "${pkgdir}/usr/lib"/gtk-4.0
@@ -97,5 +100,11 @@ package() {
   rm -rf "${pkgdir}/usr/share"/glib-2.0/schemas/org.gtk.gtk4*
   rm -rf "${pkgdir}/usr/share"/locale/*/LC_MESSAGES/gtk*
   rm -rf "${pkgdir}/usr/share"/locale/*/LC_MESSAGES/libadwaita*
+  rm -rf "${pkgdir}/usr/share"/locale/*/LC_MESSAGES/gtksourceview*
   rm -rf "${pkgdir}/usr/share"/man/man1/pango*
+  rm -rf "${pkgdir}/usr/share"/doc
+  rm -rf "${pkgdir}/usr/share"/vala
+  rm -rf "${pkgdir}/usr/lib/pkgconfig/gtksourceview-5.pc"
+  rm -rf "${pkgdir}/usr/lib/"libgtksourceview-5*
+  rm -rf "${pkgdir}/usr/lib/girepository-1.0"
 }
