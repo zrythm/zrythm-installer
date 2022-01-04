@@ -129,7 +129,7 @@ PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
 ninja -C build
 
 %install
-@MESON_BIN@ install -C build --skip-subprojects=gtksourceview5,libaudec,reproc,rtmidi,rtaudio,libcyaml --destdir="%{buildroot}/"
+@MESON_BIN@ install -C build --skip-subprojects=libaudec,reproc,rtmidi,rtaudio,libcyaml --destdir="%{buildroot}/"
 mkdir -p "%{buildroot}%{_libdir}/lv2"
 mkdir -p "%{buildroot}%{_libdir}/zrythm/carla"
 rm -rf "%{buildroot}%{_includedir}"
@@ -145,31 +145,27 @@ done
 # copy all subproject libs
 mkdir -p "%{buildroot}%{_libdir}"/zrythm
 mv "%{buildroot}%{_libdir}"/*.so* "%{buildroot}%{_libdir}"/zrythm/
-# copy all other libs
-#cp -r "%{buildroot}%{_libdir}"/gdk-pixbuf-2.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
-#for libname in gtk epoxy graphene gdk freetype pango harfbuzz cairo pixman fontconfig fribidi json-glib gio gmodule gobject gthread glib; do \
-  #cp "/usr/lib/x86_64-linux-gnu/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
-#done
-#for libname in rsvg png; do \
-  #if `ls "/usr/lib/lib$${libname}"*.so*`; then \
-    #cp "/usr/lib/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/ ; \
-  #fi ; \
-#done
-#sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
-#cat ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 patchelf --set-rpath "%{_libdir}/zrythm/carla:%{_libdir}/zrythm" "%{buildroot}%{_bindir}"/zrythm
 patchelf --replace-needed /usr/lib/zrythm/carla/libcarla_host-plugin.so libcarla_host-plugin.so "%{buildroot}%{_bindir}"/zrythm
+if [ -d "%{buildroot}%{_datadir}/gtksourceview-5" ]; then
+  mv "%{buildroot}%{_datadir}/gtksourceview-5" "%{buildroot}%{_datadir}/zrythm/gtksourceview-5" ;
+fi
 # remove unused things
+rm -rf "%{buildroot}%{_includedir}"
 rm -rf "%{buildroot}%{_bindir}"/gtk*
 rm -rf "%{buildroot}%{_bindir}"/pango*
 rm -rf "%{buildroot}%{_libdir}"/gtk-4.0
 rm -rf "%{buildroot}%{_libdir}"/pkgconfig
 rm -rf "%{buildroot}%{_libdir}"/*.a
+rm -rf "%{buildroot}%{_libdir}"/libgtksourceview-5*
+rm -rf "%{buildroot}%{_datadir}"/doc
 rm -rf "%{buildroot}%{_datadir}"/gettext
 rm -rf "%{buildroot}%{_datadir}"/gtk-4.0
 rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/gtk*
 rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/libadwaita*
 rm -rf "%{buildroot}%{_datadir}"/man/man1/pango*
+rm -rf "%{buildroot}%{_datadir}"/vala
+rm -rf "%{buildroot}%{_datadir}"/icons/hicolor/scalable/actions
 %find_lang zrythm
 
 %files -f zrythm.lang

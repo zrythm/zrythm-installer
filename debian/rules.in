@@ -50,7 +50,7 @@ override_dh_auto_test:
 override_dh_auto_install:
 	cd debian/build && \
 		PATH=$$PATH:/home/build/.local/bin \
-		@MESON_BIN@ install --skip-subprojects=gtksourceview5,libaudec,reproc,rtmidi,rtaudio,libcyaml \
+		@MESON_BIN@ install --skip-subprojects=libaudec,reproc,rtmidi,rtaudio,libcyaml \
 		--destdir="${CURDIR}/debian/zrythm@DASH_TRIAL@"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/include"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/libbacktrace"*
@@ -83,14 +83,23 @@ override_dh_auto_install:
 	patchelf --set-rpath /usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/carla:/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
 	patchelf --set-rpath /usr/lib/$(DEB_HOST_MULTIARCH)/zrythm ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/libadwaita-1.so.0
 	patchelf --replace-needed /usr/lib/zrythm/carla/libcarla_host-plugin.so libcarla_host-plugin.so ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/bin/zrythm
+	if [ -d "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gtksourceview-5" ]; then \
+		mv "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gtksourceview-5" "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/zrythm/gtksourceview-5" ; \
+	fi
 	# remove unused things
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/include
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/gtk*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/gtk-4.0"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/gtksourceview"*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/doc"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gettext"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gtk-4.0"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/gtk*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/libadwaita*
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/gtksourceview*
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/vala"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/icons/hicolor/scalable/actions"
 
 override_dh_shlibdeps:
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
