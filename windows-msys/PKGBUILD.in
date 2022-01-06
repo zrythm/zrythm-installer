@@ -132,7 +132,7 @@ check() {
   echo "running tests"
   ninja test
   echo "running --version"
-  src/zrythm.exe --version
+  src/zrythm.exe --version > test.txt 2>&1 || cat test.txt
   popd
 
   pushd "$_zplugins_builddir"
