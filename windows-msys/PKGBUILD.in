@@ -100,7 +100,8 @@ build() {
     -Dvamp_static=true \
     -Dinstaller_ver=true -Dcarla=enabled \
     -Dcarla_binaries_dir_32bit='/mingw32/lib/carla' \
-    --buildtype=debugoptimized \
+    -Ddebug=true \
+    -Doptimization=0 \
     -Dextra_debug_info=true \
     -Db_lto=false \
     -Dtests=false \
@@ -128,7 +129,9 @@ build() {
 
 check() {
   pushd $_zrythm_builddir
+  echo "running tests"
   ninja test
+  echo "running --version"
   src/zrythm.exe --version
   popd
 

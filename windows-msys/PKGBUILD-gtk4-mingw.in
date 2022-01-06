@@ -44,7 +44,8 @@ build() {
   MSYS2_ARG_CONV_EXCL="--prefix=" \
   ${MINGW_PREFIX}/bin/meson \
     --prefix=${MINGW_PREFIX} \
-    --buildtype=debug \
+    -Ddebug=true \
+    -Doptimization=2 \
     -Dbuild-examples=false \
     -Dbuild-tests=false \
     -Dman-pages=false \
