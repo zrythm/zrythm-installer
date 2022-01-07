@@ -20,6 +20,7 @@
 set -ex
 
 mingw_pkg_prefix="@MINGW_PKG_PREFIX@"
+zrythm_builds_path="@ZRYTHM_BUILDS_PATH@"
 
 out_file="$1"
 
@@ -65,3 +66,10 @@ else
 fi
 
 cp $private_dir/*.pkg.tar.zst $out_file
+
+if [ ! -z "$zrythm_builds_path" ]; then
+  distro=windows-msys
+  id_rsa_path=
+  source "$zrythm_builds_path"/scripts/common.sh.in
+  send_file "$out_file" "/msys2-cache/$out_file"
+fi

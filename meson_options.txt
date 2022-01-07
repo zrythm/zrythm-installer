@@ -127,3 +127,8 @@ option (
   'manuals-zip-file', type: 'string',
   value: '/tmp/manuals.zip',
   description: 'Zip file containing manuals (for Windows and MacOS installers)')
+
+option (
+  'zrythm-builds-path', type: 'string',
+  value: '',
+  description: 'Path to zrythm-builds repository. If non-empty, used when caching packages.')

@@ -49,6 +49,8 @@ windows_msys_conf.set (
 windows_msys_conf.set (
   'LSP_DSP_LIB_VER', lsp_dsp_lib_ver)
 windows_msys_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
+windows_msys_conf.set (
+  'ZRYTHM_BUILDS_PATH', get_option ('zrythm-builds-path'))
 
 mingw_zrythm_pkgbuild = configure_file (
   output: 'PKGBUILD',
