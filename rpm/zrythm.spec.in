@@ -170,7 +170,7 @@ rm -rf "%{buildroot}%{_datadir}"/icons/hicolor/scalable/actions
 
 %files -f zrythm.lang
 %license COPYING
-%doc README.md CONTRIBUTING.md INSTALL.md CHANGELOG.md
+%doc README.md CONTRIBUTING.md CHANGELOG.md
 %{_bindir}/zrythm
 %{_bindir}/zrythm_launch
 %{_bindir}/zrythm_lv2apply
