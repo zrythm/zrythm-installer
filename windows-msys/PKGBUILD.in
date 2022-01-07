@@ -130,9 +130,10 @@ build() {
 check() {
   pushd $_zrythm_builddir
   echo "running tests"
-  ninja test
+  ninja test || cat meson-logs/testlog.txt; exit 1
   echo "running --version"
-  src/zrythm.exe --version > test.txt 2>&1 || cat test.txt
+  # cmd && cmd OK || cmd failed
+  src/zrythm.exe --version > test.txt 2>&1 && cat test.txt || cat test.txt; exit 1
   popd
 
   pushd "$_zplugins_builddir"

@@ -28,6 +28,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-gst-plugins-bad-libs"
          "${MINGW_PACKAGE_PREFIX}-ffmpeg"
          "${MINGW_PACKAGE_PREFIX}-shared-mime-info")
+options=('!strip')
 source=("https://gitlab.gnome.org/GNOME/gtk/-/archive/${_commit}/gtk-${_commit}.tar.gz")
 sha256sums=('SKIP')
 
