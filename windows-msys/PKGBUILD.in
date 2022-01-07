@@ -82,7 +82,7 @@ build() {
   sed -i -e 's|"|'\''|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
 
   echo "using prefix ${MINGW_PREFIX}"
-  MSYS2_ARG_CONV_EXCL="--prefix=" \
+  MSYS2_ARG_CONV_EXCL="--prefix=;--buildtype=" \
   ${MINGW_PREFIX}/bin/meson \
     --prefix=${MINGW_PREFIX} \
     -Dsdl=enabled \
@@ -101,7 +101,7 @@ build() {
     -Dinstaller_ver=true -Dcarla=enabled \
     -Dcarla_binaries_dir_32bit='/mingw32/lib/carla' \
     -Ddebug=true \
-    -Doptimization=0 \
+    -Doptimization=g \
     -Dextra_debug_info=true \
     -Db_lto=false \
     -Dtests=false \
