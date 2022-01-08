@@ -65,11 +65,6 @@ mingw_cairo_pkgbuild = configure_file (
   input: 'PKGBUILD-cairo-mingw.in',
   configuration: windows_msys_conf,
   )
-mingw_gtk_pkgbuild = configure_file (
-  output: 'PKGBUILD-gtk4-mingw',
-  input: 'PKGBUILD-gtk4-mingw.in',
-  configuration: windows_msys_conf,
-  )
 mingw_libadwaita_pkgbuild = configure_file (
   output: 'PKGBUILD-libadwaita-mingw',
   input: 'PKGBUILD-libadwaita-mingw.in',
@@ -306,25 +301,11 @@ run_target (
   'run-mingw-cairo',
   command: [ 'echo', 'done' ],
   depends: cairo_pkg)
-gtk_pkg = custom_target (
-  'mingw-gtk',
-  output: 'gtk.pkg.tar.zst',
-  input: [ make_mingw_pkg, mingw_gtk_pkgbuild, ],
-  command: make_mingw_pkg_cmd,
-  depends: [ cairo_pkg ],
-  console: true,
-  install: false,
-  )
-run_target (
-  'run-mingw-gtk',
-  command: [ 'echo', 'done' ],
-  depends: gtk_pkg)
 libadwaita_pkg = custom_target (
   'mingw-libadwaita',
   output: 'libadwaita.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_libadwaita_pkgbuild, ],
   command: make_mingw_pkg_cmd,
-  depends: [ gtk_pkg ],
   console: true,
   install: false,
   )
@@ -370,19 +351,19 @@ windows_chroot_target = custom_target (
     carla_packages[1],
     lv2_pkg, serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg, cairo_pkg,
-    gtk_pkg, libadwaita_pkg,
+    libadwaita_pkg,
     lsp_dsp_lib_pkg, mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
     '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" ' +
-    '"${14}" "${15}" "${16}"',
+    '"${14}" "${15}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
     '@INPUT7@', '@INPUT8@', '@INPUT9@', '@INPUT10@',
-    '@INPUT11@', '@INPUT12@', '@INPUT13@', '@INPUT14@',
+    '@INPUT11@', '@INPUT12@', '@INPUT13@',
     ],
   console: true,
   install: false,
