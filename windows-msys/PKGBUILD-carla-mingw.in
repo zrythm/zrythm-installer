@@ -47,15 +47,11 @@ build() {
   export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
   export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
 
-  mv "${MINGW_PREFIX}/lib/pkgconfig/x11.pc" "${MINGW_PREFIX}/lib/pkgconfig/x11.pc.bak"
-
   if [ "$MINGW_ARCH" = "mingw32" ]; then
-    make win32r PREFIX=${MINGW_PREFIX} DEBUG=false
+    make win32r HAVE_X11=false PREFIX=${MINGW_PREFIX} DEBUG=false
   else
-    make PREFIX=${MINGW_PREFIX} DEBUG=true
+    make HAVE_X11=false PREFIX=${MINGW_PREFIX} DEBUG=true
   fi
-
-  mv "${MINGW_PREFIX}/lib/pkgconfig/x11.pc.bak" "${MINGW_PREFIX}/lib/pkgconfig/x11.pc"
 }
 
 package() {
@@ -66,6 +62,6 @@ package() {
   install -D -m755 bin/*.exe "${pkgdir}/${MINGW_PREFIX}"/lib/carla/
 
   if [ "$MINGW_ARCH" != "mingw32" ]; then
-    make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" DEBUG=false install
+    make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" install
   fi
 }
