@@ -101,7 +101,7 @@ build() {
     -Dinstaller_ver=true -Dcarla=enabled \
     -Dcarla_binaries_dir_32bit='/mingw32/lib/carla' \
     -Ddebug=true \
-    -Doptimization=g \
+    -Doptimization=2 \
     -Dextra_debug_info=true \
     -Db_lto=false \
     -Dtests=false \
@@ -109,7 +109,7 @@ build() {
     -Dforce_fallback_for=rtmidi,rtaudio \
     "../zrythm-${pkgver}"
 
-  ${MINGW_PREFIX}/bin/ninja -d explain
+  ${MINGW_PREFIX}/bin/ninja -d explain -v
   cp ${MINGW_PREFIX}/lib/carla/libcarla_host-plugin.dll ./src/
   popd
 
