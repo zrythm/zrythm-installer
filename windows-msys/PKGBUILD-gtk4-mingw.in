@@ -2,9 +2,9 @@
 _realname=gtk4
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_commit='4.6.0'
+_commit='main'
 pkgver=4.6.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Cairo vector graphics library (mingw-w64)"
 arch=('any')
 url="https://cairographics.org/"
