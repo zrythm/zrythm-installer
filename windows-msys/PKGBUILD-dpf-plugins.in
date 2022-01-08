@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2022 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -16,29 +16,25 @@
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Maintainer: Alexandros Theodotou <alex at zrythm dot org>
-_realname=carla
+_realname=dpf-plugins
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.3.0
+pkgver=1.4
 pkgrel=1
 arch=('any')
-pkgdesc='carla'
+pkgdesc='DPF plugins'
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 options=('!strip')
 license=("GPL2")
 url="https://github.com/falktx/carla"
-source=("Carla-@CARLA_GIT_VER@.tar.gz")
+source=("https://github.com/DISTRHO/DPF-Plugins/archive/refs/tags/v${pkgver}.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
   ls
   rm -rf ${_realname}-${pkgver}
-  mv "Carla-@CARLA_GIT_VER@" ${_realname}-${pkgver}
-  cd ${_realname}-${pkgver}
-
-  make msys2fix
-  make features
+  mv "DPF-Plugins-${pkgver}" ${_realname}-${pkgver}
 }
 
 build() {
@@ -47,21 +43,11 @@ build() {
   export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
   export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
 
-  if [ "$MINGW_ARCH" = "mingw32" ]; then
-    make win32r HAVE_X11=false PREFIX=${MINGW_PREFIX} DEBUG=false
-  else
-    make HAVE_X11=false PREFIX=${MINGW_PREFIX} DEBUG=true
-  fi
+  make PREFIX=${MINGW_PREFIX} DEBUG=true HAVE_OPENGL=false
 }
 
 package() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  mkdir -p "${pkgdir}/${MINGW_PREFIX}"/lib/carla
-  ls -l bin
-  install -D -m755 bin/*.exe "${pkgdir}/${MINGW_PREFIX}"/lib/carla/
-
-  if [ "$MINGW_ARCH" != "mingw32" ]; then
-    make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" install
-  fi
+  make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" install
 }
