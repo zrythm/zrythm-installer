@@ -25,7 +25,7 @@ arch=('any')
 pkgdesc='carla'
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
-options=('strip' 'staticlibs')
+options=('!strip')
 license=("GPL2")
 url="https://github.com/falktx/carla"
 source=("Carla-@CARLA_GIT_VER@.tar.gz")
@@ -44,14 +44,18 @@ prepare() {
 build() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++"
-  export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++"
+  export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
+  export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
+
+  mv "${MINGW_PREFIX}/lib/pkgconfig/x11.pc" "${MINGW_PREFIX}/lib/pkgconfig/x11.pc.bak"
 
   if [ "$MINGW_ARCH" = "mingw32" ]; then
     make win32r PREFIX=${MINGW_PREFIX} DEBUG=false
   else
-    make PREFIX=${MINGW_PREFIX} DEBUG=false
+    make PREFIX=${MINGW_PREFIX} DEBUG=true
   fi
+
+  mv "${MINGW_PREFIX}/lib/pkgconfig/x11.pc.bak" "${MINGW_PREFIX}/lib/pkgconfig/x11.pc"
 }
 
 package() {
