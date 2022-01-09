@@ -359,7 +359,7 @@ run_target (
   command: [ 'echo', 'done' ],
   depends: mingw_zrythm_pkg)
 
-chroot_dir = '/tmp/zrythm' + dash_trial + '-chroot'
+chroot_dir = meson.current_build_dir () / 'zrythm' + dash_trial + '-chroot'
 windows_chroot_target = custom_target (
   'windows-chroot',
   output: 'zrythm-test',
