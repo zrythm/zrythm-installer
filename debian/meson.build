@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 debian_conf = configuration_data ()
+debian_conf.merge_from (global_conf)
 debian_conf.set (
   'MESON_BIN', meson_bin)
 debian_conf.set (
