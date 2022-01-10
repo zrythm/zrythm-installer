@@ -161,6 +161,7 @@ rm -rf "%{buildroot}%{_libdir}"/libgtksourceview-5*
 rm -rf "%{buildroot}%{_datadir}"/doc
 rm -rf "%{buildroot}%{_datadir}"/gettext
 rm -rf "%{buildroot}%{_datadir}"/gtk-4.0
+rm -rf "%{buildroot}%{_datadir}"/glib-2.0/schemas/org.gtk.gtk4*
 rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/gtk*
 rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/libadwaita*
 rm -rf "%{buildroot}%{_datadir}"/man/man1/pango*
