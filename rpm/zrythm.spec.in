@@ -167,6 +167,7 @@ rm -rf "%{buildroot}%{_datadir}"/locale/*/LC_MESSAGES/libadwaita*
 rm -rf "%{buildroot}%{_datadir}"/man/man1/pango*
 rm -rf "%{buildroot}%{_datadir}"/vala
 rm -rf "%{buildroot}%{_datadir}"/icons/hicolor/scalable/actions
+rm -rf "%{buildroot}/usr/lib/.build-id"
 %find_lang zrythm
 
 %files -f zrythm.lang
