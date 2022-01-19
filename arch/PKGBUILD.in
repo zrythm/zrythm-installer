@@ -24,16 +24,15 @@ arch=('x86_64' 'i686')
 url="https://www.zrythm.org"
 options=('!strip')
 license=('AGPL3')
-depends=('curl' 'gtk4' 'lilv' 'libx11' 'jack' 'libsndfile'
+depends=('curl' 'gtk4' 'lilv' 'libadwaita' 'libx11' 'jack' 'libsndfile'
   'json-glib' 'libyaml' 'libsamplerate' 'guile' 'alsa-lib'
   'fftw' 'graphviz' 'breeze-icons' 'zstd'
-  'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk'
+  'rtmidi' 'rtaudio' 'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk'
   'wayland-protocols')
 makedepends=(
   'python' 'gettext' 'sed'
   'ninja' 'help2man' 'python-sphinx'
   'ladspa' 'lv2')
-optdepends=('portaudio: portaudio backend')
 conflicts=( 'zrythm-git' )
 source=( "https://www.zrythm.org/releases/zrythm-$pkgver.tar.gz" )
 sha256sums=('SKIP')
@@ -52,7 +51,7 @@ build() {
     -Drtmidi=enabled -Dcarla=enabled \
     -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true \
     -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
-    -Dforce_fallback_for=rtmidi,rtaudio,libadwaita,gtk4 \
+    -Dforce_fallback_for=gtk4 \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dcheck_updates=true \
     -Dinstaller_ver=true \
