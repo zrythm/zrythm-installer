@@ -51,7 +51,6 @@ build() {
     -Drtmidi=enabled -Dcarla=enabled \
     -Dlsp_dsp=enabled -Dstatic_lsp_dsp=true \
     -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
-    -Dforce_fallback_for=gtk4 \
     -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
     -Dcheck_updates=true \
     -Dinstaller_ver=true \
@@ -72,8 +71,10 @@ package() {
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
   @MESON_BIN@ install -C build --skip-subprojects=libbacktrace,libaudec,reproc,rtmidi,rtaudio,libcyaml --destdir="${pkgdir}/"
-	# copy all subproject libs
-	mv ${pkgdir}/usr/lib/*.so* ${pkgdir}/usr/lib/zrythm/
+  # copy all subproject libs
+  if [ -f "${pkgdir}/usr/lib/"*.so ]; then
+    mv ${pkgdir}/usr/lib/*.so* ${pkgdir}/usr/lib/zrythm/
+  fi
   mkdir -p "${pkgdir}/usr/lib/zrythm/carla"
   mkdir -p "${pkgdir}/usr/lib/lv2"
   for file in carla-discovery-native carla-bridge-lv2-gtk2 carla-bridge-lv2-gtk3 carla-bridge-lv2-qt5 carla-bridge-lv2-x11 carla-bridge-native libcarla_host-plugin.so; do
