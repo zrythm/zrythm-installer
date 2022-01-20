@@ -88,7 +88,9 @@ override_dh_auto_install:
 	fi
 	# remove unused things
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/include
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/cairo*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/gtk*
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@"/usr/bin/pango*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/gtk-4.0"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/gtksourceview"*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig"
