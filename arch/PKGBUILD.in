@@ -56,6 +56,7 @@ build() {
     -Dinstaller_ver=true \
     -Dcompletions=false \
     -Dcarla_use_cv32_patchbay_variant=true \
+    -Dforce_fallback_for=libadwaita,gtksourceview5,gtk4 \
     -Db_lto=false \
     -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
   ninja -C build
