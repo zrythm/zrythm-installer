@@ -48,9 +48,9 @@ build() {
   export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
 
   if [ "$MINGW_ARCH" = "mingw32" ]; then
-    make win32r HAVE_X11=false PREFIX=${MINGW_PREFIX} DEBUG=false
+    make win32r HAVE_X11=false PREFIX=${MINGW_PREFIX}
   else
-    make HAVE_X11=false PREFIX=${MINGW_PREFIX} DEBUG=true
+    make HAVE_X11=false PREFIX=${MINGW_PREFIX}
   fi
 }
 
