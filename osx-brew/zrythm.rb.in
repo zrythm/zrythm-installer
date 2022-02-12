@@ -65,6 +65,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
         "-Dgtk4:x11-backend=false",
         "-Dcarla=enabled",
+        "-Dx11=disabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
         "-Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@",
         # manpage fails
