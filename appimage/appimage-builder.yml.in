@@ -118,7 +118,7 @@ AppDir:
   after_bundle:
     # this is executed after the packages and files are added
     - echo $APPDIR
-    - cp $APPDIR/usr/lib/zrythm/carla/libcarla_host-plugin.so $APPDIR/usr/lib/x86_64-linux-gnu/
+    - cp $APPDIR/usr/lib/x86_64-linux-gnu/zrythm/carla/libcarla_host-plugin.so $APPDIR/usr/lib/x86_64-linux-gnu/
     - readelf -d $APPDIR/usr/bin/zrythm
     - patchelf --remove-rpath $APPDIR/usr/bin/zrythm
     - patchelf --replace-needed /usr/lib/x86_64-linux-gnu/zrythm/carla/libcarla_host-plugin.so libcarla_host-plugin.so $APPDIR/usr/bin/zrythm
