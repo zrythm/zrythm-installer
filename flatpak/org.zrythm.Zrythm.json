@@ -8,7 +8,6 @@
     "copy-icon": true,
     "finish-args": [
         "--share=ipc",
-        "--device=dri",
         "--socket=x11",
         "--share=network",
         "--socket=pulseaudio",
@@ -461,6 +460,21 @@
             ]
         },
         {
+            "name": "rtaudio",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Djack=disabled",
+                "-Dalsa=disabled"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.2.0.tar.gz",
+                    "sha256": "d6089c214e5dbff136ab21f3f5efc284e93475ebd198c54d4b9b6c44419ef4e6"
+                }
+            ]
+        },
+        {
             "name": "zrythm",
             "builddir": true,
             "buildsystem": "meson",
@@ -469,7 +483,10 @@
                 "-Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@",
                 "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
                 "-Dcheck_updates=true",
-                "-Dinstaller_ver=true"
+                "-Dinstaller_ver=true",
+                "-Djack=disabled",
+                "-Dalsa=disabled",
+                "-Drtaudio=enabled"
             ],
             "build-options": {
                 "env": {
