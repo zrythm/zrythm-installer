@@ -1,0 +1,53 @@
+#!@BASH@
+#
+# Copyright (C) 2022 Alexandros Theodotou <alex at zrythm dot org>
+#
+# This file is part of Zrythm
+#
+# Zrythm is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Zrythm is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+set -xe
+
+# args:
+# 1: output package (.flatpak) path
+# 2: .json path
+# 3: private dir
+# 4: shared modules dir
+
+out_pkg="$1"
+flatpak_json="$2"
+private_dir="$3"
+shared_modules_dir="$4"
+
+flatpak_json_filename=`basename "$flatpak_json"`
+out_pkg_filename=`basename "$out_pkg"`
+
+rm -rf "$private_dir"
+mkdir -p "$private_dir"
+
+cp -r "$shared_modules_dir" "$private_dir/shared-modules"
+cp "$flatpak_json" "$private_dir/$flatpak_json_filename"
+
+pushd "$private_dir"
+
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak-builder --repo=zrythm --force-clean --install-deps-from=flathub --ccache --user build-dir "$flatpak_json_filename"
+flatpak remote-add --user zrythm zrythm --no-gpg-verify
+#flatpak install --user zrythm org.zrythm.Zrythm
+flatpak build-bundle zrythm "$out_pkg_filename" org.zrythm.Zrythm
+#flatpak install "$out_pkg"
+
+popd
+
+mv "$private_dir/$out_pkg_filename" "$out_pkg"

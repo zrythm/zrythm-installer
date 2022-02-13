@@ -5,3 +5,6 @@
 [submodule "ext/macos-installer-builder"]
 	path = ext/macos-installer-builder
 	url = https://github.com/KosalaHerath/macos-installer-builder.git
+[submodule "flatpak/shared-modules"]
+	path = flatpak/shared-modules
+	url = https://github.com/flathub/shared-modules.git

@@ -69,6 +69,7 @@ is_windows_msys = distro.contains ('windows10-msys')
 is_osx_brew = distro.contains ('osx-brew')
 is_gnu_linux = distro.contains ('gnu-linux')
 is_appimage = distro.contains ('appimage')
+is_flatpak = distro.contains ('flatpak')
 
 meson_src_root = meson.source_root ()
 
@@ -229,6 +230,10 @@ endif
 
 if is_appimage
   subdir ('appimage')
+endif
+
+if is_flatpak
+  subdir ('flatpak')
 endif
 
 summary ({
