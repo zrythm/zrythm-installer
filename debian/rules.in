@@ -97,6 +97,7 @@ override_dh_auto_install:
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/doc"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gettext"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/gtk-4.0"
+	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/man/man1/"pango*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/gtk*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/libadwaita*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/gtksourceview*
