@@ -41,9 +41,9 @@ cp "$flatpak_json" "$private_dir/$flatpak_json_filename"
 
 pushd "$private_dir"
 
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak-builder --repo=zrythm --force-clean --install-deps-from=flathub --ccache --user build-dir "$flatpak_json_filename"
-flatpak remote-add --user zrythm zrythm --no-gpg-verify
+flatpak remote-add --if-not-exists --user zrythm zrythm --no-gpg-verify
 #flatpak install --user zrythm org.zrythm.Zrythm
 flatpak build-bundle zrythm "$out_pkg_filename" org.zrythm.Zrythm
 #flatpak install "$out_pkg"
