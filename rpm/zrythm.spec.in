@@ -154,10 +154,12 @@ fi
 rm -rf "%{buildroot}%{_includedir}"
 rm -rf "%{buildroot}%{_bindir}"/gtk*
 rm -rf "%{buildroot}%{_bindir}"/pango*
+rm -rf "%{buildroot}%{_bindir}"/wayland*
 rm -rf "%{buildroot}%{_libdir}"/gtk-4.0
 rm -rf "%{buildroot}%{_libdir}"/pkgconfig
 rm -rf "%{buildroot}%{_libdir}"/*.a
 rm -rf "%{buildroot}%{_libdir}"/libgtksourceview-5*
+rm -rf "%{buildroot}%{_datadir}"/aclocal
 rm -rf "%{buildroot}%{_datadir}"/doc
 rm -rf "%{buildroot}%{_datadir}"/gettext
 rm -rf "%{buildroot}%{_datadir}"/gtk-4.0
