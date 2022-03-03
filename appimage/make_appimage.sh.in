@@ -93,6 +93,10 @@ done
 sed -i 's|/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders|/usr/lib/x86_64-linux-gnu/zrythm/gdk-pixbuf-2.0/2.10.0/loaders|g' "$appdir_root"/usr/lib/x86_64-linux-gnu/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 cat "$appdir_root"/usr/lib/x86_64-linux-gnu/zrythm/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
+# copy gsettings schemas
+cp /usr/share/glib-2.0/schemas/org.gtk.gtk4* "$appdir_root"/usr/share/glib-2.0/schemas/
+glib-compile-schemas --targetdir="$appdir_root"/usr/share/glib-2.0/schemas "$appdir_root"/usr/share/glib-2.0/schemas
+
 popd # zrythm tarball inner dir
 
 # create appimage from AppDir
