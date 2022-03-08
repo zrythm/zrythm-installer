@@ -58,7 +58,7 @@ $meson_bin build --buildtype=debugoptimized \
 popd
 
 # fedora's lv2_validate is broken
-if [[ "$distro" != "fedora"* ]]; then
+if [[ "$distro" != "fedora"* && "$distro" != "osx"* ]]; then
   ninja -C $private_dir/$inner_dir_name/build test
 fi
 
