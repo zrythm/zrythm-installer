@@ -484,7 +484,7 @@
                 "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
                 "-Dcheck_updates=true",
                 "-Dinstaller_ver=true",
-                "-Djack=disabled",
+                "-Djack=enabled",
                 "-Dalsa=disabled",
                 "-Drtaudio=enabled"
             ],
