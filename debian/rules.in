@@ -103,6 +103,7 @@ override_dh_auto_install:
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/gtk*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/libadwaita*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"locale/*/LC_MESSAGES/gtksourceview*
+	mv "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"glib-2.0/schemas/org.gtk.gtk4.Settings.FileChooser.gschema.xml "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"glib-2.0/schemas/org.zrythm.org.gtk.gtk4.Settings.FileChooser.gschema.xml || true
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/"glib-2.0/schemas/org.gtk.gtk4*
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/vala"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/share/icons/hicolor/scalable/actions"
