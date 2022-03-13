@@ -133,7 +133,6 @@ check() {
   pushd $_zrythm_builddir
   echo "running tests"
   ninja test || cat meson-logs/testlog.txt
-  ninja test
   echo "running --version"
   src/zrythm.exe --version > test.txt 2>&1 || cat test.txt
   src/zrythm.exe --version
