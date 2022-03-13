@@ -236,22 +236,11 @@ foreach dep_name : independent_dep_names
     install: false,
     )
 endforeach
-lv2_pkg = custom_target (
-  'mingw-lv2',
-  output: 'lv2.pkg.tar.zst',
-  input: [
-    make_mingw_pkg, 'PKGBUILD-lv2-mingw',
-    ],
-  command: make_mingw_pkg_cmd,
-  console: true,
-  install: false,
-  )
 serd_pkg = custom_target (
   'mingw-serd',
   output: 'serd.pkg.tar.zst',
   input: [ make_mingw_pkg, 'PKGBUILD-serd-mingw', ],
   command: make_mingw_pkg_cmd,
-  depends: lv2_pkg,
   console: true,
   install: false,
   )
@@ -368,7 +357,7 @@ windows_chroot_target = custom_target (
     independent_deps[0],
     carla_packages[0],
     carla_packages[1],
-    lv2_pkg, serd_pkg, sord_pkg,
+    serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg, cairo_pkg,
     gtk4_pkg, libadwaita_pkg,
     lsp_dsp_lib_pkg, mingw_zrythm_pkg,
@@ -382,7 +371,7 @@ windows_chroot_target = custom_target (
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
     '@INPUT7@', '@INPUT8@', '@INPUT9@', '@INPUT10@',
-    '@INPUT11@', '@INPUT12@', '@INPUT13@', '@INPUT14@',
+    '@INPUT11@', '@INPUT12@', '@INPUT13@',
     ],
   console: true,
   install: false,
