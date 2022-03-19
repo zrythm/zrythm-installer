@@ -28,6 +28,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "help2man" => :build
   depends_on "cmake" => :build
   depends_on "gnu-sed" => :build
+  depends_on "sassc" => :build
   depends_on "curl"
   depends_on "libyaml"
   depends_on "guile"
