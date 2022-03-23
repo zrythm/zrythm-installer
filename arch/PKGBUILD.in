@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2022 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -56,7 +56,7 @@ build() {
     -Dinstaller_ver=true \
     -Dcompletions=false \
     -Dcarla_use_cv32_patchbay_variant=true \
-    -Dforce_fallback_for=libadwaita,gtksourceview5,gtk4 \
+    -Dforce_fallback_for=gtksourceview5 \
     -Db_lto=false \
     -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
   ninja -C build
