@@ -336,8 +336,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lilv_pkg, libadwaita_pkg, lsp_dsp_lib_pkg,
-    independent_deps,
+    lilv_pkg, lsp_dsp_lib_pkg, independent_deps,
     ],
   console: true,
   install: false,
@@ -358,8 +357,7 @@ windows_chroot_target = custom_target (
     carla_packages[0],
     carla_packages[1],
     serd_pkg, sord_pkg,
-    sratom_pkg, lilv_pkg, cairo_pkg,
-    gtk4_pkg, libadwaita_pkg,
+    sratom_pkg, lilv_pkg,
     lsp_dsp_lib_pkg, mingw_zrythm_pkg,
     ],
   command: [
@@ -371,7 +369,6 @@ windows_chroot_target = custom_target (
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
     '@INPUT7@', '@INPUT8@', '@INPUT9@', '@INPUT10@',
-    '@INPUT11@', '@INPUT12@', '@INPUT13@',
     ],
   console: true,
   install: false,
