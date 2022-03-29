@@ -40,37 +40,6 @@ cp $zrythm_src_tarball $private_dir/
 pushd $private_dir
 tar xf $zrythm_src_tarball_filename
 pushd $inner_dir
-
-# temp patch
-cat > p1.patch <<EOF
-diff --git a/doc/user/credits/intro.rst b/doc/user/credits/intro.rst
-index 262e3f2ca..a91488fda 100644
---- a/doc/user/credits/intro.rst
-+++ b/doc/user/credits/intro.rst
-@@ -22,9 +22,17 @@ Translators
- These include translators of the software, the user
- manual and the website.
-
--.. literalinclude:: ../../../TRANSLATORS
--   :language: text
--   :end-before: ----
-+.. only:: html or epub
-+
-+   .. literalinclude:: ../../../TRANSLATORS
-+      :language: text
-+      :end-before: ----
-+
-+.. only:: latex
-+
-+   See the
-+   :download:`TRANSLATORS <../../../TRANSLATORS>`
-+   file in the source distribution.
-
- Other Contributors
- ------------------
-EOF
-patch < p1.patch
-
 $meson_bin build -Dcarla=disabled -Dstrict_sphinx_opts=false
 sed -i -e 's/latexpdf/latex/' doc/user/meson.build
 # run twice because pt fails for some reason
