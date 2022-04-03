@@ -149,8 +149,6 @@ global_conf.set (
 global_conf.set (
   'PDF_DIR', get_option ('pdf-dir'))
 global_conf.set (
-  'MANUALS_ZIP_FILE', get_option ('manuals-zip-file'))
-global_conf.set (
   'GET_PKG_FILENAME_SH_PATH',
   meson.build_root () / 'scripts/get_pkg_filename.sh')
 

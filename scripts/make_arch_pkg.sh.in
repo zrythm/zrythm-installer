@@ -32,7 +32,7 @@ mkdir -p $private_dir
 cp $pkgbuild $private_dir/
 cp $zrythm_src_tarball $private_dir/
 
-# build manuals
+# build
 pushd $private_dir
 makepkg -f
 popd

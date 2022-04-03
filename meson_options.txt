@@ -122,8 +122,3 @@ option (
   'pdf-dir', type: 'string',
   value: '/tmp/pdf',
   description: 'Dir holding each manual PDF (for GNU/Linux zip)')
-
-option (
-  'manuals-zip-file', type: 'string',
-  value: '/tmp/manuals.zip',
-  description: 'Zip file containing manuals (for Windows and MacOS installers)')

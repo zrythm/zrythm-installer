@@ -409,11 +409,11 @@ installer_dist_dir = custom_target (
     ],
   command: [
     bash, '-c',
-    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"',
+    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8"',
     '_ignored',
     '@OUTPUT@', '@INPUT1@', chroot_dir,
     '@PRIVATE_DIR@', '@INPUT2@', '@INPUT3@',
-    '@INPUT4@', get_option ('manuals-zip-file'), '@INPUT5@',
+    '@INPUT4@', '@INPUT5@',
     ],
   console: true,
   install: false,

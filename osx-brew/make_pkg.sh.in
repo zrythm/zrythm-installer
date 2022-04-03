@@ -33,7 +33,6 @@ uninstall_sh="${11}"
 info_plist="${12}"
 
 dash_trial="@DASH_TRIAL@"
-manuals_zip="@MANUALS_ZIP_FILE@"
 breeze_dark="@BREEZE_DARK@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
 zrythm_product_ver="@ZRYTHM_PRODUCT_VERSION@"
@@ -215,14 +214,6 @@ work_dir=`mktemp -d`
 mkdir $work_dir/$inner_dir_name
 cp $inner_dir/macOS-x64/target/pkg/Zrythm-macos-installer-x64-$zrythm_product_ver.pkg $work_dir/$inner_dir_name
 
-if [ "$dash_trial" != "-trial" ] && [ "$is_tag" = "true" ]; then
-  echo "adding user manuals" ;
-  if [ -f "$manuals_zip" ]; then
-    unzip -o $manuals_zip -d $work_dir/$inner_dir_name/ ;
-  else
-    echo "no user manuals found, skipping..."
-  fi
-fi
 pushd $work_dir
 zip -r $inner_dir_name.zip $inner_dir_name
 popd

@@ -26,8 +26,7 @@ private_dir="$4"
 copy_dll_deps_sh="$5"
 rcedit_x64_exe="$6"
 dll_dir="$7"
-manuals_zip="$8"
-breeze_dark_path="$9"
+breeze_dark_path="$8"
 
 dash_trial="@DASH_TRIAL@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
@@ -107,14 +106,6 @@ EOL
   echo "Copying dlls..."
 
   cp -R "$dll_dir"/* "$dist_bindir"/
-
-  # ******************************
-
-  # ******************************
-  if [ "$dash_trial" != "-trial" ] && [ "$is_tag" = "true" ]; then
-    echo "packaging user manuals" ;
-    unzip -o $manuals_zip -d $dist_dir/ ;
-  fi
 
   # ******************************
 

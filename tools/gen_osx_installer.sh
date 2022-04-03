@@ -265,12 +265,6 @@ cp $zrythm_src_dir/README.md $Doc/
 cp $zrythm_src_dir/COPYING* $Doc/
 brew list --versions -1 -v > $Doc/THIRDPARTY_INFO.txt
 
-# add user manuals if not trial
-if ! [[ "$app_name_w_spaces" == *"rial"* ]]; then
-  echo "packaging user manuals from $manual_zip_path" ;
-  unzip -o $manual_zip_path -d $Doc/ ;
-fi
-
 # remove unnecessary files
 rm -f $Lib/$GDK_PIXBUF_DIR/loaders/*.a
 rm $Lib/$GDK_PIXBUF_DIR/loaders.cache-e
