@@ -117,8 +117,3 @@ option (
   'packages-dir', type: 'string',
   value: '/tmp/packages',
   description: 'Dir holding each package (for GNU/Linux zip)')
-
-option (
-  'pdf-dir', type: 'string',
-  value: '/tmp/pdf',
-  description: 'Dir holding each manual PDF (for GNU/Linux zip)')

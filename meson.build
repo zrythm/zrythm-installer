@@ -147,8 +147,6 @@ global_conf.set ('EMAIL_AT_SYM', '@')
 global_conf.set (
   'PACKAGES_DIR', get_option ('packages-dir'))
 global_conf.set (
-  'PDF_DIR', get_option ('pdf-dir'))
-global_conf.set (
   'GET_PKG_FILENAME_SH_PATH',
   meson.build_root () / 'scripts/get_pkg_filename.sh')
 
@@ -238,7 +236,6 @@ summary ({
   'prefix': prefix,
   'libdir': libdir,
   'Packages dir': get_option ('packages-dir'),
-  'PDF dir': get_option ('pdf-dir'),
   }, section: 'Directories')
 
 summary ({

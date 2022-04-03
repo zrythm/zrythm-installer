@@ -32,7 +32,6 @@ zip_filename=`basename $out_file`
 zip_inner_dir_name="${zip_filename%.*}"
 zip_inner_dir="$private_dir/$zip_inner_dir_name"
 zrythm_version="@ZRYTHM_PKG_VERSION@"
-pdf_dir="@PDF_DIR@"
 dash_trial="@DASH_TRIAL@"
 
 rm -rf $out_file
@@ -83,13 +82,8 @@ for distro in $distros ; do
   echo "done"
 done
 
-pdf=""
-if [ "@TRIAL_TRUE_FALSE@" = "false" ]; then
-  pdf="$(ls $pdf_dir/Zrythm-*.pdf)"
-fi
-
 echo "zipping installer..."
-cp -R $pdf $installer_sh $readme $zip_inner_dir/
+cp -R $installer_sh $readme $zip_inner_dir/
 pushd $private_dir
 zip -r $zip_inner_dir_name.zip $zip_inner_dir_name
 popd
