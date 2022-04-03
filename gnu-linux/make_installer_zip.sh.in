@@ -26,7 +26,7 @@ readme=$4
 
 # dir holding each package
 packages_dir="@PACKAGES_DIR@"
-distros="archlinux debian11 debian12 ubuntu2004 ubuntu2110 fedora34 fedora35"
+distros="archlinux debian11 debian12 ubuntu2004 ubuntu2204 fedora34 fedora35"
 get_pkg_filename_from_distro_sh="@MESON_BUILD_ROOT@/scripts/get_pkg_filename_from_distro.sh"
 zip_filename=`basename $out_file`
 zip_inner_dir_name="${zip_filename%.*}"

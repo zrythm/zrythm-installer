@@ -40,6 +40,7 @@ debian_12_str="Debian GNU/Linux 12"
 ubuntu_18_04="Ubuntu 18.04"
 ubuntu_20_04_str="Ubuntu 20.04"
 ubuntu_21_10_str="Ubuntu 21.10"
+ubuntu_22_04_str="Ubuntu 22.04"
 
 zenity_width=360
 have_zenity=0
@@ -71,6 +72,9 @@ if [[ "$ID" = *"ubuntu"* ]]; then
   elif [[ "$VERSION_ID" = *"21.10"* ]] || [[ "$UBUNTU_CODENAME" = "impish" ]]; then
     echo "found $ubuntu_21_10_str"
     distro_identifier="ubuntu2110"
+  elif [[ "$VERSION_ID" = *"22.04"* ]] || [[ "$UBUNTU_CODENAME" = "jammy" ]]; then
+    echo "found $ubuntu_22_04_str"
+    distro_identifier="ubuntu2204"
   fi
 elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
   if [[ "$UBUNTU_CODENAME" = *"bionic"* ]]; then
@@ -85,6 +89,9 @@ elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
   elif [[ "$UBUNTU_CODENAME" = *"impish"* ]]; then
     echo "found $ubuntu_21_10_str"
     distro_identifier="ubuntu2110"
+  elif [[ "$UBUNTU_CODENAME" = *"jammy"* ]]; then
+    echo "found $ubuntu_22_04_str"
+    distro_identifier="ubuntu2204"
   fi
 elif [[ "$ID" = *"trisquel"* ]]; then
   if [[ "$VERSION_ID" = *"9.0"* ]]; then
