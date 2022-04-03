@@ -59,6 +59,9 @@ distro_to_pkg_type () {
     "flatpak")
       echo "FLATPAK"
       ;;
+    "manual" | "user-manual")
+      echo "USER_MANUAL"
+      ;;
   esac
 }
 pkg_type=$(distro_to_pkg_type $distro)
