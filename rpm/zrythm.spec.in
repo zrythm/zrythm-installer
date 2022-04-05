@@ -144,7 +144,11 @@ for f in `ls @BUILT_ZPLUGINS_DIR@/lib/lv2`; do
 done
 # copy all subproject libs
 mkdir -p "%{buildroot}%{_libdir}"/zrythm
-mv "%{buildroot}%{_libdir}"/*.so* "%{buildroot}%{_libdir}"/zrythm/
+for f in `ls "%{buildroot}%{_libdir}"/*.so*`; do
+  if [[ "$f" != *"libzrythm.so"* ]]; then
+    mv "$f" "%{buildroot}%{_libdir}"/zrythm/
+  fi
+done
 patchelf --set-rpath "%{_libdir}/zrythm/carla:%{_libdir}/zrythm" "%{buildroot}%{_bindir}"/zrythm
 patchelf --replace-needed /usr/lib/zrythm/carla/libcarla_host-plugin.so libcarla_host-plugin.so "%{buildroot}%{_bindir}"/zrythm
 if [ -d "%{buildroot}%{_datadir}/gtksourceview-5" ]; then
