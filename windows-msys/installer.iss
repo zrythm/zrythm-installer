@@ -81,7 +81,7 @@ Source: "Zrythm-*.pdf"; DestDir: "{app}"; \
   Components: zrythm
 Source: "COPYING"; DestDir: "{app}"; \
   Components: zrythm
-Source: "COPYING.GPL3"; DestDir: "{app}"; \
+Source: "LICENSES\*"; DestDir: "{app}\LICENSES"; \
   Components: zrythm
 Source: "THANKS"; DestDir: "{app}"; \
   Components: zrythm

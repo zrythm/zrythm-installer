@@ -262,7 +262,7 @@ sed -i -e "s|/usr/local|@executable_path/..|" $Lib/$GDK_PIXBUF_DIR/loaders.cache
 
 # add license, readme, third party info
 cp $zrythm_src_dir/README.md $Doc/
-cp $zrythm_src_dir/COPYING* $Doc/
+cp -r $zrythm_src_dir/LICENSES $Doc/
 brew list --versions -1 -v > $Doc/THIRDPARTY_INFO.txt
 
 # remove unnecessary files

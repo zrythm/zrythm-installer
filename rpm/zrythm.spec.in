@@ -173,8 +173,8 @@ rm -rf "%{buildroot}/usr/lib/.build-id"
 %find_lang zrythm
 
 %files -f zrythm.lang
-%license COPYING
-%doc README.md CONTRIBUTING.md CHANGELOG.md
+%license LICENSES/LicenseRef-ZrythmLicense.txt
+%doc README.md CONTRIBUTING.md CHANGELOG.md TRADEMARKS.md
 %{_bindir}/zrythm
 %{_bindir}/zrythm_launch
 %{_bindir}/zrythm_lv2apply

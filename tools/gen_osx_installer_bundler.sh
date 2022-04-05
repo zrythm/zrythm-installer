@@ -104,7 +104,7 @@ glib-compile-schemas "$Share/$SCHEMAS_DIR/"
 
 # add license, readme, third party info
 cp $ZRYTHM_SRC_DIR/README.md $Resources/
-cp $ZRYTHM_SRC_DIR/COPYING* $Resources/
+cp -r $ZRYTHM_SRC_DIR/LICENSES $Resources/
 brew list --versions -1 -v > $Resources/THIRDPARTY_INFO.txt
 
 sed "s|@NORMAL_PREFIX@|$NORMAL_PREFIX|" < \
