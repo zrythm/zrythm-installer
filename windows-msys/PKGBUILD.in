@@ -41,7 +41,6 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk4"
          "${MINGW_PACKAGE_PREFIX}-fftw"
          "${MINGW_PACKAGE_PREFIX}-pango"
          "${MINGW_PACKAGE_PREFIX}-pcre2"
-         "${MINGW_PACKAGE_PREFIX}-SDL2"
          "${MINGW_PACKAGE_PREFIX}-zstd"
          "${MINGW_PACKAGE_PREFIX}-libyaml"
          "${MINGW_PACKAGE_PREFIX}-vamp-plugin-sdk"
@@ -85,7 +84,7 @@ build() {
   MSYS2_ARG_CONV_EXCL="--prefix=;--buildtype=" \
   ${MINGW_PREFIX}/bin/meson \
     --prefix=${MINGW_PREFIX} \
-    -Dsdl=enabled \
+    -Dsdl=disabled \
     -Drtaudio=enabled \
     -Drtmidi=enabled \
     -Dlsp_dsp=enabled \

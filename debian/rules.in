@@ -67,8 +67,8 @@ override_dh_auto_install:
 	if [ ! -f ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/carla/libcarla_host-plugin.so ] ; then exit 1 ; fi
 	# copy all subproject libs
 	for f in `ls ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/*.so*`; do \
-		if [[ "$f" != *"libzrythm.so"* ]]; then \
-			mv "$f" ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/ ; \
+		if [[ "$$f" != *"libzrythm.so"* ]]; then \
+			mv "$$f" ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/ ; \
 		fi ; \
 	done
 	# copy all other libs
