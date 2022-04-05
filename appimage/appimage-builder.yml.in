@@ -80,7 +80,7 @@ AppDir:
   files:
     include:
       - /etc/mime.types
-      - /usr/lib/x86_64-linux-gnu/zrythm/carla/libcarla_host-plugin.so
+      - /usr/lib/x86_64-linux-gnu/libzrythm.so
       - /usr/lib/x86_64-linux-gnu/zrythm/carla/libcarla_host-plugin.so
     exclude:
       - usr/bin/gio*
