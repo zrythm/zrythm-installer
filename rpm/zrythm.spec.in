@@ -197,7 +197,7 @@ rm -rf "%{buildroot}/usr/lib/.build-id"
 %endif
 %{_datadir}/mime/packages/org.zrythm.Zrythm-mime.xml
 %{_datadir}/metainfo/org.zrythm.Zrythm.appdata.xml
-%{_libdir}/libzrythm.so*
+#%{_libdir}/libzrythm.so*
 %{_libdir}/zrythm/*
 %{_libdir}/lv2/Zrythm-*
 %{_libdir}/zrythm/carla/carla-discovery-native
