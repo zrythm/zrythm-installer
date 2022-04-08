@@ -26,7 +26,7 @@ options=('!strip')
 license=('AGPL3')
 depends=('curl' 'gtk4' 'lilv' 'libadwaita' 'libx11' 'jack' 'libsndfile'
   'json-glib' 'libyaml' 'libsamplerate' 'guile' 'alsa-lib'
-  'fftw' 'graphviz' 'breeze-icons' 'zstd'
+  'fftw' 'graphviz' 'gtksourceview5' 'breeze-icons' 'zstd'
   'rtmidi' 'rtaudio' 'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk'
   'wayland-protocols')
 makedepends=(
@@ -56,7 +56,6 @@ build() {
     -Dinstaller_ver=true \
     -Dcompletions=false \
     -Dcarla_use_cv32_patchbay_variant=true \
-    -Dforce_fallback_for=gtksourceview5 \
     -Db_lto=false \
     -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
   ninja -C build
