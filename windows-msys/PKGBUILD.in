@@ -80,6 +80,8 @@ build() {
   mv TRANSLATORS2 ${srcdir}/zrythm-${pkgver}/TRANSLATORS
   sed -i -e 's|"|'\''|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
 
+  # FIXME remove fallback for libadwaita when version after
+  # 1.1.0 is released
   echo "using prefix ${MINGW_PREFIX}"
   MSYS2_ARG_CONV_EXCL="--prefix=;--buildtype=" \
   ${MINGW_PREFIX}/bin/meson \
@@ -105,7 +107,7 @@ build() {
     -Db_lto=false \
     -Dtests=false \
     -Dcarla_use_cv32_patchbay_variant=true \
-    -Dforce_fallback_for=rtmidi,rtaudio \
+    -Dforce_fallback_for=rtmidi,rtaudio,libadwaita \
     "../zrythm-${pkgver}"
 
   ${MINGW_PREFIX}/bin/ninja -d explain -v
