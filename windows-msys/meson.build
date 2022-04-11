@@ -212,29 +212,11 @@ foreach arch : [ 'ucrt64', 'mingw32' ]
   console: true,
   install: false,
   )
-carla_packages += carla_pkg_target
-run_target (
-  'mingw-carla-' + arch + '-build',
-  command: [ 'echo', 'done', ],
-  depends: carla_pkg_target)
-endforeach
-independent_dep_names = [
-  'jack2-bin',
-  ]
-independent_deps = []
-foreach dep_name : independent_dep_names
-  independent_deps += custom_target (
-    'mingw-' + dep_name,
-    output: dep_name + '.pkg.tar.zst',
-    input: [
-      make_mingw_pkg,
-      'PKGBUILD-' + dep_name + '-mingw',
-      ],
-    command: make_mingw_pkg_cmd,
-    depends: carla_packages,
-    console: true,
-    install: false,
-    )
+  carla_packages += carla_pkg_target
+  run_target (
+    'mingw-carla-' + arch + '-build',
+    command: [ 'echo', 'done', ],
+    depends: carla_pkg_target)
 endforeach
 serd_pkg = custom_target (
   'mingw-serd',
@@ -336,7 +318,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lilv_pkg, lsp_dsp_lib_pkg, independent_deps,
+    lilv_pkg, lsp_dsp_lib_pkg,
     ],
   console: true,
   install: false,
@@ -353,7 +335,6 @@ windows_chroot_target = custom_target (
   output: 'zrythm-test',
   input: [
     make_windows_chroot, zrythm_src_tarball,
-    independent_deps[0],
     carla_packages[0],
     carla_packages[1],
     serd_pkg, sord_pkg,
@@ -364,11 +345,11 @@ windows_chroot_target = custom_target (
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
     '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" ' +
-    '"${14}" "${15}" "${16}"',
+    '"${14}" "${15}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
-    '@INPUT7@', '@INPUT8@', '@INPUT9@', '@INPUT10@',
+    '@INPUT7@', '@INPUT8@', '@INPUT9@',
     ],
   console: true,
   install: false,
