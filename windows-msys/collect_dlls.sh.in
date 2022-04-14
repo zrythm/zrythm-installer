@@ -1,6 +1,6 @@
 #!@BASH@
 #
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2022 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -34,13 +34,19 @@ mkdir -p $out_dir
 main () {
   echo "Copying dlls..."
 
-  $copy_dll_deps_sh \
-    --infile "$chroot_mingw_prefix/bin/zrythm$dash_trial.exe" \
-    --destdir $out_dir/ \
-    --recursivesrcdir "$chroot_mingw_prefix/bin" \
-    --srcdir "$chroot_mingw_prefix/bin" \
-    --objdump "$mingw_prefix/bin/objdump.exe" \
-    --copy
+  # https://github.com/msys2/MINGW-packages/issues/5204
+  cp "$chroot_mingw_prefix/bin/zrythm$dash_trial.exe" "$out_dir"/
+  for i in {1..10}; do
+    ldd "$out_dir"/* | grep -iv system32 | grep -vi windows | grep -v :$  | cut -f2 -d\> | cut -f1 -d\( | tr \\ / |while read a; do ! [ -e "$out_dir/`basename $a`" ] && cp -v "$a" "$out_dir"/ || echo "could not copy: $a"; done
+  done
+
+  #$copy_dll_deps_sh \
+    #--infile "$chroot_mingw_prefix/bin/zrythm$dash_trial.exe" \
+    #--destdir $out_dir/ \
+    #--recursivesrcdir "$chroot_mingw_prefix/bin" \
+    #--srcdir "$chroot_mingw_prefix/bin" \
+    #--objdump "$mingw_prefix/bin/objdump.exe" \
+    #--copy
 
   # some dlls need to be copied manually
   cp $chroot_mingw_prefix/bin/librsvg-2-2.dll $out_dir/
