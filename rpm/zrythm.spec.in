@@ -30,6 +30,7 @@ Source0:       https://www.zrythm.org/releases/zrythm-%{version}.tar.gz
 BuildRequires: gcc-c++ gcc pkgconfig
 BuildRequires: gtk4-devel
 BuildRequires: python3
+BuildRequires: boost-devel
 BuildRequires: libcurl-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libyaml-devel

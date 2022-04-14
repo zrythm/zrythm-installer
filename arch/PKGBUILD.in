@@ -25,7 +25,7 @@ url="https://www.zrythm.org"
 options=('!strip')
 license=('AGPL3')
 depends=('curl' 'gtk4' 'lilv' 'libadwaita' 'libx11' 'jack' 'libsndfile'
-  'json-glib' 'libyaml' 'libsamplerate' 'guile' 'alsa-lib'
+  'boost' 'json-glib' 'libyaml' 'libsamplerate' 'guile' 'alsa-lib'
   'fftw' 'graphviz' 'gtksourceview5' 'breeze-icons' 'zstd'
   'rtmidi' 'rtaudio' 'rubberband' 'xdg-utils' 'sdl2' 'xxhash' 'vamp-plugin-sdk'
   'wayland-protocols')
