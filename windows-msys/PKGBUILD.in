@@ -124,6 +124,7 @@ build() {
   MSYS2_ARG_CONV_EXCL="--prefix=" \
   ${MINGW_PREFIX}/bin/meson \
     --prefix=${MINGW_PREFIX} \
+    -Dplugins=Chordz,Chorus,EQ,LFO,LimiterSP,PhaserSP,PitchSP,Saturator,Saw \
     --buildtype=release \
     "../zplugins-${_zplugins_ver}"
   meson compile

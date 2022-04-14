@@ -43,7 +43,7 @@ mkdir -p $out_file
 tar xf $tarball -C $private_dir
 mv $private_dir/zplugins $private_dir/$inner_dir_name
 pushd $private_dir/$inner_dir_name
-meson_opts="--prefix=/"
+meson_opts="--prefix=/ -Dplugins=Chordz,Chorus,EQ,LFO,LimiterSP,PhaserSP,PitchSP,Saturator,Saw"
 if [[ "$distro" == "osx-brew"* ]]; then
   # set lv2 core spec path
   lv2_cellar=`brew info lv2 | sed '4q;d' | awk '{print $1;}'`
