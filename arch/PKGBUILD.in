@@ -71,7 +71,7 @@ package() {
   cd $_rootdir
   install -vDm 644 AUTHORS CONTRIBUTING.md CHANGELOG.md README.md THANKS TRANSLATORS \
     -t "${pkgdir}/usr/share/doc/zrythm/"
-  @MESON_BIN@ install -C build --skip-subprojects=libbacktrace,libaudec,reproc,rtmidi,rtaudio,libcyaml --destdir="${pkgdir}/"
+  @MESON_BIN@ install -C build --skip-subprojects=libbacktrace,libaudec,reproc,rtmidi,rtaudio,libcyaml,libpanel --destdir="${pkgdir}/"
   # copy all subproject libs
   if ls "${pkgdir}/usr/lib/"*.so; then
     mv ${pkgdir}/usr/lib/*.so* ${pkgdir}/usr/lib/zrythm/

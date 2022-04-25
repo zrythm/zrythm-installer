@@ -75,6 +75,11 @@ mingw_libadwaita_pkgbuild = configure_file (
   input: 'PKGBUILD-libadwaita-mingw.in',
   configuration: windows_msys_conf,
   )
+mingw_libpanel_pkgbuild = configure_file (
+  output: 'PKGBUILD-libpanel-mingw',
+  input: 'PKGBUILD-libpanel-mingw.in',
+  configuration: windows_msys_conf,
+  )
 mingw_lsp_dsp_lib_pkgbuild = configure_file (
   output: 'PKGBUILD-lsp-dsp-lib-mingw',
   input: 'PKGBUILD-lsp-dsp-lib-mingw.in',
@@ -304,6 +309,19 @@ run_target (
   command: [ 'echo', 'done' ],
   depends: libadwaita_pkg)
 
+libpanel_pkg = custom_target (
+  'mingw-libpanel',
+  output: 'libpanel.pkg.tar.zst',
+  input: [ make_mingw_pkg, mingw_libpanel_pkgbuild, ],
+  command: make_mingw_pkg_cmd,
+  console: true,
+  install: false,
+  )
+run_target (
+  'run-mingw-libpanel',
+  command: [ 'echo', 'done' ],
+  depends: libpanel_pkg)
+
 mingw_zrythm_pkg = custom_target (
   'mingw-zrythm-pkg',
   output: 'zrythm' + dash_trial + '.pkg.tar.zst',
@@ -318,7 +336,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lilv_pkg, lsp_dsp_lib_pkg,
+    lilv_pkg, lsp_dsp_lib_pkg, libpanel_pkg,
     ],
   console: true,
   install: false,
@@ -339,17 +357,17 @@ windows_chroot_target = custom_target (
     carla_packages[1],
     serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg,
-    lsp_dsp_lib_pkg, mingw_zrythm_pkg,
+    lsp_dsp_lib_pkg, libpanel_pkg, mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
     '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" ' +
-    '"${14}" "${15}"',
+    '"${14}" "${15}" "${16}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
-    '@INPUT7@', '@INPUT8@', '@INPUT9@',
+    '@INPUT7@', '@INPUT8@', '@INPUT9@', '@INPUT10@',
     ],
   console: true,
   install: false,

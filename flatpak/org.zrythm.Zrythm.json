@@ -399,6 +399,22 @@
             ]
         },
         {
+            "name": "libpanel",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dvapi=false",
+                "-Dinstall-examples=false",
+                "-Dintrospection=disabled"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/chergert/libpanel",
+                    "commit": "ac8cf86eb402c8877f7766ff13886bdd91519845"
+                }
+            ]
+        },
+        {
             "name": "zrythm",
             "builddir": true,
             "buildsystem": "meson",

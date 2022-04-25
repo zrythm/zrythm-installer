@@ -50,7 +50,7 @@ override_dh_auto_test:
 override_dh_auto_install:
 	cd debian/build && \
 		PATH=$$PATH:/home/build/.local/bin \
-		@MESON_BIN@ install --skip-subprojects=libaudec,reproc,rtmidi,rtaudio,libcyaml \
+		@MESON_BIN@ install --skip-subprojects=libaudec,reproc,rtmidi,rtaudio,libcyaml,libpanel \
 		--destdir="${CURDIR}/debian/zrythm@DASH_TRIAL@"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/include"
 	rm -rf "${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/libbacktrace"*

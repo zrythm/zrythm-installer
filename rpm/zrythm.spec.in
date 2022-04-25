@@ -130,7 +130,7 @@ PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
 ninja -C build
 
 %install
-@MESON_BIN@ install -C build --skip-subprojects=libaudec,reproc,rtmidi,rtaudio,libcyaml --destdir="%{buildroot}/"
+@MESON_BIN@ install -C build --skip-subprojects=libaudec,reproc,rtmidi,rtaudio,libcyaml,libpanel --destdir="%{buildroot}/"
 mkdir -p "%{buildroot}%{_libdir}/lv2"
 mkdir -p "%{buildroot}%{_libdir}/zrythm/carla"
 rm -rf "%{buildroot}%{_includedir}"
