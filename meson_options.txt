@@ -74,8 +74,9 @@ option (
   description: 'Locales for the manual')
 
 option (
-  'distro', type: 'string',
-  value: 'debian10',
+  'distro', type: 'combo',
+  choices: ['archlinux', 'debian11', 'debian12', 'fedora35', 'fedora36', 'windows-msys', 'flatpak', 'gnu-linux', 'osx-brew', 'appimage', 'ubuntu2004', 'ubuntu2204' ],
+  value: 'arch',
   description: 'Distro to build')
 
 option (

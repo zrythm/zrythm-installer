@@ -49,7 +49,7 @@ command -v zenity && have_zenity=1 || true
 if [[ "$ID" = *"debian"* ]]; then
   if [[ "$VERSION_ID" = *"10"* ]]; then
     echo "found $debian_10_str"
-    distro_identifier="debian10"
+    #distro_identifier="debian10"
   elif [[ "$VERSION_ID" = *"11"* ]]; then
     echo "found $debian_11_str"
     distro_identifier="debian11"
@@ -65,13 +65,13 @@ fi
 if [[ "$ID" = *"ubuntu"* ]]; then
   if [[ "$VERSION_ID" = *"18.04"* ]] || [[ "$UBUNTU_CODENAME" = "bionic" ]]; then
     echo "found $ubuntu_18_04_str"
-    distro_identifier="ubuntu1804"
+    #distro_identifier="ubuntu1804"
   elif [[ "$VERSION_ID" = *"20.04"* ]] || [[ "$UBUNTU_CODENAME" = "focal" ]]; then
     echo "found $ubuntu_20_04_str"
     distro_identifier="ubuntu2004"
   elif [[ "$VERSION_ID" = *"21.10"* ]] || [[ "$UBUNTU_CODENAME" = "impish" ]]; then
     echo "found $ubuntu_21_10_str"
-    distro_identifier="ubuntu2110"
+    #distro_identifier="ubuntu2110"
   elif [[ "$VERSION_ID" = *"22.04"* ]] || [[ "$UBUNTU_CODENAME" = "jammy" ]]; then
     echo "found $ubuntu_22_04_str"
     distro_identifier="ubuntu2204"
@@ -79,16 +79,16 @@ if [[ "$ID" = *"ubuntu"* ]]; then
 elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
   if [[ "$UBUNTU_CODENAME" = *"bionic"* ]]; then
     echo "found $ubuntu_18_04_str"
-    distro_identifier="ubuntu1804"
+    #distro_identifier="ubuntu1804"
   elif [[ "$UBUNTU_CODENAME" = *"focal"* ]]; then
     echo "found $ubuntu_20_04_str"
     distro_identifier="ubuntu2004"
   elif [[ "$UBUNTU_CODENAME" = *"hirsute"* ]]; then
     echo "found $ubuntu_21_10_str"
-    distro_identifier="ubuntu2110"
+    #distro_identifier="ubuntu2110"
   elif [[ "$UBUNTU_CODENAME" = *"impish"* ]]; then
     echo "found $ubuntu_21_10_str"
-    distro_identifier="ubuntu2110"
+    #distro_identifier="ubuntu2110"
   elif [[ "$UBUNTU_CODENAME" = *"jammy"* ]]; then
     echo "found $ubuntu_22_04_str"
     distro_identifier="ubuntu2204"
@@ -96,7 +96,7 @@ elif [[ "$ID_LIKE" = *"ubuntu"* ]]; then
 elif [[ "$ID" = *"trisquel"* ]]; then
   if [[ "$VERSION_ID" = *"9.0"* ]]; then
     echo "found $ubuntu_18_04_str"
-    distro_identifier="ubuntu1804"
+    #distro_identifier="ubuntu1804"
   fi
 fi
 
@@ -116,16 +116,19 @@ if [[ "$ID" = "fedora" ]] || [[ "$ID_LIKE" = "fedora" ]]; then
   architecture="x86_64"
   if [[ "$VERSION_ID" = *"32"* ]]; then
     echo "found Fedora 32"
-    distro_identifier="fedora32"
+    #distro_identifier="fedora32"
   elif [[ "$VERSION_ID" = *"33"* ]]; then
     echo "found Fedora 33"
-    distro_identifier="fedora33"
+    #distro_identifier="fedora33"
   elif [[ "$VERSION_ID" = *"34"* ]]; then
     echo "found Fedora 34"
-    distro_identifier="fedora34"
+    #distro_identifier="fedora34"
   elif [[ "$VERSION_ID" = *"35"* ]]; then
     echo "found Fedora 35"
     distro_identifier="fedora35"
+  elif [[ "$VERSION_ID" = *"36"* ]]; then
+    echo "found Fedora 36"
+    distro_identifier="fedora36"
   fi
 fi
 
