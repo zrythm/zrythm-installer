@@ -46,6 +46,8 @@ BuildRequires: graphviz-devel
 BuildRequires: xxhash-devel
 BuildRequires: vamp-plugin-sdk-devel
 BuildRequires: json-glib-devel
+Requires: libwayland-client >= 1.20.0
+Requires: libwayland-cursor >= 1.20.0
 Requires: libcurl
 Requires: ladspa
 Requires: lv2
