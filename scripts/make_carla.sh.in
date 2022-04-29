@@ -19,6 +19,8 @@
 
 set -ex
 
+distro="@DISTRO@"
+
 out_dir="`pwd`/$1"
 carla_source_zip="$2"
 private_dir="$3"
@@ -39,7 +41,11 @@ mkdir -p $private_dir
 unzip -o "$carla_source_zip" -d "$private_dir"
 cd "$private_dir/Carla-$carla_git_ver"
 make features
-make -j4
+args=""
+if [[ "$distro" = "fedora36" ]]; then
+  args="$args USING_JUCE=false USING_JUCE_AUDIO_DEVICES=false USING_JUCE_GUI_EXTRA=false"
+fi
+make -j4 $args
 make install DESTDIR="$out_dir" PREFIX="$prefix" LIBDIR=$prefix
 sudo mkdir -p "$prefix"
 sudo cp -Rv "$out_dir/$prefix"/* "$prefix"/
