@@ -52,7 +52,7 @@ option (
 
 option (
   'lsp-dsp-lib-ver', type: 'string',
-  value: '1.0.3',
+  value: '0.5.14',
   description: 'LSP DSP lib version')
 
 option (
