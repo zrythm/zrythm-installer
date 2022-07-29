@@ -286,7 +286,6 @@ gtk4_pkg = custom_target (
   'mingw-gtk4',
   output: 'gtk4.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_gtk4_pkgbuild, ],
-  depends: cairo_pkg,
   command: make_mingw_pkg_cmd,
   console: true,
   install: false,
