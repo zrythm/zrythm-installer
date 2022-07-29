@@ -29,6 +29,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "cmake" => :build
   depends_on "gnu-sed" => :build
   depends_on "sassc" => :build
+  depends_on "glib-utils" => :build
   depends_on "boost"
   depends_on "curl"
   depends_on "libyaml"
