@@ -122,7 +122,7 @@ PKG_CONFIG_PATH=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
   -Dtrial_ver=@TRIAL_TRUE_FALSE@ -Dcarla=enabled \
   -Dgraphviz=enabled -Dlsp_dsp=enabled \
   -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
-  -Dforce_fallback_for=libadwaita \
+  -Dforce_fallback_for=libadwaita,libpanel,gtk4 \
   -Dextra_debug_info=true \
   -Dcheck_updates=true \
   -Dinstaller_ver=true \
