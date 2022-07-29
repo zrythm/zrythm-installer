@@ -177,6 +177,8 @@ rm -rf "%{buildroot}%{_datadir}"/man/man1/pango*
 rm -rf "%{buildroot}%{_datadir}"/vala
 rm -rf "%{buildroot}%{_datadir}"/icons/hicolor/scalable/actions
 rm -rf "%{buildroot}/usr/lib/.build-id"
+rm -rf "%{buildroot}%{_datadir}"/pkgconfig
+rm -rf "%{buildroot}%{_datadir}"/wayland-protocols
 %find_lang zrythm
 
 %files -f zrythm.lang
