@@ -79,6 +79,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dinstaller_ver=true",
         "-Dvamp_static=true",
         "-Dcarla_use_cv32_patchbay_variant=true",
+        "-Dforce_fallback_for=gtk4,libpanel,libadwaita",
         ".."
 
       # workaround for C++ 20 <version>
