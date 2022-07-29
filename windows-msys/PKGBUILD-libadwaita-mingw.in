@@ -9,6 +9,7 @@ pkgdesc="Libadwaita"
 arch=('any')
 url="https://cairographics.org/"
 license=(LGPL2.1 MPL1.1)
+options=('staticlibs' 'debug')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-gobject-introspection"
@@ -30,6 +31,7 @@ build() {
   cd /tmp/libadwaita-build-${MINGW_CHOST}
 
   MSYS2_ARG_CONV_EXCL="--prefix=" \
+  LDFLAGS="-lssp" \
   ${MINGW_PREFIX}/bin/meson \
     --prefix=${MINGW_PREFIX} \
     --buildtype=debug \
