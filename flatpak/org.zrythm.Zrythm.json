@@ -415,12 +415,119 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/libadwaita",
-                    "commit": "b14744cc8290daac7e636fa976efae160bb280b9"
+                    "commit": "abc160a311bd80bdd641633c52e12e1bfc4feb1d"
                 }
             ],
             "cleanup": [
                 "/include",
                 "/lib/pkgconfig"
+            ],
+            "modules": [
+                {
+                    "name": "pango",
+                    "buildsystem": "meson",
+                    "build-options": {
+                        "no-debuginfo": true
+                    },
+                    "config-opts": [
+                        "-Dtests=false",
+                        "-Dbuild-documentation=false"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://gitlab.gnome.org/GNOME/pango",
+                            "commit": "a05c3549709b92294194c335cb7d5190f14359bf"
+                        }
+                    ],
+                    "cleanup": [
+                        "/include",
+                        "/bin/pango-*"
+                    ]
+                },
+                {
+                    "name": "libsass",
+                    "buildsystem": "meson",
+                    "build-options": {
+                        "no-debuginfo": true
+                    },
+                    "cleanup": [
+                        "*"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/lazka/libsass.git",
+                            "branch": "meson",
+                            "commit": "302397c0c8ae2d7ab02f45ea461c2c3d768f248e"
+                        }
+                    ]
+                },
+                {
+                    "name": "sassc",
+                    "buildsystem": "meson",
+                    "build-options": {
+                        "no-debuginfo": true
+                    },
+                    "cleanup": [
+                        "*"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/lazka/sassc.git",
+                            "branch": "meson",
+                            "commit": "82803377c33247265d779af034eceb5949e78354"
+                        }
+                    ]
+                },
+                {
+                    "name": "gtk",
+                    "buildsystem": "meson",
+                    "build-options": {
+                        "no-debuginfo": true
+                    },
+                    "config-opts": [
+                        "-Dbuild-documentation=false",
+                        "-Dintrospection=disabled",
+                        "-Dgtk_doc=false",
+                        "-Dtests=false",
+                        "-Dexamples=false",
+                        "-Dvapi=false"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://gitlab.gnome.org/GNOME/gtk",
+                            "commit": "924da0e84b3969d1eda80e3bcf2d3b8ab6ce6085"
+                        }
+                    ],
+                    "cleanup": [
+                        "/include",
+                        "/bin/gtk4-*"
+                    ]
+                },
+                {
+                    "name": "gtksourceview",
+                    "buildsystem": "meson",
+                    "build-options": {
+                        "env": {
+                            "LIBRARY_PATH": "/app/lib"
+                        },
+                        "no-debuginfo": true
+                    },
+                    "config-opts": [
+                        "-Dvapi=false",
+                        "-Dintrospection=disabled"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://gitlab.gnome.org/GNOME/gtksourceview",
+                            "commit": "3eaf6f22271e34280fd3938fe4086d5756033c51"
+                        }
+                    ]
+                }
             ]
         },
         {
@@ -434,8 +541,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/chergert/libpanel",
-                    "commit": "ac8cf86eb402c8877f7766ff13886bdd91519845"
+                    "url": "https://gitlab.gnome.org/GNOME/libpanel",
+                    "commit": "c7b5ebe3c552290915534854834f1dda7d00ce09"
                 }
             ]
         },
