@@ -40,13 +40,13 @@ rm -rf $private_dir
 mkdir -p $private_dir
 unzip -o "$carla_source_zip" -d "$private_dir"
 cd "$private_dir/Carla-$carla_git_ver"
-make features
-args=""
+args="HAVE_SDL1=false HAVE_SDL2=false"
 if [[ "$distro" = "fedora36" ]]; then
-  args="$args USING_JUCE=false USING_JUCE_AUDIO_DEVICES=false USING_JUCE_GUI_EXTRA=false HAVE_SDL=false"
+  args="$args USING_JUCE=false USING_JUCE_AUDIO_DEVICES=false USING_JUCE_GUI_EXTRA=false"
 fi
+make features $args
 make -j4 $args
-make install DESTDIR="$out_dir" PREFIX="$prefix" LIBDIR=$prefix
+make install $args DESTDIR="$out_dir" PREFIX="$prefix" LIBDIR=$prefix
 sudo mkdir -p "$prefix"
 sudo cp -Rv "$out_dir/$prefix"/* "$prefix"/
 
