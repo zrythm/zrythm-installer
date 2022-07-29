@@ -43,7 +43,7 @@ cd "$private_dir/Carla-$carla_git_ver"
 make features
 args=""
 if [[ "$distro" = "fedora36" ]]; then
-  args="$args USING_JUCE=false USING_JUCE_AUDIO_DEVICES=false USING_JUCE_GUI_EXTRA=false"
+  args="$args USING_JUCE=false USING_JUCE_AUDIO_DEVICES=false USING_JUCE_GUI_EXTRA=false HAVE_SDL=false"
 fi
 make -j4 $args
 make install DESTDIR="$out_dir" PREFIX="$prefix" LIBDIR=$prefix
