@@ -63,7 +63,7 @@ PATH="$PATH:/home/build/.local/bin" \
   -Dinstaller_ver=true \
   -Dappimage=true \
   -Dcarla_use_cv32_patchbay_variant=true \
-  --force-fallback-for=libadwaita \
+  --force-fallback-for=libadwaita,gtk4,libpanel \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 
 # build
