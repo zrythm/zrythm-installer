@@ -9,7 +9,7 @@ pkgdesc="Libadwaita"
 arch=('any')
 url="https://cairographics.org/"
 license=(LGPL2.1 MPL1.1)
-options=('staticlibs' 'debug')
+options=('staticlibs')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-gobject-introspection"
