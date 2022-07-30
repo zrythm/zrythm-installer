@@ -541,8 +541,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libpanel",
-                    "commit": "c7b5ebe3c552290915534854834f1dda7d00ce09"
+                    "url": "https://gitlab.gnome.org/alex-tee/libpanel",
+                    "commit": "d7184085b9e478907627385a1034efb7343e6e65"
                 }
             ]
         },
