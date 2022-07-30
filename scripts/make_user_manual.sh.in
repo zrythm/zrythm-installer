@@ -40,7 +40,7 @@ cp $zrythm_src_tarball $private_dir/
 pushd $private_dir
 tar xf $zrythm_src_tarball_filename
 pushd $inner_dir
-$meson_bin build -Dcarla=disabled -Dstrict_sphinx_opts=false
+$meson_bin build -Dcarla=disabled -Dstrict_sphinx_opts=false -Dforce_fallback_for=gtk4,libadwaita,libpanel
 sed -i -e 's/latexpdf/latex/' doc/user/meson.build
 # run twice because pt fails for some reason
 ninja -C build latex-manual-$lang || ninja -C build latex-manual-$lang
