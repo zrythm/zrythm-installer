@@ -524,7 +524,7 @@
                         {
                             "type": "git",
                             "url": "https://gitlab.gnome.org/GNOME/gtksourceview",
-                            "commit": "3eaf6f22271e34280fd3938fe4086d5756033c51"
+                            "commit": "ec0b434c4ebea7e9c1920013af2a911c4b28a66a"
                         }
                     ]
                 }
