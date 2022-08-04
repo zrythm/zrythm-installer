@@ -33,6 +33,7 @@ build() {
   cd /tmp/${_realname}-build-${MINGW_CHOST}
 
   MSYS2_ARG_CONV_EXCL="--prefix=" \
+  LDFLAGS="-lssp" \
   ${MINGW_PREFIX}/bin/meson \
     --prefix=${MINGW_PREFIX} \
     --buildtype=debug \
