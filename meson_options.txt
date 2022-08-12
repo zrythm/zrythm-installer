@@ -47,7 +47,7 @@ option (
 
 option (
   'carla-git-ver', type: 'string',
-  value: '19dcf134e53123581c523fc6e9c7045d08b06f83',
+  value: 'c7b4ee9c39ad5a3e7e6114007d6114ea3aece66c',
   description: 'Carla version')
 
 option (
@@ -62,7 +62,7 @@ option (
 
 option (
   'carla-bottle-ver', type: 'string',
-  value: '0.1.6',
+  value: '0.1.7',
   description: 'Carla bottle version')
 
 option (
