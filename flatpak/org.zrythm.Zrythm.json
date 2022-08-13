@@ -558,7 +558,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/drobilla/zix",
-                    "commit": "9cdc083d0d88bc222fa04849948fab8a9b4deee0"
+                    "commit": "9fc129c7dc1a0fa6b034f08d49d8e2f995585082"
                 }
             ]
         },
