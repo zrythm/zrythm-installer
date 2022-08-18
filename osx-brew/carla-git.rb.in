@@ -36,7 +36,7 @@ class CarlaGit < Formula
   depends_on "liblo"
   depends_on "libmagic"
   depends_on "pyqt@5"
-  depends_on "python@3.9"
+  depends_on "python@3.10"
 
   def install
     system "make"
