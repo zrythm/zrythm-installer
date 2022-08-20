@@ -319,8 +319,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/0.5.14/lsp-dsp-lib-0.5.14-src.tar.gz",
-                    "sha256": "781dae54c934bc11c412a7abbea1321e4ea6513ca24327627b8bfbe5fdb49fbd"
+                    "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.4/lsp-dsp-lib-src-1.0.4.tar.gz",
+                    "sha256": "7bb5411666af51a7329c8d0f907d00bb25e3ec2ee3e99680353d5f6f5356d962"
                 }
             ]
         },
@@ -415,7 +415,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/libadwaita",
-                    "commit": "abc160a311bd80bdd641633c52e12e1bfc4feb1d"
+                    "commit": "7387b453a4c93fbb60d68ec009af6f719fe8bab9"
                 }
             ],
             "cleanup": [
@@ -542,7 +542,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/alex-tee/libpanel",
-                    "commit": "d7184085b9e478907627385a1034efb7343e6e65"
+                    "commit": "11a83c39014254540015999a262f41a4e0fc7579"
                 }
             ]
         },
@@ -558,7 +558,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/drobilla/zix",
-                    "commit": "9fc129c7dc1a0fa6b034f08d49d8e2f995585082"
+                    "commit": "f2fc88e136fc92328b86575fdfed1cc7c7729ef3"
                 }
             ]
         },
