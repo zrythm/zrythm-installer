@@ -82,7 +82,7 @@ cp "$appdir_root"/usr/lib/x86_64-linux-gnu/*.so* "$appdir_root"/usr/lib/x86_64-l
 # copy all other libs
 cp -r /usr/lib/x86_64-linux-gnu/gtk-4.0 "$appdir_root"/usr/lib/x86_64-linux-gnu/zrythm/
 cp -r /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0 "$appdir_root"/usr/lib/x86_64-linux-gnu/zrythm/
-for libname in gtk epoxy graphene gdk freetype pango harfbuzz cairo pixman fontconfig fribidi json-glib gio gmodule gobject gthread glib; do
+for libname in gtk epoxy graphene gdk freetype pango harfbuzz cairo pixman fontconfig fribidi json-glib gio gmodule gobject gthread glib wayland-client; do
   cp "/usr/lib/x86_64-linux-gnu/lib${libname}"*.so* "$appdir_root"/usr/lib/x86_64-linux-gnu/zrythm/
 done
 for libname in rsvg png; do

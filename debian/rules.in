@@ -74,7 +74,7 @@ override_dh_auto_install:
 	# copy all other libs
 	#cp -r /usr/lib/x86_64-linux-gnu/gtk-4.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/zrythm/
 	cp -r /usr/lib/$(DEB_HOST_MULTIARCH)/gdk-pixbuf-2.0 ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/
-	for libname in gtk epoxy graphene gdk freetype pango harfbuzz cairo pixman fontconfig fribidi json-glib gio gmodule gobject gthread glib; do \
+	for libname in gtk epoxy graphene gdk freetype pango harfbuzz cairo pixman fontconfig fribidi json-glib gio gmodule gobject gthread glib wayland-client; do \
 		cp "/usr/lib/$(DEB_HOST_MULTIARCH)/lib$${libname}"*.so* ${CURDIR}/debian/zrythm@DASH_TRIAL@/usr/lib/$(DEB_HOST_MULTIARCH)/zrythm/ ; \
 	done
 	for libname in rsvg png; do \
