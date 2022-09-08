@@ -7,11 +7,10 @@ navigate to this directory, then run
 the following command and follow the
 instructions:
 
-  ./install.sh
+  ./installer.sh
 
-To uninstall, use:
-
-  ./install.sh -u
+If you prefer to install the packages
+manually, you can find them inside `bin`.
 
 If you experience any problems, please
 email alex@EMAIL_AT_SYM@zrythm.org

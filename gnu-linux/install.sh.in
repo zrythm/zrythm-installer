@@ -1,0 +1,150 @@
+#!/bin/bash
+#
+# Copyright (C) 2019-2020, 2022 Alexandros Theodotou <alex at zrythm dot org>
+#
+#  This file is part of Zrythm
+#
+#  Zrythm is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Zrythm is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+set -ex
+
+uninstall=0
+uninstall_prefix_txt=""
+if [[ "$1" = "-u" ]]; then
+  uninstall=1
+  uninstall_prefix_txt="un"
+fi
+
+zrythm_ver="@ZRYTHM_PKG_VERSION@"
+trial="@DASH_TRIAL@"
+
+zenity_width=360
+have_zenity=0
+command -v zenity && have_zenity=1 || true
+
+if [[ -z "$XDG_DATA_HOME" ]]; then
+  XDG_DATA_HOME="$HOME/.local/share"
+fi
+trash_dir="$XDG_DATA_HOME/Trash"
+trash_dir="$trash_dir/zrythm-installer-deleted-files-$(date +"%Y_%m_%d_%H_%M")"
+mkdir -p "$trash_dir"
+
+# ---- Helper funcs ----
+
+show_error()
+{
+  if [ $have_zenity -ne 0 ]; then
+    zenity --error --text="$1" --width $zenity_width
+  else
+    echo "$1"
+  fi
+}
+
+show_info()
+{
+  if [ $have_zenity -ne 0 ]; then
+    zenity --info --text="$1" --width $zenity_width
+  else
+    echo "$1"
+  fi
+}
+
+ask_for_root_pw()
+{
+  ask_for_root_pw_text="Please enter your root password in the terminal to continue (if asked)"
+  show_info "$ask_for_root_pw_text"
+}
+
+print_install_success()
+{
+  if [ $uninstall -eq 0 ]; then
+    show_info "Install successful!"
+  else
+    show_info "Uninstall successful!"
+  fi
+}
+
+# ---- Install ----
+
+proceed=0
+proceed_txt="Proceed with the ${uninstall_prefix_txt}installation of Zrythm$trial v$zrythm_ver?"
+if [ $have_zenity -ne 0 ]; then
+  zenity --question --text="$proceed_txt" --width $zenity_width
+  if [ $? -eq 0 ]; then
+    proceed=1
+  fi
+else
+  read -p "$proceed_txt (type Y or y): " -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    proceed=1
+  fi
+fi
+
+# install packages
+if [ $proceed -ne 0 ]; then
+  pkgname="zrythm$trial-$zrythm_ver"
+  prefix="opt/$pkgname"
+  installed_prefix="/opt/$pkgname"
+  sudo mv "$installed_prefix" "$trash_dir/" || true
+  if [ $uninstall -eq 0 ]; then
+    sudo cp -r "$prefix" "$installed_prefix"
+  fi
+
+  # application
+  application_path_in_zip="share/applications/org.zrythm.Zrythm.desktop"
+  application_path_installed="/usr/share/applications/org.zrythm.Zrythm-installer.desktop"
+  sudo mv "$application_path_installed" "$trash_dir/" || true
+  if [ $uninstall -eq 0 ]; then
+    sudo cp "$prefix/$application_path_in_zip" "$application_path_installed"
+  fi
+
+  # app icon
+  appicon_path_in_zip="share/icons/hicolor/scalable/apps/zrythm.svg"
+  appicon_path_installed="/usr/share/icons/hicolor/scalable/apps/zrythm.svg"
+  sudo mv "$appicon_path_installed" "$trash_dir/" || true
+  if [ $uninstall -eq 0 ]; then
+    sudo cp "$prefix/$appicon_path_in_zip" "$appicon_path_installed"
+  fi
+
+  # manpage
+  manpage_path_in_zip="share/man/man1/zrythm.1"
+  manpage_path_installed="/usr/share/man/man1/zrythm.1"
+  sudo mv "$manpage_path_installed" "$trash_dir/" || true
+  if [ $uninstall -eq 0 ]; then
+    sudo cp "$prefix/$manpage_path_in_zip" "$manpage_path_installed"
+  fi
+
+  # metainfo
+  metainfo_path_in_zip="share/metainfo/org.zrythm.Zrythm.appdata.xml"
+  metainfo_path_installed="/usr/share/metainfo/org.zrythm.Zrythm-installer.appdata.xml"
+  sudo mv "$metainfo_path_installed" "$trash_dir/" || true
+  if [ $uninstall -eq 0 ]; then
+    sudo cp "$prefix/$metainfo_path_in_zip" "$metainfo_path_installed"
+  fi
+
+  # mime type
+  mimetype_path_in_zip="share/mime/packages/org.zrythm.Zrythm-mime.xml"
+  mimetype_path_installed="/usr/share/mime/packages/org.zrythm.Zrythm-mime.xml"
+  sudo mv "$mimetype_path_installed" "$trash_dir/" || true
+  if [ $uninstall -eq 0 ]; then
+    sudo cp "$prefix/$mimetype_path_in_zip" "$mimetype_path_installed"
+  fi
+
+  # workaround for missing libcrypt.so.1 (version 2) on arch based systems
+  #if [ $uninstall -eq 0 ]; then
+    #sudo ln -s /usr/lib/libcrypt.so.2 "$installed_prefix/lib/x86_64-linux-gnu/libcrypt.so.1" || true
+  #fi
+
+  print_install_success
+fi

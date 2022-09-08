@@ -1,0 +1,91 @@
+#! /bin/bash
+#
+# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+#
+# This file is part of Zrythm
+#
+# Zrythm is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Zrythm is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+set -e
+
+out_file=$1
+private_dir=$2
+installer_sh=$3
+readme=$4
+
+# dir holding each package
+packages_dir="@PACKAGES_DIR@"
+distros="archlinux debian11 debian12 ubuntu2004 ubuntu2204 fedora36"
+get_pkg_filename_from_distro_sh="@MESON_BUILD_ROOT@/scripts/get_pkg_filename_from_distro.sh"
+zip_filename=`basename $out_file`
+zip_inner_dir_name="${zip_filename%.*}"
+zip_inner_dir="$private_dir/$zip_inner_dir_name"
+zrythm_version="@ZRYTHM_PKG_VERSION@"
+dash_trial="@DASH_TRIAL@"
+
+rm -rf $out_file
+rm -rf $private_dir
+
+mkdir -p $zip_inner_dir
+
+# returns the built package filename
+get_package_filename () {
+  distro=$1
+  set +u
+  trial=$2
+  set -u
+  $get_pkg_filename_from_distro_sh $distro $trial
+}
+
+# returns the filename to be placed inside "bin"
+get_dest_package_filename () {
+  prefix="zrythm$dash_trial-$zrythm_version"
+  distro=$1
+  res=""
+  case "$distro" in
+    "debian"* | "ubuntu"*)
+      res="$prefix-1_amd64.deb"
+      ;;
+    "archlinux")
+      res="$prefix-1_x86_64.pkg.tar.zst"
+      ;;
+    "fedora"*)
+      res="$prefix-1_x86_64.rpm"
+  esac
+  echo $res
+}
+
+copy_package () {
+  distro=$1
+  src_pkg_filename="$(get_package_filename $distro $dash_trial)"
+  dest_pkg_filename="$(get_dest_package_filename $distro)"
+  distro_bin_dir="$zip_inner_dir/bin/$distro"
+  mkdir -p "$distro_bin_dir"
+  cp "$packages_dir/$distro/$src_pkg_filename" \
+    "$distro_bin_dir/$dest_pkg_filename"
+}
+
+for distro in $distros ; do
+  echo "copying packages for $distro..."
+  copy_package $distro
+  echo "done"
+done
+
+echo "zipping installer..."
+cp -R $installer_sh $readme $zip_inner_dir/
+pushd $private_dir
+zip -r $zip_inner_dir_name.zip $zip_inner_dir_name
+popd
+cp $zip_inner_dir.zip $out_file
+echo "done"

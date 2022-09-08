@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -15,48 +15,26 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-gnu_linux_conf = configuration_data ()
-gnu_linux_conf.merge_from (global_conf)
-
-make_zrythm = configure_file (
-  output: 'make-zrythm.sh',
-  input: 'make-zrythm.sh.in',
-  configuration: gnu_linux_conf,
-  )
+gnu_linux_zip_conf = configuration_data ()
+gnu_linux_zip_conf.merge_from (global_conf)
 
 # configure scripts
 make_installer_zip_sh = configure_file (
   output: 'make_installer_zip.sh',
   input: 'make_installer_zip.sh.in',
-  configuration: gnu_linux_conf,
+  configuration: gnu_linux_zip_conf,
   )
 
 # configure installer script and README
 installer_sh = configure_file (
-  output: 'install.sh',
-  input: 'install.sh.in',
-  configuration: gnu_linux_conf,
+  output: 'installer.sh',
+  input: 'installer.sh.in',
+  configuration: gnu_linux_zip_conf,
   )
 readme = configure_file (
   output: 'README',
   input: 'README.in',
-  configuration: gnu_linux_conf,
-  )
-
-# this target installs zrythm with prefix = /opt/... and DESTDIR in meson's
-# private dir
-# it will be copied in the installer zip
-zrythm_installed_target = custom_target (
-  'zrythm-installed-target',
-  output: 'zrythm-installed',
-  input: [
-    zrythm_src_tarball ],
-  command: [
-    make_zrythm, '@OUTPUT@', '@PRIVATE_DIR@', '@INPUT0@',
-    '/opt/zrythm' + dash_trial + '-' + zrythm_pkg_ver,
-    meson_bin,
-    ],
-  console: true,
+  configuration: gnu_linux_zip_conf,
   )
 
 installer_zip_filename = run_command (
@@ -66,15 +44,13 @@ installer_zip = custom_target (
   output: installer_zip_filename,
   input: [
     make_installer_zip_sh, installer_sh, readme,
-    zrythm_installed_target,
     ],
   command: [
     make_installer_zip_sh, '@OUTPUT@', '@PRIVATE_DIR@',
-    '@INPUT1@', '@INPUT2@', '@INPUT3@',
+    '@INPUT1@', '@INPUT2@',
     ],
   install: true,
   install_dir: get_option ('prefix'),
-  console: true,
   )
 
 run_target (
