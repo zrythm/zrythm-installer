@@ -30,6 +30,10 @@ zip_inner_dir_name="${zip_filename%.*}"
 zip_inner_dir="$private_dir/$zip_inner_dir_name"
 zrythm_version="@ZRYTHM_PKG_VERSION@"
 dash_trial="@DASH_TRIAL@"
+build_trial=true
+if [ -z "$dash_trial" ]; then
+  build_trial=false
+fi
 
 meson_build_dir="`pwd`"
 
@@ -55,6 +59,7 @@ $meson_bin build \
   -Dguile_snarf_docs_path= \
   -Dguile=enabled \
   -Dforce_fallback_for="$fallback_subprojects_csv" \
+  -Dtrial_ver="$build_trial" \
   -Dinstaller_ver=true
 ninja -C build
 DESTDIR="$meson_build_dir/$out_file" ninja -C build install
