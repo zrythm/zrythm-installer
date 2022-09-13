@@ -70,6 +70,7 @@ is_osx_brew = distro.contains ('osx-brew')
 is_gnu_linux = distro.contains ('gnu-linux')
 is_appimage = distro.contains ('appimage')
 is_flatpak = distro.contains ('flatpak')
+is_user_manuals = distro.contains ('manual')
 
 meson_src_root = meson.source_root ()
 
@@ -196,7 +197,7 @@ lsp_dsp_lib_installation = custom_target (
   install: false,
   )
 
-if is_arch
+if is_arch or is_user_manuals
   subdir ('arch')
 endif
 

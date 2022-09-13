@@ -79,6 +79,11 @@ run_target (
   depends: [ arch_pkg ])
 
 run_target (
+  'user-manual-pdfs',
+  command: [ 'echo', 'done' ],
+  depends: [ manual_deps ])
+
+run_target (
   'arch',
   command: [ 'echo', 'done' ],
   depends: [ arch_pkg, manual_deps ])
