@@ -85,6 +85,10 @@ cp -L /lib/x86_64-linux-gnu/libwrap.so.0 "$destdir_w_prefix/lib/x86_64-linux-gnu
 cp -L /lib/x86_64-linux-gnu/libapparmor.so.1 "$destdir_w_prefix/lib/x86_64-linux-gnu/libapparmor.so.1"
 cp -L /lib/x86_64-linux-gnu/libnsl.so.1 "$destdir_w_prefix/lib/x86_64-linux-gnu/libnsl.so.1"
 
+# guile
+cp -r /usr/local/share/guile "$destdir_w_prefix/share/"
+cp -r /usr/local/lib/guile "$destdir_w_prefix/lib/x86_64-linux-gnu/"
+
 # copy carla libs
 carla_lib_path="$destdir_w_prefix/lib/x86_64-linux-gnu/zrythm/carla"
 mkdir -p "$carla_lib_path"
