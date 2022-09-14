@@ -80,6 +80,11 @@ done
 cp -L /lib/x86_64-linux-gnu/libcrypt.so.1 "$destdir_w_prefix/lib/x86_64-linux-gnu/libcrypt.so.1"
 rm /opt/zrythm/lib/x86_64-linux-gnu/libstdc++.so* || true
 
+# these are needed on fedora 34 + x11
+cp -L /lib/x86_64-linux-gnu/libwrap.so.0 "$destdir_w_prefix/lib/x86_64-linux-gnu/libwrap.so.0"
+cp -L /lib/x86_64-linux-gnu/libapparmor.so.1 "$destdir_w_prefix/lib/x86_64-linux-gnu/libapparmor.so.1"
+cp -L /lib/x86_64-linux-gnu/libnsl.so.1 "$destdir_w_prefix/lib/x86_64-linux-gnu/libnsl.so.1"
+
 # copy carla libs
 carla_lib_path="$destdir_w_prefix/lib/x86_64-linux-gnu/zrythm/carla"
 mkdir -p "$carla_lib_path"
@@ -97,3 +102,6 @@ cp -r /usr/share/icons/breeze-dark "$destdir_w_prefix/share/icons/"
 
 # compile glib schemas
 glib-compile-schemas "$destdir_w_prefix/share/glib-2.0/schemas"
+
+# cleanup
+rm -rf "$destdir_w_prefix/include"
