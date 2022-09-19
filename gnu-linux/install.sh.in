@@ -91,6 +91,14 @@ else
   fi
 fi
 
+sudo_copy_file()
+{
+  src_path="$1"
+  dest_path="$2"
+  sudo mkdir -p `dirname "$dest_path"`
+  sudo cp "$src_path" "$dest_path"
+}
+
 # install packages
 if [ $proceed -ne 0 ]; then
   pkgname="zrythm$trial-$zrythm_ver"
@@ -103,42 +111,42 @@ if [ $proceed -ne 0 ]; then
 
   # application
   application_path_in_zip="share/applications/org.zrythm.Zrythm.desktop"
-  application_path_installed="/usr/share/applications/org.zrythm.Zrythm-installer.desktop"
+  application_path_installed="/usr/local/share/applications/org.zrythm.Zrythm-installer.desktop"
   sudo mv "$application_path_installed" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
-    sudo cp "$prefix/$application_path_in_zip" "$application_path_installed"
+    sudo_copy_file "$prefix/$application_path_in_zip" "$application_path_installed"
   fi
 
   # app icon
   appicon_path_in_zip="share/icons/hicolor/scalable/apps/zrythm.svg"
-  appicon_path_installed="/usr/share/icons/hicolor/scalable/apps/zrythm.svg"
+  appicon_path_installed="/usr/local/share/icons/hicolor/scalable/apps/zrythm.svg"
   sudo mv "$appicon_path_installed" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
-    sudo cp "$prefix/$appicon_path_in_zip" "$appicon_path_installed"
+    sudo_copy_file "$prefix/$appicon_path_in_zip" "$appicon_path_installed"
   fi
 
   # manpage
   manpage_path_in_zip="share/man/man1/zrythm.1"
-  manpage_path_installed="/usr/share/man/man1/zrythm.1"
+  manpage_path_installed="/usr/local/share/man/man1/zrythm.1"
   sudo mv "$manpage_path_installed" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
-    sudo cp "$prefix/$manpage_path_in_zip" "$manpage_path_installed"
+    sudo_copy_file "$prefix/$manpage_path_in_zip" "$manpage_path_installed"
   fi
 
   # metainfo
   metainfo_path_in_zip="share/metainfo/org.zrythm.Zrythm.appdata.xml"
-  metainfo_path_installed="/usr/share/metainfo/org.zrythm.Zrythm-installer.appdata.xml"
+  metainfo_path_installed="/usr/local/share/metainfo/org.zrythm.Zrythm-installer.appdata.xml"
   sudo mv "$metainfo_path_installed" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
-    sudo cp "$prefix/$metainfo_path_in_zip" "$metainfo_path_installed"
+    sudo_copy_file "$prefix/$metainfo_path_in_zip" "$metainfo_path_installed"
   fi
 
   # mime type
   mimetype_path_in_zip="share/mime/packages/org.zrythm.Zrythm-mime.xml"
-  mimetype_path_installed="/usr/share/mime/packages/org.zrythm.Zrythm-mime.xml"
+  mimetype_path_installed="/usr/local/share/mime/packages/org.zrythm.Zrythm-mime.xml"
   sudo mv "$mimetype_path_installed" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
-    sudo cp "$prefix/$mimetype_path_in_zip" "$mimetype_path_installed"
+    sudo_copy_file "$prefix/$mimetype_path_in_zip" "$mimetype_path_installed"
   fi
 
   # workaround for missing libcrypt.so.1 (version 2) on arch based systems
