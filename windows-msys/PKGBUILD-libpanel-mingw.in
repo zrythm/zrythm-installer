@@ -2,7 +2,7 @@
 _realname=libpanel
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_commit='main'
+_commit='12d44e116acd367294acbced747334338d0b7a52'
 pkgver=0.1
 pkgrel=1
 pkgdesc="libpanel"
@@ -15,7 +15,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-gtk-doc")
 depends=("${MINGW_PACKAGE_PREFIX}-libadwaita")
-source=("https://gitlab.gnome.org/alex-tee/libpanel/-/archive/${_commit}/libpanel-${_commit}.tar.gz")
+source=("https://gitlab.gnome.org/GNOME/libpanel/-/archive/${_commit}/libpanel-${_commit}.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {

@@ -536,13 +536,14 @@
             "config-opts": [
                 "-Dvapi=false",
                 "-Dinstall-examples=false",
-                "-Dintrospection=disabled"
+                "-Dintrospection=disabled",
+                "-Ddocs=disabled"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/alex-tee/libpanel",
-                    "commit": "11a83c39014254540015999a262f41a4e0fc7579"
+                    "url": "https://gitlab.gnome.org/GNOME/libpanel",
+                    "commit": "12d44e116acd367294acbced747334338d0b7a52"
                 }
             ]
         },
