@@ -190,7 +190,8 @@ build_meson_wrap_project libobsd libobsd-1.1.0 -Ddefault_library=static
 build_meson_wrap_project expat expat-2.4.8 -Ddefault_library=static
 build_meson_project https://gitlab.freedesktop.org/wayland/wayland/-/archive/1.21.0/wayland-1.21.0.tar.gz -Ddefault_library=static -Ddocumentation=false -Ddtd_validation=false -Dtests=false
 build_meson_project https://gitlab.freedesktop.org/wayland/wayland-protocols/-/archive/1.26/wayland-protocols-1.26.tar.gz -Ddefault_library=static
-build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=static -Dlibedit=disabled -Dlibreadline=disabled
+build_autotools_project https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.gz/download --disable-shared --enable-static
+#build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=static -Dlibedit=disabled -Dlibreadline=disabled
 build_meson_wrap_project glib glib-2.72.2 -Ddefault_library=static -Dlibelf=disabled # enable libelf later if needed
 build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=static -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
 build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disable-shared --enable-static
