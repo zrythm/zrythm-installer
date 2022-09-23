@@ -118,3 +118,8 @@ option (
   'packages-dir', type: 'string',
   value: '/tmp/packages',
   description: 'Dir holding each package (for GNU/Linux zip)')
+
+option (
+  'gnu-linux-deps-prefix', type: 'string',
+  value: '/home/alex/local-zrythm-deps',
+  description: 'Build all dependencies if a FINISHED file does not exist in this dir')

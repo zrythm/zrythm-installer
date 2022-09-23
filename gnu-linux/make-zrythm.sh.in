@@ -30,6 +30,7 @@ zip_inner_dir_name="${zip_filename%.*}"
 zip_inner_dir="$private_dir/$zip_inner_dir_name"
 zrythm_version="@ZRYTHM_PKG_VERSION@"
 dash_trial="@DASH_TRIAL@"
+deps_prefix="@DEPS_PREFIX@"
 
 meson_build_dir="`pwd`"
 
@@ -40,6 +41,8 @@ mkdir -p "$out_file"
 mkdir -p "$private_dir"
 tar xf "$zrythm_src_tarball" --directory "$private_dir"
 pushd "$private_dir/zrythm-$zrythm_version"
+
+export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
 
 fallback_subprojects_csv=gtk4,libadwaita,libpanel,lilv,sord,serd,sratom,lv2,zix,xxhash,libcyaml,libaudec,json-glib,gtksourceview5,rtmidi,zstd,pcre,pcre2
 fallback_subprojects="`echo $fallback_subprojects_csv | tr , ' '`"

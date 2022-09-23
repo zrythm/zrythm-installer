@@ -1,0 +1,232 @@
+#! /bin/bash
+#
+# Copyright (C) 2022 Alexandros Theodotou <alex at zrythm dot org>
+#
+# This file is part of Zrythm
+#
+# Zrythm is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Zrythm is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+set -ex
+
+out_file=$1
+private_dir=$2
+meson_bin="$3"
+
+deps_prefix="@DEPS_PREFIX@"
+
+rm -rf "$out_file"
+rm -rf "$private_dir"
+
+# return if finished
+if [ -f "$deps_prefix/FINISHED" ]; then
+  touch "$out_file"
+  exit 0
+fi
+
+mkdir -p "$private_dir"
+
+rm -rf  "$deps_prefix"
+mkdir -p "$deps_prefix"
+
+pushd "$private_dir"
+
+# prepare wrapdb
+git clone https://github.com/mesonbuild/wrapdb
+pushd wrapdb
+git checkout b84a291a389b70d3a1218a729716829459f80f37
+popd # wrapdb
+
+export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
+export PATH="$PATH:$deps_prefix/bin"
+
+fetch()
+{
+  url="$1"
+  filename="`basename "$url"`"
+  cachedir="/tmp/zrythm-installer-cache-srcs"
+  mkdir -p "$cachedir"
+  if ! [ -f "$cachedir/$filename" ]; then
+    wget "$url" --directory-prefix="$cachedir"
+  fi
+  cp "$cachedir/$filename" ./"$filename"
+}
+
+build_meson_wrap_project()
+{
+  prj_name="$1"
+  shift
+  prj_dir_name="$1"
+  shift
+  opts="$@"
+  pushd wrapdb
+  "$meson_bin" subprojects download "$prj_name"
+  pushd subprojects/"$prj_dir_name"
+  "$meson_bin" setup build --wrap-mode=nofallback -Dprefix="$deps_prefix" "$@"
+  "$meson_bin" compile -C build
+  "$meson_bin" install -C build
+  popd # project
+  popd # wrapdb
+}
+
+build_meson_project()
+{
+  url="$1"
+  shift
+  opts="$@"
+  fetch "$url"
+  tar xf "`basename "$url"`"
+  prj_dir_name="`basename -s .tar.gz "$url"`"
+  prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+  pushd "$prj_dir_name"
+  "$meson_bin" setup build --wrap-mode=nofallback -Dprefix="$deps_prefix" "$@"
+  "$meson_bin" compile -C build
+  "$meson_bin" install -C build
+  popd # project
+}
+
+build_cmake_project()
+{
+  url="$1"
+  shift
+  opts="$@"
+  fetch "$url"
+  tar xf "`basename "$url"`"
+  prj_dir_name="`basename -s .tar.gz "$url"`"
+  prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+  pushd "$prj_dir_name"
+  mkdir build && pushd build
+  cmake .. -DCMAKE_INSTALL_PREFIX="$deps_prefix" "$@"
+  cmake --build .
+  cmake --install .
+  popd # build
+  popd # project
+}
+
+build_autotools_project()
+{
+  url="$1"
+  shift
+  opts="$@"
+  fetch "$url"
+  tar xf "`basename "$url"`"
+  prj_dir_name="`basename -s .tar.gz "$url"`"
+  prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+  pushd "$prj_dir_name"
+  ./configure --prefix="$deps_prefix" "$@"
+  make -j8
+  make install
+  popd # project
+}
+
+build_custom()
+{
+  url="$1"
+  config_cmd="$2"
+  make_cmd="$3"
+  install_cmd="$4"
+  fetch "$url"
+  tar xf "`basename "$url"`"
+  prj_dir_name="`basename -s .tar.gz "$url"`"
+  prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+  pushd "$prj_dir_name"
+  $config_cmd
+  $make_cmd
+  $install_cmd
+  popd # project
+}
+
+build_meson_wrap_project zlib zlib-1.2.12 -Ddefault_library=static
+build_meson_wrap_project liblzma xz-5.2.6 -Ddefault_library=static
+build_meson_wrap_project lz4 lz4-1.9.4 -Ddefault_library=static
+build_meson_wrap_project zstd zstd-1.4.5 -Ddefault_library=static
+build_meson_wrap_project xxhash xxHash-0.8.1 -Ddefault_library=static
+build_meson_wrap_project icu icu -Ddefault_library=static
+build_meson_wrap_project libxml2 libxml2-2.10.2 -Ddefault_library=static
+build_meson_wrap_project libyaml yaml-0.2.5 -Ddefault_library=static
+build_meson_wrap_project libxrender libXrender-0.9.10 -Ddefault_library=static
+build_meson_wrap_project libxcursor libXcursor-1.2.1 -Ddefault_library=static
+build_meson_wrap_project libxrandr libXrandr-1.5.2 -Ddefault_library=static
+build_meson_wrap_project libpng libpng-1.6.37 -Ddefault_library=static
+build_meson_wrap_project libjpeg-turbo libjpeg-turbo-2.1.3 -Ddefault_library=static
+build_meson_wrap_project libtiff tiff-4.4.0 -Ddefault_library=static
+build_meson_wrap_project google-brotli brotli-1.0.9 -Ddefault_library=static
+build_meson_wrap_project freetype2 freetype-2.12.1 -Ddefault_library=static -Dharfbuzz=disabled
+build_meson_wrap_project ogg libogg-1.3.5 -Ddefault_library=static
+build_meson_wrap_project flac flac-1.4.0 -Ddefault_library=static
+build_meson_wrap_project lame lame-3.100 -Ddefault_library=static
+build_meson_wrap_project vorbis libvorbis-1.3.7 -Ddefault_library=static
+build_autotools_project http://www.fftw.org/fftw-3.3.10.tar.gz --enable-threads --disable-shared --enable-static
+build_meson_wrap_project libsndfile libsndfile-1.1.0 -Ddefault_library=static -Dprograms=false
+build_cmake_project https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz -DBUILD_SHARED_LIBS=off -DLIBSAMPLERATE_EXAMPLES=0
+
+# vamp
+url="https://code.soundsoftware.ac.uk/attachments/download/2588/vamp-plugin-sdk-2.9.0.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.gz "$url"`"
+pushd "$prj_dir_name"
+./configure --prefix="$deps_prefix" --disable-programs
+make -j1 sdkstatic
+cp ./*.a $deps_prefix/lib/
+cp -r ./vamp-hostsdk $deps_prefix/include/vamp-hostsdk
+sed "s,%PREFIX%,$deps_prefix," ./pkgconfig/vamp-hostsdk.pc.in > "$deps_prefix/lib/pkgconfig/vamp-hostsdk.pc"
+popd # project
+
+build_meson_wrap_project rubberband rubberband-2.0.2 -Ddefault_library=static
+build_meson_wrap_project pcre2 pcre2-10.40 -Ddefault_library=static -Dgrep=false -Dtest=false
+build_meson_project https://gitlab.freedesktop.org/gstreamer/meson-ports/libffi/-/archive/meson/libffi-meson.tar.gz -Ddefault_library=static
+build_meson_wrap_project libobsd libobsd-1.1.0 -Ddefault_library=static
+build_meson_wrap_project expat expat-2.4.8 -Ddefault_library=static
+build_meson_project https://gitlab.freedesktop.org/wayland/wayland/-/archive/1.21.0/wayland-1.21.0.tar.gz -Ddefault_library=static -Ddocumentation=false -Ddtd_validation=false -Dtests=false
+build_meson_project https://gitlab.freedesktop.org/wayland/wayland-protocols/-/archive/1.26/wayland-protocols-1.26.tar.gz -Ddefault_library=static
+build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=static -Dlibedit=disabled -Dlibreadline=disabled
+build_meson_wrap_project glib glib-2.72.2 -Ddefault_library=static -Dlibelf=disabled # enable libelf later if needed
+build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=static -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
+build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disable-shared --enable-static
+build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.0.tar.xz -Ddefault_library=static -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
+build_meson_project https://www.cairographics.org/releases/pixman-0.40.0.tar.gz -Ddefault_library=static -Dgtk=disabled
+
+# cairo
+url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.17.6/cairo-1.17.6.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.gz "$url"`"
+prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+pushd "$prj_dir_name"
+# struct stat is reserved
+find ./ -type f -exec sed -i -e 's/struct stat/struct staat/g' {} \;
+"$meson_bin" setup build --wrap-mode=nofallback -Dprefix="$deps_prefix" -Ddefault_library=static -Dspectre=disabled -Dtests=disabled
+"$meson_bin" compile -C build
+"$meson_bin" install -C build
+popd # project
+
+build_meson_wrap_project harfbuzz harfbuzz-5.2.0 -Ddefault_library=static
+build_meson_wrap_project freetype2 freetype-2.12.1 -Ddefault_library=static
+build_meson_wrap_project epoxy libepoxy-1.5.10 -Ddefault_library=shared # fails with static: 動的オブジェクト `/usr/lib/libX11.so' に対する静的リンクが試みられました
+build_meson_project https://download.gnome.org/sources/graphene/1.10/graphene-1.10.8.tar.xz -Ddefault_library=static
+build_meson_wrap_project json-glib json-glib-1.6.6 -Ddefault_library=static
+build_meson_project https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz -Ddefault_library=static
+#build_autotools_project https://github.com/tlwg/libdatrie/releases/download/v0.2.13/libdatrie-0.2.13.tar.xz --disable-shared --enable-static
+#build_autotools_project https://github.com/tlwg/libthai/releases/download/v0.1.29/libthai-0.1.29.tar.xz --disable-shared --enable-static # missing trie_* symbols for some reason
+build_meson_project https://download.gnome.org/sources/pango/1.50/pango-1.50.10.tar.xz -Ddefault_library=static -Dintrospection=disabled -Dlibthai=disabled
+build_meson_project https://download.gnome.org/sources/gdk-pixbuf/2.42/gdk-pixbuf-2.42.9.tar.xz -Ddefault_library=static -Djpeg=enabled -Dpng=enabled -Dbuiltin_loaders=png,jpeg -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Drelocatable=true -Dman=false -Dinstalled_tests=false
+
+# OK up to here
+build_autotools_project https://download.gnome.org/sources/librsvg/2.52/librsvg-2.52.4.tar.xz --disable-gtk-doc --disable-vala --disable-introspection --disable-shared --enable-static
+build_meson_project https://download.gnome.org/sources/gtk/4.8/gtk-4.8.1.tar.xz -Ddefault_library=static
+
+popd # private dir
+
+touch "$deps_prefix/FINISHED"
+touch "$out_file"

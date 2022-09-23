@@ -17,10 +17,18 @@
 
 gnu_linux_conf = configuration_data ()
 gnu_linux_conf.merge_from (global_conf)
+gnu_linux_conf.set (
+  'DEPS_PREFIX', get_option ('gnu-linux-deps-prefix'))
 
 make_zrythm = configure_file (
   output: 'make-zrythm.sh',
   input: 'make-zrythm.sh.in',
+  configuration: gnu_linux_conf,
+  )
+
+make_zrythm_deps = configure_file (
+  output: 'make-zrythm-deps.sh',
+  input: 'make-zrythm-deps.sh.in',
   configuration: gnu_linux_conf,
   )
 
@@ -43,6 +51,15 @@ readme = configure_file (
   configuration: gnu_linux_conf,
   )
 
+zrythm_deps = custom_target (
+  'zrythm-deps-target',
+  output: 'zrythm-deps-finished',
+  command: [
+    make_zrythm_deps, '@OUTPUT@', '@PRIVATE_DIR@', meson_bin,
+    ],
+  console: true,
+  )
+
 # this target installs zrythm with prefix = /opt/... and DESTDIR in meson's
 # private dir
 # it will be copied in the installer zip
@@ -56,6 +73,7 @@ zrythm_installed_target = custom_target (
     '/opt/zrythm' + dash_trial + '-' + zrythm_pkg_ver,
     meson_bin,
     ],
+  depends: zrythm_deps,
   console: true,
   )
 
@@ -77,6 +95,10 @@ installer_zip = custom_target (
   console: true,
   )
 
+run_target (
+  'gnu-linux-zrythm-deps',
+  command: [ 'echo', 'done' ],
+  depends: zrythm_deps)
 run_target (
   'gnu-linux-packages',
   command: [ 'echo', 'done' ],
