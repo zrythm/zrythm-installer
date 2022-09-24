@@ -47,8 +47,9 @@ export PATH="$deps_prefix/bin:$PATH"
 export LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
 export CPATH="$deps_prefix/include"
 #export LDFLAGS="$(pkg-config --libs gmp libffi libcrypt) -lunistring"
+export LD_LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
 
-fallback_subprojects_csv=libadwaita,libpanel,lilv,sord,serd,sratom,zix,libcyaml,libaudec
+fallback_subprojects_csv=lilv,sord,serd,sratom,zix,libcyaml,libaudec
 fallback_subprojects="`echo $fallback_subprojects_csv | tr , ' '`"
 $meson_bin subprojects download $fallback_subprojects
 $meson_bin build \
@@ -69,7 +70,7 @@ $meson_bin build \
   -Drtaudio=disabled -Drtmidi=disabled -Dlsp_dsp=enabled \
   -Djack=disabled -Dalsa=disabled \
   -Dpulse=disabled \
-  -Dfftw3f_separate=true \
+  -Dfftw3_threads_separate=false \
   -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
   -Dcheck_updates=true -Dcompletions=false \
   -Dcarla_use_cv32_patchbay_variant=true \
@@ -85,10 +86,10 @@ destdir_w_prefix="$meson_build_dir/$out_file/$prefix"
 zrythm_bin="$destdir_w_prefix/bin/zrythm"
 
 # copy dependent libs
-#for f in `ldd "$zrythm_bin" | awk '{print $3}' | grep '/usr'` ; do
-  #f_basename=`basename "$f"`
-  #cp -L "$f" "$destdir_w_prefix/lib/x86_64-linux-gnu/$f_basename"
-#done
+for f in `ldd "$zrythm_bin" | awk '{print $3}' | grep "$deps_prefix"` ; do
+  f_basename=`basename "$f"`
+  cp -L "$f" "$destdir_w_prefix/lib/x86_64-linux-gnu/$f_basename"
+done
 #cp -L /lib/x86_64-linux-gnu/libcrypt.so.1 "$destdir_w_prefix/lib/x86_64-linux-gnu/libcrypt.so.1"
 #rm /opt/zrythm/lib/x86_64-linux-gnu/libstdc++.so* || true
 
@@ -111,12 +112,33 @@ patchelf --replace-needed $deps_prefix/lib/carla/libcarla_host-plugin.so libcarl
 # copy pixbuf loaders
 cp -r $deps_prefix/lib/x86_64-linux-gnu/gdk-pixbuf-2.0 "$destdir_w_prefix/lib/x86_64-linux-gnu/"
 cp -L $deps_prefix/lib/librsvg-2.so.2 "$destdir_w_prefix/lib/x86_64-linux-gnu/"
-sed -i "s|$deps_prefix/|$prefix/|g" "$destdir_w_prefix/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+sed -i "s|$deps_prefix/|${prefix}/|g" "$destdir_w_prefix/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+
+# copy required binaries
+mkdir -p "$destdir_w_prefix/libexec"
+cp "$deps_prefix/libexec/gio-launch-desktop" "$destdir_w_prefix/libexec/gio-launch-desktop"
 
 # copy breeze-dark
 cp -r /usr/share/icons/breeze-dark "$destdir_w_prefix/share/icons/"
 
-# compile glib schemas
+# copy other icons
+mkdir -p "$destdir_w_prefix/share/icons/hicolor/scalable/actions"
+cp "$deps_prefix/share/icons/hicolor/scalable/actions/"* "$destdir_w_prefix/share/icons/hicolor/scalable/actions/"
+
+# copy thumbnailers
+cp -r "$deps_prefix/share/thumbnailers" "$destdir_w_prefix/share/thumbnailers"
+
+# copy gtk4 stuff
+cp -r "$deps_prefix/share/gtk-4.0" "$destdir_w_prefix/share/gtk-4.0"
+
+# copy gtksourceview stuff
+cp -r "$deps_prefix/share/gtksourceview-5" "$destdir_w_prefix/share/gtksourceview-5"
+
+# copy missing LC messages
+rsync -zrahvWt --remove-source-files "$deps_prefix/share/locale/" "$destdir_w_prefix/share/locale"
+
+# copy and compile glib schemas
+cp "$deps_prefix/share/glib-2.0/schemas/"* "$destdir_w_prefix/share/glib-2.0/schemas/"
 glib-compile-schemas "$destdir_w_prefix/share/glib-2.0/schemas"
 
 # cleanup
@@ -125,4 +147,16 @@ rm -rf include
 rm -rf bin/zstd* bin/lv2* bin/s*rd* bin/unzstd bin/gtk4*
 rm -rf lib/libreproc.a lib/python3
 rm -rf lib/x86_64-linux-gnu/zrythm/carla/libcarla_standalone2.so
+
+# https://github.com/AppImageCommunity/pkg2appimage/blob/master/excludelist
+rm -rf lib/x86_64-linux-gnu/libfontconfig.so.1
+rm -rf lib/x86_64-linux-gnu/libexpat.so.1
+rm -rf lib/x86_64-linux-gnu/libp11-kit.so.0
+rm -rf lib/x86_64-linux-gnu/libz.so.1
+rm -rf lib/x86_64-linux-gnu/libfribidi.so.0
+rm -rf lib/x86_64-linux-gnu/libgmp.so.10
+
+# remove these too (verify that it still works)
+rm -rf lib/x86_64-linux-gnu/libXrender.so.1
+rm -rf lib/x86_64-linux-gnu/libfreetype.so.6
 popd
