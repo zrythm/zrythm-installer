@@ -460,14 +460,14 @@
                         "no-debuginfo": true
                     },
                     "config-opts": [
-                        "-Dtests=false",
-                        "-Dbuild-documentation=false"
+                        "-Dinstall-tests=false",
+                        "-Dgtk_dock=false"
                     ],
                     "sources": [
                         {
                             "type": "git",
                             "url": "https://gitlab.gnome.org/GNOME/pango",
-                            "commit": "a05c3549709b92294194c335cb7d5190f14359bf"
+                            "commit": "8d4e58f15b6d608d1da7268371f7efde7b35e950"
                         }
                     ],
                     "cleanup": [
