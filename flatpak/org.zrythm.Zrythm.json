@@ -1,7 +1,7 @@
 {
     "app-id": "org.zrythm.Zrythm",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "42",
+    "runtime-version": "43",
     "sdk": "org.gnome.Sdk",
     "command": "zrythm_launch",
     "rename-icon": "zrythm",
@@ -19,9 +19,9 @@
     "add-extensions": {
         "org.freedesktop.LinuxAudio.Plugins": {
             "directory": "extensions/Plugins",
-            "version": "21.08",
+            "version": "22.08",
             "add-ld-path": "lib",
-            "merge-dirs": "ladspa;dssi;lv2;lxvst;vst3",
+            "merge-dirs": "ladspa;dssi;lv2;vst;vst3",
             "subdirectories": true,
             "no-autodownload": true
         }
@@ -40,17 +40,18 @@
     "modules": [
         {
             "name": "vamp-plugin-sdk",
-            "buildsystem": "simple",
-            "build-commands": [
-                "./configure --prefix=/app",
-                "make -j 1 host",
-                "make install"
-            ],
+            "buildsystem": "autotools",
+            "no-parallel-make": true,
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://archive.org/download/vamp-plugin-sdk-2.8.0-source/vamp-plugin-sdk-2.8.0.tar.gz",
-                    "sha256": "dcc96ae894795822398789f251c2c7effa602fc60e9dd6c7a5c5d2e7a513526c"
+                    "type": "git",
+                    "url": "https://github.com/c4dm/vamp-plugin-sdk",
+                    "commit": "67adfc2bf9486912a0fce5123cf54360ea2678bc",
+                    "tag": "vamp-plugin-sdk-v2.10",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^vamp-plugin-sdk-v([\\d.]+)$"
+                    }
                 }
             ],
             "post-install": [
@@ -68,33 +69,8 @@
         "shared-modules/linux-audio/jack2.json",
         "shared-modules/linux-audio/liblo.json",
         {
-            "name": "libatomic_ops",
-            "buildsystem": "autotools",
-            "config-opts": [],
-            "build-options": {
-                "no-debuginfo": true
-            },
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/ivmai/libatomic_ops/releases/download/v7.6.10/libatomic_ops-7.6.10.tar.gz",
-                    "sha256": "587edf60817f56daf1e1ab38a4b3c729b8e846ff67b4f62a6157183708f099af"
-                }
-            ],
-            "cleanup": [
-                "*.a",
-                "*.la",
-                "/include",
-                "/share/info",
-                "/share/man",
-                "/share/aclocal",
-                "/lib/pkgconfig"
-            ]
-        },
-        {
             "name": "bdwgc",
             "buildsystem": "autotools",
-            "config-opts": [],
             "build-options": {
                 "no-debuginfo": true
             },
@@ -102,7 +78,15 @@
                 {
                     "type": "git",
                     "url": "https://github.com/ivmai/bdwgc.git",
-                    "tag": "v7.6.6"
+                    "commit": "cd1fbc1dbfd2cc888436944dd2784f39820698d7",
+                    "tag": "v8.2.2",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/ivmai/bdwgc/releases/latest",
+                        "tag-query": ".tag_name",
+                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                        "timestamp-query": ".published_at"
+                    }
                 }
             ],
             "cleanup": [
@@ -116,9 +100,10 @@
         },
         {
             "name": "guile",
+            "buildsystem": "autotools",
             "cleanup": [
                 "/bin",
-                "/lib/libguile-3.0.so.1.2.0-gdb.scm"
+                "/lib/libguile-3.0.so.1.5.0-gdb.scm"
             ],
             "build-options": {
                 "no-debuginfo": true
@@ -126,8 +111,47 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://ftp.gnu.org/gnu/guile/guile-3.0.4.tar.xz",
-                    "sha256": "6b7947dc2e3d115983846a268b8f5753c12fd5547e42fbf2b97d75a3b79f0d31"
+                    "url": "https://ftp.gnu.org/gnu/guile/guile-3.0.8.tar.xz",
+                    "sha256": "daa7060a56f2804e9b74c8d7e7fe8beed12b43aab2789a38585183fcc17b8a13",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 1277,
+                        "stable-only": true,
+                        "url-template": "https://ftp.gnu.org/gnu/guile/guile-$version.tar.xz"
+                    }
+                }
+            ],
+            "modules": [
+                {
+                    "name": "libatomic_ops",
+                    "buildsystem": "autotools",
+                    "build-options": {
+                        "no-debuginfo": true
+                    },
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/ivmai/libatomic_ops",
+                            "commit": "7c5a50620b9216e7364c215ecde1120747c3708d",
+                            "tag": "v7.6.14",
+                            "x-checker-data": {
+                                "type": "json",
+                                "url": "https://api.github.com/repos/ivmai/libatomic_ops/releases/latest",
+                                "tag-query": ".tag_name",
+                                "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                                "timestamp-query": ".published_at"
+                            }
+                        }
+                    ],
+                    "cleanup": [
+                        "*.a",
+                        "*.la",
+                        "/include",
+                        "/share/info",
+                        "/share/man",
+                        "/share/aclocal",
+                        "/lib/pkgconfig"
+                    ]
                 }
             ]
         },
@@ -320,7 +344,13 @@
                 {
                     "type": "archive",
                     "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.4/lsp-dsp-lib-src-1.0.4.tar.gz",
-                    "sha256": "7bb5411666af51a7329c8d0f907d00bb25e3ec2ee3e99680353d5f6f5356d962"
+                    "sha256": "7bb5411666af51a7329c8d0f907d00bb25e3ec2ee3e99680353d5f6f5356d962",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/lsp-plugins/lsp-dsp-lib/releases/latest",
+                        "version-query": ".tag_name",
+                        "url-query": ".assets[] | select(.name==\"lsp-dsp-lib-src-\" + $version + \".tar.gz\") | .browser_download_url"
+                    }
                 }
             ]
         },
@@ -415,7 +445,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/libadwaita",
-                    "commit": "7387b453a4c93fbb60d68ec009af6f719fe8bab9"
+                    "commit": "a905117bd2150de9e85d65f8cdce8d8fb001b89e"
                 }
             ],
             "cleanup": [
@@ -499,7 +529,7 @@
                         {
                             "type": "git",
                             "url": "https://gitlab.gnome.org/GNOME/gtk",
-                            "commit": "924da0e84b3969d1eda80e3bcf2d3b8ab6ce6085"
+                            "commit": "3a941eff4aa0ad66e0aa34e6528bc4d78c5e5d5e"
                         }
                     ],
                     "cleanup": [
@@ -543,7 +573,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/libpanel",
-                    "commit": "12d44e116acd367294acbced747334338d0b7a52"
+                    "commit": "1403a020e5d65e21bc0e16133aeb2b6e7cdca2de"
                 }
             ]
         },
