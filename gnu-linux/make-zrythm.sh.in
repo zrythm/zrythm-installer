@@ -24,6 +24,7 @@ private_dir=$2
 zrythm_src_tarball=$3
 prefix="$4"
 meson_bin="$5"
+zplugins_tarball="$6"
 
 zip_filename=`basename $out_file`
 zip_inner_dir_name="${zip_filename%.*}"
@@ -31,6 +32,7 @@ zip_inner_dir="$private_dir/$zip_inner_dir_name"
 zrythm_version="@ZRYTHM_PKG_VERSION@"
 dash_trial="@DASH_TRIAL@"
 deps_prefix="@DEPS_PREFIX@"
+zplugins_ver="@ZPLUGINS_VER@"
 
 meson_build_dir="`pwd`"
 
@@ -40,7 +42,8 @@ rm -rf "$private_dir"
 mkdir -p "$out_file"
 mkdir -p "$private_dir"
 tar xf "$zrythm_src_tarball" --directory "$private_dir"
-pushd "$private_dir/zrythm-$zrythm_version"
+tar xf "$zplugins_tarball" --directory "$private_dir"
+mv "$private_dir/zplugins" "$private_dir/zplugins-$zplugins_ver"
 
 export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
 export PATH="$deps_prefix/bin:$PATH"
@@ -49,6 +52,20 @@ export CPATH="$deps_prefix/include"
 #export LDFLAGS="$(pkg-config --libs gmp libffi libcrypt) -lunistring"
 export LD_LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
 
+# make zplugins
+if [[ "@TRIAL_TRUE_FALSE@" == "false" ]]; then
+  pushd "$private_dir/zplugins-$zplugins_ver"
+  "$meson_bin" build --buildtype=debugoptimized -Dprefix="$prefix" \
+    -Dlv2dir="lib/x86_64-linux-gnu/zrythm/lv2" \
+    -Dplugins=Chordz,Chorus,EQ,LFO,LimiterSP,PhaserSP,PitchSP,Saturator,Saw \
+    -Dlv2_core_path="$prefix/lib/lv2"
+  ninja -C build -v
+  "$meson_bin" install -C build --destdir="$meson_build_dir/$out_file"
+  popd
+fi
+
+# make zrythm
+pushd "$private_dir/zrythm-$zrythm_version"
 fallback_subprojects_csv=lilv,sord,serd,sratom,zix,libcyaml,libaudec
 fallback_subprojects="`echo $fallback_subprojects_csv | tr , ' '`"
 $meson_bin subprojects download $fallback_subprojects
