@@ -23,7 +23,8 @@ pkgver=0.16.4
 pkgrel=1
 arch=('any')
 pkgdesc='sord'
-depends=("$MINGW_PACKAGE_PREFIX-serd")
+depends=("$MINGW_PACKAGE_PREFIX-serd"
+         "${MINGW_PACKAGE_PREFIX}-pcre")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "python")
