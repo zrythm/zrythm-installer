@@ -518,12 +518,12 @@
                         "no-debuginfo": true
                     },
                     "config-opts": [
-                        "-Dbuild-documentation=false",
+                        "-Dmedia-gstreamer=disabled",
+                        "-Dprint-cups=disabled",
                         "-Dintrospection=disabled",
                         "-Dgtk_doc=false",
-                        "-Dtests=false",
-                        "-Dexamples=false",
-                        "-Dvapi=false"
+                        "-Dbuild-tests=false",
+                        "-Dbuild-examples=false"
                     ],
                     "sources": [
                         {
