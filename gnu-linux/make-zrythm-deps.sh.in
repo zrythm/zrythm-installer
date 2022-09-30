@@ -36,8 +36,8 @@ fi
 
 mkdir -p "$private_dir"
 
-rm -rf "$deps_prefix"
-mkdir -p "$deps_prefix"
+#rm -rf "$deps_prefix"
+#mkdir -p "$deps_prefix"
 
 pushd "$private_dir"
 
@@ -161,6 +161,7 @@ cleanup_pc_r() {
   find "$deps_prefix" -name '*.pc' -type f -exec sed -i -e 's| -R| -Wl,-rpath,|g' {} \;
 }
 
+aaa() {
 build_autotools_project https://ftp.gnu.org/gnu/libunistring/libunistring-1.0.tar.gz --disable-static --enable-shared
 build_meson_project https://gitlab.freedesktop.org/gstreamer/meson-ports/libffi/-/archive/meson/libffi-meson.tar.gz -Ddefault_library=shared
 build_autotools_project https://www.hboehm.info/gc/gc_source/gc-8.2.2.tar.gz --disable-static --enable-shared
@@ -405,6 +406,14 @@ build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.7/
 build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
 build_meson_project https://download.gnome.org/sources/libadwaita/1.2/libadwaita-1.2.0.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
 build_meson_project https://download.gnome.org/sources/libpanel/1.0/libpanel-1.0.1.tar.xz -Ddefault_library=shared -Dvapi=false -Ddocs=disabled -Dintrospection=disabled -Dc_std=gnu11 -Dinstall-examples=true
+}
+
+# pulse
+build_meson_project https://freedesktop.org/software/pulseaudio/releases/pulseaudio-16.1.tar.gz -Ddefault_library=shared -Ddaemon=false -Ddoxygen=false -Dgcov=false -Dman=false -Dtests=false -Dalsa=enabled -Dgtk=disabled -Dasyncns=disabled -Davahi=disabled -Dbluez5=disabled -Dbluez5-gstreamer=disabled -Dbluez5-native-headset=false -Dbluez5-ofono-headset=false -Ddbus=disabled -Delogind=disabled -Dfftw=disabled -Dglib=disabled -Dgsettings=disabled -Dgstreamer=disabled -Dhal-compat=false -Dipv6=false -Djack=disabled -Dlirc=disabled -Dopenssl=disabled -Dorc=disabled -Doss-output=disabled -Dsoxr=disabled -Dspeex=disabled -Dsystemd=disabled -Dtcpwrap=disabled -Dudev=disabled -Dvalgrind=disabled -Dx11=disabled -Dwebrtc-aec=disabled -Dbashcompletiondir=no -Dzshcompletiondir=no
+mv "$deps_prefix/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so" "$deps_prefix/lib/x86_64-linux-gnu/"
+
+build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.2.0.tar.gz -Ddefault_library=shared -Djack=disabled -Dalsa=enabled -Dpulse=enabled
+build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
 
 popd # private dir
 

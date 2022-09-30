@@ -67,9 +67,9 @@ $meson_bin build \
   -Dmanpage=true \
   -Dgraphviz=disabled \
   -Dvamp_static=true \
-  -Drtaudio=disabled -Drtmidi=disabled -Dlsp_dsp=enabled \
-  -Djack=disabled -Dalsa=disabled \
-  -Dpulse=disabled \
+  -Drtaudio=enabled -Drtmidi=enabled -Dlsp_dsp=enabled \
+  -Djack=enabled -Dalsa=enabled \
+  -Dpulse=enabled \
   -Dfftw3_threads_separate=false \
   -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
   -Dcheck_updates=true -Dcompletions=false \
