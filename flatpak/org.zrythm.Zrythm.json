@@ -461,7 +461,7 @@
                     },
                     "config-opts": [
                         "-Dinstall-tests=false",
-                        "-Dgtk_dock=false"
+                        "-Dgtk_doc=false"
                     ],
                     "sources": [
                         {
