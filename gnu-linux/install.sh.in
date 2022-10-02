@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 #
 # Copyright (C) 2019-2020, 2022 Alexandros Theodotou <alex at zrythm dot org>
 #
@@ -21,7 +21,7 @@ set -ex
 
 uninstall=0
 uninstall_prefix_txt=""
-if [[ "$1" = "-u" ]]; then
+if [ "$1" = "-u" ]; then
   uninstall=1
   uninstall_prefix_txt="un"
 fi
@@ -33,7 +33,7 @@ zenity_width=360
 have_zenity=0
 command -v zenity && have_zenity=1 || true
 
-if [[ -z "$XDG_DATA_HOME" ]]; then
+if [ -z "$XDG_DATA_HOME" ]; then
   XDG_DATA_HOME="$HOME/.local/share"
 fi
 trash_dir="$XDG_DATA_HOME/Trash"
@@ -85,8 +85,9 @@ if [ $have_zenity -ne 0 ]; then
     proceed=1
   fi
 else
-  read -p "$proceed_txt (type Y or y): " -n 1 -r
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
+  echo "$proceed_txt (type Y or y): " | tr -d '\n' &&
+  read -r
+  if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     proceed=1
   fi
 fi
