@@ -80,8 +80,7 @@ print_install_success()
 proceed=0
 proceed_txt="Proceed with the ${uninstall_prefix_txt}installation of Zrythm$trial v$zrythm_ver?"
 if [ $have_zenity -ne 0 ]; then
-  zenity --question --text="$proceed_txt" --width $zenity_width
-  if [ $? -eq 0 ]; then
+  if zenity --question --text="$proceed_txt" --width $zenity_width; then
     proceed=1
   fi
 else
