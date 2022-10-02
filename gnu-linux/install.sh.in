@@ -95,7 +95,7 @@ sudo_copy_file()
 {
   src_path="$1"
   dest_path="$2"
-  sudo mkdir -p `dirname "$dest_path"`
+  sudo mkdir -p "$(dirname "$dest_path")"
   sudo cp "$src_path" "$dest_path"
 }
 
