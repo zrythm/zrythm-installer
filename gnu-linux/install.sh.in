@@ -31,7 +31,7 @@ trial="@DASH_TRIAL@"
 
 zenity_width=360
 have_zenity=0
-command -v zenity && have_zenity=1 || true
+command -v zenity > /dev/null && have_zenity=1 || true
 
 if [ -z "$XDG_DATA_HOME" ]; then
   XDG_DATA_HOME="$HOME/.local/share"
