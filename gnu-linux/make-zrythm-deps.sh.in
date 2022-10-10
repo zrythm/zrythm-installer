@@ -388,10 +388,10 @@ build_meson_project https://download.gnome.org/sources/gtk/4.8/gtk-4.8.1.tar.xz 
 build_meson_project https://download.gnome.org/sources/gtksourceview/5.5/gtksourceview-5.5.1.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dvapi=false -Dinstall_tests=true
 
 # carla
-url="https://github.com/falkTX/Carla/archive/refs/tags/v2.5.0.tar.gz"
+url="https://github.com/falkTX/Carla/archive/@CARLA_GIT_VER@.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
-prj_dir_name="Carla-2.5.0"
+prj_dir_name="Carla-@CARLA_GIT_VER@"
 pushd "$prj_dir_name"
 sed -i -e 's|PARAMETER_IS_AUTOMABLE = PARAMETER_IS_AUTOMATABLE|PARAMETER_IS_AUTOMABLE = 0x020|' source/backend/CarlaBackend.h
 args="HAVE_SDL1=false HAVE_SDL2=false"
