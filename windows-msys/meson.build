@@ -52,6 +52,8 @@ windows_msys_conf.set (
   'LIBADWAITA_VER', libadwaita_ver)
 windows_msys_conf.set (
   'LIBPANEL_VER', libpanel_ver)
+windows_msys_conf.set (
+  'LSP_DSP_LIB_VER', lsp_dsp_lib_ver)
 windows_msys_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
 
 mingw_zrythm_pkgbuild = configure_file (
@@ -82,6 +84,11 @@ mingw_libadwaita_pkgbuild = configure_file (
 mingw_libpanel_pkgbuild = configure_file (
   output: 'PKGBUILD-libpanel-mingw',
   input: 'PKGBUILD-libpanel-mingw.in',
+  configuration: windows_msys_conf,
+  )
+mingw_lsp_dsp_lib_pkgbuild = configure_file (
+  output: 'PKGBUILD-lsp-dsp-lib-mingw',
+  input: 'PKGBUILD-lsp-dsp-lib-mingw.in',
   configuration: windows_msys_conf,
   )
 
@@ -295,6 +302,19 @@ run_target (
   command: [ 'echo', 'done' ],
   depends: libpanel_pkg)
 
+lsp_dsp_lib_pkg = custom_target (
+  'mingw-lsp-dsp-lib',
+  output: 'lsp-dsp-lib.pkg.tar.zst',
+  input: [ make_mingw_pkg, mingw_lsp_dsp_lib_pkgbuild, ],
+  command: make_mingw_pkg_cmd,
+  console: true,
+  install: false,
+  )
+run_target (
+  'run-mingw-lsp-dsp-lib',
+  command: [ 'echo', 'done' ],
+  depends: lsp_dsp_lib_pkg)
+
 mingw_zrythm_pkg = custom_target (
   'mingw-zrythm-pkg',
   output: 'zrythm' + dash_trial + '.pkg.tar.zst',
@@ -309,7 +329,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lilv_pkg,
+    lilv_pkg, lsp_dsp_lib_pkg,
     ],
   console: true,
   install: false,
@@ -328,16 +348,17 @@ windows_chroot_target = custom_target (
     make_windows_chroot, zrythm_src_tarball,
     carla_packages[0],
     carla_packages[1],
-    sratom_pkg, lilv_pkg,
+    sratom_pkg, lilv_pkg, lsp_dsp_lib_pkg,
     mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
-    '"$7" "$8" "$9" "${10}" "${11}" "${12}"',
+    '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
+    '@INPUT7@',
     ],
   console: true,
   install: false,
