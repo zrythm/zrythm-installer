@@ -309,7 +309,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lilv_pkg, libpanel_pkg,
+    lilv_pkg,
     ],
   console: true,
   install: false,
@@ -329,16 +329,15 @@ windows_chroot_target = custom_target (
     carla_packages[0],
     carla_packages[1],
     sratom_pkg, lilv_pkg,
-    libpanel_pkg, mingw_zrythm_pkg,
+    mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
-    '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"',
+    '"$7" "$8" "$9" "${10}" "${11}" "${12}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
-    '@INPUT7@',
     ],
   console: true,
   install: false,
