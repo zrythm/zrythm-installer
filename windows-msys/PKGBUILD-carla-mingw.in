@@ -24,6 +24,8 @@ pkgrel=1
 arch=('any')
 pkgdesc='carla'
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-fluidsynth"
+             "${MINGW_PACKAGE_PREFIX}-libogg"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 options=('!strip')
 license=("GPL2")
