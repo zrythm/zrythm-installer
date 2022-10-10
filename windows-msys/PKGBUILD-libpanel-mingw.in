@@ -2,8 +2,8 @@
 _realname=libpanel
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_commit='1403a020e5d65e21bc0e16133aeb2b6e7cdca2de'
-pkgver=1.0.1
+_commit='@LIBPANEL_VER@'
+pkgver=1.0.0
 pkgrel=1
 pkgdesc="libpanel"
 arch=('any')

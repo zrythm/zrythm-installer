@@ -2,8 +2,8 @@
 _realname=libadwaita
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_commit='main'
-pkgver=0.1
+_commit='@LIBADWAITA_VER@'
+pkgver=1.2.0
 pkgrel=1
 pkgdesc="Libadwaita"
 arch=('any')

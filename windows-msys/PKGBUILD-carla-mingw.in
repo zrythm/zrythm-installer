@@ -23,9 +23,8 @@ pkgver=2.3.0
 pkgrel=1
 arch=('any')
 pkgdesc='carla'
+depends=("${MINGW_PACKAGE_PREFIX}-fluidsynth")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "${MINGW_PACKAGE_PREFIX}-fluidsynth"
-             "${MINGW_PACKAGE_PREFIX}-libogg"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 options=('!strip')
 license=("GPL2")
@@ -48,12 +47,22 @@ build() {
 
   export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
   export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
-  export LDFLAGS="$LDFLAGS -logg"
+  #export LDFLAGS="$LDFLAGS $(pkg-config --libs fluidsynth)"
+
+  declare -a common_args
+  common_args+=("SHELL=$SHELL -x")
+  common_args+=("HAVE_X11=false")
+  # fluidsynth doesn't have static libs installed that carla needs
+  common_args+=("HAVE_FLUIDSYNTH=false")
+  common_args+=("HAVE_SDL=false")
+  common_args+=("HAVE_SDL2=false")
+  common_args+=("PREFIX=${MINGW_PREFIX}")
+  echo "${common_args[@]}"
 
   if [ "$MINGW_ARCH" = "mingw32" ]; then
-    make win32r HAVE_X11=false PREFIX=${MINGW_PREFIX}
+    make "${common_args[@]}" win32r
   else
-    make HAVE_X11=false PREFIX=${MINGW_PREFIX}
+    make "${common_args[@]}"
   fi
 }
 

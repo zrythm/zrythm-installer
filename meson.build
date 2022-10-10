@@ -36,6 +36,9 @@ zrythm_pkg_semver = get_option ('zrythm-pkg-semver')
 zplugins_ver = get_option ('zplugins-ver')
 carla_git_ver = get_option ('carla-git-ver')
 lsp_dsp_lib_ver = get_option ('lsp-dsp-lib-ver')
+gtk_ver = get_option ('gtk-ver')
+libadwaita_ver = get_option ('libadwaita-ver')
+libpanel_ver = get_option ('libpanel-ver')
 build_trial = get_option ('build-trial')
 zrythm_https_repo = 'https://git.zrythm.org/zrythm/zrythm'
 orig_inner_dir_name = 'zrythm-' + zrythm_git_ver
@@ -141,6 +144,12 @@ global_conf.set (
   'LILV_VERSION', get_option ('lilv-ver'))
 global_conf.set (
   'JACK_VERSION', get_option ('jack-ver'))
+global_conf.set (
+  'GTK_VER', gtk_ver)
+global_conf.set (
+  'LIBADWAITA_VER', libadwaita_ver)
+global_conf.set (
+  'LIBPANEL_VER', libpanel_ver)
 global_conf.set (
   'SUPPORTING_TEXT',
   build_trial ? 'trying out' : 'supporting')

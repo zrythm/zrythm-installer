@@ -1,63 +1,47 @@
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
-#
-# This file is part of Zrythm
-#
-# Zrythm is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Zrythm is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
-#
-# Maintainer: Alexandros Theodotou <alex at zrythm dot org>
+# Maintainer: Alexandros Theodotou <alex@zrythm.org>
+
 _realname=sratom
 pkgbase=mingw-w64-${_realname}
-pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.6.4
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=0.6.14
 pkgrel=1
+pkgdesc='A C library for serializing LV2 atoms to and from RDF (mingw-w64)'
 arch=('any')
-pkgdesc='sratom'
-depends=("$MINGW_PACKAGE_PREFIX-sord")
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "${MINGW_PACKAGE_PREFIX}-pkg-config"
-             "python")
-options=('strip' 'staticlibs')
-license=("AGPL3")
-url="https://www.zrythm.org"
-source=("http://download.drobilla.net/$_realname-$pkgver.tar.bz2")
-sha256sums=('SKIP')
-
-prepare() {
-  cd ${_realname}-${pkgver}
-
-  [[ -x ./waf ]] || /usr/bin/python ./bootstrap.py
-  sed -i 's:bin/env python$:bin/env python:' waf
-}
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32' 'clangarm64')
+url='https://drobilla.net/software/sratom.html'
+license=('spdx:ISC')
+depends=("${MINGW_PACKAGE_PREFIX}-lv2"
+         "${MINGW_PACKAGE_PREFIX}-sord")
+makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
+             "${MINGW_PACKAGE_PREFIX}-meson"
+             "${MINGW_PACKAGE_PREFIX}-pkgconf")
+source=(https://download.drobilla.net/${_realname}-${pkgver}.tar.xz{,.sig})
+sha256sums=('9982faf40db83aedd9b3850e499fecd6852b8b4ba6dede514013655cffaca1e6'
+            'SKIP')
+validpgpkeys=('907D226E7E13FA337F014A083672782A9BF368F3') # David Robillard <d@drobilla.net>
 
 build() {
-  cd "${srcdir}/${_realname}-${pkgver}"
+  mkdir -p build-${MSYSTEM} && cd build-${MSYSTEM}
 
-  DEST_OS=win32 \
-  TARGET=${MINGW_CHOST} \
-  PKG_CONFIG=${MINGW_PREFIX}/bin/pkg-config \
-  CC=gcc PERL=/usr/bin/perl \
-  AR=${MINGW_PREFIX}/bin/ar \
-  WINDRES=${MINGW_PREFIX}/bin/windres \
-  RST2MAN=${MINGW_PREFIX}/bin/rst2man3 \
-  /usr/bin/python ./waf configure \
-    --prefix=${MINGW_PREFIX} \
-    --static --no-shared
-  /usr/bin/python ./waf build
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+    ${MINGW_PREFIX}/bin/meson \
+      --prefix="${MINGW_PREFIX}" \
+      --wrap-mode=nodownload \
+      --auto-features=enabled \
+      --buildtype=plain \
+      -Ddocs=disabled \
+      ../${_realname}-${pkgver}
+
+  ${MINGW_PREFIX}/bin/meson compile
+}
+
+check() {
+  cd "${srcdir}/build-${MSYSTEM}"
+  ${MINGW_PREFIX}/bin/meson test
 }
 
 package() {
-  cd "${srcdir}/${_realname}-${pkgver}"
-  export PYTHON=${MINGW_PREFIX}/bin/python
-  /usr/bin/python ./waf install --destdir="${pkgdir}"
+  cd "${srcdir}/build-${MSYSTEM}"
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/meson install
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
 }

@@ -47,7 +47,11 @@ windows_msys_conf.set (
 windows_msys_conf.set (
   'MESON_SOURCE_ROOT', meson_src_root)
 windows_msys_conf.set (
-  'LSP_DSP_LIB_VER', lsp_dsp_lib_ver)
+  'GTK_VER', gtk_ver)
+windows_msys_conf.set (
+  'LIBADWAITA_VER', libadwaita_ver)
+windows_msys_conf.set (
+  'LIBPANEL_VER', libpanel_ver)
 windows_msys_conf.set ('IS_TAG', is_tag ? 'true' : 'false')
 
 mingw_zrythm_pkgbuild = configure_file (
@@ -78,11 +82,6 @@ mingw_libadwaita_pkgbuild = configure_file (
 mingw_libpanel_pkgbuild = configure_file (
   output: 'PKGBUILD-libpanel-mingw',
   input: 'PKGBUILD-libpanel-mingw.in',
-  configuration: windows_msys_conf,
-  )
-mingw_lsp_dsp_lib_pkgbuild = configure_file (
-  output: 'PKGBUILD-lsp-dsp-lib-mingw',
-  input: 'PKGBUILD-lsp-dsp-lib-mingw.in',
   configuration: windows_msys_conf,
   )
 
@@ -223,29 +222,11 @@ foreach arch : [ 'ucrt64', 'mingw32' ]
     command: [ 'echo', 'done', ],
     depends: carla_pkg_target)
 endforeach
-serd_pkg = custom_target (
-  'mingw-serd',
-  output: 'serd.pkg.tar.zst',
-  input: [ make_mingw_pkg, 'PKGBUILD-serd-mingw', ],
-  command: make_mingw_pkg_cmd,
-  console: true,
-  install: false,
-  )
-sord_pkg = custom_target (
-  'mingw-sord',
-  output: 'sord.pkg.tar.zst',
-  input: [ make_mingw_pkg, 'PKGBUILD-sord-mingw', ],
-  command: make_mingw_pkg_cmd,
-  depends: serd_pkg,
-  console: true,
-  install: false,
-  )
 sratom_pkg = custom_target (
   'mingw-sratom',
   output: 'sratom.pkg.tar.zst',
   input: [ make_mingw_pkg, 'PKGBUILD-sratom-mingw', ],
   command: make_mingw_pkg_cmd,
-  depends: sord_pkg,
   console: true,
   install: false,
   )
@@ -262,14 +243,6 @@ run_target (
   'run-mingw-lilv',
   command: [ 'echo', 'done' ],
   depends: lilv_pkg)
-lsp_dsp_lib_pkg = custom_target (
-  'mingw-lsp-dsp-lib',
-  output: 'lsp-dsp-lib.pkg.tar.zst',
-  input: [ make_mingw_pkg, mingw_lsp_dsp_lib_pkgbuild, ],
-  command: make_mingw_pkg_cmd,
-  console: true,
-  install: false,
-  )
 cairo_pkg = custom_target (
   'mingw-cairo',
   output: 'cairo.pkg.tar.zst',
@@ -336,7 +309,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lilv_pkg, lsp_dsp_lib_pkg, libpanel_pkg,
+    lilv_pkg, libpanel_pkg,
     ],
   console: true,
   install: false,
@@ -355,19 +328,17 @@ windows_chroot_target = custom_target (
     make_windows_chroot, zrythm_src_tarball,
     carla_packages[0],
     carla_packages[1],
-    serd_pkg, sord_pkg,
     sratom_pkg, lilv_pkg,
-    lsp_dsp_lib_pkg, libpanel_pkg, mingw_zrythm_pkg,
+    libpanel_pkg, mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
-    '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" ' +
-    '"${14}" "${15}" "${16}"',
+    '"$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
     '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
-    '@INPUT7@', '@INPUT8@', '@INPUT9@', '@INPUT10@',
+    '@INPUT7@',
     ],
   console: true,
   install: false,

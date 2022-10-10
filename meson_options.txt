@@ -47,7 +47,7 @@ option (
 
 option (
   'carla-git-ver', type: 'string',
-  value: '7d23ab72be1f5fc541e919ad98c63f5ee2c9b94c',
+  value: 'f0b1c507091902e7f500adf55706c13e590c837e',
   description: 'Carla version')
 
 option (
@@ -108,6 +108,21 @@ option (
   'jack-ver', type: 'string',
   value: '1.9.14.r1',
   description: 'JACK version')
+
+option (
+  'gtk-ver', type: 'string',
+  value: '4.8.1',
+  description: 'GTK git version')
+
+option (
+  'libadwaita-ver', type: 'string',
+  value: '1.2.0',
+  description: 'libadwaita git version')
+
+option (
+  'libpanel-ver', type: 'string',
+  value: '1.0.0',
+  description: 'libpanel git version')
 
 option (
   'breeze-dark-path', type: 'string',
