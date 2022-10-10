@@ -15,10 +15,8 @@ depends=("${MINGW_PACKAGE_PREFIX}-libsndfile"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-pkgconf")
-source=(https://download.drobilla.net/${_realname}-${pkgver}.tar.xz{,.sig})
-sha256sums=('4fb082b9b8b286ea92bbb71bde6b75624cecab6df0cc639ee75a2a096212eebc'
-            'SKIP')
-validpgpkeys=('907D226E7E13FA337F014A083672782A9BF368F3') # David Robillard <d@drobilla.net>
+source=(https://download.drobilla.net/${_realname}-${pkgver}.tar.xz)
+sha256sums=('4fb082b9b8b286ea92bbb71bde6b75624cecab6df0cc639ee75a2a096212eebc')
 
 build() {
   mkdir -p build-${MSYSTEM} && cd build-${MSYSTEM}
