@@ -27,6 +27,9 @@ copy_dll_deps_sh="$5"
 rcedit_x64_exe="$6"
 dll_dir="$7"
 breeze_dark_path="$8"
+carla_zip_path="$9"
+mingw_packages_zip_path="${10}"
+mingw_packages_commit="${11}"
 
 dash_trial="@DASH_TRIAL@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
@@ -61,12 +64,12 @@ main () {
   rm -rf $out_dir
 
   # create third party info
-  mingw_packages_commit=`git ls-remote https://github.com/msys2/MINGW-packages | grep HEAD | head -n1 | awk '{print $1;}'`
+  #mingw_packages_commit=`git ls-remote https://github.com/msys2/MINGW-packages | grep HEAD | head -n1 | awk '{print $1;}'`
   thirdparty_dir=$dist_dir/third_party
   mkdir -p $thirdparty_dir
-  wget "https://github.com/msys2/MINGW-packages/archive/$mingw_packages_commit.zip" -P $thirdparty_dir/
+  cp "$mingw_packages_zip_path" "$thirdparty_dir"/
   echo "https://github.com/msys2/MINGW-packages/tree/$mingw_packages_commit" > $dist_dir/THIRDPARTY_INFO
-  wget "https://github.com/falkTX/Carla/archive/@CARLA_GIT_VER@.zip" -P $thirdparty_dir/
+  cp "$carla_zip_path" "$thirdparty_dir"/
   echo "https://github.com/falkTX/Carla/tree/@CARLA_GIT_VER@.zip" >> $dist_dir/THIRDPARTY_INFO
 
   # create sources distribution

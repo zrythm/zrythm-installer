@@ -23,6 +23,7 @@ project (
 cc = meson.get_compiler ('c')
 
 bash = find_program ('bash')
+git = find_program ('git')
 wget = find_program ('wget')
 meson_bin = get_option ('meson-path')
 

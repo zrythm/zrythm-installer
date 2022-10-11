@@ -387,6 +387,23 @@ run_target (
   command: [ 'echo', 'done' ],
   depends: dll_dir)
 
+mingw_packages_commit_cmd = run_command (
+  bash, '-c', 'git ls-remote "https://github.com/msys2/MINGW-packages" | grep HEAD | head -n1 | awk \'{print $$1;}\'',
+  '_ignored',
+  capture: true, check: true)
+mingw_packages_commit = mingw_packages_commit_cmd.stdout().split ('HEAD')[0].strip()
+mingw_packages_zip = custom_target (
+  'mingw-packages-zip',
+  output: 'MINGW-packages-' + mingw_packages_commit + '.zip',
+  command: [
+    bash, '-c', 'wget "$1" -O "$2"',
+    '_ignored',
+    'https://github.com/falkTX/Carla/archive/' + mingw_packages_commit + '.zip',
+    '@OUTPUT@',
+    ],
+  install: false,
+  )
+
 installer_dist_dir = custom_target (
   'windows-installer-dist-dir',
   output: 'installer-dist',
@@ -394,15 +411,18 @@ installer_dist_dir = custom_target (
     make_dist_dir, zrythm_src_tarball,
     'copy-dll-deps.sh',
     rcedit_x64_exe, dll_dir,
-    breeze_icons,
+    breeze_icons, carla_zip_windows,
+    mingw_packages_zip, mingw_packages_commit,
     ],
   command: [
     bash, '-c',
-    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8"',
+    '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" ' +
+    '"$9" "${10}" "${11}"',
     '_ignored',
     '@OUTPUT@', '@INPUT1@', chroot_dir,
     '@PRIVATE_DIR@', '@INPUT2@', '@INPUT3@',
-    '@INPUT4@', '@INPUT5@',
+    '@INPUT4@', '@INPUT5@', '@INPUT6@', '@INPUT7@',
+    '@INPUT8@',
     ],
   console: true,
   install: false,
