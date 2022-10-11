@@ -40,6 +40,8 @@ rm -rf $chroot_dir
 mkdir -p $chroot_dir/var/lib/pacman
 mkdir -p $chroot_dir/var/log
 mkdir -p $chroot_dir/tmp
+mkdir -p $chroot_dir/var/cache/pacman
+cp -r /var/cache/pacman/pkg "$chroot_dir/var/cache/pacman/"
 pacman -Syu --root $chroot_dir
 pacman -S \
   filesystem bash pacman \

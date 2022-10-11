@@ -387,9 +387,10 @@ run_target (
   command: [ 'echo', 'done' ],
   depends: dll_dir)
 
+mingw_packages_url = 'https://github.com/msys2/MINGW-packages'
 mingw_packages_commit_cmd = run_command (
-  bash, '-c', 'git ls-remote "https://github.com/msys2/MINGW-packages" | grep HEAD | head -n1 | awk \'{print $$1;}\'',
-  '_ignored',
+  bash, '-c', 'git ls-remote "$1" | grep HEAD | head -n1 | awk \'{print $$1;}\'',
+  '_ignored', mingw_packages_url,
   capture: true, check: true)
 mingw_packages_commit = mingw_packages_commit_cmd.stdout().split ('HEAD')[0].strip()
 mingw_packages_zip = custom_target (
@@ -398,7 +399,7 @@ mingw_packages_zip = custom_target (
   command: [
     bash, '-c', 'wget "$1" -O "$2"',
     '_ignored',
-    'https://github.com/falkTX/Carla/archive/' + mingw_packages_commit + '.zip',
+    mingw_packages_url + '/archive/' + mingw_packages_commit + '.zip',
     '@OUTPUT@',
     ],
   install: false,
@@ -412,7 +413,7 @@ installer_dist_dir = custom_target (
     'copy-dll-deps.sh',
     rcedit_x64_exe, dll_dir,
     breeze_icons, carla_zip_windows,
-    mingw_packages_zip, mingw_packages_commit,
+    mingw_packages_zip,
     ],
   command: [
     bash, '-c',
@@ -422,11 +423,32 @@ installer_dist_dir = custom_target (
     '@OUTPUT@', '@INPUT1@', chroot_dir,
     '@PRIVATE_DIR@', '@INPUT2@', '@INPUT3@',
     '@INPUT4@', '@INPUT5@', '@INPUT6@', '@INPUT7@',
-    '@INPUT8@',
+    mingw_packages_commit,
     ],
   console: true,
   install: false,
   )
+
+iscc_exe_rel_path = '.wine/drive_c/Program Files (x86)/Inno Setup 6/ISCC.exe'
+iscc_exe_abs_path = meson.current_build_dir () / iscc_exe_rel_path
+install_inno_setup = custom_target (
+  'install-inno-setup-target',
+  output: 'installed-inno-setup',
+  command: [
+    bash, '-c', 'set -xe ; mkdir -p "$1" ; pushd "$1" ; if ! test -f "$2" ; then ' +
+    'wget "$3" ; unzip "$5" -d ./ ; fi ; popd; touch "$4"',
+    '_ignored',
+    meson.current_build_dir (), iscc_exe_rel_path,
+    'https://www.zrythm.org/downloads/inno-setup-bin.zip', '@OUTPUT@',
+    'inno-setup-bin.zip',
+    ],
+  install: false,
+  )
+run_target (
+  'install-inno-setup',
+  command: [ 'echo', 'done', ],
+    depends: install_inno_setup)
+
 
 windows_msys_installer_filename = run_command (
   bash, '-c',
@@ -441,9 +463,11 @@ windows_msys_installer = custom_target (
     ],
   command: [
     bash, '-c',
-    '@INPUT0@ "$1" "$2" "$3"', '_ignored',
+    '@INPUT0@ "$1" "$2" "$3" "$4"', '_ignored',
     '@OUTPUT@', '@INPUT1@', '@INPUT2@',
+    iscc_exe_abs_path,
     ],
+  depends: install_inno_setup,
   console: true,
   install: true,
   install_dir: get_option ('prefix'),
