@@ -72,7 +72,7 @@ $meson_bin subprojects download $fallback_subprojects
 $meson_bin build \
   -Dprefix="$prefix" \
   -Db_lto=true \
-  -Dnative_build=true \
+  -Dnative_build=false \
   -Ddebug=true \
   -Doptimization=2 \
   -Dcarla=enabled \
