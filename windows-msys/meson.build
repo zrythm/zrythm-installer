@@ -388,13 +388,13 @@ run_target (
   depends: dll_dir)
 
 mingw_packages_url = 'https://github.com/msys2/MINGW-packages'
-mingw_packages_commit_cmd = run_command (
-  bash, '-c', 'git ls-remote "$1" | grep HEAD | head -n1 | awk \'{print $$1;}\'',
+mingw_packages_commit_res = run_command (
+  bash, '-c', 'git ls-remote "$1" | grep HEAD | head -n1 | awk \'{print $1;}\'',
   '_ignored', mingw_packages_url,
   capture: true, check: true)
-mingw_packages_commit = mingw_packages_commit_cmd.stdout().split ('HEAD')[0].strip()
+mingw_packages_commit = mingw_packages_commit_res.stdout().split ('HEAD')[0].strip()
 mingw_packages_zip = custom_target (
-  'mingw-packages-zip',
+  'mingw-packages-' + mingw_packages_commit + '-zip',
   output: 'MINGW-packages-' + mingw_packages_commit + '.zip',
   command: [
     bash, '-c', 'wget "$1" -O "$2"',
