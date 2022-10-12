@@ -121,7 +121,7 @@ option (
 
 option (
   'libpanel-ver', type: 'string',
-  value: '1.0.0',
+  value: '1.0.1',
   description: 'libpanel git version')
 
 option (
