@@ -138,3 +138,9 @@ option (
   'gnu-linux-deps-prefix', type: 'string',
   value: '/home/alex/local-zrythm-deps',
   description: 'Build all dependencies if a FINISHED file does not exist in this dir')
+
+option (
+  'march_mtune', type: 'string',
+  #value: '-march=x86-64-v2 -mtune=haswell', # not supported by old gcc
+  value: '-march=nehalem -mtune=haswell',
+  description: '-march and -mtune flags to pass to the compiler')

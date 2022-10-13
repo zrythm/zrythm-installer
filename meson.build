@@ -161,6 +161,8 @@ global_conf.set (
 global_conf.set (
   'GET_PKG_FILENAME_SH_PATH',
   meson.build_root () / 'scripts/get_pkg_filename.sh')
+global_conf.set (
+  'MARCH_MTUNE', get_option ('march_mtune'))
 
 subdir ('scripts')
 subdir ('sources')

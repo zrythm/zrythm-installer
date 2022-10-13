@@ -66,6 +66,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "--prefix=#{prefix}", "--libdir=#{lib}",
         "--buildtype=debugoptimized", "-Dextra_debug_info=true",
         "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
+        "-Dc_args='@MARCH_MTUNE@'", "-Dcpp_args='@MARCH_MTUNE@'" \
         "-Dgtk4:x11-backend=false",
         "-Dcarla=enabled",
         "-Dx11=disabled",

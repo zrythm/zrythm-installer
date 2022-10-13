@@ -73,6 +73,7 @@ $meson_bin build \
   -Dprefix="$prefix" \
   -Db_lto=true \
   -Dnative_build=false \
+  -Dc_args="@MARCH_MTUNE@" -Dcpp_args="@MARCH_MTUNE@" \
   -Ddebug=true \
   -Doptimization=2 \
   -Dcarla=enabled \

@@ -87,6 +87,7 @@ build() {
   MSYS2_ARG_CONV_EXCL="--prefix=;--buildtype=" \
   ${MINGW_PREFIX}/bin/meson \
     --prefix=${MINGW_PREFIX} \
+    -Dc_args="@MARCH_MTUNE@" -Dcpp_args="@MARCH_MTUNE@" \
     -Dsdl=disabled \
     -Drtaudio=enabled \
     -Drtmidi=enabled \

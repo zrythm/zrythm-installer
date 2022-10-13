@@ -50,8 +50,8 @@ popd # wrapdb
 export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
 export PATH="$deps_prefix/bin:$PATH"
 export ACLOCAL_PATH="$deps_prefix/share/aclocal"
-export CFLAGS=-fPIC
-export CPPFLAGS=-DPIC
+export CFLAGS='-fPIC @MARCH_MTUNE@'
+export CPPFLAGS='-DPIC @MARCH_MTUNE@'
 export LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
 export CPATH="$deps_prefix/include"
 export LD_LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
