@@ -75,6 +75,7 @@ $meson_bin build \
   -Dnative_build=false \
   -Dc_args="@MARCH_MTUNE@" -Dcpp_args="@MARCH_MTUNE@" \
   -Ddebug=true \
+  -Dextra_debug_info=true \
   -Doptimization=2 \
   -Dcarla=enabled \
   -Dopus=true \
