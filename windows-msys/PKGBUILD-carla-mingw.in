@@ -45,8 +45,10 @@ prepare() {
 build() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
-  export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
+  #export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
+  #export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
+  export CFLAGS="$CFLAGS -g -ggdb3"
+  export CXXFLAGS="$CXXFLAGS -g -ggdb3"
   #export LDFLAGS="$LDFLAGS $(pkg-config --libs fluidsynth)"
 
   declare -a common_args
@@ -57,6 +59,8 @@ build() {
   common_args+=("HAVE_SDL=false")
   common_args+=("HAVE_SDL2=false")
   common_args+=("PREFIX=${MINGW_PREFIX}")
+  common_args+=("NOOPT=true")
+  common_args+=("SKIP_STRIPPING=true")
   echo "${common_args[@]}"
 
   if [ "$MINGW_ARCH" = "mingw32" ]; then

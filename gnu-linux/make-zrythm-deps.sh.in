@@ -50,11 +50,11 @@ popd # wrapdb
 export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
 export PATH="$deps_prefix/bin:$PATH"
 export ACLOCAL_PATH="$deps_prefix/share/aclocal"
-export CFLAGS='-fPIC @MARCH_MTUNE@'
-export CPPFLAGS='-DPIC @MARCH_MTUNE@'
-export LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
+export LIBRARY_PATH="$deps_prefix/lib64:$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
 export CPATH="$deps_prefix/include"
-export LD_LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
+export LD_LIBRARY_PATH="$LIBRARY_PATH"
+
+num_cpus=16
 
 fetch()
 {
@@ -136,7 +136,7 @@ build_autotools_project()
   prj_dir_name="`basename -s .tar.lz "$prj_dir_name"`"
   pushd "$prj_dir_name"
   ./configure --prefix="$deps_prefix" "$@"
-  make -j8
+  make -j$num_cpus
   make install
   popd # project
 }
@@ -161,6 +161,31 @@ cleanup_pc_r() {
   find "$deps_prefix" -name '*.pc' -type f -exec sed -i -e 's| -R| -Wl,-rpath,|g' {} \;
 }
 
+#skip_build() {
+# gcc
+url="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.xz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.xz "$url"`"
+prj_build_dir_name="$prj_dir_name-build"
+pushd "$prj_dir_name"
+./contrib/download_prerequisites
+popd
+mkdir "$prj_build_dir_name"
+pushd "$prj_build_dir_name"
+export CFLAGS='@MARCH_MTUNE@'
+export CPPFLAGS='@MARCH_MTUNE@'
+"$(pwd)"/../"$prj_dir_name"/configure --prefix="$deps_prefix" --enable-languages=c,c++,lto --disable-multilib --with-build-config=bootstrap-lto --with-linker-hash-style=gnu --with-system-zlib --enable-__cxa_atexit --enable-cet=auto --enable-checking=release --enable-clocale=gnu --enable-default-pie --enable-default-ssp --enable-gnu-indirect-function --enable-gnu-unique-object --enable-libstdcxx-backtrace --enable-link-serialization=1 --enable-linker-build-id --enable-lto --enable-plugin --enable-shared --enable-threads=posix --disable-libssp --disable-libstdcxx-pch --disable-werror
+make -j$num_cpus
+make install
+popd # project build dir
+#} # end skip_build()
+
+export CC="$deps_prefix"/bin/gcc
+export CXX="$deps_prefix"/bin/g++
+export CFLAGS='-fPIC -g @MARCH_MTUNE@'
+export CPPFLAGS='-DPIC -g @MARCH_MTUNE@'
+
 build_autotools_project https://ftp.gnu.org/gnu/libunistring/libunistring-1.0.tar.gz --disable-static --enable-shared
 build_meson_project https://gitlab.freedesktop.org/gstreamer/meson-ports/libffi/-/archive/meson/libffi-meson.tar.gz -Ddefault_library=shared
 build_autotools_project https://www.hboehm.info/gc/gc_source/gc-8.2.2.tar.gz --disable-static --enable-shared
@@ -175,15 +200,16 @@ prj_dir_name="`basename -s .tar.gz "$url"`"
 prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
 pushd "$prj_dir_name"
 ./configure --prefix="$deps_prefix" --enable-shared --disable-static --enable-hashes=strong,glibc --enable-obsolete-api=no --disable-failure-tokens
-make -j8
+make -j$num_cpus
 make install
 popd # project
+
+#build_autotools_project http://zlib.net/fossils/zlib-1.2.12.tar.gz #--static
 
 # guile
 build_autotools_project https://ftp.gnu.org/gnu/guile/guile-3.0.8.tar.gz --disable-static --enable-shared --disable-lto --disable-deprecated --disable-tmpnam --disable-rpath #--enable-mini-gmp
 sed -i -e "s|-lgc -lpthread -ldl|-lgc -lpthread -ldl $(pkg-config --libs gmp libffi libcrypt) -lunistring|g" "$deps_prefix/lib/pkgconfig/guile-3.0.pc"
 
-build_autotools_project http://zlib.net/fossils/zlib-1.2.12.tar.gz #--static
 build_autotools_project https://tukaani.org/xz/xz-5.2.6.tar.xz --disable-static --enable-shared
 build_meson_wrap_project lz4 lz4-1.9.4 -Ddefault_library=shared
 
@@ -213,7 +239,7 @@ fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="xxHash-0.8.1"
 pushd "$prj_dir_name"
-CFLAGS="$CFLAGS -O3" make XXH_FORCE_MEMORY_ACCESS=1 XXH_STATIC_LINKING_ONLY=1 PREFIX="$deps_prefix" -j8
+CFLAGS="$CFLAGS -O3" make XXH_FORCE_MEMORY_ACCESS=1 XXH_STATIC_LINKING_ONLY=1 PREFIX="$deps_prefix" -j$num_cpus
 make install PREFIX="$deps_prefix"
 rm "$deps_prefix/lib/"libxxhash*.so*
 popd # project
@@ -225,7 +251,7 @@ tar xf "`basename "$url"`"
 prj_dir_name="icu/source"
 pushd "$prj_dir_name"
 ./configure --prefix="$deps_prefix" --disable-static --enable-shared
-make -j8
+make -j$num_cpus
 make install
 popd # project
 
@@ -240,7 +266,7 @@ prj_dir_name="xorg-macros-util-macros-${xorg_macros_ver}"
 pushd "$prj_dir_name"
 ./autogen.sh
 ./configure --prefix="$deps_prefix"
-make -j8
+make -j$num_cpus
 make install
 popd # project
 
@@ -318,7 +344,7 @@ tar xf pcre-8.45.tar.gz
 prj_dir_name=pcre-8.45
 pushd "$prj_dir_name"
 ./configure --prefix="$deps_prefix" --disable-static --enable-shared
-make -j8
+make -j$num_cpus
 make install
 popd # project
 
@@ -379,7 +405,7 @@ build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.
 #prj_dir_name="cups-2.4.2"
 #pushd "$prj_dir_name"
 #./configure --prefix="$deps_prefix" --disable-static --enable-shared --disable-libpaper --disable-libusb --disable-tcp-wrappers --disable-dbus --disable-pam --disable-largefile --disable-raw-printing --without-systemd --without-tls
-#make -j8
+#make -j$num_cpus
 #make install
 #popd # project
 
@@ -394,14 +420,14 @@ tar xf "`basename "$url"`"
 prj_dir_name="Carla-@CARLA_GIT_VER@"
 pushd "$prj_dir_name"
 sed -i -e 's|PARAMETER_IS_AUTOMABLE = PARAMETER_IS_AUTOMATABLE|PARAMETER_IS_AUTOMABLE = 0x020|' source/backend/CarlaBackend.h
-args="HAVE_SDL1=false HAVE_SDL2=false"
+args="HAVE_SDL1=false HAVE_SDL2=false NOOPT=true SKIP_STRIPPING=true"
 make features $args
-make -j8 $args
+make -j$num_cpus $args
 make install $args PREFIX="$deps_prefix"
 popd # project
 
 LDFLAGS="$(pkg-config --libs libbrotlidec)" build_autotools_project https://curl.haxx.se/download/curl-7.85.0.tar.gz --disable-static --enable-shared --disable-ldap --disable-ldaps --disable-manual --without-ssl --with-gnutls --with-ca-fallback --without-ca-bundle
-build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.7/lsp-dsp-lib-src-1.0.7.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" 'make -j8' "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
+build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.7/lsp-dsp-lib-src-1.0.7.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
 build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
 build_meson_project https://download.gnome.org/sources/libadwaita/1.2/libadwaita-1.2.0.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
 build_meson_project https://download.gnome.org/sources/libpanel/1.0/libpanel-1.0.1.tar.xz -Ddefault_library=shared -Dvapi=false -Ddocs=disabled -Dintrospection=disabled -Dc_std=gnu11 -Dinstall-examples=true
@@ -412,6 +438,18 @@ mv "$deps_prefix/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so" "$deps_
 
 build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.2.0.tar.gz -Ddefault_library=shared -Djack=disabled -Dalsa=enabled -Dpulse=enabled
 build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
+
+# libbacktrace
+url="https://git.sr.ht/~alextee/libbacktrace/archive/20221013.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.gz "$url"`"
+prj_dir_name="libbacktrace-$prj_dir_name"
+pushd "$prj_dir_name"
+./configure --prefix="$deps_prefix" --disable-shared --enable-static
+make -j$num_cpus
+make install
+popd # project
 
 popd # private dir
 

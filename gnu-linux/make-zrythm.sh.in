@@ -47,10 +47,12 @@ mv "$private_dir/zplugins" "$private_dir/zplugins-$zplugins_ver"
 
 export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
 export PATH="$deps_prefix/bin:$PATH"
-export LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
+export LIBRARY_PATH="$deps_prefix/lib64:$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
 export CPATH="$deps_prefix/include"
 #export LDFLAGS="$(pkg-config --libs gmp libffi libcrypt) -lunistring"
-export LD_LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
+export LD_LIBRARY_PATH="$LIBRARY_PATH"
+export CC="$deps_prefix"/bin/gcc
+export CXX="$deps_prefix"/bin/g++
 
 # make zplugins
 if [[ "@TRIAL_TRUE_FALSE@" == "false" ]]; then
