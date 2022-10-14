@@ -1,0 +1,52 @@
+_realname=libbacktrace
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+_commit='1da441c1b020bef75d040dd300814b1a49e0e529'
+pkgver=20221013
+pkgrel=1
+pkgdesc="Library to produce symbolic backtraces (mingw-w64)"
+arch=('any')
+url="https://github.com/ianlancetaylor/libbacktrace"
+license=('BSD')
+depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
+makedepends=('git')
+source=("https://git.sr.ht/~alextee/libbacktrace/archive/${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  printf "r%s.%s" "$(git rev-list --count "${_commit}")" "$(git rev-parse --short "${_commit}")"
+}
+
+prepare () {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  # dont allow undefined symbols to build the dll
+  sed -i "87ilibbacktrace_la_LDFLAGS = -no-undefined" Makefile.am
+  autoreconf -vfi
+}
+
+build() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
+  mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
+
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared
+
+  make CFLAGS='-g'
+}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}
+
+  make install DESTDIR="${pkgdir}"
+
+  install -Dm644 ${srcdir}/${_realname}-${pkgver}/LICENSE ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE
+}

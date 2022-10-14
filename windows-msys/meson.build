@@ -317,6 +317,19 @@ run_target (
   command: [ 'echo', 'done' ],
   depends: lsp_dsp_lib_pkg)
 
+libbacktrace_pkg = custom_target (
+  'mingw-libbacktrace',
+  output: 'libbacktrace.pkg.tar.zst',
+  input: [ make_mingw_pkg, 'PKGBUILD-libbacktrace', ],
+  command: make_mingw_pkg_cmd,
+  console: true,
+  install: false,
+  )
+run_target (
+  'run-mingw-libbacktrace',
+  command: [ 'echo', 'done' ],
+  depends: libbacktrace_pkg)
+
 mingw_zrythm_pkg = custom_target (
   'mingw-zrythm-pkg',
   output: 'zrythm' + dash_trial + '.pkg.tar.zst',
@@ -331,7 +344,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lsp_dsp_lib_pkg,
+    lsp_dsp_lib_pkg, libbacktrace_pkg,
     ],
   console: true,
   install: false,
@@ -350,7 +363,7 @@ windows_chroot_target = custom_target (
     make_windows_chroot, zrythm_src_tarball,
     carla_packages[0],
     carla_packages[1],
-    sratom_pkg, lsp_dsp_lib_pkg,
+    lsp_dsp_lib_pkg, libbacktrace_pkg,
     mingw_zrythm_pkg,
     ],
   command: [

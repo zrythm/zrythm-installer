@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2022 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -33,6 +33,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk4"
          "${MINGW_PACKAGE_PREFIX}-cantarell-fonts"
          "${MINGW_PACKAGE_PREFIX}-curl-winssl"
          "${MINGW_PACKAGE_PREFIX}-rubberband"
+         "${MINGW_PACKAGE_PREFIX}-libbacktrace"
          "${MINGW_PACKAGE_PREFIX}-libsndfile"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
          "${MINGW_PACKAGE_PREFIX}-lilv"
