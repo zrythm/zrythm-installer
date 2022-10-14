@@ -157,3 +157,4 @@ if [ $proceed -ne 0 ]; then
 
   print_install_success
 fi
+# vim: ft=sh ts=2 sw=2
