@@ -344,7 +344,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lsp_dsp_lib_pkg, libbacktrace_pkg,
+    lsp_dsp_lib_pkg,
     ],
   console: true,
   install: false,
@@ -363,16 +363,16 @@ windows_chroot_target = custom_target (
     make_windows_chroot, zrythm_src_tarball,
     carla_packages[0],
     carla_packages[1],
-    lsp_dsp_lib_pkg, libbacktrace_pkg,
+    lsp_dsp_lib_pkg,
     mingw_zrythm_pkg,
     ],
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" ' +
-    '"$7" "$8" "$9" "${10}" "${11}" "${12}"',
+    '"$7" "$8" "$9" "${10}" "${11}"',
     '_ignored',
     '@OUTPUT@', chroot_dir, '@INPUT1@', '@INPUT2@',
-    '@INPUT3@', '@INPUT4@', '@INPUT5@', '@INPUT6@',
+    '@INPUT3@', '@INPUT4@', '@INPUT5@',
     ],
   console: true,
   install: false,
