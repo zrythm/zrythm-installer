@@ -42,6 +42,9 @@ prepare() {
 build() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
+  export CC='ccache gcc'
+  export CXX='ccache g++'
+
   make config PREFIX=${MINGW_PREFIX}
   cat ./.config.mk
   #make fetch

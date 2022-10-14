@@ -31,6 +31,7 @@ class CarlaGit < Formula
     sha256 high_sierra: "51ee66c8406766f33784fe139c292bad745ff43581164168f30f5ffa77171a06"
   end
 
+  depends_on "ccache" => :build
   depends_on "pkg-config" => :build
   depends_on "fluid-synth"
   depends_on "liblo"

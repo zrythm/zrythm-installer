@@ -22,6 +22,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   sha256 "@ZRYTHM_BREW_SHA256@"
   version "@ZRYTHM_PKG_VERSION@"
 
+  depends_on "ccache" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build

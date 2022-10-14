@@ -24,7 +24,8 @@ pkgrel=1
 arch=('any')
 pkgdesc='carla'
 depends=("${MINGW_PACKAGE_PREFIX}-fluidsynth")
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+makedepends=("${MINGW_PACKAGE_PREFIX}-ccache"
+             "${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 options=('!strip')
 license=("GPL2")
@@ -47,8 +48,10 @@ build() {
 
   #export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
   #export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
-  export CFLAGS="$CFLAGS -g -ggdb3"
-  export CXXFLAGS="$CXXFLAGS -g -ggdb3"
+  export CC='ccache gcc'
+  export CXX='ccache g++'
+  export CFLAGS="$CFLAGS -g -mtune=haswell"
+  export CXXFLAGS="$CXXFLAGS -g -mtune=haswell"
   #export LDFLAGS="$LDFLAGS $(pkg-config --libs fluidsynth)"
 
   declare -a common_args
