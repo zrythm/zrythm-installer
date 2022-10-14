@@ -17,11 +17,11 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
-set -ex
+set -eu
 
 uninstall=0
 uninstall_prefix_txt=""
-if [ "$1" = "-u" ]; then
+if [ "${1:-}" = "-u" ]; then
   uninstall=1
   uninstall_prefix_txt="un"
 fi
@@ -34,7 +34,7 @@ have_zenity=0
 # shellcheck disable=SC2015
 command -v zenity > /dev/null && have_zenity=1 || true
 
-if [ -z "$XDG_DATA_HOME" ]; then
+if [ -z "${XDG_DATA_HOME:-}" ]; then
   XDG_DATA_HOME="$HOME/.local/share"
 fi
 trash_dir="$XDG_DATA_HOME/Trash"
