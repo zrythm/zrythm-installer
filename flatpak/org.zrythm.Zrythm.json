@@ -374,11 +374,20 @@
             "cleanup": [
                 "*"
             ],
+            "buildsystem": "autotools",
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://github.com/sass/sassc/archive/3.6.2.tar.gz",
-                    "sha256": "608dc9002b45a91d11ed59e352469ecc05e4f58fc1259fc9a9f5b8f0f8348a03"
+                    "type": "git",
+                    "url": "https://github.com/sass/sassc",
+                    "commit": "66f0ef37e7f0ad3a65d2f481eff09d09408f42d0",
+                    "tag": "3.6.2",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/sass/sassc/releases/latest",
+                        "tag-query": ".tag_name",
+                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                        "timestamp-query": ".published_at"
+                    }
                 },
                 {
                     "type": "script",
@@ -394,11 +403,20 @@
                     "cleanup": [
                         "*"
                     ],
+                    "buildsystem": "autotools",
                     "sources": [
                         {
-                            "type": "archive",
-                            "url": "https://github.com/sass/libsass/archive/3.6.5.tar.gz",
-                            "sha256": "89d8f2c46ae2b1b826b58ce7dde966a176bac41975b82e84ad46b01a55080582"
+                            "type": "git",
+                            "url": "https://github.com/sass/libsass",
+                            "commit": "f6afdbb9288d20d1257122e71d88e53348a53af3",
+                            "tag": "3.6.5",
+                            "x-checker-data": {
+                                "type": "json",
+                                "url": "https://api.github.com/repos/sass/libsass/releases/latest",
+                                "tag-query": ".tag_name",
+                                "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                                "timestamp-query": ".published_at"
+                            }
                         },
                         {
                             "type": "script",
@@ -473,42 +491,6 @@
                     "cleanup": [
                         "/include",
                         "/bin/pango-*"
-                    ]
-                },
-                {
-                    "name": "libsass",
-                    "buildsystem": "meson",
-                    "build-options": {
-                        "no-debuginfo": true
-                    },
-                    "cleanup": [
-                        "*"
-                    ],
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://github.com/lazka/libsass.git",
-                            "branch": "meson",
-                            "commit": "302397c0c8ae2d7ab02f45ea461c2c3d768f248e"
-                        }
-                    ]
-                },
-                {
-                    "name": "sassc",
-                    "buildsystem": "meson",
-                    "build-options": {
-                        "no-debuginfo": true
-                    },
-                    "cleanup": [
-                        "*"
-                    ],
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://github.com/lazka/sassc.git",
-                            "branch": "meson",
-                            "commit": "82803377c33247265d779af034eceb5949e78354"
-                        }
                     ]
                 },
                 {
