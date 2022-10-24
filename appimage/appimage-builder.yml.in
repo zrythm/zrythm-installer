@@ -61,6 +61,7 @@ AppDir:
       - libasound2
       #- libgtksourceview-3.0-common
       #- libgtksourceview-3.0-1
+      - lv2-dev
       - graphviz
       - librubberband2
       - libx11-6
