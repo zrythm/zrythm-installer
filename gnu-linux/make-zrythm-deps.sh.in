@@ -36,8 +36,8 @@ fi
 
 mkdir -p "$private_dir"
 
-rm -rf "$deps_prefix"
-mkdir -p "$deps_prefix"
+#rm -rf "$deps_prefix"
+#mkdir -p "$deps_prefix"
 
 pushd "$private_dir"
 
@@ -48,11 +48,14 @@ git checkout b84a291a389b70d3a1218a729716829459f80f37
 popd # wrapdb
 
 export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
-export PATH="$deps_prefix/bin:$PATH"
+export PATH="$deps_prefix/bin:$PATH:/home/alex/.cargo/bin"
 export ACLOCAL_PATH="$deps_prefix/share/aclocal"
 export LIBRARY_PATH="$deps_prefix/lib64:$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
 export CPATH="$deps_prefix/include"
 export LD_LIBRARY_PATH="$LIBRARY_PATH"
+
+# test for programs
+which cargo
 
 num_cpus=16
 
@@ -135,7 +138,7 @@ build_autotools_project()
   prj_dir_name="`basename -s .tar.bz2 "$prj_dir_name"`"
   prj_dir_name="`basename -s .tar.lz "$prj_dir_name"`"
   pushd "$prj_dir_name"
-  ./configure --prefix="$deps_prefix" "$@"
+  ./configure --prefix="$deps_prefix" "$@" || ( >&2 cat config.log ; exit 1 )
   make -j$num_cpus
   make install
   popd # project
@@ -161,7 +164,7 @@ cleanup_pc_r() {
   find "$deps_prefix" -name '*.pc' -type f -exec sed -i -e 's| -R| -Wl,-rpath,|g' {} \;
 }
 
-#skip_build() {
+skip_build() {
 # gcc
 url="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.xz"
 fetch "$url"
@@ -179,7 +182,7 @@ pushd "$prj_build_dir_name"
 make -j$num_cpus
 make install
 popd # project build dir
-#} # end skip_build()
+} # end skip_build()
 
 export CC="$deps_prefix"/bin/gcc
 export CXX="$deps_prefix"/bin/g++
