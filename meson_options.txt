@@ -142,5 +142,6 @@ option (
 option (
   'march_mtune', type: 'string',
   #value: '-march=x86-64-v2 -mtune=haswell', # not supported by old gcc
-  value: '-march=nehalem -mtune=haswell',
+  # use pentium4 because some users don't have CPUs with SSE3 support
+  value: '-march=pentium4 -mtune=haswell',
   description: '-march and -mtune flags to pass to the compiler')
