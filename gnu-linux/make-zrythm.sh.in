@@ -25,6 +25,7 @@ zrythm_src_tarball=$3
 prefix="$4"
 meson_bin="$5"
 zplugins_tarball="$6"
+demo_project_zip="$7"
 
 zip_filename=`basename $out_file`
 zip_inner_dir_name="${zip_filename%.*}"
@@ -161,6 +162,10 @@ rsync -zrahvWt --remove-source-files "$deps_prefix/share/locale/" "$destdir_w_pr
 # copy and compile glib schemas
 cp "$deps_prefix/share/glib-2.0/schemas/"* "$destdir_w_prefix/share/glib-2.0/schemas/"
 glib-compile-schemas "$destdir_w_prefix/share/glib-2.0/schemas"
+
+# copy demo project(s)
+mkdir -p "$destdir_w_prefix/share/zrythm/templates"
+unzip "$demo_project_zip" -d "$destdir_w_prefix/share/zrythm/templates"
 
 # cleanup
 pushd "$destdir_w_prefix"

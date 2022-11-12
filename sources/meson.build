@@ -111,3 +111,14 @@ run_target (
   'gen-breeze-icons',
   command: [ 'echo', 'done' ],
   depends: breeze_icons)
+
+demo_project_zip = custom_target (
+  'demo-project-zip',
+  output: 'demo_zsong01.zip',
+  command: [
+    'wget',
+    'https://www.zrythm.org/demo-projects/demo_zsong01.zip',
+    '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )

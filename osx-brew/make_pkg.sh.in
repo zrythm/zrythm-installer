@@ -31,6 +31,7 @@ postinstall_script="$9"
 conclusion_html="${10}"
 uninstall_sh="${11}"
 info_plist="${12}"
+demo_project_zip="${13}"
 
 dash_trial="@DASH_TRIAL@"
 breeze_dark="@BREEZE_DARK@"
@@ -176,6 +177,10 @@ cp -rvf /usr/local/share/thumbnailers $share_dir/
 
 # copy mime database if it exists
 cp -rvf /usr/local/share/mime $share_dir/ || true
+
+# copy demo projects
+mkdir -p "$share_dir/zrythm/templates"
+unzip "$demo_project_zip" -d "$share_dir/zrythm/templates"
 
 # copy gtk schemas
 for schema in `ls /usr/local/share/glib-2.0/schemas`; do

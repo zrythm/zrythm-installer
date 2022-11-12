@@ -30,6 +30,7 @@ breeze_dark_path="$8"
 carla_zip_path="$9"
 mingw_packages_zip_path="${10}"
 mingw_packages_commit="${11}"
+demo_project_zip="${12}"
 
 dash_trial="@DASH_TRIAL@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
@@ -150,6 +151,12 @@ EOL
   # ******************************
   echo "packaging fonts"
   cp -R $chroot_mingw_prefix/share/fonts $dist_sharedir/
+  # ******************************
+
+  # ******************************
+  echo "packaging demo projects"
+  mkdir -p "$dist_sharedir/zrythm/templates"
+  unzip "$demo_project_zip" -d "$dist_sharedir/zrythm/templates"
   # ******************************
 
   # ******************************

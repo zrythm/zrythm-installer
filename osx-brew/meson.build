@@ -163,7 +163,7 @@ installer_pkg = custom_target (
     '@PRIVATE_DIR@',
     meson.source_root() / 'ext/macos-installer-builder',
     welcome_html, postinstall_script, conclusion_html,
-    uninstall_sh, info_plist
+    uninstall_sh, info_plist, demo_project_zip,
     ],
   console: true,
   install: true,
