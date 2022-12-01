@@ -164,7 +164,7 @@ cleanup_pc_r() {
   find "$deps_prefix" -name '*.pc' -type f -exec sed -i -e 's| -R| -Wl,-rpath,|g' {} \;
 }
 
-skip_build() {
+#skip_build() {
 # gcc
 url="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.xz"
 fetch "$url"
@@ -182,7 +182,7 @@ pushd "$prj_build_dir_name"
 make -j$num_cpus
 make install
 popd # project build dir
-} # end skip_build()
+#} # end skip_build()
 
 export CC="$deps_prefix"/bin/gcc
 export CXX="$deps_prefix"/bin/g++
