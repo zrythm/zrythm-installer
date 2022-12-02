@@ -412,7 +412,9 @@ build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.
 #make install
 #popd # project
 
-build_meson_project https://download.gnome.org/sources/gtk/4.8/gtk-4.8.1.tar.xz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false
+# FIXME use next gtk release
+# URL for reference: https://download.gnome.org/sources/gtk/4.8/gtk-4.8.1.tar.xz
+build_meson_project https://gitlab.gnome.org/lb90/gtk/-/archive/workaround-glx-issue/gtk-workaround-glx-issue.tar.gz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false
 
 build_meson_project https://download.gnome.org/sources/gtksourceview/5.5/gtksourceview-5.5.1.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dvapi=false -Dinstall_tests=true
 
