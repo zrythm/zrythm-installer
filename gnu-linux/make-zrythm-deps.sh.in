@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
 
+# TODO: vamp (not host sdk), libboost. currently using distro ones but might
+# cause issues
+
 set -ex
 
 out_file=$1
@@ -47,7 +50,7 @@ pushd wrapdb
 git checkout b84a291a389b70d3a1218a729716829459f80f37
 popd # wrapdb
 
-export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
+export PKG_CONFIG_PATH="$deps_prefix/lib64/pkgconfig:$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
 export PATH="$deps_prefix/bin:$PATH:/home/alex/.cargo/bin"
 export ACLOCAL_PATH="$deps_prefix/share/aclocal"
 export LIBRARY_PATH="$deps_prefix/lib64:$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
@@ -189,6 +192,7 @@ export CXX="$deps_prefix"/bin/g++
 export CFLAGS='-fPIC -g @MARCH_MTUNE@'
 export CPPFLAGS='-DPIC -g @MARCH_MTUNE@'
 
+skip_build2() {
 build_autotools_project https://ftp.gnu.org/gnu/libunistring/libunistring-1.0.tar.gz --disable-static --enable-shared
 build_meson_project https://gitlab.freedesktop.org/gstreamer/meson-ports/libffi/-/archive/meson/libffi-meson.tar.gz -Ddefault_library=shared
 build_autotools_project https://www.hboehm.info/gc/gc_source/gc-8.2.2.tar.gz --disable-static --enable-shared
@@ -311,7 +315,7 @@ fftw_common_opts="-DBUILD_SHARED_LIBS=ON -DENABLE_THREADS=ON -DENABLE_SSE=ON -DE
 build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=OFF
 build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=ON
 build_meson_wrap_project libsndfile libsndfile-1.1.0 -Ddefault_library=shared -Dprograms=false
-build_cmake_project https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz -DBUILD_SHARED_LIBS=True -DLIBSAMPLERATE_EXAMPLES=0
+build_cmake_project https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=True -DLIBSAMPLERATE_EXAMPLES=0
 
 # vamp
 url="https://code.soundsoftware.ac.uk/attachments/download/2588/vamp-plugin-sdk-2.9.0.tar.gz"
@@ -399,7 +403,7 @@ build_autotools_project https://download.gnome.org/sources/librsvg/2.52/librsvg-
 build_autotools_project https://ftp.gnu.org/gnu/nettle/nettle-3.8.tar.gz --disable-static --enable-shared
 build_autotools_project https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.19.0.tar.gz --disable-static --enable-shared
 build_autotools_project https://github.com/p11-glue/p11-kit/releases/download/0.24.1/p11-kit-0.24.1.tar.xz --disable-static --without-bash-completion --without-systemd # cannot be used as a static library
-build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.7.tar.xz --disable-static --enable-shared --disable-bash-tests --disable-tests --with-included-libtasn1
+build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.8.tar.xz --disable-static --enable-shared --disable-bash-tests --disable-tests --with-included-libtasn1
 
 # cups
 #url="https://github.com/OpenPrinting/cups/releases/download/v2.4.2/cups-2.4.2-source.tar.gz"
@@ -414,7 +418,7 @@ build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.
 
 # FIXME use next gtk release
 # URL for reference: https://download.gnome.org/sources/gtk/4.8/gtk-4.8.1.tar.xz
-build_meson_project https://gitlab.gnome.org/lb90/gtk/-/archive/workaround-glx-issue/gtk-workaround-glx-issue.tar.gz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false
+build_meson_project https://gitlab.gnome.org/GNOME/gtk/-/archive/a9c9678e1f617755368f16424a03ae1f2d2ced4e/gtk-a9c9678e1f617755368f16424a03ae1f2d2ced4e.tar.gz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false
 
 build_meson_project https://download.gnome.org/sources/gtksourceview/5.5/gtksourceview-5.5.1.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dvapi=false -Dinstall_tests=true
 
@@ -441,6 +445,7 @@ build_meson_project https://download.gnome.org/sources/libpanel/1.0/libpanel-1.0
 build_meson_project https://freedesktop.org/software/pulseaudio/releases/pulseaudio-16.1.tar.gz -Ddefault_library=shared -Ddaemon=false -Ddoxygen=false -Dgcov=false -Dman=false -Dtests=false -Dalsa=enabled -Dgtk=disabled -Dasyncns=disabled -Davahi=disabled -Dbluez5=disabled -Dbluez5-gstreamer=disabled -Dbluez5-native-headset=false -Dbluez5-ofono-headset=false -Ddbus=disabled -Delogind=disabled -Dfftw=disabled -Dglib=disabled -Dgsettings=disabled -Dgstreamer=disabled -Dhal-compat=false -Dipv6=false -Djack=disabled -Dlirc=disabled -Dopenssl=disabled -Dorc=disabled -Doss-output=disabled -Dsoxr=disabled -Dspeex=disabled -Dsystemd=disabled -Dtcpwrap=disabled -Dudev=disabled -Dvalgrind=disabled -Dx11=disabled -Dwebrtc-aec=disabled -Dbashcompletiondir=no -Dzshcompletiondir=no
 mv "$deps_prefix/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so" "$deps_prefix/lib/x86_64-linux-gnu/"
 
+} # skip_build2
 build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.2.0.tar.gz -Ddefault_library=shared -Djack=disabled -Dalsa=enabled -Dpulse=enabled
 build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
 
