@@ -72,6 +72,7 @@ is_nixos = distro.contains ('nixos')
 is_rpm = distro.contains ('fedora')
 is_windows_msys = distro.contains ('windows-msys')
 is_osx_brew = distro.contains ('osx-brew')
+is_osx = distro.contains ('osx')
 is_gnu_linux = distro.contains ('gnu-linux')
 is_appimage = distro.contains ('appimage')
 is_flatpak = distro.contains ('flatpak')
@@ -232,6 +233,8 @@ endif
 
 if is_osx_brew
   subdir ('osx-brew')
+elif is_osx
+  subdir ('osx')
 endif
 
 if is_gnu_linux

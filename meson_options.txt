@@ -140,6 +140,11 @@ option (
   description: 'Build all dependencies if a FINISHED file does not exist in this dir')
 
 option (
+  'osx-deps-prefix', type: 'string',
+  value: '/Users/alex/local-zrythm-deps',
+  description: 'Build all dependencies if a FINISHED file does not exist in this dir')
+
+option (
   'march_mtune', type: 'string',
   #value: '-march=x86-64-v2 -mtune=haswell', # not supported by old gcc
   # use pentium4 because some users don't have CPUs with SSE3 support

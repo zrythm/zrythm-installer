@@ -1,0 +1,445 @@
+#! /bin/bash
+#
+# Copyright (C) 2022-2023 Alexandros Theodotou <alex at zrythm dot org>
+#
+# This file is part of Zrythm
+#
+# Zrythm is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Zrythm is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Zrythm.  If not, see <https://www.gnu.org/licenses/>.
+
+# TODO: vamp (not host sdk), libboost. currently using distro ones but might
+# cause issues
+
+set -ex
+
+out_file=$1
+private_dir=$2
+meson_bin="$3"
+
+deps_prefix="@DEPS_PREFIX@"
+
+rm -rf "$out_file"
+rm -rf "$private_dir"
+
+# return if finished
+if [ -f "$deps_prefix/FINISHED" ]; then
+  touch "$out_file"
+  exit 0
+fi
+
+mkdir -p "$private_dir"
+
+#rm -rf "$deps_prefix"
+#mkdir -p "$deps_prefix"
+
+pushd "$private_dir"
+
+# prepare wrapdb
+git clone https://github.com/mesonbuild/wrapdb
+pushd wrapdb
+git checkout b84a291a389b70d3a1218a729716829459f80f37
+popd # wrapdb
+
+export PKG_CONFIG_PATH="$deps_prefix/lib64/pkgconfig:$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
+export PATH="$deps_prefix/bin:$PATH:/home/alex/.cargo/bin"
+export ACLOCAL_PATH="$deps_prefix/share/aclocal"
+export LIBRARY_PATH="$deps_prefix/lib64:$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
+export CPATH="$deps_prefix/include"
+export LD_LIBRARY_PATH="$LIBRARY_PATH"
+
+# test for programs
+which cargo
+
+num_cpus=16
+
+fetch()
+{
+  url="$1"
+  filename="`basename "$url"`"
+  cachedir="/tmp/zrythm-installer-cache-srcs"
+  mkdir -p "$cachedir"
+  if ! [ -f "$cachedir/$filename" ]; then
+    wget "$url" --directory-prefix="$cachedir"
+  fi
+  cp "$cachedir/$filename" ./"$filename"
+}
+
+build_meson_wrap_project()
+{
+  prj_name="$1"
+  shift
+  prj_dir_name="$1"
+  shift
+  opts="$@"
+  pushd wrapdb
+  "$meson_bin" subprojects download "$prj_name"
+  pushd subprojects/"$prj_dir_name"
+  rm -rf builddir
+  "$meson_bin" setup builddir --wrap-mode=nofallback -Dprefix="$deps_prefix" "$@"
+  "$meson_bin" compile -C builddir
+  "$meson_bin" install -C builddir
+  popd # project
+  popd # wrapdb
+}
+
+build_meson_project()
+{
+  url="$1"
+  shift
+  opts="$@"
+  fetch "$url"
+  tar xf "`basename "$url"`"
+  prj_dir_name="`basename -s .tar.gz "$url"`"
+  prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+  prj_dir_name="`basename -s .tar.bz2 "$prj_dir_name"`"
+  pushd "$prj_dir_name"
+  rm -rf builddir
+  "$meson_bin" setup builddir --wrap-mode=nofallback -Dprefix="$deps_prefix" "$@"
+  "$meson_bin" compile -C builddir
+  "$meson_bin" install -C builddir
+  popd # project
+}
+
+build_cmake_project()
+{
+  url="$1"
+  shift
+  opts="$@"
+  fetch "$url"
+  tar xf "`basename "$url"`"
+  prj_dir_name="`basename -s .tar.gz "$url"`"
+  prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+  prj_dir_name="`basename -s .tar.bz2 "$prj_dir_name"`"
+  pushd "$prj_dir_name"
+  rm -rf builddir && mkdir builddir && pushd builddir
+  cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX="$deps_prefix" "$@"
+  cmake --build .
+  cmake --install .
+  popd # build
+  popd # project
+}
+
+build_autotools_project()
+{
+  url="$1"
+  shift
+  opts="$@"
+  fetch "$url"
+  tar xf "`basename "$url"`"
+  prj_dir_name="`basename -s .tar.gz "$url"`"
+  prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+  prj_dir_name="`basename -s .tar.bz2 "$prj_dir_name"`"
+  prj_dir_name="`basename -s .tar.lz "$prj_dir_name"`"
+  pushd "$prj_dir_name"
+  ./configure --prefix="$deps_prefix" "$@" || ( >&2 cat config.log ; exit 1 )
+  make -j$num_cpus
+  make install
+  popd # project
+}
+
+build_custom()
+{
+  url="$1"
+  prj_dir_name="$2"
+  config_cmd="$3"
+  make_cmd="$4"
+  install_cmd="$5"
+  fetch "$url"
+  tar xf "`basename "$url"`"
+  pushd "$prj_dir_name"
+  $config_cmd
+  $make_cmd
+  $install_cmd
+  popd # project
+}
+
+cleanup_pc_r() {
+  find "$deps_prefix" -name '*.pc' -type f -exec sed -i -e 's| -R| -Wl,-rpath,|g' {} \;
+}
+
+export CC=cc
+export CXX=cc
+export CFLAGS='-fPIC -g @MARCH_MTUNE@'
+export CPPFLAGS='-DPIC -g @MARCH_MTUNE@'
+
+build_autotools_project https://ftp.gnu.org/gnu/libunistring/libunistring-1.0.tar.gz --disable-static --enable-shared
+build_meson_project https://gitlab.freedesktop.org/gstreamer/meson-ports/libffi/-/archive/meson/libffi-meson.tar.gz -Ddefault_library=shared
+build_autotools_project https://www.hboehm.info/gc/gc_source/gc-8.2.2.tar.gz --disable-static --enable-shared
+build_autotools_project https://www.hboehm.info/gc/gc_source/libatomic_ops-7.6.14.tar.gz --disable-static --enable-shared
+build_autotools_project https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz --disable-static --enable-shared
+
+# libxcrypt
+url="https://github.com/besser82/libxcrypt/releases/download/v4.4.28/libxcrypt-4.4.28.tar.xz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.gz "$url"`"
+prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
+pushd "$prj_dir_name"
+./configure --prefix="$deps_prefix" --enable-shared --disable-static --enable-hashes=strong,glibc --enable-obsolete-api=no --disable-failure-tokens
+make -j$num_cpus
+make install
+popd # project
+
+#build_autotools_project http://zlib.net/fossils/zlib-1.2.12.tar.gz #--static
+
+# guile
+build_autotools_project https://ftp.gnu.org/gnu/guile/guile-3.0.8.tar.gz --disable-static --enable-shared --disable-lto --disable-deprecated --disable-tmpnam --disable-rpath #--enable-mini-gmp
+sed -i -e "s|-lgc -lpthread -ldl|-lgc -lpthread -ldl $(pkg-config --libs gmp libffi libcrypt) -lunistring|g" "$deps_prefix/lib/pkgconfig/guile-3.0.pc"
+
+build_autotools_project https://tukaani.org/xz/xz-5.2.6.tar.xz --disable-static --enable-shared
+build_meson_wrap_project lz4 lz4-1.9.4 -Ddefault_library=shared
+
+# zstd
+url="https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.gz "$url"`"
+pushd "$prj_dir_name"
+cmake -S build/cmake -B build -G Ninja \
+  -DCMAKE_BUILD_TYPE=None \
+  -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+  -DCMAKE_INSTALL_PREFIX="$deps_prefix" \
+  -DZSTD_BUILD_CONTRIB=OFF \
+  -DZSTD_BUILD_STATIC=ON \
+  -DZSTD_BUILD_SHARED=ON \
+  -DZSTD_BUILD_TESTS=OFF \
+  -DZSTD_BUILD_PROGRAMS=ON \
+  -DZSTD_PROGRAMS_LINK_SHARED=OFF
+cmake --build build
+cmake --install build
+popd # project
+
+# xxhash
+url="https://github.com/Cyan4973/xxHash/archive/refs/tags/v0.8.1.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="xxHash-0.8.1"
+pushd "$prj_dir_name"
+CFLAGS="$CFLAGS -O3" make XXH_FORCE_MEMORY_ACCESS=1 XXH_STATIC_LINKING_ONLY=1 PREFIX="$deps_prefix" -j$num_cpus
+make install PREFIX="$deps_prefix"
+rm "$deps_prefix/lib/"libxxhash*.so*
+popd # project
+
+# icu
+url="https://github.com/unicode-org/icu/releases/download/release-71-1/icu4c-71_1-src.tgz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="icu/source"
+pushd "$prj_dir_name"
+./configure --prefix="$deps_prefix" --disable-static --enable-shared
+make -j$num_cpus
+make install
+popd # project
+
+build_meson_wrap_project libxml2 libxml2-2.10.2 -Ddefault_library=shared
+build_meson_wrap_project libyaml yaml-0.2.5 -Ddefault_library=shared
+
+xorg_macros_ver=1.19.1
+url="https://github.com/freedesktop/xorg-macros/archive/refs/tags/util-macros-${xorg_macros_ver}.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="xorg-macros-util-macros-${xorg_macros_ver}"
+pushd "$prj_dir_name"
+./autogen.sh
+./configure --prefix="$deps_prefix"
+make -j$num_cpus
+make install
+popd # project
+
+build_autotools_project "https://xorg.freedesktop.org/releases/individual/lib/libXrender-0.9.10.tar.bz2" --disable-static --enable-shared
+build_meson_wrap_project libxcursor libXcursor-1.2.1 -Ddefault_library=shared
+build_meson_wrap_project libxrandr libXrandr-1.5.2 -Ddefault_library=shared
+build_meson_wrap_project libpng libpng-1.6.37 -Ddefault_library=shared
+build_meson_wrap_project libjpeg-turbo libjpeg-turbo-2.1.3 -Ddefault_library=shared
+build_autotools_project http://download.osgeo.org/libtiff/tiff-4.4.0.tar.gz --disable-static --enable-shared --disable-rpath --disable-webp --disable-zstd --disable-lzma --disable-jpeg --disable-zlib
+
+# brotli
+brotli_ver=1.0.9
+url="https://github.com/google/brotli/archive/refs/tags/v${brotli_ver}.tar.gz"
+fetch "$url"
+tar xf "v${brotli_ver}.tar.gz"
+prj_dir_name="brotli-${brotli_ver}"
+pushd "$prj_dir_name"
+mkdir build && pushd build
+cmake .. -DCMAKE_INSTALL_PREFIX="$deps_prefix" -DBUILD_SHARED_LIBS=True
+cmake --build .
+cmake --install .
+#rm "$deps_prefix/lib/"*brotli*.so*
+cleanup_pc_r
+#sed -i -e 's|-lbrotlicommon|-lbrotlicommon-static|g' "$deps_prefix/lib/pkgconfig/libbrotlicommon.pc"
+#sed -i -e 's|-lbrotlienc|-lbrotlienc-static -lbrotlicommon-static -lm|g' "$deps_prefix/lib/pkgconfig/libbrotlienc.pc"
+#sed -i -e 's|-lbrotlidec|-lbrotlidec-static -lbrotlicommon-static|g' "$deps_prefix/lib/pkgconfig/libbrotlidec.pc"
+popd # build
+popd # project
+
+build_meson_wrap_project freetype2 freetype-2.12.1 -Ddefault_library=shared -Dharfbuzz=disabled
+build_autotools_project https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz --disable-static --enable-shared
+build_autotools_project https://ftp.osuosl.org/pub/xiph/releases/flac/flac-1.4.1.tar.xz --disable-static --enable-shared
+build_autotools_project https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz --disable-static --enable-shared
+build_autotools_project https://downloads.sourceforge.net/sourceforge/mpg123/mpg123-1.30.2.tar.bz2 --disable-static --enable-shared
+build_autotools_project http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz --disable-static --enable-shared
+#build_meson_wrap_project lame lame-3.100 -Ddefault_library=shared
+build_meson_wrap_project vorbis libvorbis-1.3.7 -Ddefault_library=shared
+fftw_common_opts="-DBUILD_SHARED_LIBS=ON -DENABLE_THREADS=ON -DENABLE_SSE=ON -DENABLE_SSE2=ON -DENABLE_AVX=ON -DENABLE_AVX2=ON -DWITH_COMBINED_THREADS=ON"
+build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=OFF
+build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=ON
+build_meson_wrap_project libsndfile libsndfile-1.1.0 -Ddefault_library=shared -Dprograms=false
+build_cmake_project https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=True -DLIBSAMPLERATE_EXAMPLES=0
+
+# vamp
+url="https://code.soundsoftware.ac.uk/attachments/download/2588/vamp-plugin-sdk-2.9.0.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.gz "$url"`"
+pushd "$prj_dir_name"
+./configure --prefix="$deps_prefix" --disable-programs
+make -j1 sdkstatic
+cp ./*.a $deps_prefix/lib/
+cp -r ./vamp-hostsdk $deps_prefix/include/vamp-hostsdk
+sed "s,%PREFIX%,$deps_prefix," ./pkgconfig/vamp-hostsdk.pc.in > "$deps_prefix/lib/pkgconfig/vamp-hostsdk.pc"
+popd # project
+
+build_meson_wrap_project rubberband rubberband-2.0.2 -Ddefault_library=shared
+build_meson_wrap_project pcre2 pcre2-10.40 -Ddefault_library=shared -Dgrep=false -Dtest=false
+build_autotools_project https://libbsd.freedesktop.org/releases/libmd-1.0.4.tar.xz --disable-static --enable-shared
+
+# libbsd
+LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib" CPATH="$deps_prefix/include" build_autotools_project https://libbsd.freedesktop.org/releases/libbsd-0.11.6.tar.xz --disable-static --enable-shared
+#rm "$deps_prefix/lib/libbsd.so"
+find "$deps_prefix" -name '*libbsd*.pc' -type f -exec sed -i -e 's|-lmd|-L${libdir} -lmd|g' {} \;
+find "$deps_prefix" -name '*libbsd*.pc' -type f -exec sed -i -e 's|-lbsd|-lbsd -L${libdir} -lmd|g' {} \;
+
+build_meson_wrap_project expat expat-2.4.8 -Ddefault_library=shared
+build_meson_project https://gitlab.freedesktop.org/wayland/wayland/-/archive/1.21.0/wayland-1.21.0.tar.gz -Ddefault_library=shared -Ddocumentation=false -Ddtd_validation=false -Dtests=false
+build_meson_project https://gitlab.freedesktop.org/wayland/wayland-protocols/-/archive/1.26/wayland-protocols-1.26.tar.gz -Ddefault_library=shared
+
+# pcre 1
+url="https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.gz"
+wget "$url" -O ./pcre-8.45.tar.gz
+tar xf pcre-8.45.tar.gz
+prj_dir_name=pcre-8.45
+pushd "$prj_dir_name"
+./configure --prefix="$deps_prefix" --disable-static --enable-shared
+make -j$num_cpus
+make install
+popd # project
+
+#build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=shared -Dlibedit=disabled -Dlibreadline=disabled
+build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=shared -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
+build_meson_project https://download.gnome.org/sources/glib/2.74/glib-2.74.0.tar.xz -Ddefault_library=shared -Dlibelf=disabled
+build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disable-static --enable-shared
+build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.0.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
+build_meson_project https://www.cairographics.org/releases/pixman-0.40.0.tar.gz -Ddefault_library=shared -Dgtk=disabled
+
+# cairo
+url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.17.6/cairo-1.17.6.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.gz "$url"`"
+pushd "$prj_dir_name"
+# struct stat is reserved
+find ./ -type f -exec sed -i -e 's/struct stat/struct staat/g' {} \;
+CFLAGS="$CFLAGS -DHAVE_XRENDERCREATELINEARGRADIENT=1 -DHAVE_XRENDERCREATERADIALGRADIENT=1 -DHAVE_XRENDERCREATECONICALGRADIENT=1" "$meson_bin" setup build --wrap-mode=nofallback -Dprefix="$deps_prefix" -Ddefault_library=shared -Dspectre=disabled -Dtests=disabled -Dxcb=disabled -Dpng=enabled -Dzlib=enabled -Dsymbol-lookup=disabled
+"$meson_bin" compile -C build
+"$meson_bin" install -C build
+popd # project
+
+cleanup_pc_r
+
+build_meson_wrap_project harfbuzz harfbuzz-5.2.0 -Ddefault_library=shared -Dtests=disabled -Dintrospection=disabled -Ddocs=disabled -Dbenchmark=disabled -Dicu_builtin=true
+#build_meson_wrap_project freetype2 freetype-2.12.1 -Ddefault_library=shared -Dharfbuzz=enabled
+#build_meson_wrap_project harfbuzz harfbuzz-5.2.0 -Ddefault_library=shared -Dtests=disabled -Dintrospection=disabled -Ddocs=disabled -Dbenchmark=disabled -Dicu_builtin=true
+
+url="https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="libepoxy-1.5.10"
+pushd "$prj_dir_name"
+"$meson_bin" setup build --wrap-mode=nofallback -Dprefix="$deps_prefix" -Ddefault_library=shared -Dtests=false # can't link static - not allowed to link to x11 if static
+"$meson_bin" compile -C build
+"$meson_bin" install -C build
+popd # project
+
+build_meson_project https://download.gnome.org/sources/graphene/1.10/graphene-1.10.8.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dinstalled_tests=false
+build_meson_wrap_project json-glib json-glib-1.6.6 -Ddefault_library=shared -Dintrospection=disabled -Dgtk_doc=disabled -Dtests=false
+build_meson_project https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz -Ddefault_library=shared
+#build_autotools_project https://github.com/tlwg/libdatrie/releases/download/v0.2.13/libdatrie-0.2.13.tar.xz --disable-static --enable-shared
+#build_autotools_project https://github.com/tlwg/libthai/releases/download/v0.1.29/libthai-0.1.29.tar.xz --disable-static --enable-shared # missing trie_* symbols for some reason
+build_meson_project https://download.gnome.org/sources/pango/1.50/pango-1.50.10.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dlibthai=disabled
+build_meson_project https://download.gnome.org/sources/gdk-pixbuf/2.42/gdk-pixbuf-2.42.9.tar.xz -Ddefault_library=shared -Djpeg=enabled -Dpng=enabled -Dbuiltin_loaders=png,jpeg -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Drelocatable=true -Dman=false -Dinstalled_tests=false
+build_autotools_project https://download.gnome.org/sources/librsvg/2.52/librsvg-2.52.4.tar.xz --disable-gtk-doc --disable-vala --disable-introspection --enable-static --enable-shared
+
+build_autotools_project https://ftp.gnu.org/gnu/nettle/nettle-3.8.tar.gz --disable-static --enable-shared
+build_autotools_project https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.19.0.tar.gz --disable-static --enable-shared
+build_autotools_project https://github.com/p11-glue/p11-kit/releases/download/0.24.1/p11-kit-0.24.1.tar.xz --disable-static --without-bash-completion --without-systemd # cannot be used as a static library
+build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.8.tar.xz --disable-static --enable-shared --disable-bash-tests --disable-tests --with-included-libtasn1
+
+# cups
+#url="https://github.com/OpenPrinting/cups/releases/download/v2.4.2/cups-2.4.2-source.tar.gz"
+#fetch "$url"
+#tar xf "`basename "$url"`"
+#prj_dir_name="cups-2.4.2"
+#pushd "$prj_dir_name"
+#./configure --prefix="$deps_prefix" --disable-static --enable-shared --disable-libpaper --disable-libusb --disable-tcp-wrappers --disable-dbus --disable-pam --disable-largefile --disable-raw-printing --without-systemd --without-tls
+#make -j$num_cpus
+#make install
+#popd # project
+
+# FIXME use next gtk release
+# URL for reference: https://download.gnome.org/sources/gtk/4.8/gtk-4.8.1.tar.xz
+build_meson_project https://gitlab.gnome.org/GNOME/gtk/-/archive/a9c9678e1f617755368f16424a03ae1f2d2ced4e/gtk-a9c9678e1f617755368f16424a03ae1f2d2ced4e.tar.gz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false
+
+build_meson_project https://download.gnome.org/sources/gtksourceview/5.5/gtksourceview-5.5.1.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dvapi=false -Dinstall_tests=true
+
+# carla
+url="https://github.com/falkTX/Carla/archive/@CARLA_GIT_VER@.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="Carla-@CARLA_GIT_VER@"
+pushd "$prj_dir_name"
+sed -i -e 's|PARAMETER_IS_AUTOMABLE = PARAMETER_IS_AUTOMATABLE|PARAMETER_IS_AUTOMABLE = 0x020|' source/backend/CarlaBackend.h
+args="HAVE_SDL1=false HAVE_SDL2=false NOOPT=true SKIP_STRIPPING=true"
+make features $args
+make -j$num_cpus $args
+make install $args PREFIX="$deps_prefix"
+popd # project
+
+LDFLAGS="$(pkg-config --libs libbrotlidec)" build_autotools_project https://curl.haxx.se/download/curl-7.85.0.tar.gz --disable-static --enable-shared --disable-ldap --disable-ldaps --disable-manual --without-ssl --with-gnutls --with-ca-fallback --without-ca-bundle
+build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.7/lsp-dsp-lib-src-1.0.7.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
+build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
+build_meson_project https://download.gnome.org/sources/libadwaita/1.2/libadwaita-1.2.0.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
+build_meson_project https://download.gnome.org/sources/libpanel/1.0/libpanel-1.0.1.tar.xz -Ddefault_library=shared -Dvapi=false -Ddocs=disabled -Dintrospection=disabled -Dc_std=gnu11 -Dinstall-examples=true
+
+# pulse
+build_meson_project https://freedesktop.org/software/pulseaudio/releases/pulseaudio-16.1.tar.gz -Ddefault_library=shared -Ddaemon=false -Ddoxygen=false -Dgcov=false -Dman=false -Dtests=false -Dalsa=enabled -Dgtk=disabled -Dasyncns=disabled -Davahi=disabled -Dbluez5=disabled -Dbluez5-gstreamer=disabled -Dbluez5-native-headset=false -Dbluez5-ofono-headset=false -Ddbus=disabled -Delogind=disabled -Dfftw=disabled -Dglib=disabled -Dgsettings=disabled -Dgstreamer=disabled -Dhal-compat=false -Dipv6=false -Djack=disabled -Dlirc=disabled -Dopenssl=disabled -Dorc=disabled -Doss-output=disabled -Dsoxr=disabled -Dspeex=disabled -Dsystemd=disabled -Dtcpwrap=disabled -Dudev=disabled -Dvalgrind=disabled -Dx11=disabled -Dwebrtc-aec=disabled -Dbashcompletiondir=no -Dzshcompletiondir=no
+mv "$deps_prefix/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so" "$deps_prefix/lib/x86_64-linux-gnu/"
+
+build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.2.0.tar.gz -Ddefault_library=shared -Djack=disabled -Dalsa=enabled -Dpulse=enabled
+build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
+
+# libbacktrace
+url="https://git.sr.ht/~alextee/libbacktrace/archive/20221013.tar.gz"
+fetch "$url"
+tar xf "`basename "$url"`"
+prj_dir_name="`basename -s .tar.gz "$url"`"
+prj_dir_name="libbacktrace-$prj_dir_name"
+pushd "$prj_dir_name"
+./configure --prefix="$deps_prefix" --disable-shared --enable-static
+make -j$num_cpus
+make install
+popd # project
+
+popd # private dir
+
+touch "$deps_prefix/FINISHED"
+touch "$out_file"
