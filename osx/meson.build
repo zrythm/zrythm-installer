@@ -21,12 +21,6 @@ osx_conf.set (
   'DASH_TRIAL', dash_trial)
 osx_conf.set (
   'TRIAL_INITIAL_UPPERCASE', build_trial ? 'Trial' : '')
-osx_conf.set (
-  'ZRYTHM_BOTTLE_FILENAME', zrythm_bottle_filename)
-osx_conf.set (
-  'CARLA_BOTTLE_VER', carla_bottle_ver)
-osx_conf.set (
-  'CARLA_BOTTLE_FILENAME', carla_bottle_filename)
 installer_zip_filename = 'zrythm' + dash_trial + '-' + zrythm_pkg_ver + '-osx-installer.zip'
 installer_pkg_filename = 'zrythm' + dash_trial + '-' + zrythm_pkg_ver + '-osx-installer.pkg'
 osx_conf.set (
@@ -62,3 +56,10 @@ zrythm_deps = custom_target (
     ],
   console: true,
   )
+
+run_target (
+  'zrythm-deps',
+  command: [ 'echo', 'done' ],
+  depends: [
+	zrythm_deps,
+    ])

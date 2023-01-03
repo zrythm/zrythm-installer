@@ -75,7 +75,7 @@ option (
 
 option (
   'distro', type: 'combo',
-  choices: ['archlinux', 'debian11', 'debian12', 'fedora36', 'windows-msys', 'flatpak', 'gnu-linux', 'osx-brew-zip', 'appimage', 'ubuntu2004', 'ubuntu2204', 'manual' ],
+  choices: ['archlinux', 'debian11', 'debian12', 'fedora36', 'windows-msys', 'flatpak', 'gnu-linux', 'osx', 'osx-brew-zip', 'appimage', 'ubuntu2004', 'ubuntu2204', 'manual' ],
   value: 'archlinux',
   description: 'Distro to build')
 
