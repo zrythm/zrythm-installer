@@ -141,7 +141,10 @@ mkdir -p "$destdir_w_prefix/libexec"
 cp "$deps_prefix/libexec/gio-launch-desktop" "$destdir_w_prefix/libexec/gio-launch-desktop"
 
 # copy breeze-dark
-cp -r /usr/share/icons/breeze-dark "$destdir_w_prefix/share/icons/"
+wget -O breeze-icons-master.zip https://github.com/KDE/breeze-icons/archive/refs/heads/master.zip
+unzip breeze-icons-master.zip
+cp -r breeze-icons-master/icons-dark/* "$destdir_w_prefix/share/icons/"
+#cp -r /usr/share/icons/breeze-dark "$destdir_w_prefix/share/icons/"
 
 # copy other icons
 mkdir -p "$destdir_w_prefix/share/icons/hicolor/scalable/actions"
