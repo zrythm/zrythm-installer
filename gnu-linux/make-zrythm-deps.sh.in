@@ -415,10 +415,9 @@ build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.
 #make -j$num_cpus
 #make install
 #popd # project
+} # skip_build2
 
-# FIXME use next gtk release
-# URL for reference: https://download.gnome.org/sources/gtk/4.8/gtk-4.8.1.tar.xz
-build_meson_project https://gitlab.gnome.org/GNOME/gtk/-/archive/a9c9678e1f617755368f16424a03ae1f2d2ced4e/gtk-a9c9678e1f617755368f16424a03ae1f2d2ced4e.tar.gz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false
+build_meson_project https://download.gnome.org/sources/gtk/4.9/gtk-4.9.2.tar.xz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false
 
 build_meson_project https://download.gnome.org/sources/gtksourceview/5.5/gtksourceview-5.5.1.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dvapi=false -Dinstall_tests=true
 
@@ -445,7 +444,6 @@ build_meson_project https://download.gnome.org/sources/libpanel/1.0/libpanel-1.0
 build_meson_project https://freedesktop.org/software/pulseaudio/releases/pulseaudio-16.1.tar.gz -Ddefault_library=shared -Ddaemon=false -Ddoxygen=false -Dgcov=false -Dman=false -Dtests=false -Dalsa=enabled -Dgtk=disabled -Dasyncns=disabled -Davahi=disabled -Dbluez5=disabled -Dbluez5-gstreamer=disabled -Dbluez5-native-headset=false -Dbluez5-ofono-headset=false -Ddbus=disabled -Delogind=disabled -Dfftw=disabled -Dglib=disabled -Dgsettings=disabled -Dgstreamer=disabled -Dhal-compat=false -Dipv6=false -Djack=disabled -Dlirc=disabled -Dopenssl=disabled -Dorc=disabled -Doss-output=disabled -Dsoxr=disabled -Dspeex=disabled -Dsystemd=disabled -Dtcpwrap=disabled -Dudev=disabled -Dvalgrind=disabled -Dx11=disabled -Dwebrtc-aec=disabled -Dbashcompletiondir=no -Dzshcompletiondir=no
 mv "$deps_prefix/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so" "$deps_prefix/lib/x86_64-linux-gnu/"
 
-} # skip_build2
 build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.2.0.tar.gz -Ddefault_library=shared -Djack=disabled -Dalsa=enabled -Dpulse=enabled
 build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
 
