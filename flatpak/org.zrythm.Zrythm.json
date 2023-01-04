@@ -432,8 +432,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.4/lsp-dsp-lib-src-1.0.4.tar.gz",
-                    "sha256": "7bb5411666af51a7329c8d0f907d00bb25e3ec2ee3e99680353d5f6f5356d962",
+                    "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.8/lsp-dsp-lib-src-1.0.8.tar.gz",
+                    "sha256": "ee3e6171d897f1e1caf9cd2f8f3872a11ae5326b5161196b8a90f262d67c7a78",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/lsp-plugins/lsp-dsp-lib/releases/latest",
@@ -654,13 +654,14 @@
             "config-opts": [
                 "-Dbenchmarks=disabled",
                 "-Dtests=disabled",
-                "-Ddefault_library=static"
+                "-Ddefault_library=static",
+                "-Ddocs=disabled"
             ],
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/drobilla/zix",
-                    "commit": "f2fc88e136fc92328b86575fdfed1cc7c7729ef3"
+                    "commit": "56ec14c4369c591f5efbb500b0829b760bee7800"
                 }
             ]
         },
