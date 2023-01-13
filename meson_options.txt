@@ -111,8 +111,8 @@ option (
 
 option (
   'gtk-ver', type: 'string',
-  value: '4.8.1',
-  description: 'GTK git version')
+  value: '4.9.2',
+  description: 'GTK git version (must be a tag)')
 
 option (
   'libadwaita-ver', type: 'string',
