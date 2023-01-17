@@ -112,6 +112,12 @@ EOL
 
   cp -R "$dll_dir"/* "$dist_bindir"/
 
+  echo "Copying additional dlls..."
+  # these are required by epoxy but not auto-detected by the collect_dlls script
+  for dll in libEGL.dll libGLESv1_CM.dll libGLESv2.dll libGLESv2_with_capture.dll libangle_trace_loader.dll libangle_util.dll libfeature_support.dll; do
+    cp "$chroot_mingw_prefix/bin/$dll" "$dist_bindir"/
+  done
+
   # ******************************
 
   # ******************************
