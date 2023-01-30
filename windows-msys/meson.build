@@ -295,7 +295,7 @@ libpanel_pkg = custom_target (
   output: 'libpanel.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_libpanel_pkgbuild, ],
   command: make_mingw_pkg_cmd,
-  depends: libadwaita_pkg,
+  #depends: libadwaita_pkg,
   console: true,
   install: false,
   )
@@ -344,7 +344,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lsp_dsp_lib_pkg,
+    lsp_dsp_lib_pkg, libpanel_pkg,
     ],
   console: true,
   install: false,

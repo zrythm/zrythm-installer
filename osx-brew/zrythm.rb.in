@@ -91,7 +91,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
       system "ninja", "-v"
 
       # install
-      system "meson", "install", "--skip-subprojects=libaudec,libbacktrace,libcyaml,reproc,rtaudio,rtmidi,zstd,libpanel"
+      system "meson", "install", "--skip-subprojects=libaudec,libbacktrace,libcyaml,reproc,rtaudio,rtmidi,zstd"
 
       # move back
       system "mv", "../VERSION.txt", "../VERSION"

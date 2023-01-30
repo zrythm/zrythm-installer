@@ -643,8 +643,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libpanel",
-                    "commit": "1403a020e5d65e21bc0e16133aeb2b6e7cdca2de"
+                    "url": "https://git.sr.ht/~alextee/libpanel-detach",
+                    "commit": "86a41374dcb061a5007d24041b42a1823a8abc8d"
                 }
             ]
         },

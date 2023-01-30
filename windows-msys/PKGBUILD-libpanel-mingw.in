@@ -15,7 +15,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-gtk-doc")
 depends=("${MINGW_PACKAGE_PREFIX}-libadwaita")
-source=("https://gitlab.gnome.org/GNOME/libpanel/-/archive/${_commit}/libpanel-${_commit}.tar.gz")
+source=("https://git.sr.ht/~alextee/libpanel-detach/archive/1.1.0-for-zrythm.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
