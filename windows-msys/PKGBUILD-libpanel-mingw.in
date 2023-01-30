@@ -15,12 +15,12 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-gtk-doc")
 depends=("${MINGW_PACKAGE_PREFIX}-libadwaita")
-source=("https://git.sr.ht/~alextee/libpanel-detach/archive/1.1.0-for-zrythm.tar.gz")
+source=("https://git.sr.ht/~alextee/libpanel-detach/archive/${_commit}.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
   rm -rf /tmp/${_realname}-${pkgver}
-  mv "${srcdir}/${_realname}-${_commit}" /tmp/${_realname}-$pkgver
+  mv "${srcdir}/${_realname}-detach-${_commit}" /tmp/${_realname}-$pkgver
 
   cd /tmp/${_realname}-$pkgver
   #sed -i "6i add_global_link_arguments ('-lssp', language: [ 'c', 'cpp' ])" meson.build
