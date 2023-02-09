@@ -210,11 +210,12 @@ pushd "$prj_dir_name"
 make -j$num_cpus
 make install
 popd # project
+} # skip_build2
 
 #build_autotools_project http://zlib.net/fossils/zlib-1.2.12.tar.gz #--static
 
 # guile
-build_autotools_project https://ftp.gnu.org/gnu/guile/guile-3.0.8.tar.gz --disable-static --enable-shared --disable-lto --disable-deprecated --disable-tmpnam --disable-rpath #--enable-mini-gmp
+build_autotools_project https://ftp.gnu.org/gnu/guile/guile-3.0.9.tar.gz --disable-static --enable-shared --disable-lto --disable-deprecated --disable-tmpnam --disable-rpath #--enable-mini-gmp
 sed -i -e "s|-lgc -lpthread -ldl|-lgc -lpthread -ldl $(pkg-config --libs gmp libffi libcrypt) -lunistring|g" "$deps_prefix/lib/pkgconfig/guile-3.0.pc"
 
 build_autotools_project https://tukaani.org/xz/xz-5.2.6.tar.xz --disable-static --enable-shared
@@ -311,7 +312,7 @@ build_autotools_project https://downloads.sourceforge.net/sourceforge/mpg123/mpg
 build_autotools_project http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz --disable-static --enable-shared
 #build_meson_wrap_project lame lame-3.100 -Ddefault_library=shared
 build_meson_wrap_project vorbis libvorbis-1.3.7 -Ddefault_library=shared
-fftw_common_opts="-DBUILD_SHARED_LIBS=ON -DENABLE_THREADS=ON -DENABLE_SSE=ON -DENABLE_SSE2=ON -DENABLE_AVX=ON -DENABLE_AVX2=ON -DWITH_COMBINED_THREADS=ON"
+fftw_common_opts="-DBUILD_SHARED_LIBS=ON -DENABLE_THREADS=ON -DENABLE_SSE=ON -DENABLE_SSE2=ON -DENABLE_AVX=ON -DENABLE_AVX2=ON -DWITH_COMBINED_THREADS=ON -DCMAKE_BUILD_TYPE=Release"
 build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=OFF
 build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=ON
 build_meson_wrap_project libsndfile libsndfile-1.1.0 -Ddefault_library=shared -Dprograms=false
@@ -415,7 +416,6 @@ build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.
 #make -j$num_cpus
 #make install
 #popd # project
-} # skip_build2
 
 gtk_maj_min_ver="$(echo "@GTK_VER@" | cut -d. -f-2)"
 build_meson_project https://download.gnome.org/sources/gtk/${gtk_maj_min_ver}/gtk-@GTK_VER@.tar.xz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false
@@ -436,7 +436,7 @@ make install $args PREFIX="$deps_prefix"
 popd # project
 
 LDFLAGS="$(pkg-config --libs libbrotlidec)" build_autotools_project https://curl.haxx.se/download/curl-7.85.0.tar.gz --disable-static --enable-shared --disable-ldap --disable-ldaps --disable-manual --without-ssl --with-gnutls --with-ca-fallback --without-ca-bundle
-build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.7/lsp-dsp-lib-src-1.0.7.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
+build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.9/lsp-dsp-lib-src-1.0.9.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
 build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
 build_meson_project https://download.gnome.org/sources/libadwaita/1.2/libadwaita-1.2.0.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
 
