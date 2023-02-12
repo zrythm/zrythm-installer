@@ -64,6 +64,7 @@ PATH="$PATH:/home/build/.local/bin" \
   -Dappimage=true \
   -Dcarla_use_cv32_patchbay_variant=true \
   --force-fallback-for=libadwaita,gtk4,libpanel \
+  -Dwrap_mode=default \
   -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@
 
 # build

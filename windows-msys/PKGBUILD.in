@@ -111,6 +111,7 @@ build() {
     -Dtests=false \
     -Dcarla_use_cv32_patchbay_variant=true \
     -Dforce_fallback_for=rtmidi,rtaudio \
+    -Dwrap_mode=default \
     -Dfftw3_threads_separate=false \
     "../zrythm-${pkgver}"
 

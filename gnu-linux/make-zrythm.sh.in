@@ -85,6 +85,7 @@ $meson_bin build \
   -Dguile_snarf_docs_path= \
   -Dguile=enabled \
   -Dforce_fallback_for="$fallback_subprojects_csv" \
+  -Dwrap_mode=default \
   -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
   -Dmanpage=true \
   -Dgraphviz=disabled \

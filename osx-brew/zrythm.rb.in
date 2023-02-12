@@ -82,6 +82,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dcarla_use_cv32_patchbay_variant=true",
         "-Dguile=disabled",
         "-Dforce_fallback_for=gtk4,libpanel,libadwaita",
+        "-Dwrap_mode=default",
         ".."
 
       # workaround for C++ 20 <version>
