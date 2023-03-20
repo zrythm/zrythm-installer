@@ -58,7 +58,7 @@ build() {
     -Dcarla_use_cv32_patchbay_variant=true \
     -Db_lto=false \
     -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@ \
-    -Dforce_fallback_for=gtk4,libadwaita,libpanel
+    -Dforce_fallback_for=gtk4,libadwaita,libpanel,libcyaml
   ninja -C build
 }
 
