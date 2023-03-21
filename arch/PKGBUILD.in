@@ -45,6 +45,7 @@ build() {
   echo "fallback version: @ZRYTHM_PKG_SEMVER_VERSION@"
   @MESON_BIN@ build --prefix=/usr -Dtests=false \
     -Dpkg_config_path=@LIBRARY_PKG_CONFIG_PATH@:@CARLA_PKG_CONFIG_PATH@ \
+    -Dwrap_mode=default \
     -Dmanpage=true \
     -Dbuildtype=debugoptimized -Dextra_debug_info=true \
     -Dsdl=enabled -Drtaudio=enabled \
@@ -58,13 +59,13 @@ build() {
     -Dcarla_use_cv32_patchbay_variant=true \
     -Db_lto=false \
     -Dcarla_binaries_dir=@CARLA_FULL_BINS_PATH@ \
-    -Dforce_fallback_for=gtk4,libadwaita,libpanel,libcyaml
+    -Dforce_fallback_for=gtk4,libadwaita,libpanel,libcyaml,libaudec,zix
   ninja -C build
 }
 
 check() {
   cd $_rootdir
-  @MESON_BIN@ test -C build --no-suite=gtksourceview5
+  @MESON_BIN@ test -C build --suite=zrythm
   build/src/zrythm --version
 }
 

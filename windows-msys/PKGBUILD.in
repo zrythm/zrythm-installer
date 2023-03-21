@@ -112,7 +112,7 @@ build() {
     -Dcarla_use_cv32_patchbay_variant=true \
     -Dforce_fallback_for=rtmidi,rtaudio \
     -Dwrap_mode=default \
-    -Dfftw3_threads_separate=false \
+    -Dfftw3_threads_separate=true \
     "../zrythm-${pkgver}"
 
   ${MINGW_PREFIX}/bin/ninja -d explain -v
