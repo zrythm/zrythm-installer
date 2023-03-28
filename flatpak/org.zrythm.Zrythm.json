@@ -1,7 +1,7 @@
 {
     "app-id": "org.zrythm.Zrythm",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "43",
+    "runtime-version": "44",
     "sdk": "org.gnome.Sdk",
     "command": "zrythm_launch",
     "rename-icon": "zrythm",
@@ -302,19 +302,6 @@
             ]
         },
         {
-            "name": "libyaml",
-            "build-options": {
-                "no-debuginfo": true
-            },
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://pyyaml.org/download/libyaml/yaml-0.2.1.tar.gz",
-                    "sha256": "78281145641a080fb32d6e7a87b9c0664d611dcb4d542e90baf731f51cbb59cd"
-                }
-            ]
-        },
-        {
             "name": "libcyaml",
             "buildsystem": "simple",
             "build-options": {
@@ -327,9 +314,40 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/tlsa/libcyaml/",
-                    "commit": "499d1e990869455de30a706eb2ee6a2ad60900ab",
-                    "tag": "v1.3.0"
+                    "url": "https://github.com/tlsa/libcyaml",
+                    "commit": "ee6231ff844c7f100e3b4e65fa34ed47f8fb2f49",
+                    "tag": "v1.3.1",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/tlsa/libcyaml/releases/latest",
+                        "tag-query": ".tag_name",
+                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                        "timestamp-query": ".published_at"
+                    }
+                }
+            ],
+            "modules": [
+                {
+                    "name": "libyaml",
+                    "build-options": {
+                        "no-debuginfo": true
+                    },
+                    "buildsystem": "autotools",
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/yaml/libyaml",
+                            "commit": "2c891fc7a770e8ba2fec34fc6b545c672beb37e6",
+                            "tag": "0.2.5",
+                            "x-checker-data": {
+                                "type": "json",
+                                "url": "https://api.github.com/repos/yaml/libyaml/releases/latest",
+                                "tag-query": ".tag_name",
+                                "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                                "timestamp-query": ".published_at"
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -353,21 +371,21 @@
         {
             "name": "rubberband",
             "build-options": {
-                "env": {
-                    "Vamp_CFLAGS": " ",
-                    "Vamp_LIBS": " "
-                },
                 "no-debuginfo": true
             },
+            "buildsystem": "meson",
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://code.breakfastquay.com/attachments/download/34/rubberband-1.8.1.tar.bz2",
-                    "sha256": "ff0c63b0b5ce41f937a8a3bc560f27918c5fe0b90c6bc1cb70829b86ada82b75"
+                    "url": "https://breakfastquay.com/files/releases/rubberband-3.1.2.tar.bz2",
+                    "sha256": "dda7e257b14c59a1f59c5ccc4d6f19412039f77834275955aa0ff511779b98d2",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 4222,
+                        "stable-only": true,
+                        "url-template": "https://breakfastquay.com/files/releases/rubberband-$version.tar.bz2"
+                    }
                 }
-            ],
-            "post-install": [
-                "install -Dm644 -t /app/share/licenses/rubberband COPYING"
             ],
             "cleanup": [
                 "/bin",
@@ -411,10 +429,15 @@
             ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/KDE/breeze-icons",
-                    "commit": "c8ca52623d49f77fe32dc1bdb400fa16bc4afb06",
-                    "tag": "v5.90.0"
+                    "type": "archive",
+                    "url": "https://download.kde.org/stable/frameworks/5.103/breeze-icons-5.103.0.tar.xz",
+                    "sha256": "7925d70ef2078316f69b9d26e7b1536844fb1d3c045fc78a2464c54871415abd",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 305788,
+                        "stable-only": true,
+                        "url-template": "https://download.kde.org/stable/frameworks/$major.$minor/breeze-icons-$version.tar.xz"
+                    }
                 }
             ]
         },
@@ -432,8 +455,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.8/lsp-dsp-lib-src-1.0.8.tar.gz",
-                    "sha256": "ee3e6171d897f1e1caf9cd2f8f3872a11ae5326b5161196b8a90f262d67c7a78",
+                    "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.9/lsp-dsp-lib-src-1.0.9.tar.gz",
+                    "sha256": "a333fb70c92d92366bfb8de8278b97d32e26e4804c4737df6ab565069f63b862",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/lsp-plugins/lsp-dsp-lib/releases/latest",
@@ -632,23 +655,6 @@
             ]
         },
         {
-            "name": "libpanel",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dvapi=false",
-                "-Dinstall-examples=false",
-                "-Dintrospection=disabled",
-                "-Ddocs=disabled"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://git.sr.ht/~alextee/libpanel-detach",
-                    "commit": "86a41374dcb061a5007d24041b42a1823a8abc8d"
-                }
-            ]
-        },
-        {
             "name": "zix",
             "buildsystem": "meson",
             "config-opts": [
@@ -662,6 +668,23 @@
                     "type": "git",
                     "url": "https://github.com/drobilla/zix",
                     "commit": "56ec14c4369c591f5efbb500b0829b760bee7800"
+                }
+            ]
+        },
+        {
+            "name": "libpanel",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dvapi=false",
+                "-Dinstall-examples=false",
+                "-Dintrospection=disabled",
+                "-Ddocs=disabled"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://git.sr.ht/~alextee/libpanel-detach",
+                    "commit": "86a41374dcb061a5007d24041b42a1823a8abc8d"
                 }
             ]
         },
