@@ -192,7 +192,9 @@ export CXX="$deps_prefix"/bin/g++
 export CFLAGS='-fPIC -g @MARCH_MTUNE@'
 export CPPFLAGS='-DPIC -g @MARCH_MTUNE@'
 
-skip_build2() {
+#skip_build2() {
+build_autotools_project https://www.x.org/releases/individual/xcb/xcb-proto-1.15.tar.xz --disable-static --enable-shared
+build_autotools_project https://www.x.org/releases/individual/xcb/libxcb-1.15.tar.xz --disable-static --enable-shared
 build_autotools_project https://ftp.gnu.org/gnu/libunistring/libunistring-1.0.tar.gz --disable-static --enable-shared
 build_meson_project https://gitlab.freedesktop.org/gstreamer/meson-ports/libffi/-/archive/meson/libffi-meson.tar.gz -Ddefault_library=shared
 build_autotools_project https://www.hboehm.info/gc/gc_source/gc-8.2.2.tar.gz --disable-static --enable-shared
@@ -210,7 +212,7 @@ pushd "$prj_dir_name"
 make -j$num_cpus
 make install
 popd # project
-} # skip_build2
+#} # skip_build2
 
 #build_autotools_project http://zlib.net/fossils/zlib-1.2.12.tar.gz #--static
 
