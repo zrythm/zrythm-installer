@@ -364,14 +364,14 @@ build_meson_project https://www.freedesktop.org/software/fontconfig/release/font
 build_meson_project https://www.cairographics.org/releases/pixman-0.40.0.tar.gz -Ddefault_library=shared -Dgtk=disabled
 
 # cairo
-url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.17.6/cairo-1.17.6.tar.gz"
+url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.17.8/cairo-1.17.8.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="`basename -s .tar.gz "$url"`"
 pushd "$prj_dir_name"
 # struct stat is reserved
 find ./ -type f -exec sed -i -e 's/struct stat/struct staat/g' {} \;
-CFLAGS="$CFLAGS -DHAVE_XRENDERCREATELINEARGRADIENT=1 -DHAVE_XRENDERCREATERADIALGRADIENT=1 -DHAVE_XRENDERCREATECONICALGRADIENT=1" "$meson_bin" setup build --wrap-mode=nofallback -Dprefix="$deps_prefix" -Ddefault_library=shared -Dspectre=disabled -Dtests=disabled -Dxcb=disabled -Dpng=enabled -Dzlib=enabled -Dsymbol-lookup=disabled
+CFLAGS="$CFLAGS -DHAVE_XRENDERCREATELINEARGRADIENT=1 -DHAVE_XRENDERCREATERADIALGRADIENT=1 -DHAVE_XRENDERCREATECONICALGRADIENT=1" "$meson_bin" setup build --wrap-mode=nofallback -Dprefix="$deps_prefix" -Ddefault_library=shared -Dspectre=disabled -Dtests=disabled -Dxcb=enabled -Dpng=enabled -Dzlib=enabled -Dsymbol-lookup=disabled
 "$meson_bin" compile -C build
 "$meson_bin" install -C build
 popd # project
