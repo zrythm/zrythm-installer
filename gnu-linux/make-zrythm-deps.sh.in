@@ -361,7 +361,7 @@ build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15
 build_meson_project https://download.gnome.org/sources/glib/2.74/glib-2.74.0.tar.xz -Ddefault_library=shared -Dlibelf=disabled
 build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disable-static --enable-shared
 build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.0.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
-build_meson_project https://www.cairographics.org/releases/pixman-0.40.0.tar.gz -Ddefault_library=shared -Dgtk=disabled
+build_meson_project https://www.cairographics.org/releases/pixman-0.42.2.tar.gz -Ddefault_library=shared -Dgtk=disabled
 
 # cairo
 url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.17.8/cairo-1.17.8.tar.gz"
@@ -397,7 +397,7 @@ build_meson_wrap_project json-glib json-glib-1.6.6 -Ddefault_library=shared -Din
 build_meson_project https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz -Ddefault_library=shared
 #build_autotools_project https://github.com/tlwg/libdatrie/releases/download/v0.2.13/libdatrie-0.2.13.tar.xz --disable-static --enable-shared
 #build_autotools_project https://github.com/tlwg/libthai/releases/download/v0.1.29/libthai-0.1.29.tar.xz --disable-static --enable-shared # missing trie_* symbols for some reason
-build_meson_project https://download.gnome.org/sources/pango/1.50/pango-1.50.10.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dlibthai=disabled
+build_meson_project https://download.gnome.org/sources/pango/1.50/pango-1.50.14.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dlibthai=disabled
 build_meson_project https://download.gnome.org/sources/gdk-pixbuf/2.42/gdk-pixbuf-2.42.9.tar.xz -Ddefault_library=shared -Djpeg=enabled -Dpng=enabled -Dbuiltin_loaders=png,jpeg -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Drelocatable=true -Dman=false -Dinstalled_tests=false
 build_autotools_project https://download.gnome.org/sources/librsvg/2.52/librsvg-2.52.4.tar.xz --disable-gtk-doc --disable-vala --disable-introspection --enable-static --enable-shared
 
