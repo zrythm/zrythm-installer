@@ -623,7 +623,7 @@
                         {
                             "type": "git",
                             "url": "https://gitlab.gnome.org/GNOME/gtk",
-                            "commit": "3a941eff4aa0ad66e0aa34e6528bc4d78c5e5d5e"
+                            "commit": "74677018183b7b815c54b236841447132c0141e3"
                         }
                     ],
                     "cleanup": [
