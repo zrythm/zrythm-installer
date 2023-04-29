@@ -107,6 +107,7 @@ if [ $proceed -ne 0 ]; then
   installed_prefix="/opt/$pkgname"
   sudo mv "$installed_prefix" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
+    sudo mkdir /opt || true
     sudo cp -r "$prefix" "$installed_prefix"
   fi
 
