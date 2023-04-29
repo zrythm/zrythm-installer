@@ -269,12 +269,12 @@ build_meson_wrap_project libxml2 libxml2-2.10.2 -Ddefault_library=shared
 build_meson_wrap_project libyaml yaml-0.2.5 -Ddefault_library=shared
 
 xorg_macros_ver=1.19.1
-url="https://github.com/freedesktop/xorg-macros/archive/refs/tags/util-macros-${xorg_macros_ver}.tar.gz"
+url="https://xorg.freedesktop.org/releases/individual/util/util-macros-${xorg_macros_ver}.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
-prj_dir_name="xorg-macros-util-macros-${xorg_macros_ver}"
+prj_dir_name="util-macros-${xorg_macros_ver}"
 pushd "$prj_dir_name"
-./autogen.sh
+#./autogen.sh
 ./configure --prefix="$deps_prefix"
 make -j$num_cpus
 make install
