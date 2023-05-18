@@ -47,7 +47,7 @@ option (
 
 option (
   'carla-git-ver', type: 'string',
-  value: '6cdd0e71a33bd22aacbe5890f17dcdf14606bd68',
+  value: 'ad7def4bd0dbd9c2470a72cae79089a0a17dad7f',
   description: 'Carla version')
 
 option (
@@ -111,12 +111,12 @@ option (
 
 option (
   'gtk-ver', type: 'string',
-  value: '4.10.3',
+  value: '4.11.2',
   description: 'GTK git version (must be a tag)')
 
 option (
   'libadwaita-ver', type: 'string',
-  value: '1.2.0',
+  value: 'eecd684355f08564b2b72aa931025201f8bd2056',
   description: 'libadwaita git version')
 
 option (

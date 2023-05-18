@@ -440,7 +440,10 @@ popd # project
 LDFLAGS="$(pkg-config --libs libbrotlidec)" build_autotools_project https://curl.haxx.se/download/curl-7.85.0.tar.gz --disable-static --enable-shared --disable-ldap --disable-ldaps --disable-manual --without-ssl --with-gnutls --with-ca-fallback --without-ca-bundle
 build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.9/lsp-dsp-lib-src-1.0.9.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
 build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
-build_meson_project https://download.gnome.org/sources/libadwaita/1.2/libadwaita-1.2.0.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
+
+# libadwaita
+build_meson_project https://gitlab.gnome.org/GNOME/libadwaita/-/archive/@LIBADWAITA_VER@/libadwaita-@LIBADWAITA_VER@.tar.gz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
+#build_meson_project https://download.gnome.org/sources/libadwaita/1.2/libadwaita-1.2.0.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
 
 # libpanel
 url="https://git.sr.ht/~alextee/libpanel-detach/archive/1.1.0-for-zrythm.tar.gz"

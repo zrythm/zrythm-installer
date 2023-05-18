@@ -19,6 +19,8 @@ gnu_linux_conf = configuration_data ()
 gnu_linux_conf.merge_from (global_conf)
 gnu_linux_conf.set (
   'DEPS_PREFIX', get_option ('gnu-linux-deps-prefix'))
+gnu_linux_conf.set (
+  'LIBADWAITA_VER', libadwaita_ver)
 
 make_zrythm = configure_file (
   output: 'make-zrythm.sh',
