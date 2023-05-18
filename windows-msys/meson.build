@@ -281,7 +281,7 @@ libadwaita_pkg = custom_target (
   output: 'libadwaita.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_libadwaita_pkgbuild, ],
   command: make_mingw_pkg_cmd,
-  depends: gtk4_pkg,
+  #depends: gtk4_pkg,
   console: true,
   install: false,
   )
@@ -295,7 +295,7 @@ libpanel_pkg = custom_target (
   output: 'libpanel.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_libpanel_pkgbuild, ],
   command: make_mingw_pkg_cmd,
-  #depends: libadwaita_pkg,
+  depends: libadwaita_pkg,
   console: true,
   install: false,
   )
@@ -344,7 +344,7 @@ mingw_zrythm_pkg = custom_target (
     '@INPUT3@', '@PRIVATE_DIR@',
     ],
   depends: [
-    lsp_dsp_lib_pkg, libpanel_pkg,
+    libpanel_pkg, lsp_dsp_lib_pkg,
     ],
   console: true,
   install: false,
@@ -363,7 +363,7 @@ windows_chroot_target = custom_target (
     make_windows_chroot, zrythm_src_tarball,
     carla_packages[0],
     carla_packages[1],
-    lsp_dsp_lib_pkg,
+    libpanel_pkg, lsp_dsp_lib_pkg,
     mingw_zrythm_pkg,
     ],
   command: [
