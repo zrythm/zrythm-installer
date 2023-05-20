@@ -345,7 +345,8 @@ find "$deps_prefix" -name '*libbsd*.pc' -type f -exec sed -i -e 's|-lbsd|-lbsd -
 
 build_meson_wrap_project expat expat-2.4.8 -Ddefault_library=shared
 build_meson_project https://gitlab.freedesktop.org/wayland/wayland/-/archive/1.21.0/wayland-1.21.0.tar.gz -Ddefault_library=shared -Ddocumentation=false -Ddtd_validation=false -Dtests=false
-build_meson_project https://gitlab.freedesktop.org/wayland/wayland-protocols/-/archive/1.26/wayland-protocols-1.26.tar.gz -Ddefault_library=shared
+wayland_protocols_ver=1.31
+build_meson_project "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/archive/$wayland_protocols_ver/wayland-protocols-$wayland_protocols_ver.tar.gz" -Ddefault_library=shared
 
 # pcre 1
 url="https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.gz"
