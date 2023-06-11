@@ -47,7 +47,7 @@ option (
 
 option (
   'carla-git-ver', type: 'string',
-  value: 'fa3253b01f5f3ec5e5e15029f482166e8563bf51',
+  value: 'de4b1705a5ae0e6a44a5d4abe44333ef591e99ee',
   description: 'Carla version')
 
 option (
@@ -111,7 +111,7 @@ option (
 
 option (
   'gtk-ver', type: 'string',
-  value: '4.11.2',
+  value: '4.11.3',
   description: 'GTK git version (must be a tag)')
 
 option (
