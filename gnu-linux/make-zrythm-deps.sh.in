@@ -167,9 +167,9 @@ cleanup_pc_r() {
   find "$deps_prefix" -name '*.pc' -type f -exec sed -i -e 's| -R| -Wl,-rpath,|g' {} \;
 }
 
-skip_build() {
+#skip_build() {
 # gcc
-url="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-12.2.0/gcc-12.2.0.tar.xz"
+url="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-13.1.0/gcc-13.1.0.tar.xz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="`basename -s .tar.xz "$url"`"
@@ -185,14 +185,14 @@ pushd "$prj_build_dir_name"
 make -j$num_cpus
 make install
 popd # project build dir
-} # end skip_build()
+#} # end skip_build()
 
 export CC="$deps_prefix"/bin/gcc
 export CXX="$deps_prefix"/bin/g++
 export CFLAGS='-fPIC -g @MARCH_MTUNE@'
 export CPPFLAGS='-DPIC -g @MARCH_MTUNE@'
 
-skip_build2() {
+#skip_build2() {
 build_autotools_project https://www.x.org/releases/individual/xcb/xcb-proto-1.15.tar.xz --disable-static --enable-shared
 build_autotools_project https://www.x.org/releases/individual/xcb/libxcb-1.15.tar.xz --disable-static --enable-shared
 build_autotools_project https://ftp.gnu.org/gnu/libunistring/libunistring-1.0.tar.gz --disable-static --enable-shared
@@ -218,7 +218,7 @@ popd # project
 # guile
 build_autotools_project https://ftp.gnu.org/gnu/guile/guile-3.0.9.tar.gz --disable-static --enable-shared --disable-lto --disable-deprecated --disable-tmpnam --disable-rpath #--enable-mini-gmp
 sed -i -e "s|-lgc -lpthread -ldl|-lgc -lpthread -ldl $(pkg-config --libs gmp libffi libcrypt) -lunistring|g" "$deps_prefix/lib/pkgconfig/guile-3.0.pc"
-} # skip_build2
+#} # skip_build2
 
 build_autotools_project https://tukaani.org/xz/xz-5.2.6.tar.xz --disable-static --enable-shared
 build_meson_wrap_project lz4 lz4-1.9.4 -Ddefault_library=shared
