@@ -79,6 +79,8 @@ rm -rf $bin_dir/*-e
 replace_path() {
   local exe=$1
   chmod +w $exe
+  echo "processing $exe:"
+  otool -L $exe
   echo "replacing path for $exe"
   if [[ "$exe" == *".dylib" ]]; then
     local new_id="@executable_path/../lib/`basename $exe`"
