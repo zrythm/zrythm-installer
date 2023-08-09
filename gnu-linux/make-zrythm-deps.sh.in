@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# Copyright (C) 2022 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2022-2023 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -169,7 +169,7 @@ cleanup_pc_r() {
 
 #skip_build() {
 # gcc
-url="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-13.1.0/gcc-13.1.0.tar.xz"
+url="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-13.2.0/gcc-13.2.0.tar.xz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="`basename -s .tar.xz "$url"`"
@@ -202,7 +202,7 @@ build_autotools_project https://www.hboehm.info/gc/gc_source/libatomic_ops-7.6.1
 build_autotools_project https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz --disable-static --enable-shared
 
 # libxcrypt
-url="https://github.com/besser82/libxcrypt/releases/download/v4.4.28/libxcrypt-4.4.28.tar.xz"
+url="https://github.com/besser82/libxcrypt/releases/download/v4.4.36/libxcrypt-4.4.36.tar.xz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="`basename -s .tar.gz "$url"`"
@@ -224,7 +224,7 @@ build_autotools_project https://tukaani.org/xz/xz-5.2.6.tar.xz --disable-static 
 build_meson_wrap_project lz4 lz4-1.9.4 -Ddefault_library=shared
 
 # zstd
-url="https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz"
+url="https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-1.5.5.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="`basename -s .tar.gz "$url"`"
@@ -244,10 +244,10 @@ cmake --install build
 popd # project
 
 # xxhash
-url="https://github.com/Cyan4973/xxHash/archive/refs/tags/v0.8.1.tar.gz"
+url="https://github.com/Cyan4973/xxHash/archive/refs/tags/v0.8.2.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
-prj_dir_name="xxHash-0.8.1"
+prj_dir_name="xxHash-0.8.2"
 pushd "$prj_dir_name"
 CFLAGS="$CFLAGS -O3" make XXH_FORCE_MEMORY_ACCESS=1 XXH_STATIC_LINKING_ONLY=1 PREFIX="$deps_prefix" -j$num_cpus
 make install PREFIX="$deps_prefix"
@@ -255,7 +255,7 @@ rm "$deps_prefix/lib/"libxxhash*.so*
 popd # project
 
 # icu
-url="https://github.com/unicode-org/icu/releases/download/release-71-1/icu4c-71_1-src.tgz"
+url="https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="icu/source"
@@ -306,18 +306,18 @@ cleanup_pc_r
 popd # build
 popd # project
 
-build_meson_wrap_project freetype2 freetype-2.12.1 -Ddefault_library=shared -Dharfbuzz=disabled
+build_meson_wrap_project freetype2 freetype-2.13.1 -Ddefault_library=shared -Dharfbuzz=disabled
 build_autotools_project https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz --disable-static --enable-shared
-build_autotools_project https://ftp.osuosl.org/pub/xiph/releases/flac/flac-1.4.1.tar.xz --disable-static --enable-shared
+build_autotools_project https://ftp.osuosl.org/pub/xiph/releases/flac/flac-1.4.3.tar.xz --disable-static --enable-shared
 build_autotools_project https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz --disable-static --enable-shared
-build_autotools_project https://downloads.sourceforge.net/sourceforge/mpg123/mpg123-1.30.2.tar.bz2 --disable-static --enable-shared
+build_autotools_project https://downloads.sourceforge.net/sourceforge/mpg123/mpg123-1.31.3.tar.bz2 --disable-static --enable-shared
 build_autotools_project http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz --disable-static --enable-shared
 #build_meson_wrap_project lame lame-3.100 -Ddefault_library=shared
 build_meson_wrap_project vorbis libvorbis-1.3.7 -Ddefault_library=shared
 fftw_common_opts="-DBUILD_SHARED_LIBS=ON -DENABLE_THREADS=ON -DENABLE_SSE=ON -DENABLE_SSE2=ON -DENABLE_AVX=ON -DENABLE_AVX2=ON -DWITH_COMBINED_THREADS=ON -DCMAKE_BUILD_TYPE=Release"
 build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=OFF
 build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=ON
-build_meson_wrap_project libsndfile libsndfile-1.1.0 -Ddefault_library=shared -Dprograms=false
+build_meson_wrap_project libsndfile libsndfile-1.2.0 -Ddefault_library=shared -Dprograms=false
 build_cmake_project https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=True -DLIBSAMPLERATE_EXAMPLES=0
 
 # vamp
@@ -334,7 +334,7 @@ sed "s,%PREFIX%,$deps_prefix," ./pkgconfig/vamp-hostsdk.pc.in > "$deps_prefix/li
 popd # project
 
 build_meson_wrap_project rubberband rubberband-2.0.2 -Ddefault_library=shared
-build_meson_wrap_project pcre2 pcre2-10.40 -Ddefault_library=shared -Dgrep=false -Dtest=false
+build_meson_wrap_project pcre2 pcre2-10.42 -Ddefault_library=shared -Dgrep=false -Dtest=false
 build_autotools_project https://libbsd.freedesktop.org/releases/libmd-1.0.4.tar.xz --disable-static --enable-shared
 
 # libbsd
@@ -363,7 +363,7 @@ popd # project
 build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=shared -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
 build_meson_project https://download.gnome.org/sources/glib/2.74/glib-2.74.0.tar.xz -Ddefault_library=shared -Dlibelf=disabled
 build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disable-static --enable-shared
-build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.0.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
+build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
 build_meson_project https://www.cairographics.org/releases/pixman-0.42.2.tar.gz -Ddefault_library=shared -Dgtk=disabled
 
 # cairo
@@ -438,13 +438,13 @@ make -j$num_cpus $args
 make install $args PREFIX="$deps_prefix"
 popd # project
 
-LDFLAGS="$(pkg-config --libs libbrotlidec)" build_autotools_project https://curl.haxx.se/download/curl-7.85.0.tar.gz --disable-static --enable-shared --disable-ldap --disable-ldaps --disable-manual --without-ssl --with-gnutls --with-ca-fallback --without-ca-bundle
-build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.9/lsp-dsp-lib-src-1.0.9.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
+LDFLAGS="$(pkg-config --libs libbrotlidec)" build_autotools_project https://curl.haxx.se/download/curl-8.2.1.tar.gz --disable-static --enable-shared --disable-ldap --disable-ldaps --disable-manual --without-ssl --with-gnutls --with-ca-fallback --without-ca-bundle
+build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.13/lsp-dsp-lib-src-1.0.13.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
 build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
 
 # libadwaita
 #build_meson_project https://gitlab.gnome.org/GNOME/libadwaita/-/archive/@LIBADWAITA_VER@/libadwaita-@LIBADWAITA_VER@.tar.gz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
-build_meson_project https://download.gnome.org/sources/libadwaita/1.3/libadwaita-1.3.2.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
+build_meson_project https://download.gnome.org/sources/libadwaita/1.3/libadwaita-1.3.4.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
 
 # libpanel
 url="https://git.sr.ht/~alextee/libpanel-detach/archive/1.1.0-for-zrythm.tar.gz"
