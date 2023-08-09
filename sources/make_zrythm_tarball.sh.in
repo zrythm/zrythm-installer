@@ -31,8 +31,8 @@ rm -rf $private_dir
 mkdir -p $private_dir
 cp $orig_tarball $private_dir/
 pushd $private_dir
-tar xhf $orig_tarball_filename
+tar xf $orig_tarball_filename
 mv zrythm $new_inner_dir_name
-tar chzf tmp.tar.gz $new_inner_dir_name
+tar czf tmp.tar.gz $new_inner_dir_name
 popd
 cp "$private_dir/tmp.tar.gz" "$out_file"
