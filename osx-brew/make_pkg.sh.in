@@ -92,7 +92,9 @@ replace_path() {
   local changes=""
   for lib in `otool -L $exe | egrep "(/opt/|/local/)" | grep -v "/usr/lib" | awk '{print $1}'` ; do
     if [ ! -f "$lib_dir/`basename $lib`" ]; then
-      cp -rfv $lib $lib_dir/
+      # for some reason freetype dylib only uses @loader_path instead of a full path so correct it here
+      lib_without_loaderpath=${lib/@loader_path\/..\/..\/..\/..\/opt\//\/usr\/local\/opt\/}
+      cp -rfv "$lib_without_loaderpath" $lib_dir/
     fi
     replaced=""
     if [[ "$exe" == *".lv2"* ]]; then
