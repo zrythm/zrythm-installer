@@ -50,7 +50,10 @@ case "$pkg_type" in
   "WINDOWS_MSYS")
     echo "zrythm${trial}-$zrythm_pkg_ver-ms-setup.exe"
     ;;
-  "USER_MANUAL")
+  "USER_MANUAL_ZIP")
     echo "zrythm${trial}-$zrythm_pkg_ver-manual.zip"
+    ;;
+  "USER_MANUAL_PDFS") # unused
+    echo "zrythm${trial}-$zrythm_pkg_ver-INVALID.pdf.INVALID"
     ;;
 esac
