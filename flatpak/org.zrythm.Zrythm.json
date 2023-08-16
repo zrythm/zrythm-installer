@@ -700,7 +700,8 @@
                 "-Dinstaller_ver=true",
                 "-Djack=enabled",
                 "-Dalsa=disabled",
-                "-Drtaudio=enabled"
+                "-Drtaudio=enabled",
+                "-Dguile=disabled"
             ],
             "build-options": {
                 "env": {

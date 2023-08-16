@@ -83,7 +83,7 @@ $meson_bin build \
   -Dcarla=enabled \
   -Dopus=true \
   -Dguile_snarf_docs_path= \
-  -Dguile=enabled \
+  -Dguile=disabled \
   -Dforce_fallback_for="$fallback_subprojects_csv" \
   -Dwrap_mode=default \
   -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
@@ -121,9 +121,9 @@ done
 #cp -L /lib/x86_64-linux-gnu/libapparmor.so.1 "$destdir_w_prefix/lib/x86_64-linux-gnu/libapparmor.so.1"
 #cp -L /lib/x86_64-linux-gnu/libnsl.so.1 "$destdir_w_prefix/lib/x86_64-linux-gnu/libnsl.so.1"
 
-# guile
-cp -r $deps_prefix/share/guile "$destdir_w_prefix/share/"
-cp -r $deps_prefix/lib/guile "$destdir_w_prefix/lib/x86_64-linux-gnu/"
+# guile (disabled for now)
+#cp -r $deps_prefix/share/guile "$destdir_w_prefix/share/"
+#cp -r $deps_prefix/lib/guile "$destdir_w_prefix/lib/x86_64-linux-gnu/"
 
 # copy carla libs
 carla_lib_path="$destdir_w_prefix/lib/x86_64-linux-gnu/zrythm/carla"
