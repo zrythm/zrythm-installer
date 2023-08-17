@@ -245,16 +245,20 @@
             ]
         },
         {
-            "name": "libaudec",
-            "buildsystem": "meson",
+            "name": "libsoxr",
+            "buildsystem": "cmake-ninja",
             "build-options": {
+                "env": {
+                    "BUILD_SHARED_LIBS": "ON",
+                    "CFLAGS": "-fPIC"
+                },
                 "no-debuginfo": true
             },
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://git.sr.ht/~alextee/libaudec",
-                    "commit": "46f5aa04316f94bfbfa90d6b3514df54e90f0602"
+                    "url": "https://git.code.sf.net/p/soxr/code",
+                    "commit": "945b592b70470e29f917f4de89b4281fbbd540c0"
                 }
             ]
         },

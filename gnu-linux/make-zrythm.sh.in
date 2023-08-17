@@ -69,7 +69,7 @@ fi
 
 # make zrythm
 pushd "$private_dir/zrythm-$zrythm_version"
-fallback_subprojects_csv=lilv,sord,serd,sratom,zix,libcyaml,libaudec
+fallback_subprojects_csv=lilv,sord,serd,sratom,zix,libcyaml
 fallback_subprojects="`echo $fallback_subprojects_csv | tr , ' '`"
 $meson_bin subprojects download $fallback_subprojects
 $meson_bin build \
