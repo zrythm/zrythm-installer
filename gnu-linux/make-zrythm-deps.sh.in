@@ -221,6 +221,7 @@ sed -i -e "s|-lgc -lpthread -ldl|-lgc -lpthread -ldl $(pkg-config --libs gmp lib
 
 build_autotools_project https://tukaani.org/xz/xz-5.4.4.tar.xz --disable-static --enable-shared
 build_meson_wrap_project lz4 lz4-1.9.4 -Ddefault_library=shared
+} # skip_build2
 
 # zstd
 url="https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-1.5.5.tar.gz"
@@ -237,7 +238,8 @@ cmake -S build/cmake -B build -G Ninja \
   -DZSTD_BUILD_SHARED=ON \
   -DZSTD_BUILD_TESTS=OFF \
   -DZSTD_BUILD_PROGRAMS=ON \
-  -DZSTD_PROGRAMS_LINK_SHARED=OFF
+  -DZSTD_PROGRAMS_LINK_SHARED=OFF \
+  -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 cmake --install build
 popd # project
@@ -316,7 +318,6 @@ build_meson_wrap_project vorbis libvorbis-1.3.7 -Ddefault_library=shared
 fftw_common_opts="-DBUILD_SHARED_LIBS=ON -DENABLE_THREADS=ON -DENABLE_SSE=ON -DENABLE_SSE2=ON -DENABLE_AVX=ON -DENABLE_AVX2=ON -DWITH_COMBINED_THREADS=ON -DCMAKE_BUILD_TYPE=Release"
 build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=OFF
 build_cmake_project http://www.fftw.org/fftw-3.3.10.tar.gz $fftw_common_opts -DENABLE_FLOAT=ON
-} # skip_build2
 
 build_cmake_project https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2.tar.xz -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_PROGRAMS=OFF -DBUILD_EXAMPLES=ON -DBUILD_TESTING=OFF -DENABLE_EXTERNAL_LIBS=ON -DENABLE_MPEG=ON -DINSTALL_PKGCONFIG_MODULE=ON
 build_cmake_project https://sourceforge.net/projects/soxr/files/soxr-0.1.3-Source.tar.xz -DBUILD_SHARED_LIBS=True
