@@ -688,7 +688,7 @@
                 {
                     "type": "git",
                     "url": "https://git.sr.ht/~alextee/libpanel-detach",
-                    "commit": "86a41374dcb061a5007d24041b42a1823a8abc8d"
+                    "commit": "0f6581b1b95933f98f5bae7224f1101929953ccb"
                 }
             ]
         },

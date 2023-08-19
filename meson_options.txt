@@ -121,8 +121,8 @@ option (
 
 option (
   'libpanel-ver', type: 'string',
-  value: '1.1.0-for-zrythm',
-  description: 'libpanel git version (ignored for now)')
+  value: '1.3.0-for-zrythm',
+  description: 'libpanel git version')
 
 option (
   'breeze-dark-path', type: 'string',

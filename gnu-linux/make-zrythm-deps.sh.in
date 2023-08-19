@@ -448,10 +448,10 @@ build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -
 build_meson_project https://download.gnome.org/sources/libadwaita/1.3/libadwaita-1.3.4.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
 
 # libpanel
-url="https://git.sr.ht/~alextee/libpanel-detach/archive/1.1.0-for-zrythm.tar.gz"
+url="https://git.sr.ht/~alextee/libpanel-detach/archive/@LIBPANEL_VER@.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
-prj_dir_name="libpanel-detach-1.1.0-for-zrythm"
+prj_dir_name="libpanel-detach-@LIBPANEL_VER@"
 pushd "$prj_dir_name"
 rm -rf builddir
 "$meson_bin" setup builddir --wrap-mode=nofallback -Dprefix="$deps_prefix" -Ddefault_library=shared -Dvapi=false -Ddocs=disabled -Dintrospection=disabled -Dc_std=gnu11 -Dinstall-examples=true
