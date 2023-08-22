@@ -65,7 +65,8 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
       # configure
       system "meson",
         "--prefix=#{prefix}", "--libdir=#{lib}",
-        "--buildtype=debugoptimized", "-Dextra_debug_info=true",
+        "-Dextra_debug_info=true",
+        "-Ddebug=true", "-Doptimization=2",
         "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
         "-Dgtk4:x11-backend=false",
         "-Dcarla=enabled",

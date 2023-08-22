@@ -121,7 +121,7 @@ option (
 
 option (
   'libpanel-ver', type: 'string',
-  value: '1.3.0-for-zrythm',
+  value: '1.3.0-1-for-zrythm',
   description: 'libpanel git version')
 
 option (
