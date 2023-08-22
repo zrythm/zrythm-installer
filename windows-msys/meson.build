@@ -203,6 +203,18 @@ rcedit_x64_exe = custom_target (
   install: false,
   )
 
+cv2pdb_version = '0.52'
+filename = 'cv2pdb-' + cv2pdb_version + '.zip'
+url = 'https://github.com/rainers/cv2pdb/releases/download/v' + cv2pdb_version + '/' + filename
+cv2pdb_zip = custom_target (
+  'cv2pdb-zip',
+  output: filename,
+  command: [
+    'wget', url, '-O', '@OUTPUT@',
+    ],
+  install: false,
+  )
+
 # install dependencies
 carla_packages = []
 foreach arch : [ 'ucrt64', 'mingw32' ]
@@ -429,17 +441,17 @@ installer_dist_dir = custom_target (
     rcedit_x64_exe, dll_dir,
     breeze_icons, carla_zip_windows,
     mingw_packages_zip,
-    demo_project_zip,
+    demo_project_zip, cv2pdb_zip,
     ],
   command: [
     bash, '-c',
     '@INPUT0@ "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" ' +
-    '"$9" "${10}" "${11}" "${12}"',
+    '"$9" "${10}" "${11}" "${12}" "${13}"',
     '_ignored',
     '@OUTPUT@', '@INPUT1@', chroot_dir,
     '@PRIVATE_DIR@', '@INPUT2@', '@INPUT3@',
     '@INPUT4@', '@INPUT5@', '@INPUT6@', '@INPUT7@',
-    mingw_packages_commit, '@INPUT8@',
+    mingw_packages_commit, '@INPUT8@', '@INPUT9@',
     ],
   console: true,
   install: false,
