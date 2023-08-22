@@ -22,6 +22,7 @@ set -ex
 out_dir="$1"
 breeze_zip="$2"
 private_dir="$3"
+breeze_icons_ver="$4"
 
 rm -rf $out_dir
 rm -rf $private_dir
@@ -32,5 +33,5 @@ rm -rf $private_dir
 unzip -q "$breeze_zip" -d $private_dir
 
 # osx doesn't support -rL
-cp -rL $private_dir/breeze-icons-master/icons-dark $out_dir || \
-  cp -RL $private_dir/breeze-icons-master/icons-dark $out_dir
+cp -rL "$private_dir/breeze-icons-$breeze_icons_ver/icons-dark" "$out_dir" || \
+  cp -RL "$private_dir/breeze-icons-$breeze_icons_ver/icons-dark" "$out_dir"

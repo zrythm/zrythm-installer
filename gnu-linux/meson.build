@@ -74,7 +74,7 @@ zrythm_installed_target = custom_target (
     make_zrythm, '@OUTPUT@', '@PRIVATE_DIR@', '@INPUT0@',
     '/opt/zrythm' + dash_trial + '-' + zrythm_pkg_ver,
     meson_bin, zplugins_src_tarball,
-    demo_project_zip,
+    demo_project_zip, breeze_icons,
     ],
   depends: zrythm_deps,
   console: true,

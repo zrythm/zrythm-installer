@@ -90,7 +90,7 @@ breeze_icons_zip = custom_target (
   output: 'breeze-icons.zip',
   command: [
     'wget',
-    'https://github.com/KDE/breeze-icons/archive/master.zip',
+    'https://github.com/KDE/breeze-icons/archive/refs/tags/v' + breeze_icons_ver + '.zip',
     '-O', '@OUTPUT@',
     ],
   install: false,
@@ -101,7 +101,7 @@ breeze_icons = custom_target (
   output: 'breeze-dark',
   input: [ make_breeze_icons, breeze_icons_zip, ],
   command: [
-    bash, '-c', '@INPUT0@ "$1" "$2" "$3"', '_ignored',
+    bash, '-c', '@INPUT0@ "$1" "$2" "$3" "' + breeze_icons_ver + '" ', '_ignored',
     '@OUTPUT@', '@INPUT1@', '@PRIVATE_DIR@',
     ],
   install: false,

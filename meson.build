@@ -32,6 +32,7 @@ prefix = get_option ('prefix')
 libdir = get_option ('libdir')
 
 distro = get_option ('distro')
+breeze_icons_ver = get_option ('breeze-icons-ver')
 zrythm_git_ver = get_option ('zrythm-git-ver')
 zrythm_pkg_ver = get_option ('zrythm-pkg-ver')
 zrythm_pkg_semver = get_option ('zrythm-pkg-semver')
@@ -164,6 +165,8 @@ global_conf.set (
   meson.build_root () / 'scripts/get_pkg_filename.sh')
 global_conf.set (
   'MARCH_MTUNE', get_option ('march_mtune'))
+global_conf.set (
+  'BREEZE_ICONS_VER', breeze_icons_ver)
 
 subdir ('scripts')
 subdir ('sources')

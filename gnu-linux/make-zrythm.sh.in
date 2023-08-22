@@ -26,6 +26,7 @@ prefix="$4"
 meson_bin="$5"
 zplugins_tarball="$6"
 demo_project_zip="$7"
+breeze_dark_path="$8"
 
 zip_filename=`basename $out_file`
 zip_inner_dir_name="${zip_filename%.*}"
@@ -142,13 +143,8 @@ mkdir -p "$destdir_w_prefix/libexec"
 cp "$deps_prefix/libexec/gio-launch-desktop" "$destdir_w_prefix/libexec/gio-launch-desktop"
 
 # copy breeze-dark
-breeze_ver="5.108.0"
-wget -O breeze-icons-$breeze_ver.zip https://github.com/KDE/breeze-icons/archive/refs/tags/v$breeze_ver.zip
-rm -rf breeze-icons-$breeze_ver
-unzip breeze-icons-$breeze_ver.zip
-mkdir -p "$destdir_w_prefix/share/icons/breeze-dark"
-cp -r breeze-icons-$breeze_ver/icons-dark/* "$destdir_w_prefix/share/icons/breeze-dark/"
-#cp -r /usr/share/icons/breeze-dark "$destdir_w_prefix/share/icons/"
+mkdir -p "$destdir_w_prefix/share/icons"
+cp -r "$breeze_dark_path" "$destdir_w_prefix/share/icons/breeze-dark"
 
 # copy other icons
 mkdir -p "$destdir_w_prefix/share/icons/hicolor/scalable/actions"

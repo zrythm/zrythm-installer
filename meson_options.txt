@@ -125,6 +125,11 @@ option (
   description: 'libpanel git version')
 
 option (
+  'breeze-icons-ver', type: 'string',
+  value: '5.108.0',
+  description: 'Breeze icons version to download')
+
+option (
   'breeze-dark-path', type: 'string',
   value: '/Users/alex/.local/share/icons/breeze-dark',
   description: 'Breeze dark icons path')
