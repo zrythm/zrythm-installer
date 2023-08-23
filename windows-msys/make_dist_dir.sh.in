@@ -212,19 +212,16 @@ EOL
   cp "$chroot_mingw_prefix/bin/gspawn-win64-helper.exe" "$dist_bindir/"
   cp "$chroot_mingw_prefix/bin/gspawn-win64-helper-console.exe" "$dist_bindir/"
 
-  # copy original executable too for debugging with gdb because rcedit strips debug info
+  # copy original executable for debugging with gdb (DWARF)
+  # don't rcedit because it makes it impossible to debug
   cp $zrythm_exe $dist_bindir/zrythm_debug_gdb.exe
 
   # generate pbd and another executable for debugging with visual studio
+  # don't rcedit because it makes it impossible to debug
   mkdir -p "$dist_bindir/cv2pdb"
   unzip "$cv2pdb_zip" -d "$dist_bindir/cv2pdb"
   "$dist_bindir/cv2pdb/cv2pdb64.exe" "$zrythm_exe" "$dist_bindir/zrythm_debug_vs.exe"
   rm -rf "$dist_bindir/cv2pdb"
-
-  # also create rcedited version for pbd'ed version to test
-  cp "$dist_bindir/zrythm_debug_vs.exe" "$dist_bindir/zrythm_debug_vs_rcedited.exe"
-  $rcedit_x64_exe "$dist_bindir/zrythm_debug_vs_rcedited.exe" --set-icon  "$dist_dir/zrythm.ico"
-  "$dist_bindir/zrythm_debug_vs_rcedited.exe" --version
 
   # rcedited version of original
   $rcedit_x64_exe "$zrythm_exe" --set-icon  "$dist_dir/zrythm.ico"
