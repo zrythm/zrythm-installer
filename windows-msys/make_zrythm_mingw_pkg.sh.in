@@ -1,6 +1,6 @@
 #!@BASH@
 #
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2023 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -21,6 +21,7 @@ set -ex
 
 mingw_arch="@MINGW_ARCH@"
 mingw_pkg_prefix="@MINGW_PKG_PREFIX@"
+mingw_prefix="@MINGW_PREFIX@"
 
 out_file="$1"
 
@@ -28,6 +29,7 @@ pkgbuild="$2"
 src_tarball="$3"
 zplugins_tarball="$4"
 private_dir="$5"
+drmingw_zip="$6"
 
 dash_trial="@DASH_TRIAL@"
 
@@ -40,7 +42,12 @@ mkdir -p $private_dir
 cp $pkgbuild $private_dir/PKGBUILD
 cp $src_tarball $private_dir/
 cp $zplugins_tarball $private_dir/
+drmingw_zip="$(pwd)/$drmingw_zip"
 pushd $private_dir
+drmingw_dirname="drmingw-0.9.11-win64"
+unzip "$drmingw_zip" -d .
+cp "$drmingw_dirname/lib/libmgwhelp.dll.a" "$mingw_prefix/lib/"
+rm -rf "$drmingw_dirname"
 MINGW_ARCH=$mingw_arch makepkg-mingw -fs --noconfirm
 popd
 

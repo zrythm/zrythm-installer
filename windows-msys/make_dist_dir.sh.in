@@ -1,6 +1,6 @@
 #!@BASH@
 #
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2023 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -32,6 +32,7 @@ mingw_packages_zip_path="${10}"
 mingw_packages_commit="${11}"
 demo_project_zip="${12}"
 cv2pdb_zip="${13}"
+drmingw_zip="${14}"
 
 dash_trial="@DASH_TRIAL@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
@@ -211,6 +212,13 @@ EOL
   fi
   cp "$chroot_mingw_prefix/bin/gspawn-win64-helper.exe" "$dist_bindir/"
   cp "$chroot_mingw_prefix/bin/gspawn-win64-helper-console.exe" "$dist_bindir/"
+
+  # drmingw
+  mkdir -p "$dist_bindir/drmingw"
+  unzip "$drmingw_zip" -d "$dist_bindir/drmingw"
+  drmingw_dirname="drmingw-0.9.11-win64"
+  mv "$dist_bindir/drmingw/$drmingw_dirname/bin/"* "$dist_bindir/"
+  rm -rf "$dist_bindir/drmingw"
 
   # copy original executable for debugging with gdb (DWARF)
   # don't rcedit because it makes it impossible to debug
