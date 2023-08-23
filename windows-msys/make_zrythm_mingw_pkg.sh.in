@@ -47,6 +47,7 @@ pushd $private_dir
 drmingw_dirname="drmingw-0.9.11-win64"
 unzip "$drmingw_zip" -d .
 cp "$drmingw_dirname/lib/libmgwhelp.dll.a" "$mingw_prefix/lib/"
+cp "$drmingw_dirname/bin/"* "$mingw_prefix/bin/"
 rm -rf "$drmingw_dirname"
 MINGW_ARCH=$mingw_arch makepkg-mingw -fs --noconfirm
 popd

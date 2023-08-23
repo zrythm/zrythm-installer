@@ -156,7 +156,7 @@ package() {
   pushd "$_zrythm_builddir"
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/meson install \
     --skip-subprojects
-  install -Dm644 "${srcdir}/zrythm-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/zrythm/COPYING"
+  install -Dm644 "${srcdir}/zrythm-${pkgver}/LICENSES/LicenseRef-ZrythmLicense.txt" "${pkgdir}${MINGW_PREFIX}/share/licenses/zrythm/COPYING"
   popd
 
   pushd "$_zplugins_builddir"
