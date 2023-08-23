@@ -84,6 +84,7 @@ build() {
   rm ${srcdir}/zrythm-${pkgver}/TRANSLATORS
   mv TRANSLATORS2 ${srcdir}/zrythm-${pkgver}/TRANSLATORS
   sed -i -e 's|"|'\''|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
+  sed -i -e 's|os_windows ? fallback_version|os_windows ? version_fallback|g' ${srcdir}/zrythm-${pkgver}/meson.build || true
 
   echo "using prefix ${MINGW_PREFIX}"
   MSYS2_ARG_CONV_EXCL="--prefix=;--buildtype=" \
