@@ -6,17 +6,19 @@
     <body>
         <div style="font-family: Helvetica; padding-left: 10px;" align="left">
             <h3>Zrythm</h3>
-                <p style="color: #020202; font-size: 11px;">Thank you for installing Zrythm..</p>
+                <p style="color: #020202; font-size: 11px;">Thank you for installing Zrythm.</p>
+            <!--
             <h5>Run Zrythm</h5>
                 <p style="color: #020202; font-size: 11px;">Open a new terminal and run the following command to run Zrythm:</p>
                 <code style="color: #c6a72b; font-size: 11px;">&nbsp; $ <span style="color: #abb0b0">Zrythm-@ZRYTHM_PRODUCT_VERSION@</span></code>
+            -->
         </div>
         <div style="font-family: Helvetica; padding-left: 10px;" align="left">
             <br/>
             <h5>Resources</h5>
                 <p style="color: #020202; font-size: 11px;">Go through following links for additional information.</p>
                 <ul>
-                    <li><a href="https://manual.zrythm.org/en/" style="font-size: 11px;">Documentation</a></li>
+                    <li><a href="https://manual.zrythm.org/en/" style="font-size: 11px;">User Manual</a></li>
                 </ul>
         </div>
         <div style="font-family: Helvetica; padding-left: 10px;" align="left">
@@ -27,7 +29,7 @@
                 </p>
         </div>
         <div style="font-family: Helvetica; padding-left: 10px;" align="left"><br />
-          <p style="color: #abb0b0; font-size: 10px;">Copyright © 2021 The Zrythm contributors.<br/>Zrythm and the Zrythm logo are registered trademarks of Alexandros Theodotou in the United Kingdom.</p>
+          <p style="color: #abb0b0; font-size: 10px;">Copyright © 2021-2023 The Zrythm contributors.<br/>Zrythm and the Zrythm logo are registered trademarks of Alexandros Theodotou in the United Kingdom.</p>
         </div>
     </body>
 </html>

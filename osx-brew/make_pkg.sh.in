@@ -76,8 +76,19 @@ cp -rfv /usr/local/lib/libbrotlicommon*.dylib \
 # remove some unnecessary binaries
 rm -rf $bin_dir/*-e
 
+# remove unncesessary files
+for mo_file in `find "$share_dir" -type f -name '*.mo'` ; do
+  case "$mo_file" in
+    *git.mo|*subversion.mo|gnupg2.mo)
+      rm -f "$mo_file"
+  esac
+done
+
 replace_path() {
   local exe=$1
+  if [[ "$exe" == *".dSYM" ]]; then
+    return 0
+  fi
   chmod +w $exe
   echo "processing $exe:"
   otool -L $exe
@@ -137,7 +148,7 @@ cp -rvf $welcome_html $darwin_resources_dir/
 cp -rvf $conclusion_html $darwin_resources_dir/
 cp -rvf $postinstall_script $darwin_scripts_dir/
 cp -rvf $uninstall_sh $darwin_resources_dir/
-cp -rvf $application_dir/COPYING $darwin_resources_dir/LICENSE.txt
+cp -rvf $application_dir/LICENSES/LicenseRef-ZrythmLicense.txt $darwin_resources_dir/LICENSE.txt
 cp -rvf $share_dir/zrythm/themes/icons/zrythm-dark/scalable/apps/zrythm-splash-png.png $darwin_resources_dir/banner.png
 
 cp $readme_file $application_dir/README

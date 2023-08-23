@@ -63,7 +63,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
       system "gsed", "-i", "s|'VERSION'|'VERSION.txt'|", "../meson.build"
 
       # configure
-      system "meson",
+      system "meson", "setup",
         "--prefix=#{prefix}", "--libdir=#{lib}",
         "-Dextra_debug_info=true",
         "-Ddebug=true", "-Doptimization=2",
@@ -96,6 +96,8 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
       system "mkdir", "-p", "#{lib}/zrythm/carla"
       system "mkdir", "-p", "#{lib}/lv2"
       system "cp", "-RLv", "@BUILT_ZPLUGINS_DIR@/lib/lv2", "#{lib}/lv2/"
+      system "mkdir", "-p", "#{prefix}/LICENSES"
+      system "cp", "-RLv", "../LICENSES", "#{prefix}/LICENSES/"
     end
   end
 
