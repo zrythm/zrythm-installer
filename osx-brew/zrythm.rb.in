@@ -95,9 +95,9 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
       system "cp", "-r", "@BREEZE_DARK@", "#{share}/icons/breeze-dark"
       system "mkdir", "-p", "#{lib}/zrythm/carla"
       system "mkdir", "-p", "#{lib}/lv2"
-      system "cp", "-RLv", "@BUILT_ZPLUGINS_DIR@/lib/lv2", "#{lib}/lv2/"
+      system "cp", "-RLv", "@BUILT_ZPLUGINS_DIR@/lib/lv2/*", "#{lib}/lv2/"
       system "mkdir", "-p", "#{prefix}/LICENSES"
-      system "cp", "-RLv", "../LICENSES", "#{prefix}/LICENSES/"
+      system "cp", "-RLv", "../LICENSES/*", "#{prefix}/LICENSES/"
     end
   end
 
