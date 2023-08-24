@@ -181,7 +181,7 @@ pushd "$prj_dir_name"
 popd
 mkdir "$prj_build_dir_name"
 pushd "$prj_build_dir_name"
-"$(pwd)"/../"$prj_dir_name"/configure --prefix="$deps_prefix" --enable-languages=c,c++,lto --disable-multilib --with-build-config=bootstrap-lto --with-linker-hash-style=gnu --with-system-zlib --enable-__cxa_atexit --enable-cet=auto --enable-checking=release --enable-clocale=gnu --enable-default-pie --enable-default-ssp --enable-gnu-indirect-function --enable-gnu-unique-object --enable-libstdcxx-backtrace --enable-link-serialization=1 --enable-linker-build-id --enable-lto --enable-plugin --enable-shared --enable-threads=posix --disable-libssp --disable-libstdcxx-pch --disable-werror
+"$(pwd)"/../"$prj_dir_name"/configure CFLAGS_FOR_TARGET='-O2 @MARCH_MTUNE@' CXXFLAGS_FOR_TARGET='-O2 @MARCH_MTUNE@' --prefix="$deps_prefix" --enable-languages=c,c++,lto --disable-multilib --with-build-config=bootstrap-lto --with-linker-hash-style=gnu --with-system-zlib --enable-__cxa_atexit --enable-cet=auto --enable-checking=release --enable-clocale=gnu --enable-default-pie --enable-default-ssp --enable-gnu-indirect-function --enable-gnu-unique-object --enable-libstdcxx-backtrace --enable-link-serialization=1 --enable-linker-build-id --enable-lto --enable-plugin --enable-shared --enable-threads=posix --disable-libssp --disable-libstdcxx-pch --disable-werror
 make -j$num_cpus
 make install
 popd # project build dir
