@@ -12,7 +12,7 @@
         "--share=network",
         "--socket=pulseaudio",
         "--device=all",
-        "--filesystem=home",
+        "--filesystem=host:ro",
         "--filesystem=xdg-run/pipewire-0",
         "--system-talk-name=org.freedesktop.RealtimeKit1"
     ],
@@ -21,7 +21,7 @@
             "directory": "extensions/Plugins",
             "version": "22.08",
             "add-ld-path": "lib",
-            "merge-dirs": "ladspa;dssi;lv2;vst;vst3",
+            "merge-dirs": "ladspa;dssi;lv2;clap;vst;vst3",
             "subdirectories": true,
             "no-autodownload": true
         }
@@ -41,6 +41,9 @@
         {
             "name": "vamp-plugin-sdk",
             "buildsystem": "autotools",
+            "build-options": {
+                "no-debuginfo": true
+            },
             "no-parallel-make": true,
             "sources": [
                 {
@@ -55,7 +58,7 @@
                 }
             ],
             "post-install": [
-                "install -Dm644 -t /app/share/licenses/vamp-plugin-sdk COPYING"
+                "install -Dm644 -t ${FLATPAK_DEST}/share/licenses/vamp-plugin-sdk COPYING"
             ],
             "cleanup": [
                 "/bin",
@@ -64,99 +67,11 @@
             ]
         },
         "shared-modules/linux-audio/lv2.json",
-        {
-          "name": "lilv",
-          "buildsystem": "meson",
-          "modules": [
-            {
-              "name": "serd",
-              "buildsystem": "meson",
-              "sources": [
-                {
-                  "type": "archive",
-                  "url": "https://download.drobilla.net/serd-0.30.16.tar.xz",
-                  "sha256": "f50f486da519cdd8d03b20c9e42414e459133f5a244411d8e63caef8d9ac9146"
-                }
-              ],
-              "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig",
-                "/share/man"
-              ]
-            },
-            {
-              "name": "sord",
-              "buildsystem": "meson",
-              "sources": [
-                {
-                  "type": "archive",
-                  "url": "https://download.drobilla.net/sord-0.16.14.tar.xz",
-                  "sha256": "220fd97d5fcb216e7b85db66f685bfdaad7dc58a50d1f96dfb2558dbc6c4731b"
-                }
-              ],
-              "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig",
-                "/share/man"
-              ]
-            },
-            {
-              "name": "sratom",
-              "buildsystem": "meson",
-              "cleanup": [
-                "/include",
-                "/lib/pkgconfig"
-              ],
-              "sources": [
-                {
-                  "type": "archive",
-                  "url": "https://download.drobilla.net/sratom-0.6.14.tar.xz",
-                  "sha256": "9982faf40db83aedd9b3850e499fecd6852b8b4ba6dede514013655cffaca1e6"
-                }
-              ]
-            }
-          ],
-          "sources": [
-            {
-              "type": "archive",
-              "url": "https://download.drobilla.net/lilv-0.24.20.tar.xz",
-              "sha256": "4fb082b9b8b286ea92bbb71bde6b75624cecab6df0cc639ee75a2a096212eebc"
-            }
-          ],
-          "cleanup": [
-            "/bin",
-            "/etc",
-            "/lib/pkgconfig",
-            "/share/man"
-          ]
-        },
+        "shared-modules/linux-audio/lilv.json",
         "shared-modules/linux-audio/fftw3f.json",
-        {
-            "name": "jack2",
-            "buildsystem": "simple",
-            "build-commands": [
-                "./waf configure --prefix=$FLATPAK_DEST --htmldir=$FLATPAK_DEST/share/doc/jack/ --classic",
-                "./waf build -j $FLATPAK_BUILDER_N_JOBS",
-                "./waf install"
-            ],
-            "cleanup": [
-                "/include",
-                "/lib/jack",
-                "/lib/libjack*",
-                "/lib/pkgconfig",
-                "/share/man"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/jackaudio/jack2/archive/v1.9.17.tar.gz",
-                    "sha256": "38f674bbc57852a8eb3d9faa1f96a0912d26f7d5df14c11005ad499c8ae352f2"
-                }
-            ]
-        },
+        "shared-modules/linux-audio/jack2.json",
         "shared-modules/linux-audio/liblo.json",
+        "shared-modules/linux-audio/fluidsynth2.json",
         {
             "name": "bdwgc",
             "buildsystem": "autotools",
@@ -167,8 +82,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/ivmai/bdwgc.git",
-                    "commit": "cd1fbc1dbfd2cc888436944dd2784f39820698d7",
-                    "tag": "v8.2.2",
+                    "commit": "d1ff06cc503a74dca0150d5e988f2c93158b0cdf",
+                    "tag": "v8.2.4",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/ivmai/bdwgc/releases/latest",
@@ -200,8 +115,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://ftp.gnu.org/gnu/guile/guile-3.0.8.tar.xz",
-                    "sha256": "daa7060a56f2804e9b74c8d7e7fe8beed12b43aab2789a38585183fcc17b8a13",
+                    "url": "https://ftp.gnu.org/gnu/guile/guile-3.0.9.tar.xz",
+                    "sha256": "1a2625ac72b2366e95792f3fe758fd2df775b4044a90a4a9787326e66c0d750d",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1277,
@@ -221,8 +136,8 @@
                         {
                             "type": "git",
                             "url": "https://github.com/ivmai/libatomic_ops",
-                            "commit": "7c5a50620b9216e7364c215ecde1120747c3708d",
-                            "tag": "v7.6.14",
+                            "commit": "cc8e83a1f25f38054c721a1a7e6f9195104f94a4",
+                            "tag": "v7.8.0",
                             "x-checker-data": {
                                 "type": "json",
                                 "url": "https://api.github.com/repos/ivmai/libatomic_ops/releases/latest",
@@ -245,29 +160,12 @@
             ]
         },
         {
-            "name": "libsoxr",
-            "buildsystem": "cmake-ninja",
-            "build-options": {
-                "env": {
-                    "BUILD_SHARED_LIBS": "ON",
-                    "CFLAGS": "-fPIC"
-                },
-                "no-debuginfo": true
-            },
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://git.code.sf.net/p/soxr/code",
-                    "commit": "945b592b70470e29f917f4de89b4281fbbd540c0"
-                }
-            ]
-        },
-        {
             "name": "carla",
             "buildsystem": "simple",
             "build-commands": [
-                "make PREFIX=/app -j $FLATPAK_BUILDER_N_JOBS",
-                "make PREFIX=/app install"
+                "make features",
+                "make PREFIX=${FLATPAK_DEST} HAVE_FLUIDSYNTH=true HAVE_LIBMAGIC=true HAVE_LIBLO=true -j $FLATPAK_BUILDER_N_JOBS",
+                "make PREFIX=${FLATPAK_DEST} install"
             ],
             "build-options": {
                 "arch": {
@@ -282,8 +180,15 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/falkTX/Carla/",
-                    "commit": "@CARLA_GIT_VER@"
+                    "url": "https://github.com/falkTX/Carla",
+                    "commit": "bdb9b076f4c2abd28a67b9b4f165d4742dc941c1",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/falkTX/Carla/commits",
+                        "commit-query": "first( .[].sha )",
+                        "version-query": "first( .[].sha )",
+                        "timestamp-query": "first( .[].commit.committer.date )"
+                    }
                 }
             ]
         },
@@ -291,8 +196,8 @@
             "name": "xxHash",
             "buildsystem": "simple",
             "build-commands": [
-                "make PREFIX=/app -j $FLATPAK_BUILDER_N_JOBS",
-                "make PREFIX=/app install"
+                "make PREFIX=${FLATPAK_DEST} -j $FLATPAK_BUILDER_N_JOBS",
+                "make PREFIX=${FLATPAK_DEST} install"
             ],
             "build-options": {
                 "no-debuginfo": true
@@ -300,8 +205,16 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/Cyan4973/xxHash/",
-                    "commit": "b1a61dff654af43552b5ee05c737b6fd2a0ee14b"
+                    "url": "https://github.com/Cyan4973/xxHash",
+                    "commit": "bbb27a5efb85b92a0486cf361a8635715a53f6ba",
+                    "tag": "v0.8.2",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/Cyan4973/xxHash/releases/latest",
+                        "tag-query": ".tag_name",
+                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                        "timestamp-query": ".published_at"
+                    }
                 }
             ]
         },
@@ -312,15 +225,15 @@
                 "no-debuginfo": true
             },
             "build-commands": [
-                "make PREFIX=/app -j $FLATPAK_BUILDER_N_JOBS",
-                "make PREFIX=/app install"
+                "make PREFIX=${FLATPAK_DEST} -j $FLATPAK_BUILDER_N_JOBS",
+                "make PREFIX=${FLATPAK_DEST} install"
             ],
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/tlsa/libcyaml",
-                    "commit": "ee6231ff844c7f100e3b4e65fa34ed47f8fb2f49",
-                    "tag": "v1.3.1",
+                    "commit": "e2bea44c472719daff095541b22b038fa54c274b",
+                    "tag": "v1.4.1",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/tlsa/libcyaml/releases/latest",
@@ -368,7 +281,14 @@
                 {
                     "type": "git",
                     "url": "https://github.com/ianlancetaylor/libbacktrace",
-                    "commit": "d0f5e95a87a4d3e0a1ed6c069b5dae7cbab3ed2a"
+                    "commit": "9ae4f4ae4481b1e69d38ed810980d33103544613",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/ianlancetaylor/libbacktrace/commits",
+                        "commit-query": "first( .[].sha )",
+                        "version-query": "first( .[].sha )",
+                        "timestamp-query": "first( .[].commit.committer.date )"
+                    }
                 }
             ]
         },
@@ -381,8 +301,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://breakfastquay.com/files/releases/rubberband-3.1.2.tar.bz2",
-                    "sha256": "dda7e257b14c59a1f59c5ccc4d6f19412039f77834275955aa0ff511779b98d2",
+                    "url": "https://breakfastquay.com/files/releases/rubberband-3.3.0.tar.bz2",
+                    "sha256": "d9ef89e2b8ef9f85b13ac3c2faec30e20acf2c9f3a9c8c45ce637f2bc95e576c",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 4222,
@@ -416,7 +336,14 @@
                     "type": "git",
                     "url": "https://github.com/DaanDeMeyer/reproc",
                     "commit": "8aea3aef64c37a7ed0db759a7128a80c2540c808",
-                    "tag": "v14.2.4"
+                    "tag": "v14.2.4",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/DaanDeMeyer/reproc/releases/latest",
+                        "tag-query": ".tag_name",
+                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                        "timestamp-query": ".published_at"
+                    }
                 }
             ]
         },
@@ -428,14 +355,14 @@
                 "no-debuginfo": true
             },
             "build-commands": [
-                "mkdir -p /app/share/icons/breeze-dark",
-                "cp -r icons-dark/* /app/share/icons/breeze-dark"
+                "mkdir -p ${FLATPAK_DEST}/share/icons/breeze-dark",
+                "cp -r icons-dark/* ${FLATPAK_DEST}/share/icons/breeze-dark"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/frameworks/5.103/breeze-icons-5.103.0.tar.xz",
-                    "sha256": "7925d70ef2078316f69b9d26e7b1536844fb1d3c045fc78a2464c54871415abd",
+                    "url": "https://download.kde.org/stable/frameworks/5.109/breeze-icons-5.109.0.tar.xz",
+                    "sha256": "e07a0be85f4fe67576204339be9ac9c6809618b16963fb147d59a325380c54b2",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 305788,
@@ -452,15 +379,15 @@
                 "no-debuginfo": true
             },
             "build-commands": [
-                "make PREFIX=/app config",
-                "make PREFIX=/app -j $FLATPAK_BUILDER_N_JOBS",
-                "make PREFIX=/app install"
+                "make PREFIX=${FLATPAK_DEST} config",
+                "make PREFIX=${FLATPAK_DEST} -j $FLATPAK_BUILDER_N_JOBS",
+                "make PREFIX=${FLATPAK_DEST} install"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.9/lsp-dsp-lib-src-1.0.9.tar.gz",
-                    "sha256": "a333fb70c92d92366bfb8de8278b97d32e26e4804c4737df6ab565069f63b862",
+                    "url": "https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.11/lsp-dsp-lib-src-1.0.11.tar.gz",
+                    "sha256": "be01621e77da14695a9f7c6922ab1bd390b2e15bbe3939f2468296f3b02da6a3",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/lsp-plugins/lsp-dsp-lib/releases/latest",
@@ -473,15 +400,27 @@
         {
             "name": "rtaudio",
             "buildsystem": "meson",
+            "build-options": {
+                "//": "unlike the rest of the modules, this must be set to false, otherwise libcyaml.so.1 cannot be found at runtime",
+                "no-debuginfo": false
+            },
             "config-opts": [
-                "-Djack=disabled",
+                "-Djack=enabled",
                 "-Dalsa=disabled"
             ],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.2.0.tar.gz",
-                    "sha256": "d6089c214e5dbff136ab21f3f5efc284e93475ebd198c54d4b9b6c44419ef4e6"
+                    "type": "git",
+                    "url": "https://github.com/thestk/rtaudio",
+                    "commit": "b4f04903312e0e0efffbe77655172e0f060dc085",
+                    "tag": "6.0.1",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/thestk/rtaudio/releases/latest",
+                        "tag-query": ".tag_name",
+                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                        "timestamp-query": ".published_at"
+                    }
                 }
             ]
         },
@@ -548,17 +487,96 @@
         {
             "name": "boost",
             "buildsystem": "simple",
+            "build-options": {
+                "no-debuginfo": true
+            },
             "build-commands": [
                 "./bootstrap.sh --prefix=${FLATPAK_DEST}",
-                "./b2 -j $FLATPAK_BUILDER_N_JOBS headers",
-                "mkdir -p ${FLATPAK_DEST}/include/boost",
-                "cp -r boost/* ${FLATPAK_DEST}/include/boost"
+                "./b2 variant=release -j ${FLATPAK_BUILDER_N_JOBS} install"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_1_78_0.tar.bz2",
-                    "sha256": "8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc"
+                    "url": "https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2",
+                    "sha256": "6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 6845,
+                        "stable-only": true,
+                        "url-template": "https://boostorg.jfrog.io/artifactory/main/release/$version/source/boost_${major}_${minor}_$patch.tar.bz2"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "zix",
+            "buildsystem": "meson",
+            "build-options": {
+                "no-debuginfo": true
+            },
+            "config-opts": [
+                "-Dbenchmarks=disabled",
+                "-Dtests=disabled",
+                "-Ddefault_library=static",
+                "-Ddocs=disabled"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.com/drobilla/zix",
+                    "commit": "a5c18d52a5351430d370084f25aaf7d166f7afd5",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://gitlab.com/api/v4/projects/drobilla%2Fzix/repository/commits/main",
+                        "commit-query": ".id",
+                        "version-query": ".short_id",
+                        "timestamp-query": ".committed_date"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "soxr",
+            "buildsystem": "cmake-ninja",
+            "build-options": {
+                "no-debuginfo": true
+            },
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DBUILD_TESTS=no"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://sourceforge.net/projects/soxr/files/soxr-0.1.3-Source.tar.xz",
+                    "sha256": "b111c15fdc8c029989330ff559184198c161100a59312f5dc19ddeb9b5a15889"
+                }
+            ]
+        },
+        {
+            "name": "gtk",
+            "buildsystem": "meson",
+            "build-options": {
+                "no-debuginfo": true
+            },
+            "config-opts": [
+                "-Dbuild-demos=false",
+                "-Dbuild-testsuite=false",
+                "-Dbuild-examples=false",
+                "-Dbuild-tests=false"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/gtk.git",
+                    "commit": "07a92c169074b081051e14f0f386d3c7adcdc737",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://gitlab.gnome.org/api/v4/projects/gnome%2Fgtk/repository/commits/main",
+                        "commit-query": ".id",
+                        "version-query": ".short_id",
+                        "timestamp-query": ".committed_date"
+                    }
                 }
             ]
         },
@@ -569,126 +587,101 @@
                 "no-debuginfo": true
             },
             "config-opts": [
+                "-Dvapi=false",
                 "-Dintrospection=disabled",
                 "-Dgtk_doc=false",
                 "-Dtests=false",
-                "-Dexamples=false",
-                "-Dvapi=false"
+                "-Dexamples=false"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libadwaita",
-                    "commit": "a905117bd2150de9e85d65f8cdce8d8fb001b89e"
+                    "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
+                    "commit": "749a33b047d4f0ea5c38a5decccd0e37a582a4ef",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://gitlab.gnome.org/api/v4/projects/gnome%2Flibadwaita/repository/commits/main",
+                        "commit-query": ".id",
+                        "version-query": ".short_id",
+                        "timestamp-query": ".committed_date"
+                    }
                 }
-            ],
-            "cleanup": [
-                "/include",
-                "/lib/pkgconfig"
             ],
             "modules": [
                 {
-                    "name": "pango",
+                    "name": "appstream",
                     "buildsystem": "meson",
                     "build-options": {
                         "no-debuginfo": true
                     },
                     "config-opts": [
-                        "-Dinstall-tests=false",
-                        "-Dgtk_doc=false"
+                        "-Dstemming=false",
+                        "-Dapidocs=false"
                     ],
                     "sources": [
                         {
-                            "type": "git",
-                            "url": "https://gitlab.gnome.org/GNOME/pango",
-                            "commit": "8d4e58f15b6d608d1da7268371f7efde7b35e950"
+                            "type": "archive",
+                            "url": "https://github.com/ximion/appstream/archive/refs/tags/v0.16.2.tar.gz",
+                            "sha256": "9a2ebe660704878ab795470a72cd53049408ddd9da6e9cb45232cf0ed6505660",
+                            "x-checker-data": {
+                                "type": "anitya",
+                                "project-id": 10385,
+                                "url-template": "https://github.com/ximion/appstream/archive/refs/tags/v$version.tar.gz"
+                            }
                         }
                     ],
-                    "cleanup": [
-                        "/include",
-                        "/bin/pango-*"
-                    ]
-                },
-                {
-                    "name": "gtk",
-                    "buildsystem": "meson",
-                    "build-options": {
-                        "no-debuginfo": true
-                    },
-                    "config-opts": [
-                        "-Dmedia-gstreamer=disabled",
-                        "-Dprint-cups=disabled",
-                        "-Dintrospection=disabled",
-                        "-Dgtk_doc=false",
-                        "-Dbuild-tests=false",
-                        "-Dbuild-examples=false"
-                    ],
-                    "sources": [
+                    "modules": [
                         {
-                            "type": "git",
-                            "url": "https://gitlab.gnome.org/GNOME/gtk",
-                            "commit": "74677018183b7b815c54b236841447132c0141e3"
-                        }
-                    ],
-                    "cleanup": [
-                        "/include",
-                        "/bin/gtk4-*"
-                    ]
-                },
-                {
-                    "name": "gtksourceview",
-                    "buildsystem": "meson",
-                    "build-options": {
-                        "env": {
-                            "LIBRARY_PATH": "/app/lib"
-                        },
-                        "no-debuginfo": true
-                    },
-                    "config-opts": [
-                        "-Dvapi=false",
-                        "-Dintrospection=disabled"
-                    ],
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://gitlab.gnome.org/GNOME/gtksourceview",
-                            "commit": "ec0b434c4ebea7e9c1920013af2a911c4b28a66a"
+                            "name": "libxmlb",
+                            "buildsystem": "meson",
+                            "build-options": {
+                                "no-debuginfo": true
+                            },
+                            "config-opts": [
+                                "-Dgtkdoc=false"
+                            ],
+                            "sources": [
+                                {
+                                    "type": "git",
+                                    "url": "https://github.com/hughsie/libxmlb",
+                                    "commit": "3be2235c9be79c0ece789d3d50c52c15be31829d",
+                                    "tag": "0.3.13",
+                                    "x-checker-data": {
+                                        "type": "json",
+                                        "url": "https://api.github.com/repos/hughsie/libxmlb/releases/latest",
+                                        "tag-query": ".tag_name",
+                                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
+                                        "timestamp-query": ".published_at"
+                                    }
+                                }
+                            ]
                         }
                     ]
-                }
-            ]
-        },
-        {
-            "name": "zix",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dbenchmarks=disabled",
-                "-Dtests=disabled",
-                "-Ddefault_library=static",
-                "-Ddocs=disabled"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/drobilla/zix",
-                    "commit": "56ec14c4369c591f5efbb500b0829b760bee7800"
                 }
             ]
         },
         {
             "name": "libpanel",
             "buildsystem": "meson",
+            "build-options": {
+                "no-debuginfo": true
+            },
             "config-opts": [
                 "-Dvapi=false",
                 "-Dinstall-examples=false",
-                "-Dintrospection=disabled",
-                "-Ddocs=disabled"
+                "-Ddocs=disabled",
+                "-Dintrospection=disabled"
             ],
             "sources": [
                 {
                     "type": "git",
                     "url": "https://git.sr.ht/~alextee/libpanel-detach",
-                    "commit": "0f6581b1b95933f98f5bae7224f1101929953ccb"
+                    "commit": "3f77a2cc2cfc3c3c75b9cd5bd6d8174466906faf",
+                    "tag": "1.3.0-1-for-zrythm",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^([\\d.-]+)-for-zrythm$"
+                    }
                 }
             ]
         },
@@ -714,7 +707,7 @@
                 "no-debuginfo": true
             },
             "post-install": [
-                "install -d /app/extensions/Plugins"
+                "install -d ${FLATPAK_DEST}/app/extensions/Plugins"
             ],
             "sources": [
                 {
