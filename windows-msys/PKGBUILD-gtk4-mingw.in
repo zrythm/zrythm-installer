@@ -48,8 +48,11 @@ build() {
     --prefix=${MINGW_PREFIX} \
     -Ddebug=true \
     -Doptimization=2 \
+    -Dbuild-demos=false \
     -Dbuild-examples=false \
     -Dbuild-tests=false \
+    -Dbuild-testsuite=false \
+    -Dmedia-gstreamer=disabled \
     -Dman-pages=false \
     -Dmacos-backend=false \
     -Dx11-backend=false \
