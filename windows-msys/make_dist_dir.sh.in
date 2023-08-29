@@ -231,8 +231,8 @@ EOL
   "$dist_bindir/cv2pdb/cv2pdb64.exe" "$zrythm_exe" "$dist_bindir/zrythm_debug_vs.exe"
   rm -rf "$dist_bindir/cv2pdb"
 
-  # rcedited version of original
-  $rcedit_x64_exe "$zrythm_exe" --set-icon  "$dist_dir/zrythm.ico"
+  # rcedited version of original (try twice because sometimes it fails)
+  $rcedit_x64_exe "$zrythm_exe" --set-icon  "$dist_dir/zrythm.ico" || $rcedit_x64_exe "$zrythm_exe" --set-icon  "$dist_dir/zrythm.ico"
   "$zrythm_exe" --version
 
   # ******************************
