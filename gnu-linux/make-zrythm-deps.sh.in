@@ -221,7 +221,6 @@ sed -i -e "s|-lgc -lpthread -ldl|-lgc -lpthread -ldl $(pkg-config --libs gmp lib
 
 build_autotools_project https://tukaani.org/xz/xz-5.4.4.tar.xz --disable-static --enable-shared
 build_meson_wrap_project lz4 lz4-1.9.4 -Ddefault_library=shared
-} # skip_build2
 
 # zstd
 url="https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-1.5.5.tar.gz"
@@ -443,9 +442,13 @@ LDFLAGS="$(pkg-config --libs libbrotlidec)" build_autotools_project https://curl
 build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.9/lsp-dsp-lib-src-1.0.9.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
 build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
 
+build_meson_project https://github.com/hughsie/libxmlb/releases/download/0.3.14/libxmlb-0.3.14.tar.xz -Ddefault_library=shared -Dgtkdoc=false -Dintrospection=false -Dtests=false
+} # skip_build2
+build_meson_project https://www.freedesktop.org/software/appstream/releases/AppStream-0.16.3.tar.xz -Ddefault_library=shared -Dsystemd=false -Dstemming=false -Dgir=false -Dsvg-support=false -Dapidocs=false -Dinstall-docs=false
+
 # libadwaita
 #build_meson_project https://gitlab.gnome.org/GNOME/libadwaita/-/archive/@LIBADWAITA_VER@/libadwaita-@LIBADWAITA_VER@.tar.gz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
-build_meson_project https://download.gnome.org/sources/libadwaita/1.3/libadwaita-1.3.4.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
+build_meson_project https://download.gnome.org/sources/libadwaita/1.4/libadwaita-1.4.beta.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
 
 # libpanel
 url="https://git.sr.ht/~alextee/libpanel-detach/archive/@LIBPANEL_VER@.tar.gz"
