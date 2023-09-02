@@ -116,8 +116,8 @@ option (
 
 option (
   'libadwaita-ver', type: 'string',
-  # 1.3.2
-  value: 'dfaf404704a6e4a15d9881fc39ec8a607cd47701',
+  # 1.4.beta
+  value: 'dbe9da35ed611b907efb4a671f6ab57342946581',
   description: 'libadwaita git version')
 
 option (
