@@ -29,12 +29,13 @@ if [ "$bottle_or_zip" = "bottle" ]; then
   bottle_filename="$(basename $bottle_file)"
   formula_file=$3
   tarball=$4
-  tarball_filename="$(git ls-remote https://git.zrythm.org/zrythm/zrythm | grep HEAD | awk '{print $1}').tar.gz"
+  zrythm_commit="$(git ls-remote https://gitlab.zrythm.org/zrythm/zrythm | grep HEAD | awk '{print $1}')"
+  tarball_filename="$zrythm_commit.tar.gz"
   zrythm_version=$5
   carla_version=$6
   carla_bottle_ver=$7
 
-  wget https://git.zrythm.org/zrythm/zrythm/archive/$tarball_filename
+  wget  "https://gitlab.zrythm.org/zrythm/zrythm/-/archive/$zrythm_commit/zrythm-$zrythm_commit.tar.gz"
 
   # copy formula file to where it needs to be
   if [[ "$bottle_filename" == *"rial"* ]]; then
