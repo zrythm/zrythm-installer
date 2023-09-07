@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2023 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -299,12 +299,20 @@ run_target (
   'run-mingw-gtk4',
   command: [ 'echo', 'done' ],
   depends: gtk4_pkg)
+appstream_pkg = custom_target (
+  'mingw-appstream',
+  output: 'appstream.pkg.tar.zst',
+  input: [ make_mingw_pkg, 'PKGBUILD-appstream-mingw', ],
+  command: make_mingw_pkg_cmd,
+  console: true,
+  install: false,
+  )
 libadwaita_pkg = custom_target (
   'mingw-libadwaita',
   output: 'libadwaita.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_libadwaita_pkgbuild, ],
   command: make_mingw_pkg_cmd,
-  depends: gtk4_pkg,
+  depends: [ gtk4_pkg, appstream_pkg ],
   console: true,
   install: false,
   )

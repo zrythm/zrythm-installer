@@ -83,6 +83,9 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dcarla_use_cv32_patchbay_variant=true",
         "-Dguile=disabled",
         "-Dforce_fallback_for=gtk4,libpanel,libadwaita",
+        "-Dappstream:stemming=false",
+        "-Dappstream:gir=false",
+        "-Dappstream:svg-support=false",
         "-Dwrap_mode=default",
         ".."
 

@@ -1,0 +1,59 @@
+# Contributor: Alexandros Theodotou <alex at zrythm dot org>
+_realname=appstream
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+_commit='ee2c3545ec6ed708121a7c9ea28252afbc0da8e1'
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="appstream"
+arch=('any')
+url="https://cairographics.org/"
+license=(LGPL2.1 MPL1.1)
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-meson")
+depends=("${MINGW_PACKAGE_PREFIX}-libxslt"
+         "${MINGW_PACKAGE_PREFIX}-gperf"
+         "${MINGW_PACKAGE_PREFIX}-itstool"
+         "${MINGW_PACKAGE_PREFIX}-libxmlb")
+source=("https://gitlab.zrythm.org/zrythm/${_realname}/-/archive/${_commit}/${_realname}-${_commit}.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  rm -rf /tmp/${_realname}-${pkgver}
+  mv "${srcdir}/${_realname}-${_commit}" /tmp/${_realname}-$pkgver
+}
+
+build() {
+  rm -rf /tmp/${_realname}-build-${MINGW_CHOST}
+  mkdir -p /tmp/${_realname}-build-${MINGW_CHOST}
+  cd /tmp/${_realname}-build-${MINGW_CHOST}
+
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+  LDFLAGS="-lssp" \
+  ${MINGW_PREFIX}/bin/meson \
+    --prefix=${MINGW_PREFIX} \
+    -Ddebug=true \
+    -Doptimization=2 \
+    -Dsystemd=false \
+    -Dstemming=false \
+    -Dgir=false \
+    -Dsvg-support=false \
+    -Dapidocs=false \
+    -Dinstall-docs=false \
+    -Ddefault_library=shared \
+    /tmp/${_realname}-${pkgver}
+
+  meson compile
+}
+
+package() {
+  cd /tmp/${_realname}-build-${MINGW_CHOST}
+
+  DESTDIR="${pkgdir}" meson install
+
+  install -Dm644 "/tmp/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+
+  # reclaim space
+  rm -rf /tmp/${_realname}-build-${MINGW_CHOST}
+}
