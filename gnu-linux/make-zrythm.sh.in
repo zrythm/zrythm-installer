@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# Copyright (C) 2022 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2022-2023 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -45,7 +45,7 @@ mkdir -p "$out_file"
 mkdir -p "$private_dir"
 tar xf "$zrythm_src_tarball" --directory "$private_dir"
 tar xf "$zplugins_tarball" --directory "$private_dir"
-mv "$private_dir/zplugins" "$private_dir/zplugins-$zplugins_ver"
+mv "$private_dir/zplugins-v$zplugins_ver" "$private_dir/zplugins-$zplugins_ver"
 
 export PKG_CONFIG_PATH="$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
 export PATH="$deps_prefix/bin:$PATH"

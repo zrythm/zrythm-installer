@@ -42,7 +42,7 @@ option (
 
 option (
   'zplugins-ver', type: 'string',
-  value: '0.2.5',
+  value: '0.2.6',
   description: 'Zplugins version')
 
 option (

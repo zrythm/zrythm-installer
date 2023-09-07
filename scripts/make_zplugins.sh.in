@@ -1,6 +1,6 @@
 #!@BASH@
 #
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2021, 2023 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -41,7 +41,7 @@ rm -rf $out_file
 mkdir -p $private_dir
 mkdir -p $out_file
 tar xf $tarball -C $private_dir
-mv $private_dir/zplugins $private_dir/$inner_dir_name
+mv $private_dir/zplugins-v$zplugins_ver $private_dir/$inner_dir_name
 pushd $private_dir/$inner_dir_name
 meson_opts="--prefix=/ -Dplugins=Chordz,Chorus,EQ,LFO,LimiterSP,PhaserSP,PitchSP,Saturator,Saw"
 if [[ "$distro" == "osx-brew"* ]]; then

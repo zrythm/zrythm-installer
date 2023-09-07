@@ -444,7 +444,7 @@ build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -
 
 build_meson_project https://github.com/hughsie/libxmlb/releases/download/0.3.14/libxmlb-0.3.14.tar.xz -Ddefault_library=shared -Dgtkdoc=false -Dintrospection=false -Dtests=false
 } # skip_build2
-build_meson_project https://www.freedesktop.org/software/appstream/releases/AppStream-0.16.3.tar.xz -Ddefault_library=shared -Dsystemd=false -Dstemming=false -Dgir=false -Dsvg-support=false -Dapidocs=false -Dinstall-docs=false
+build_meson_project https://gitlab.zrythm.org/zrythm/appstream/-/archive/ee2c3545ec6ed708121a7c9ea28252afbc0da8e1/appstream-ee2c3545ec6ed708121a7c9ea28252afbc0da8e1.tar.gz -Ddefault_library=shared -Dsystemd=false -Dstemming=false -Dgir=false -Dsvg-support=false -Dapidocs=false -Dinstall-docs=false
 
 # libadwaita
 #build_meson_project https://gitlab.gnome.org/GNOME/libadwaita/-/archive/@LIBADWAITA_VER@/libadwaita-@LIBADWAITA_VER@.tar.gz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
@@ -470,16 +470,7 @@ build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-6.0
 build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
 
 # libbacktrace
-url="https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz"
-fetch "$url"
-tar xf "`basename "$url"`"
-prj_dir_name="`basename -s .tar.gz "$url"`"
-prj_dir_name="libbacktrace-$prj_dir_name"
-pushd "$prj_dir_name"
-./configure --prefix="$deps_prefix" --disable-shared --enable-static
-make -j$num_cpus
-make install
-popd # project
+build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static
 
 popd # private dir
 
