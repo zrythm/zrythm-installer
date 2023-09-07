@@ -451,7 +451,7 @@ build_meson_project https://www.freedesktop.org/software/appstream/releases/AppS
 build_meson_project https://download.gnome.org/sources/libadwaita/1.4/libadwaita-1.4.beta.tar.xz -Ddefault_library=shared -Dvapi=false -Dtests=false -Dintrospection=disabled
 
 # libpanel
-url="https://git.sr.ht/~alextee/libpanel-detach/archive/@LIBPANEL_VER@.tar.gz"
+url="https://gitlab.zrythm.org/zrythm/libpanel-detach/-/archive/@LIBPANEL_VER@/libpanel-detach-@LIBPANEL_VER@.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="libpanel-detach-@LIBPANEL_VER@"
@@ -470,7 +470,7 @@ build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-6.0
 build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
 
 # libbacktrace
-url="https://git.sr.ht/~alextee/libbacktrace/archive/20221013.tar.gz"
+url="https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="`basename -s .tar.gz "$url"`"

@@ -10,7 +10,7 @@ url="https://github.com/ianlancetaylor/libbacktrace"
 license=('BSD')
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
 makedepends=('git' 'autoconf')
-source=("https://git.sr.ht/~alextee/libbacktrace/archive/${pkgver}.tar.gz")
+source=("https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/${pkgver}/libbacktrace-${pkgver}.tar.gz")
 sha256sums=('SKIP')
 
 pkgver() {

@@ -444,7 +444,7 @@ build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.2
 build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
 
 # libbacktrace
-url="https://git.sr.ht/~alextee/libbacktrace/archive/20221013.tar.gz"
+url="https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="`basename -s .tar.gz "$url"`"
