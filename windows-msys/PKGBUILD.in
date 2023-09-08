@@ -125,7 +125,8 @@ build() {
   mkdir -p "$_zplugins_builddir"
   pushd "$_zplugins_builddir"
   ls -l
-  mv ../zplugins ../zplugins-${_zplugins_ver}
+  ls -l ..
+  mv ../zplugins-v${_zplugins_ver} ../zplugins-${_zplugins_ver}
   MSYS2_ARG_CONV_EXCL="--prefix=" \
   ${MINGW_PREFIX}/bin/meson \
     --prefix=${MINGW_PREFIX} \
