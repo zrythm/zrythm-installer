@@ -360,9 +360,11 @@ make -j$num_cpus
 make install
 popd # project
 
+} # skip_build2
+
 #build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=shared -Dlibedit=disabled -Dlibreadline=disabled
 build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=shared -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
-build_meson_project https://download.gnome.org/sources/glib/2.76/glib-2.76.0.tar.xz -Ddefault_library=shared -Dlibelf=disabled
+build_meson_project https://download.gnome.org/sources/glib/2.78/glib-2.78.0.tar.xz -Ddefault_library=shared -Dlibelf=disabled -Dselinux=disabled -Dtests=false
 build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disable-static --enable-shared
 build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
 build_meson_project https://www.cairographics.org/releases/pixman-0.42.2.tar.gz -Ddefault_library=shared -Dgtk=disabled
@@ -443,7 +445,6 @@ build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.9/
 build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
 
 build_meson_project https://github.com/hughsie/libxmlb/releases/download/0.3.14/libxmlb-0.3.14.tar.xz -Ddefault_library=shared -Dgtkdoc=false -Dintrospection=false -Dtests=false
-} # skip_build2
 build_meson_project https://gitlab.zrythm.org/zrythm/appstream/-/archive/ee2c3545ec6ed708121a7c9ea28252afbc0da8e1/appstream-ee2c3545ec6ed708121a7c9ea28252afbc0da8e1.tar.gz -Ddefault_library=shared -Dsystemd=false -Dstemming=false -Dgir=false -Dsvg-support=false -Dapidocs=false -Dinstall-docs=false
 
 # libadwaita
