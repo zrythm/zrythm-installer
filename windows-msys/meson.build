@@ -312,7 +312,7 @@ libadwaita_pkg = custom_target (
   output: 'libadwaita.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_libadwaita_pkgbuild, ],
   command: make_mingw_pkg_cmd,
-  depends: [ gtk4_pkg, appstream_pkg ],
+  depends: [ gtk4_pkg, ],
   console: true,
   install: false,
   )
