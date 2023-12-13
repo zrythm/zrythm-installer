@@ -33,6 +33,7 @@ class CarlaGit < Formula
 
   depends_on "ccache" => :build
   depends_on "pkg-config" => :build
+  depends_on "cmake" => :build
   depends_on "fluid-synth"
   depends_on "liblo"
   depends_on "libmagic"
@@ -40,13 +41,13 @@ class CarlaGit < Formula
   depends_on "python@3.10"
 
   def install
-    system "make", "NOOPT=true", "SKIP_STRIPPING=true", "HAVE_PYQT=false"
-    system "make", "install", "PREFIX=#{prefix}"
+    system "cmake", "-S", "cmake", "-B", "_build", "-DCMAKE_BUILD_TYPE=RelWithDebInfo", "-DCARLA_BUILD_STATIC=false", *std_cmake_args
+    system "cmake", "--build", "_build"
+    system "cmake", "--install", "_build"
 
     inreplace bin/"carla", "PYTHON=$(which python3 2>/dev/null)",
                            "PYTHON=#{Formula["python@3.9"].opt_bin}/python3"
-    system "cp", "#{lib}/carla/carla-discovery-native",
-      "#{bin}/"
+    system "cp", "#{lib}/carla/carla-discovery-native", "#{bin}/"
   end
 
   test do
