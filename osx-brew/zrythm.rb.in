@@ -61,10 +61,6 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   def install
     mkdir "build" do
 
-      # workaround for C++ 20 <version>
-      system "mv", "../VERSION", "../VERSION.txt"
-      system "gsed", "-i", "s|'VERSION'|'VERSION.txt'|", "../meson.build"
-
       # configure
       system "meson", "setup",
         "--prefix=#{prefix}", "--libdir=#{lib}",

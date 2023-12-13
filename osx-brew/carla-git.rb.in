@@ -47,6 +47,7 @@ class CarlaGit < Formula
 
     inreplace bin/"carla", "PYTHON=$(which python3 2>/dev/null)",
                            "PYTHON=#{Formula["python@3.9"].opt_bin}/python3"
+    system "mkdir", "-p", "#{bin}/carla"
     system "cp", "#{lib}/carla/carla-discovery-native", "#{bin}/"
   end
 
