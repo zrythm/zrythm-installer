@@ -40,7 +40,7 @@ class CarlaGit < Formula
   depends_on "python@3.10"
 
   def install
-    system "make", "NOOPT=true", "SKIP_STRIPPING=true"
+    system "make", "NOOPT=true", "SKIP_STRIPPING=true", "HAVE_PYQT=false"
     system "make", "install", "PREFIX=#{prefix}"
 
     inreplace bin/"carla", "PYTHON=$(which python3 2>/dev/null)",
