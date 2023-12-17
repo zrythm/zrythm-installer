@@ -414,7 +414,6 @@ pushd "$prj_dir_name"
 popd # project
 
 build_meson_project https://download.gnome.org/sources/graphene/1.10/graphene-1.10.8.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dinstalled_tests=false
-build_meson_wrap_project json-glib json-glib-1.6.6 -Ddefault_library=shared -Dintrospection=disabled -Dgtk_doc=disabled -Dtests=false
 build_meson_project https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz -Ddefault_library=shared
 #build_autotools_project https://github.com/tlwg/libdatrie/releases/download/v0.2.13/libdatrie-0.2.13.tar.xz --disable-static --enable-shared
 #build_autotools_project https://github.com/tlwg/libthai/releases/download/v0.1.29/libthai-0.1.29.tar.xz --disable-static --enable-shared # missing trie_* symbols for some reason
