@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 #
-# Copyright (C) 2019-2020, 2022 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2019-2020, 2022-2023 Alexandros Theodotou <alex at zrythm dot org>
 #
 #  This file is part of Zrythm
 #
@@ -86,7 +86,7 @@ if [ $have_zenity -ne 0 ]; then
   fi
 else
   echo "$proceed_txt (type Y or y): " | tr -d '\n' &&
-  read -r
+  read REPLY
   if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     proceed=1
   fi
