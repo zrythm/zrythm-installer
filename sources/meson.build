@@ -114,10 +114,10 @@ run_target (
 
 demo_project_zip = custom_target (
   'demo-project-zip',
-  output: 'demo_zsong01.zip',
+  output: 'demo_project01.zip',
   command: [
     'wget',
-    'https://www.zrythm.org/demo-projects/demo_zsong01.zip',
+    'https://www.zrythm.org/demo-projects/demo_project01.zip',
     '-O', '@OUTPUT@',
     ],
   install: false,
