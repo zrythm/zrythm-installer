@@ -71,7 +71,7 @@ Source: "lib\*"; DestDir: "{app}\lib"; \
   Flags: ignoreversion recursesubdirs; \
   Components: zrythm
 Source: "share\*"; DestDir: "{app}\share"; \
-  Flags: ignoreversion recursesubdirs; \
+  Flags: ignoreversion recursesubdirs createallsubdirs; \
   Components: zrythm
 Source: "etc\*"; DestDir: "{app}\etc"; \
   Flags: ignoreversion recursesubdirs; \
