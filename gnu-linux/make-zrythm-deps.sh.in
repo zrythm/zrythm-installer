@@ -445,6 +445,7 @@ fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="shaderc-2023.8"
 pushd "$prj_dir_name"
+utils/git-sync-deps
 rm -rf builddir && mkdir builddir && pushd builddir
 cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX="$deps_prefix" -DBUILD_SHARED_LIBS=True -DSHADERC_SKIP_TESTS=True -DSHADERC_SKIP_EXAMPLES=True -DCMAKE_BUILD_TYPE=Release
 cmake --build .
