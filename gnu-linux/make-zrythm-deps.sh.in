@@ -51,7 +51,7 @@ git checkout a18f6990993cb06d364c60344d11d3e7a1cbf8df
 popd # wrapdb
 
 export PKG_CONFIG_PATH="$deps_prefix/lib64/pkgconfig:$deps_prefix/lib/x86_64-linux-gnu/pkgconfig:$deps_prefix/lib/pkgconfig:$deps_prefix/share/pkgconfig"
-export PATH="$deps_prefix/bin:$PATH:/home/alex/.cargo/bin"
+export PATH="$deps_prefix/bin:/home/alex/.local/bin:$PATH:/home/alex/.cargo/bin"
 export ACLOCAL_PATH="$deps_prefix/share/aclocal"
 export LIBRARY_PATH="$deps_prefix/lib64:$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib"
 export CPATH="$deps_prefix/include"
