@@ -437,19 +437,19 @@ build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.
 
 build_meson_project https://gitlab.freedesktop.org/mesa/drm/-/archive/libdrm-2.4.119/drm-libdrm-2.4.119.tar.gz -Ddefault_library=shared -Dtests=false -Dvalgrind=disabled -Dman-pages=disabled -Dcairo-tests=disabled
 
-url="https://github.com/google/shaderc/archive/refs/tags/v2023.8.tar.gz"
-shift
-fetch "$url"
-tar xf "`basename "$url"`"
-prj_dir_name="shaderc-2023.8"
-pushd "$prj_dir_name"
-utils/git-sync-deps
-rm -rf builddir && mkdir builddir && pushd builddir
-cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX="$deps_prefix" -DBUILD_SHARED_LIBS=True -DSHADERC_SKIP_TESTS=True -DSHADERC_SKIP_EXAMPLES=True -DCMAKE_BUILD_TYPE=Release
-cmake --build .
-cmake --install .
-popd # build
-popd # project
+#url="https://github.com/google/shaderc/archive/refs/tags/v2023.8.tar.gz"
+#shift
+#fetch "$url"
+#tar xf "`basename "$url"`"
+#prj_dir_name="shaderc-2023.8"
+#pushd "$prj_dir_name"
+#utils/git-sync-deps
+#rm -rf builddir && mkdir builddir && pushd builddir
+#cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX="$deps_prefix" -DBUILD_SHARED_LIBS=True -DSHADERC_SKIP_TESTS=True -DSHADERC_SKIP_EXAMPLES=True -DCMAKE_BUILD_TYPE=Release
+#cmake --build .
+#cmake --install .
+#popd # build
+#popd # project
 
 } # skip_build2
 
