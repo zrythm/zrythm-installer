@@ -167,7 +167,7 @@ cleanup_pc_r() {
   find "$deps_prefix" -name '*.pc' -type f -exec sed -i -e 's| -R| -Wl,-rpath,|g' {} \;
 }
 
-skip_build() {
+#skip_build() {
 # gcc
 url="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-13.2.0/gcc-13.2.0.tar.xz"
 fetch "$url"
@@ -185,14 +185,13 @@ pushd "$prj_build_dir_name"
 make -j$num_cpus
 make install
 popd # project build dir
-} # end skip_build()
-
+#} # end skip_build()
 export CC="$deps_prefix"/bin/gcc
 export CXX="$deps_prefix"/bin/g++
 export CFLAGS='-fPIC -g @MARCH_MTUNE@'
 export CPPFLAGS='-DPIC -g @MARCH_MTUNE@'
 
-skip_build2() {
+#skip_build2() {
 
 url="https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
 fetch "$url"
@@ -451,7 +450,7 @@ build_meson_project https://gitlab.freedesktop.org/mesa/drm/-/archive/libdrm-2.4
 #popd # build
 #popd # project
 
-} # skip_build2
+#} # skip_build2
 
 gtk_maj_min_ver="$(echo "@GTK_VER@" | cut -d. -f-2)"
 build_meson_project https://download.gnome.org/sources/gtk/${gtk_maj_min_ver}/gtk-@GTK_VER@.tar.xz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false -Ddebug=true -Dbuild-testsuite=false
