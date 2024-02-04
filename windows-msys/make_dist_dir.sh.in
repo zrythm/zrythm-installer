@@ -26,13 +26,12 @@ private_dir="$4"
 copy_dll_deps_sh="$5"
 rcedit_x64_exe="$6"
 dll_dir="$7"
-breeze_dark_path="$8"
-carla_zip_path="$9"
-mingw_packages_zip_path="${10}"
-mingw_packages_commit="${11}"
-demo_project_zip="${12}"
-cv2pdb_zip="${13}"
-drmingw_zip="${14}"
+carla_zip_path="$8"
+mingw_packages_zip_path="${9}"
+mingw_packages_commit="${10}"
+demo_project_zip="${11}"
+cv2pdb_zip="${12}"
+drmingw_zip="${13}"
 
 dash_trial="@DASH_TRIAL@"
 zrythm_pkg_ver="@ZRYTHM_PKG_VERSION@"
@@ -128,10 +127,12 @@ EOL
   # ******************************
 
   # ******************************
-  echo "packaging breeze icons"
+  #
   mkdir -p "$dist_sharedir/icons"
+
+  #echo "packaging breeze icons"
   # the icons are preinstalled here
-  cp -R "$breeze_dark_path" "$dist_sharedir/icons"/breeze-dark
+  #cp -R "$breeze_dark_path" "$dist_sharedir/icons"/breeze-dark
 
   echo "packaging existing hicolor icons"
   cp -R "$chroot_mingw_prefix/share/icons/hicolor" "$dist_sharedir/icons/"

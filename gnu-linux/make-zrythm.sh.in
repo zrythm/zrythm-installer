@@ -26,7 +26,6 @@ prefix="$4"
 meson_bin="$5"
 zplugins_tarball="$6"
 demo_project_zip="$7"
-breeze_dark_path="$8"
 
 zip_filename=`basename $out_file`
 zip_inner_dir_name="${zip_filename%.*}"
@@ -142,9 +141,10 @@ sed -i "s|$deps_prefix/|${prefix}/|g" "$destdir_w_prefix/lib/x86_64-linux-gnu/gd
 mkdir -p "$destdir_w_prefix/libexec"
 cp "$deps_prefix/libexec/gio-launch-desktop" "$destdir_w_prefix/libexec/gio-launch-desktop"
 
-# copy breeze-dark
 mkdir -p "$destdir_w_prefix/share/icons"
-cp -r "$breeze_dark_path" "$destdir_w_prefix/share/icons/breeze-dark"
+
+# copy breeze-dark
+#cp -r "$breeze_dark_path" "$destdir_w_prefix/share/icons/breeze-dark"
 
 # copy other icons
 mkdir -p "$destdir_w_prefix/share/icons/hicolor/scalable/actions"

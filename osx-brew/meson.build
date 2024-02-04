@@ -143,7 +143,7 @@ zrythm_bottle = custom_target (
     '@INPUT1@', '@PRIVATE_DIR@',
     '@INPUT3@',
     ],
-  depends: [ breeze_icons, zplugins_installation, ],
+  depends: [ zplugins_installation, ],
   console: true,
   install: false,
   )
@@ -174,7 +174,7 @@ run_target (
   'osx-brew-prepare',
   command: [ 'echo', 'done' ],
   depends: [
-    carla_bottle, zrythm_src_tarball, breeze_icons,
+    carla_bottle, zrythm_src_tarball,
     ])
 
 run_target (

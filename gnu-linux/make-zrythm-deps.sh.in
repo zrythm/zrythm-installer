@@ -496,6 +496,8 @@ cmake --install .
 popd # build
 popd # project
 
+} # skip_build2
+
 #gtk_maj_min_ver="$(echo "@GTK_VER@" | cut -d. -f-2)"
 #build_meson_project https://download.gnome.org/sources/gtk/${gtk_maj_min_ver}/gtk-@GTK_VER@.tar.xz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false -Ddebug=true -Dbuild-testsuite=false -Dvulkan=disabled
 build_meson_project https://gitlab.gnome.org/GNOME/gtk/-/archive/@GTK_VER@/gtk-@GTK_VER@.tar.gz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false -Ddebug=true -Dbuild-testsuite=false -Dvulkan=enabled
@@ -536,8 +538,6 @@ build_meson_project https://github.com/hughsie/libxmlb/releases/download/0.3.14/
 
 # xslt
 build_autotools_project https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz --enable-shared --disable-static
-
-} # skip_build2
 
 # appstream (needs xslt above and docbook-xslt from ubuntu repos)
 url="https://github.com/ximion/appstream/archive/refs/tags/v1.0.1.tar.gz"
