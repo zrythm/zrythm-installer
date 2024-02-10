@@ -1,0 +1,40 @@
+UCRT64:
+  # https://docs.gitlab.com/ee/ci/runners/saas/windows_saas_runner.html
+  tags: [ windows ]
+  script: # https://www.msys2.org/docs/ci/#gitlab
+  #- wget.exe -nv -O msys2.exe https://github.com/msys2/msys2-installer/releases/download/nightly-x86_64/msys2-base-x86_64-latest.sfx.exe
+  #- ./msys2.exe -y -oC:\
+  #- Remove-Item msys2.exe
+  - $env:CHERE_INVOKING = 'yes'
+  - $env:MSYSTEM = 'UCRT64' # https://www.msys2.org/docs/environments/
+  - C:\msys64\usr\bin\bash -lc ' '
+  #- C:\msys64\usr\bin\bash -lc 'pacman --noconfirm -Syuu'
+  #- C:\msys64\usr\bin\bash -lc 'pacman --noconfirm -Syuu'
+  #- |
+    #C:\msys64\usr\bin\bash -lc '
+    #pacman --noconfirm -Syu git zip unzip base-devel tree guile libguile-devel mingw-w64-i686-ccache mingw-w64-i686-toolchain mingw-w64-i686-fluidsynth mingw-w64-i686-libogg mingw-w64-ucrt-x86_64-appstream mingw-w64-ucrt-x86_64-ccache mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-libsamplerate mingw-w64-ucrt-x86_64-fftw mingw-w64-ucrt-x86_64-boost mingw-w64-ucrt-x86_64-ffmpeg mingw-w64-ucrt-x86_64-libyaml mingw-w64-ucrt-x86_64-libsndfile mingw-w64-ucrt-x86_64-rubberband mingw-w64-ucrt-x86_64-dlfcn mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-graphviz mingw-w64-ucrt-x86_64-fluidsynth mingw-w64-ucrt-x86_64-cantarell-fonts mingw-w64-ucrt-x86_64-gtksourceview5 mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-binutils mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-python-setuptools mingw-w64-ucrt-x86_64-jack2 mingw-w64-ucrt-x86_64-lilv mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-python-pip mingw-w64-ucrt-x86_64-meson mingw-w64-ucrt-x86_64-python3 mingw-w64-ucrt-x86_64-gtk-doc mingw-w64-ucrt-x86_64-gi-docgen mingw-w64-ucrt-x86_64-graphene mingw-w64-ucrt-x86_64-pango mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-adwaita-icon-theme mingw-w64-ucrt-x86_64-curl-winssl mingw-w64-ucrt-x86_64-gperf mingw-w64-ucrt-x86_64-libxmlb mingw-w64-ucrt-x86_64-libxslt mingw-w64-ucrt-x86_64-itstool mingw-w64-ucrt-x86_64-pcre mingw-w64-ucrt-x86_64-pcre2 mingw-w64-ucrt-x86_64-xxhash mingw-w64-ucrt-x86_64-vamp-plugin-sdk mingw-w64-ucrt-x86_64-iconv mingw-w64-ucrt-x86_64-libsoxr mingw-w64-ucrt-x86_64-lv2 mingw-w64-ucrt-x86_64-graphene mingw-w64-ucrt-x86_64-libsass mingw-w64-ucrt-x86_64-sassc mingw-w64-ucrt-x86_64-shaderc'
+  - |
+    C:\msys64\usr\bin\bash -lc '
+    # make sure this dir exists and the following repos are already initialized
+    cd /c/src
+    pushd zrythm && git fetch && git reset --hard origin/master && popd
+    pushd zrythm-builds && git fetch && git reset --hard origin/master && popd
+    pushd zrythm-installer && git fetch && git reset --hard origin/master && popd'
+  #- |
+    #C:\msys64\usr\bin\bash -lc '
+    #/ucrt64/bin/pip install awscli pip-system-certs'
+  - |
+    C:\msys64\usr\bin\bash -lc '
+    curl https://github.com
+    curl https://gitlab.zrythm.org'
+  - |
+    C:\msys64\usr\bin\bash -lc '
+    cd /c/src
+    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    export MESON_PATH=/ucrt64/bin/meson
+    export NINJA_PATH=/ucrt64/bin/ninja
+    export AWS_CLI_PATH=/ucrt64/bin/aws
+    zrythm-builds/scripts/make-pkg.sh windows-msys windows-msys-prepare
+    zrythm-builds/scripts/make-pkg.sh windows-msys
+    zrythm-builds/scripts/push-pkg.sh windows-msys'
