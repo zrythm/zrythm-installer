@@ -112,7 +112,8 @@ option (
 option (
   'gtk-ver', type: 'string',
   # 4.13.5 (avoid newer releases because they use the new ngl renderer)
-  value: 'a45b66e1cac48e2c6cae63a36a037d38a6dfcd54',
+  # 4.13.7
+  value: 'a75d97c7881f698e2a90f5bed75dcd9b4289f573',
   description: 'GTK git version')
 
 option (
