@@ -111,9 +111,10 @@ option (
 
 option (
   'gtk-ver', type: 'string',
-  # 4.13.5 (avoid newer releases because they use the new ngl renderer)
-  # 4.13.7
-  value: 'a75d97c7881f698e2a90f5bed75dcd9b4289f573',
+  # // 4.13.5 (avoid newer releases because they use the new ngl renderer)
+  # // 4.13.7
+  # branch disable-depth-test by luca bacci
+  value: 'b35b1020888b6b46f453fe8ed5e75c54a102ebb5',
   description: 'GTK git version')
 
 option (
