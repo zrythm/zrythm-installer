@@ -224,6 +224,7 @@ EOL
   # copy original executable for debugging with gdb (DWARF)
   # don't rcedit because it makes it impossible to debug
   cp $zrythm_exe $dist_bindir/zrythm_debug_gdb.exe
+  "$zrythm_exe" --version
 
   # generate pbd and another executable for debugging with visual studio
   # don't rcedit because it makes it impossible to debug
