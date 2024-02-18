@@ -146,8 +146,8 @@ APPICON_DIR1=$ICONS_DIR/hicolor/scalable/apps
 APPICON_DIR2=$ICONS_DIR/hicolor/48x48/apps
 mkdir -p $APPICON_DIR1
 mkdir -p $APPICON_DIR2
-cp $zrythm_src_dir/data/icon-themes/zrythm-dark/scalable/apps/zrythm.svg $APPICON_DIR1/
-cp $zrythm_src_dir/data/icon-themes/zrythm-dark/scalable/apps/zrythm.svg $APPICON_DIR2/
+cp $zrythm_src_dir/data/icon-themes/zrythm-dark/scalable/apps/org.zrythm.Zrythm.svg $APPICON_DIR1/
+cp $zrythm_src_dir/data/icon-themes/zrythm-dark/scalable/apps/org.zrythm.Zrythm.svg $APPICON_DIR2/
 
 echo "copying themes"
 #rsync -a --copy-links /usr/local/share/ $Share/

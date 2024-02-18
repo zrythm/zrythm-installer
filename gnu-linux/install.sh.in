@@ -120,8 +120,8 @@ if [ $proceed -ne 0 ]; then
   fi
 
   # app icon
-  appicon_path_in_zip="share/icons/hicolor/scalable/apps/zrythm.svg"
-  appicon_path_installed="/usr/local/share/icons/hicolor/scalable/apps/zrythm.svg"
+  appicon_path_in_zip="share/icons/hicolor/scalable/apps/org.zrythm.Zrythm.svg"
+  appicon_path_installed="/usr/local/share/icons/hicolor/scalable/apps/org.zrythm.Zrythm.svg"
   sudo mv "$appicon_path_installed" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
     sudo_copy_file "$prefix/$appicon_path_in_zip" "$appicon_path_installed"
