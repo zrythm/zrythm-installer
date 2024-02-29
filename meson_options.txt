@@ -47,7 +47,7 @@ option (
 
 option (
   'carla-git-ver', type: 'string',
-  value: '84e2e0a4beee64297e3e33c9cb58448cb2fdbd73',
+  value: '9729f1621cd0b35d91c3f9ac20609b4c1b46fbfa',
   description: 'Carla version')
 
 option (
