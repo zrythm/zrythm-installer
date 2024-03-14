@@ -111,14 +111,14 @@ option (
 
 option (
   'gtk-ver', type: 'string',
-  # 4.13.8
-  value: 'e8508762f5248335dbc64b451e00067c0e794227',
+  # 4.14.0
+  value: '5a9a0874bd272634c001138f2e9897566c926bf2',
   description: 'GTK git version')
 
 option (
   'libadwaita-ver', type: 'string',
-  # 1.5.beta
-  value: 'fb97bcc3aaf999c274d0f03bf9d7076ec4c97878',
+  # 1.5.rc
+  value: '1a7bb78065b2094eb15f3f0696a3d0089725fa84',
   description: 'libadwaita git version')
 
 option (
