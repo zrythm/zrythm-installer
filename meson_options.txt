@@ -117,13 +117,13 @@ option (
 
 option (
   'libadwaita-ver', type: 'string',
-  # 1.5.rc
-  value: '1a7bb78065b2094eb15f3f0696a3d0089725fa84',
+  # 1.5.0
+  value: '6eed5e87efdcb6c599caaad64cbf1b68603ee6e7',
   description: 'libadwaita git version')
 
 option (
   'libpanel-ver', type: 'string',
-  value: '1.3.0-1-for-zrythm',
+  value: '1.6.0-1-for-zrythm',
   description: 'libpanel git version')
 
 option (
