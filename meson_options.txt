@@ -111,8 +111,8 @@ option (
 
 option (
   'gtk-ver', type: 'string',
-  # 4.14.1
-  value: 'c648bb7b19bede75d3af4acaed468b922269ed05',
+  # 4.14.2
+  value: '29c29b0e641a1e53ea512bc0edd689d0b78ab3ae',
   description: 'GTK git version')
 
 option (

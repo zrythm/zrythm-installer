@@ -326,7 +326,8 @@ libpanel_pkg = custom_target (
   output: 'libpanel.pkg.tar.zst',
   input: [ make_mingw_pkg, mingw_libpanel_pkgbuild, ],
   command: make_mingw_pkg_cmd,
-  depends: libadwaita_pkg,
+  # don't depend on libadwaita/gtk anymore - use upstream packages
+  #depends: libadwaita_pkg,
   console: true,
   install: false,
   )
