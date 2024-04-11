@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 #
-# Copyright (C) 2019-2020, 2022-2023 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2019-2020, 2022-2024 Alexandros Theodotou <alex at zrythm dot org>
 #
 #  This file is part of Zrythm
 #
@@ -33,6 +33,7 @@ zenity_width=360
 have_zenity=0
 # shellcheck disable=SC2015
 command -v zenity > /dev/null && have_zenity=1 || true
+command -v xdg-desktop-menu > /dev/null && have_xdg_desktop_menu=1 || true
 
 if [ -z "${XDG_DATA_HOME:-}" ]; then
   XDG_DATA_HOME="$HOME/.local/share"
@@ -40,6 +41,10 @@ fi
 trash_dir="$XDG_DATA_HOME/Trash"
 trash_dir="$trash_dir/zrythm-installer-deleted-files-$(date +"%Y_%m_%d_%H_%M")"
 mkdir -p "$trash_dir"
+
+pkgname="zrythm$trial-$zrythm_ver"
+prefix="opt/$pkgname"
+installed_prefix="/opt/$pkgname"
 
 # ---- Helper funcs ----
 
@@ -70,7 +75,7 @@ ask_for_root_pw()
 print_install_success()
 {
   if [ $uninstall -eq 0 ]; then
-    show_info "Install successful!"
+    show_info "Install successful! You can find Zrythm in your list of installed programs, or you can run $installed_prefix/bin/zrythm_launch from a terminal to launch Zrythm."
   else
     show_info "Uninstall successful!"
   fi
@@ -102,9 +107,6 @@ sudo_copy_file()
 
 # install packages
 if [ $proceed -ne 0 ]; then
-  pkgname="zrythm$trial-$zrythm_ver"
-  prefix="opt/$pkgname"
-  installed_prefix="/opt/$pkgname"
   sudo mv "$installed_prefix" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
     sudo mkdir /opt || true
@@ -117,6 +119,9 @@ if [ $proceed -ne 0 ]; then
   sudo mv "$application_path_installed" "$trash_dir/" || true
   if [ $uninstall -eq 0 ]; then
     sudo_copy_file "$prefix/$application_path_in_zip" "$application_path_installed"
+  fi
+  if [ $have_xdg_desktop_menu -ne 0 ]; then
+    xdg-desktop-menu forceupdate --mode system
   fi
 
   # app icon
