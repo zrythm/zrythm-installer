@@ -98,7 +98,6 @@ build() {
     -Dstatic_deps=false \
     -Dstatic_lsp_dsp=true \
     -Djack=enabled \
-    -Dguile=disabled \
     -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
     -Dcheck_updates=true \
     -Dmanpage=false \
