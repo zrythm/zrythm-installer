@@ -168,7 +168,7 @@ unzip "$demo_project_zip" -d "$destdir_w_prefix/share/zrythm/templates"
 pushd "$destdir_w_prefix"
 rm -rf include
 rm -rf bin/zstd* bin/lv2* bin/s*rd* bin/unzstd bin/gtk4*
-rm -rf lib/libreproc.a lib/python3
+rm -rf lib/python3
 rm -rf lib/x86_64-linux-gnu/zrythm/carla/libcarla_standalone2.so
 
 # https://github.com/AppImageCommunity/pkg2appimage/blob/master/excludelist
