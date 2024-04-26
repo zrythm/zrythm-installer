@@ -531,7 +531,7 @@ make install $args PREFIX="$deps_prefix"
 popd # project
 
 LDFLAGS="$(pkg-config --libs libbrotlidec)" build_autotools_project https://curl.haxx.se/download/curl-8.2.1.tar.gz --disable-static --enable-shared --disable-ldap --disable-ldaps --disable-manual --with-gnutls --with-ca-fallback --without-ca-bundle
-build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.9/lsp-dsp-lib-src-1.0.9.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
+build_custom https://github.com/lsp-plugins/lsp-dsp-lib/releases/download/1.0.21/lsp-dsp-lib-src-1.0.21.tar.gz lsp-dsp-lib "make config PREFIX=$deps_prefix" "make -j$num_cpus" "make install" # && rm $deps_prefix/lib/liblsp-dsp-lib.so
 build_meson_project https://lv2plug.in/spec/lv2-1.18.10.tar.xz -Ddocs=disabled -Dold_headers=true -Dplugins=disabled -Dtests=disabled
 
 build_meson_project https://github.com/hughsie/libxmlb/releases/download/0.3.14/libxmlb-0.3.14.tar.xz -Ddefault_library=shared -Dgtkdoc=false -Dintrospection=false -Dtests=false
