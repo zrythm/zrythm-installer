@@ -562,7 +562,7 @@ build_meson_project https://freedesktop.org/software/pulseaudio/releases/pulseau
 mv "$deps_prefix/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so" "$deps_prefix/lib/x86_64-linux-gnu/"
 
 build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-6.0.1.tar.gz -Ddefault_library=shared -Djack=disabled -Dalsa=enabled -Dpulse=enabled
-build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-5.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
+build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-6.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
 
 # libbacktrace
 build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static

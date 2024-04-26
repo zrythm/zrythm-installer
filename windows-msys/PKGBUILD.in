@@ -48,6 +48,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk4"
          "${MINGW_PACKAGE_PREFIX}-shaderc"
          "${MINGW_PACKAGE_PREFIX}-zstd"
          "${MINGW_PACKAGE_PREFIX}-libyaml"
+         "${MINGW_PACKAGE_PREFIX}-rtmidi"
          "${MINGW_PACKAGE_PREFIX}-vamp-plugin-sdk"
          "${MINGW_PACKAGE_PREFIX}-xxhash")
 makedepends=("${MINGW_PACKAGE_PREFIX}-ccache"
@@ -111,7 +112,7 @@ build() {
     -Db_lto=false \
     -Dtests=false \
     -Dcarla_use_cv32_patchbay_variant=true \
-    -Dforce_fallback_for=rtmidi,rtaudio \
+    -Dforce_fallback_for=rtaudio \
     -Dwrap_mode=default \
     -Dfftw3_threads_separate=true \
     "../zrythm-${pkgver}"
