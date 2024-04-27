@@ -19,17 +19,13 @@
 _realname=carla
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.6.0
+pkgver=2.3.0
 pkgrel=1
 arch=('any')
 pkgdesc='carla'
-depends=("${MINGW_PACKAGE_PREFIX}-fluidsynth"
-         "${MINGW_PACKAGE_PREFIX}-liblo")
+depends=("${MINGW_PACKAGE_PREFIX}-fluidsynth")
 makedepends=("${MINGW_PACKAGE_PREFIX}-ccache"
-             "${MINGW_PACKAGE_PREFIX}-cc"
-             "${MINGW_PACKAGE_PREFIX}-cmake"
-             "${MINGW_PACKAGE_PREFIX}-ninja"
-             "tree"
+             "${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 options=('!strip')
 license=("GPL2")
@@ -42,47 +38,49 @@ prepare() {
   rm -rf ${_realname}-${pkgver}
   mv "Carla-@CARLA_GIT_VER@" ${_realname}-${pkgver}
   cd ${_realname}-${pkgver}
+
   make msys2fix
+  make features
 }
 
 build() {
-  mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
+  cd "${srcdir}/${_realname}-${pkgver}"
 
-  CFLAGS+=" -mtune=haswell"
-  CXXFLAGS+=" -mtune=haswell"
+  #export CFLAGS="$CFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
+  #export CXXFLAGS="$CXXFLAGS -static-libgcc -static-libstdc++ -g -ggdb3"
+  export CC='ccache gcc'
+  export CXX='ccache g++'
+  export CFLAGS="$CFLAGS -g -mtune=haswell"
+  export CXXFLAGS="$CXXFLAGS -g -mtune=haswell"
+  #export LDFLAGS="$LDFLAGS $(pkg-config --libs fluidsynth)"
 
-  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
-  ${MINGW_PREFIX}/bin/cmake \
-    -GNinja \
-    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-    -DCMAKE_C_FLAGS=-Duint="\"unsigned int\"" \
-    -DBUILD_SHARED_LIBS=ON \
-    -DCARLA_BUILD_STATIC=false \
-    ../${_realname}-${pkgver}/cmake
+  declare -a common_args
+  common_args+=("SHELL=$SHELL -x")
+  common_args+=("HAVE_X11=false")
+  # fluidsynth doesn't have static libs installed that carla needs
+  common_args+=("HAVE_FLUIDSYNTH=false")
+  common_args+=("HAVE_SDL=false")
+  common_args+=("HAVE_SDL2=false")
+  common_args+=("PREFIX=${MINGW_PREFIX}")
+  common_args+=("NOOPT=true")
+  common_args+=("SKIP_STRIPPING=true")
+  echo "${common_args[@]}"
 
-  ${MINGW_PREFIX}/bin/cmake --build .
-
-  #if [ "$MINGW_ARCH" = "mingw32" ]; then
-    #make "${common_args[@]}" win32r
-  #else
-    #make "${common_args[@]}"
-  #fi
+  if [ "$MINGW_ARCH" = "mingw32" ]; then
+    make "${common_args[@]}" win32r
+  else
+    make "${common_args[@]}"
+  fi
 }
 
 package() {
-  pushd "${srcdir}/build-${MSYSTEM}"
-  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install .
-  popd
+  cd "${srcdir}/${_realname}-${pkgver}"
 
-  pushd "${srcdir}/${_realname}-${pkgver}"
+  mkdir -p "${pkgdir}/${MINGW_PREFIX}"/lib/carla
+  ls -l bin
+  install -D -m755 bin/*.exe "${pkgdir}/${MINGW_PREFIX}"/lib/carla/
 
-  tree "${pkgdir}/${MINGW_PREFIX}"
-  #mkdir -p "${pkgdir}/${MINGW_PREFIX}"/lib/carla
-  #ls -l bin
-  #install -D -m755 bin/*.exe "${pkgdir}/${MINGW_PREFIX}"/lib/carla/
-
-  #if [ "$MINGW_ARCH" != "mingw32" ]; then
-    #make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" install
-  #fi
+  if [ "$MINGW_ARCH" != "mingw32" ]; then
+    make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" install
+  fi
 }
