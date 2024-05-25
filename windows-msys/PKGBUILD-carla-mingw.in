@@ -29,7 +29,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-ccache"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 options=('!strip')
 license=("GPL2")
-url="https://github.com/falktx/carla"
+url="https://github.com/zrythm/carla"
 source=("Carla-@CARLA_GIT_VER@.tar.gz")
 sha256sums=('SKIP')
 

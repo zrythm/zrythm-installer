@@ -518,7 +518,7 @@ popd # build
 popd # project
 
 # carla
-url="https://github.com/falkTX/Carla/archive/@CARLA_GIT_VER@.tar.gz"
+url="https://github.com/zrythm/Carla/archive/@CARLA_GIT_VER@.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="Carla-@CARLA_GIT_VER@"

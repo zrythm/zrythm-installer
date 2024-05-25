@@ -55,7 +55,7 @@ run_target (
   depends: zrythm_src_tarball)
 
 
-url = 'https://github.com/falkTX/Carla/archive/' + carla_git_ver + '.zip'
+url = 'https://github.com/zrythm/Carla/archive/' + carla_git_ver + '.zip'
 carla_src_zip = custom_target (
   'carla-source-tarball',
   output: 'Carla-' + carla_git_ver + '.zip',
