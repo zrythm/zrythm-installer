@@ -61,6 +61,7 @@ build() {
   common_args+=("HAVE_FLUIDSYNTH=false")
   common_args+=("HAVE_SDL=false")
   common_args+=("HAVE_SDL2=false")
+  common_args+=("HAVE_HYLIA=false") # compilation breaks and ableton link is not needed anw
   common_args+=("PREFIX=${MINGW_PREFIX}")
   common_args+=("NOOPT=true")
   common_args+=("SKIP_STRIPPING=true")
