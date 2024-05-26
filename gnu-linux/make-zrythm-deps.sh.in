@@ -567,6 +567,9 @@ build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-6.0.0
 # libbacktrace
 build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static
 
+# magic_enum
+build_cmake_project "https://github.com/Neargye/magic_enum/releases/download/v0.9.5/magic_enum-v0.9.5.tar.gz" -DBUILD_SHARED_LIBS=True
+
 popd # private dir
 
 touch "$deps_prefix/FINISHED"
