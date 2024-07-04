@@ -45,6 +45,7 @@ mkdir -p "$trash_dir"
 pkgname="zrythm$trial-$zrythm_ver"
 prefix="opt/$pkgname"
 installed_prefix="/opt/$pkgname"
+symlink="/opt/zrythm"
 
 # ---- Helper funcs ----
 
@@ -75,7 +76,7 @@ ask_for_root_pw()
 print_install_success()
 {
   if [ $uninstall -eq 0 ]; then
-    show_info "Install successful! You can find Zrythm in your list of installed programs, or you can run $installed_prefix/bin/zrythm_launch from a terminal to launch Zrythm."
+    show_info "Install successful! You can find Zrythm in your list of installed programs, or you can run $symlink/bin/zrythm_launch from a terminal to launch Zrythm."
   else
     show_info "Uninstall successful!"
   fi
@@ -107,9 +108,11 @@ sudo_copy_file()
 
 # install packages
 if [ $proceed -ne 0 ]; then
-  sudo mv "$installed_prefix" "$trash_dir/" || true
+  if [ -d "$installed_prefix" ]; then
+    sudo mv "$installed_prefix" "$trash_dir/" || true
+  fi
   if [ $uninstall -eq 0 ]; then
-    sudo mkdir /opt || true
+    sudo mkdir /opt > /dev/null 2>&1 || true
     sudo cp -r "$prefix" "$installed_prefix"
   fi
 
@@ -160,6 +163,13 @@ if [ $proceed -ne 0 ]; then
   #if [ $uninstall -eq 0 ]; then
     #sudo ln -s /usr/lib/libcrypt.so.2 "$installed_prefix/lib/x86_64-linux-gnu/libcrypt.so.1" || true
   #fi
+
+  # template fix
+  sudo chmod -R +rx "$installed_prefix/share/zrythm/templates"
+  
+  # manage symlink
+  [ -L "$symlink" ] && sudo rm -f "$symlink"
+  [ $uninstall -eq 0 ] && sudo ln -s "$installed_prefix" "$symlink"
 
   print_install_success
 fi
