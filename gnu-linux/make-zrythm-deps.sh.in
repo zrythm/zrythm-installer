@@ -457,6 +457,7 @@ vulkan_ver=1.3.275
 
 build_cmake_project "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release
 build_cmake_project "https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DUPDATE_DEPS=ON -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
+build_cmake_project "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2024.2.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSKIP_SPIRV_TOOLS_INSTALL=OFF
 build_cmake_project "https://github.com/KhronosGroup/glslang/archive/refs/tags/14.0.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release
 
 #gtk_maj_min_ver="$(echo "@GTK_VER@" | cut -d. -f-2)"
