@@ -383,13 +383,16 @@ build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disa
 build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
 build_meson_project https://www.cairographics.org/releases/pixman-0.42.2.tar.gz -Ddefault_library=shared -Dgtk=disabled
 
+} # skip_build2
+
 vulkan_ver=1.3.290
+glslang_ver=14.2.0
+spirv_tools_ver=2024.2
 build_cmake_project "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release
 build_cmake_project "https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DUPDATE_DEPS=ON -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
 build_cmake_project "https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-$vulkan_ver.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSPIRV_HEADERS_ENABLE_TESTS=OFF
-build_cmake_project "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2024.2.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSKIP_SPIRV_TOOLS_INSTALL=OFF -DSPIRV-Headers_SOURCE_DIR="$deps_prefix"
-build_cmake_project "https://github.com/KhronosGroup/glslang/archive/refs/tags/14.0.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DALLOW_EXTERNAL_SPIRV_TOOLS=ON
-} # skip_build2
+build_cmake_project "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v${spirv_tools_ver}.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSKIP_SPIRV_TOOLS_INSTALL=OFF -DSPIRV-Headers_SOURCE_DIR="$deps_prefix"
+build_cmake_project "https://github.com/KhronosGroup/glslang/archive/refs/tags/${glslang_ver}.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DALLOW_EXTERNAL_SPIRV_TOOLS=ON
 
 # cairo
 url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.18.2/cairo-1.18.2.tar.gz"
@@ -443,17 +446,29 @@ build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.
 #make install
 #popd # project
 
-build_meson_project https://gitlab.freedesktop.org/mesa/drm/-/archive/libdrm-2.4.119/drm-libdrm-2.4.119.tar.gz -Ddefault_library=shared -Dtests=false -Dvalgrind=disabled -Dman-pages=disabled -Dcairo-tests=disabled
+build_meson_project https://gitlab.freedesktop.org/mesa/drm/-/archive/libdrm-2.4.123/drm-libdrm-2.4.123.tar.gz -Ddefault_library=shared -Dtests=false -Dvalgrind=disabled -Dman-pages=disabled -Dcairo-tests=disabled
 
-url="https://github.com/google/shaderc/archive/refs/tags/v2023.8.tar.gz"
+shaderc_ver="${spirv_tools_ver}"
+url="https://github.com/google/shaderc/archive/refs/tags/v${shaderc_ver}.tar.gz"
 shift
 fetch "$url"
 tar xf "`basename "$url"`"
-prj_dir_name="shaderc-2023.8"
+prj_dir_name="shaderc-${shaderc_ver}"
 pushd "$prj_dir_name"
+# de-vendor libs and disable git versioning
+sed '/examples/d;/third_party/d' -i CMakeLists.txt
+sed '/build-version/d' -i glslc/CMakeLists.txt
+cat <<- EOF > glslc/src/build-version.inc
+"${shaderc_ver}\\n"
+"${spirv_tools_ver}\\n"
+"${glslang_ver}\\n"
+EOF
+
 utils/git-sync-deps
 rm -rf builddir && mkdir builddir && pushd builddir
-cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX="$deps_prefix" -DBUILD_SHARED_LIBS=True -DSHADERC_SKIP_TESTS=True -DSHADERC_SKIP_EXAMPLES=True -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX="$deps_prefix" \
+  -DBUILD_SHARED_LIBS=True -DSHADERC_SKIP_TESTS=True -DSHADERC_SKIP_EXAMPLES=True -DCMAKE_BUILD_TYPE=Release \
+  -DSHADERC_SKIP_TESTS=ON -Dglslang_SOURCE_DIR="${deps_prefix}/include/glslang"
 cmake --build .
 cmake --install .
 popd # build
