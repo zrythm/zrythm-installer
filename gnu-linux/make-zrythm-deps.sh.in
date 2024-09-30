@@ -98,7 +98,12 @@ build_meson_project()
   shift
   opts="$@"
   fetch "$url"
-  tar xf "`basename "$url"`"
+  filename=`basename "$url"`
+  if [[ "$filename" == *.zip ]]; then
+    unzip "$filename"
+  else
+    tar xf "`basename "$url"`"
+  fi
   prj_dir_name="`basename -s .tar.gz "$url"`"
   prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
   prj_dir_name="`basename -s .tar.bz2 "$prj_dir_name"`"
@@ -116,10 +121,19 @@ build_cmake_project()
   shift
   opts="$@"
   fetch "$url"
-  tar xf "`basename "$url"`"
+  filename=`basename "$url"`
+  if [[ "$filename" == *.zip ]]; then
+    unzip "$filename"
+  else
+    tar xf "`basename "$url"`"
+  fi
   prj_dir_name="`basename -s .tar.gz "$url"`"
   prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
   prj_dir_name="`basename -s .tar.bz2 "$prj_dir_name"`"
+  # Handle GitHub auto-generated tarballs
+  if [[ "$url" == *"/archive/refs/tags/"* ]]; then
+    prj_dir_name=$(tar -tzf "$filename" | head -1 | cut -f1 -d"/")
+  fi
   pushd "$prj_dir_name"
   rm -rf builddir && mkdir builddir && pushd builddir
   cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX="$deps_prefix" "$@"
@@ -569,6 +583,15 @@ build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive
 
 # magic_enum
 build_cmake_project "https://github.com/Neargye/magic_enum/releases/download/v0.9.5/magic_enum-v0.9.5.tar.gz" -DBUILD_SHARED_LIBS=True
+
+# fmt
+build_cmake_project https://github.com/fmtlib/fmt/releases/download/11.0.2/fmt-11.0.2.zip -DBUILD_SHARED_LIBS=True
+
+# spdlog
+build_cmake_project https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.tar.gz -DBUILD_SHARED_LIBS=True -DSPDLOG_FMT_EXTERNAL=ON -DSPDLOG_BUILD_SHARED=ON
+
+# gtest
+build_cmake_project https://github.com/google/googletest/releases/download/v1.15.2/googletest-1.15.2.tar.gz -DBUILD_SHARED_LIBS=True
 
 # gtkmm stack
 build_meson_project https://download.gnome.org/sources/libsigc++/3.6/libsigc%2B%2B-3.6.0.tar.xz -Ddefault_library=shared -Dvalidation=false -Dbuild-tests=false

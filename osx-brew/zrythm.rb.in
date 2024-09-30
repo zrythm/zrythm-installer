@@ -44,6 +44,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "lilv"
   depends_on "librsvg"
   depends_on "gtksourceview5"
+  depends_on "googletest"
   #depends_on "graphviz"
   depends_on "rubberband"
   depends_on "sdl2"
