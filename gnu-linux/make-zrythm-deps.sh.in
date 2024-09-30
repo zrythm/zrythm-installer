@@ -383,8 +383,16 @@ build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disa
 build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
 build_meson_project https://www.cairographics.org/releases/pixman-0.42.2.tar.gz -Ddefault_library=shared -Dgtk=disabled
 
+vulkan_ver=1.3.290
+build_cmake_project "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release
+build_cmake_project "https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DUPDATE_DEPS=ON -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
+build_cmake_project "https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-$vulkan_ver.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSPIRV_HEADERS_ENABLE_TESTS=OFF
+build_cmake_project "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2024.2.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSKIP_SPIRV_TOOLS_INSTALL=OFF -DSPIRV-Headers_SOURCE_DIR="$deps_prefix"
+build_cmake_project "https://github.com/KhronosGroup/glslang/archive/refs/tags/14.0.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DALLOW_EXTERNAL_SPIRV_TOOLS=ON
+} # skip_build2
+
 # cairo
-url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.17.8/cairo-1.17.8.tar.gz"
+url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.18.2/cairo-1.18.2.tar.gz"
 fetch "$url"
 tar xf "`basename "$url"`"
 prj_dir_name="`basename -s .tar.gz "$url"`"
@@ -450,15 +458,6 @@ cmake --build .
 cmake --install .
 popd # build
 popd # project
-
-vulkan_ver=1.3.290
-
-build_cmake_project "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release
-build_cmake_project "https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DUPDATE_DEPS=ON -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
-build_cmake_project "https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-$vulkan_ver.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSPIRV_HEADERS_ENABLE_TESTS=OFF
-build_cmake_project "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2024.2.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSKIP_SPIRV_TOOLS_INSTALL=OFF -DSPIRV-Headers_SOURCE_DIR="$deps_prefix"
-} # skip_build2
-build_cmake_project "https://github.com/KhronosGroup/glslang/archive/refs/tags/14.0.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DALLOW_EXTERNAL_SPIRV_TOOLS=ON
 
 #gtk_maj_min_ver="$(echo "@GTK_VER@" | cut -d. -f-2)"
 #build_meson_project https://download.gnome.org/sources/gtk/${gtk_maj_min_ver}/gtk-@GTK_VER@.tar.xz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false -Ddebug=true -Dbuild-testsuite=false -Dvulkan=disabled
