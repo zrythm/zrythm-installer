@@ -69,36 +69,28 @@ fi
 
 # make zrythm
 pushd "$private_dir/zrythm-$zrythm_version"
-fallback_subprojects_csv=lilv,sord,serd,sratom,zix,libcyaml
-fallback_subprojects="`echo $fallback_subprojects_csv | tr , ' '`"
-$meson_bin subprojects download $fallback_subprojects
-$meson_bin build \
-  -Dprefix="$prefix" \
-  -Db_lto=true \
-  -Dnative_build=false \
-  -Dc_args="@MARCH_MTUNE@" -Dcpp_args="@MARCH_MTUNE@" \
-  -Ddebug=true \
-  -Dextra_debug_info=true \
-  -Doptimization=2 \
-  -Dcarla=enabled \
-  -Dopus=true \
-  -Dforce_fallback_for="$fallback_subprojects_csv" \
-  -Dwrap_mode=default \
-  -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
-  -Dmanpage=true \
-  -Dgraphviz=disabled \
-  -Dvamp_static=true \
-  -Drtaudio=enabled -Drtmidi=enabled -Dlsp_dsp=enabled \
-  -Djack=enabled -Dalsa=enabled \
-  -Dpulse=enabled \
-  -Dfftw3_threads_separate=false \
-  -Dstatic_lsp_dsp=true -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
-  -Dcheck_updates=true -Dcompletions=false \
-  -Dcarla_use_cv32_patchbay_variant=true \
-  -Dinstaller_ver=true \
-  -Dtests=false
-ninja -C build -v
-"$meson_bin" install -C build --destdir="$meson_build_dir/$out_file"
+#fallback_subprojects_csv=lilv,sord,serd,sratom,zix,libcyaml
+#fallback_subprojects="`echo $fallback_subprojects_csv | tr , ' '`"
+#$meson_bin subprojects download $fallback_subprojects
+cmake -B build \
+  -DCMAKE_INSTALL_PREFIX="$prefix" \
+  -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+  -DCMAKE_C_FLAGS="@MARCH_MTUNE@" -DCMAKE_CXX_FLAGS="@MARCH_MTUNE@" \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DZRYTHM_MAINTAINER_MODE=ON \
+  -DZRYTHM_IS_TRIAL_VER=@TRIAL_TRUE_FALSE@ \
+  -DZRYTHM_MANPAGE=ON \
+  -DZRYTHM_WITH_RTAUDIO=ON -DZRYTHM_WITH_RTMIDI=ON \
+  -DZRYTHM_WITH_JACK=ON \
+  -DZRYTHM_FFTW3_THREADS_SEPARATE=OFF \
+  -DZRYTHM_PACKAGE_VERSION=@ZRYTHM_PKG_SEMVER_VERSION@ \
+  -DZRYTHM_CHECK_UPDATES=ON \
+  -DZRYTHM_SHELL_COMPLETIONS=OFF \
+  -DZRYTHM_CARLA_WITH_CV32_PATCHBAY_VARIANT=ON \
+  -DZRYTHM_IS_INSTALLER_VER=ON \
+  -DZRYTHM_TESTS=OFF
+cmake --build build --verbose
+DESTDIR="$meson_build_dir/$out_file" cmake --install build
 popd
 
 # --- copy rest of needed items ---

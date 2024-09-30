@@ -192,7 +192,7 @@ export CXX="$deps_prefix"/bin/g++
 export CFLAGS='-fPIC -g @MARCH_MTUNE@'
 export CPPFLAGS='-DPIC -g @MARCH_MTUNE@'
 
-skip_build2() {
+#skip_build2() {
 
 url="https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
 fetch "$url"
@@ -209,9 +209,9 @@ build_autotools_project https://www.x.org/releases/individual/xcb/xcb-proto-1.15
 build_autotools_project https://www.x.org/releases/individual/xcb/libxcb-1.15.tar.xz --disable-static --enable-shared
 build_autotools_project https://ftp.gnu.org/gnu/libunistring/libunistring-1.0.tar.gz --disable-static --enable-shared
 build_meson_project https://gitlab.freedesktop.org/gstreamer/meson-ports/libffi/-/archive/meson/libffi-meson.tar.gz -Ddefault_library=shared
-build_autotools_project https://www.hboehm.info/gc/gc_source/gc-8.2.2.tar.gz --disable-static --enable-shared
-build_autotools_project https://www.hboehm.info/gc/gc_source/libatomic_ops-7.6.14.tar.gz --disable-static --enable-shared
-build_autotools_project https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz --disable-static --enable-shared
+#build_autotools_project https://www.hboehm.info/gc/gc_source/gc-8.2.2.tar.gz --disable-static --enable-shared
+#build_autotools_project https://www.hboehm.info/gc/gc_source/libatomic_ops-7.6.14.tar.gz --disable-static --enable-shared
+#build_autotools_project https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz --disable-static --enable-shared
 
 # libxcrypt
 url="https://github.com/besser82/libxcrypt/releases/download/v4.4.36/libxcrypt-4.4.36.tar.xz"
@@ -228,10 +228,10 @@ popd # project
 #build_autotools_project http://zlib.net/fossils/zlib-1.2.12.tar.gz #--static
 
 # guile
-build_autotools_project https://ftp.gnu.org/gnu/guile/guile-3.0.9.tar.gz --disable-static --enable-shared --disable-lto --disable-deprecated --disable-tmpnam --disable-rpath #--enable-mini-gmp
-sed -i -e "s|-lgc -lpthread -ldl|-lgc -lpthread -ldl $(pkg-config --libs gmp libffi libcrypt) -lunistring|g" "$deps_prefix/lib/pkgconfig/guile-3.0.pc"
+#build_autotools_project https://ftp.gnu.org/gnu/guile/guile-3.0.9.tar.gz --disable-static --enable-shared --disable-lto --disable-deprecated --disable-tmpnam --disable-rpath #--enable-mini-gmp
+#sed -i -e "s|-lgc -lpthread -ldl|-lgc -lpthread -ldl $(pkg-config --libs gmp libffi libcrypt) -lunistring|g" "$deps_prefix/lib/pkgconfig/guile-3.0.pc"
 
-build_autotools_project https://tukaani.org/xz/xz-5.4.4.tar.xz --disable-static --enable-shared
+#build_autotools_project https://tukaani.org/xz/xz-5.4.4.tar.xz --disable-static --enable-shared
 build_meson_wrap_project lz4 lz4-1.9.4 -Ddefault_library=shared
 
 # zstd
@@ -496,7 +496,7 @@ cmake --install .
 popd # build
 popd # project
 
-} # skip_build2
+#} # skip_build2
 
 #gtk_maj_min_ver="$(echo "@GTK_VER@" | cut -d. -f-2)"
 #build_meson_project https://download.gnome.org/sources/gtk/${gtk_maj_min_ver}/gtk-@GTK_VER@.tar.xz -Ddefault_library=shared -Dmedia-gstreamer=disabled -Dprint-cups=disabled -Dintrospection=disabled -Dbuild-tests=false -Ddebug=true -Dbuild-testsuite=false -Dvulkan=disabled
@@ -569,6 +569,13 @@ build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive
 
 # magic_enum
 build_cmake_project "https://github.com/Neargye/magic_enum/releases/download/v0.9.5/magic_enum-v0.9.5.tar.gz" -DBUILD_SHARED_LIBS=True
+
+# gtkmm stack
+build_meson_project https://download.gnome.org/sources/libsigc++/3.6/libsigc%2B%2B-3.6.0.tar.xz -Ddefault_library=shared -Dvalidation=false -Dbuild-tests=false
+build_meson_project https://download.gnome.org/sources/glibmm/2.82/glibmm-2.82.0.tar.xz -Ddefault_library=shared
+build_meson_project https://www.cairographics.org/releases/cairomm-1.18.0.tar.xz -Ddefault_library=shared -Dboost-shared=true
+build_meson_project https://download.gnome.org/sources/pangomm/2.54/pangomm-2.54.0.tar.xz -Ddefault_library=shared
+build_meson_project https://download.gnome.org/sources/gtkmm/4.16/gtkmm-4.16.0.tar.xz -Ddefault_library=shared
 
 popd # private dir
 

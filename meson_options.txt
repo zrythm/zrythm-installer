@@ -21,6 +21,11 @@ option (
   description: 'Full path to meson or meson.py')
 
 option (
+  'cmake-path', type: 'string',
+  value: 'cmake',
+  description: 'Full path to cmake executable')
+
+option (
   'zrythm-git-ver', type: 'string',
   value: 'master',
   description: 'Git tag/commit')

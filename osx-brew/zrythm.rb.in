@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2021, 2024 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -60,32 +60,33 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "libsoxr"
   depends_on "yyjson"
   depends_on "shaderc"
+  depends_on "gtkmm4"
+  depends_on "libpanel"
+  depends_on "magic_enum"
+  depends_on "fmt"
+  depends_on "spdlog"
 
   def install
     mkdir "build" do
 
       # configure
-      system "meson", "setup",
-        "--prefix=#{prefix}", "--libdir=#{lib}",
-        "-Dextra_debug_info=true",
-        "-Ddebug=true", "-Doptimization=2",
-        "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
-        "-Dgtk4:x11-backend=false",
-        "-Dcarla=enabled",
-        "-Dx11=disabled",
-        "-Drtmidi=auto", "-Drtaudio=auto",
-        "-Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@",
+      system "cmake", "-S", "..", "-B", ".",
+        "-DCMAKE_INSTALL_PREFIX=#{prefix}", #"--libdir=#{lib}",
+        #"-Dextra_debug_info=true",
+        "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+        "-DZRYTHM_TESTS=OFF",
+        "-DZRYTHM_MAINTAINER_MODE=ON",
+        "-DZRYTHM_IS_INSTALLER_VER=ON",
+        "-DZRYTHM_IS_TRIAL_VER=@TRIAL_TRUE_FALSE@",
+        "-DZRYTHM_WITH_X11=OFF",
+        "-DZRYTHM_WITH_RTMIDI=ON",
+        "-DZRYTHM_WITH_RTAUDIO=ON",
+        "-DZRYTHM_PACKAGE_VERSION=@ZRYTHM_PKG_SEMVER_VERSION@",
         # manpage fails
-        "-Dmanpage=false",
-        # TODO enable
-        "-Dstatic_deps=false",
-        "-Dcheck_updates=true",
-        "-Dinstaller_ver=true",
-        "-Dvamp_static=true",
-        "-Dcarla_use_cv32_patchbay_variant=true",
-        "-Dforce_fallback_for=gtk4,libpanel,libadwaita",
-        "-Dwrap_mode=default",
-        ".."
+        "-DZRYTHM_MANPAGE=OFF",
+        "-DZRYTHM_CHECK_UPDATES=ON",
+        #"-Dvamp_static=true",
+        "-DZRYTHM_CARLA_WITH_CV32_PATCHBAY_VARIANT=ON"
 
       # build
       system "ninja", "-v"

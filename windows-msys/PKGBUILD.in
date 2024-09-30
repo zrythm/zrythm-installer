@@ -34,12 +34,14 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk4"
          "${MINGW_PACKAGE_PREFIX}-cantarell-fonts"
          "${MINGW_PACKAGE_PREFIX}-curl-winssl"
          "${MINGW_PACKAGE_PREFIX}-rubberband"
+         "${MINGW_PACKAGE_PREFIX}-fmt"
          "${MINGW_PACKAGE_PREFIX}-libsndfile"
          "${MINGW_PACKAGE_PREFIX}-libsamplerate"
          "${MINGW_PACKAGE_PREFIX}-lilv"
          "${MINGW_PACKAGE_PREFIX}-lsp-dsp-lib"
          "${MINGW_PACKAGE_PREFIX}-jack2"
          "${MINGW_PACKAGE_PREFIX}-gtksourceview5"
+         "${MINGW_PACKAGE_PREFIX}-gtkmm-4.0"
          "${MINGW_PACKAGE_PREFIX}-graphviz"
          "${MINGW_PACKAGE_PREFIX}-dlfcn"
          "${MINGW_PACKAGE_PREFIX}-fftw"
@@ -49,6 +51,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk4"
          "${MINGW_PACKAGE_PREFIX}-zstd"
          "${MINGW_PACKAGE_PREFIX}-libyaml"
          "${MINGW_PACKAGE_PREFIX}-rtmidi"
+         "${MINGW_PACKAGE_PREFIX}-spdlog"
          "${MINGW_PACKAGE_PREFIX}-vamp-plugin-sdk"
          "${MINGW_PACKAGE_PREFIX}-xxhash")
 makedepends=("${MINGW_PACKAGE_PREFIX}-ccache"
@@ -88,34 +91,25 @@ build() {
   sed -i -e 's|"|'\''|g' ${srcdir}/zrythm-${pkgver}/TRANSLATORS
 
   echo "using prefix ${MINGW_PREFIX}"
-  MSYS2_ARG_CONV_EXCL="--prefix=;--buildtype=" \
-  ${MINGW_PREFIX}/bin/meson \
-    --prefix=${MINGW_PREFIX} \
-    -Dc_args="@MARCH_MTUNE@" -Dcpp_args="@MARCH_MTUNE@" \
-    -Dsdl=disabled \
-    -Drtaudio=enabled \
-    -Drtmidi=enabled \
-    -Dlsp_dsp=enabled \
-    -Dstatic_deps=false \
-    -Dstatic_lsp_dsp=true \
-    -Djack=enabled \
-    -Dfallback_version=@ZRYTHM_PKG_SEMVER_VERSION@ \
-    -Dcheck_updates=true \
-    -Dmanpage=false \
-    -Dtrial_ver=@TRIAL_TRUE_FALSE@ \
-    -Dvamp_static=true \
-    -Dinstaller_ver=true -Dcarla=enabled \
-    -Dcarla_binaries_dir_32bit='/mingw32/lib/carla' \
-    -Ddebug=true \
-    -Doptimization=2 \
-    -Dextra_debug_info=true \
-    -Db_lto=false \
-    -Dtests=false \
-    -Dcarla_use_cv32_patchbay_variant=true \
-    -Dforce_fallback_for=rtaudio \
-    -Dwrap_mode=default \
-    -Dfftw3_threads_separate=true \
-    "../zrythm-${pkgver}"
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_BUILD_TYPE=" \
+  ${MINGW_PREFIX}/bin/cmake -B . \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_C_FLAGS="@MARCH_MTUNE@" -DCMAKE_CXX_FLAGS="@MARCH_MTUNE@" \
+    -DZRYTHM_WITH_RTAUDIO=ON \
+    -DZRYTHM_WITH_RTMIDI=ON \
+    -DZRYTHM_WITH_JACK=ON \
+    -DZRYTHM_PACKAGE_VERSION=@ZRYTHM_PKG_SEMVER_VERSION@ \
+    -DZRYTHM_CHECK_UPDATES=ON \
+    -DZRYTHM_MANPAGE=OFF \
+    -DZRYTHM_MAINTAINER_MODE=ON \
+    -DZRYTHM_IS_TRIAL_VER=@TRIAL_TRUE_FALSE@ \
+    -DZRYTHM_IS_INSTALLER_VER=ON \
+    -DZRYTHM_CARLA_BINARIES_32_BIT_DIR='/mingw32/lib/carla' \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DZRYTHM_TESTS=OFF \
+    -DZRYTHM_CARLA_WITH_CV32_PATCHBAY_VARIANT=ON \
+    -DZRYTHM_FFTW3_THREADS_SEPARATE=ON \
+    -S "../zrythm-${pkgver}"
 
   ${MINGW_PREFIX}/bin/ninja -d explain -v
   cp ${MINGW_PREFIX}/lib/carla/libcarla_host-plugin.dll ./src/
@@ -143,7 +137,8 @@ check() {
   set -x
   pushd $_zrythm_builddir
   echo "running tests"
-  ninja test || cat meson-logs/testlog.txt
+  # TODO
+  #ninja test || cat meson-logs/testlog.txt
   echo "running --version"
   src/zrythm.exe --version > test.txt 2>&1 || cat test.txt
   src/zrythm.exe --version
@@ -157,8 +152,7 @@ check() {
 
 package() {
   pushd "$_zrythm_builddir"
-  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/meson install \
-    --skip-subprojects
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install .
   install -Dm644 "${srcdir}/zrythm-${pkgver}/LICENSES/LicenseRef-ZrythmLicense.txt" "${pkgdir}${MINGW_PREFIX}/share/licenses/zrythm/COPYING"
   popd
 

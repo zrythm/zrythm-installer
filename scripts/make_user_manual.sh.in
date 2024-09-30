@@ -30,7 +30,6 @@ rm -rf $private_dir
 mkdir -p $private_dir
 
 inner_dir="@ZRYTHM_INNER_DIR_NAME@"
-meson_bin="@MESON_BIN@"
 
 latex_build_dir=build/doc/user/_build/$lang/latex
 
@@ -43,10 +42,10 @@ pushd $inner_dir
 python -m venv venv
 source ./venv/bin/activate
 pip install -r requirements.txt
-$meson_bin build -Dwrap_mode=default -Dcarla=disabled -Dstrict_sphinx_opts=false -Dforce_fallback_for=gtk4,libadwaita,libpanel,libcyaml
-sed -i -e 's/latexpdf/latex/' doc/user/meson.build
+cmake -B build -DZRYTHM_USER_MANUAL=ON
+sed -i -e 's/latexpdf/latex/' doc/user/CMakeLists.txt
 # run twice because pt fails for some reason
-ninja -C build latex-manual-$lang || ninja -C build latex-manual-$lang
+cmake --build build --target latex-manual-$lang || cmake --build build --target latex-manual-$lang
 deactivate
 make -C $latex_build_dir
 popd
