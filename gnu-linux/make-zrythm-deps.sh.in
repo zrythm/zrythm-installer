@@ -467,6 +467,7 @@ url="https://github.com/google/shaderc/archive/refs/tags/v${shaderc_ver}.tar.gz"
 shift
 fetch "$url"
 tar xf "`basename "$url"`"
+ls -l
 prj_dir_name="shaderc-${shaderc_ver}"
 pushd "$prj_dir_name"
 # de-vendor libs and disable git versioning
@@ -477,7 +478,6 @@ cat <<- EOF > glslc/src/build-version.inc
 "${spirv_tools_ver}\\n"
 "${glslang_ver}\\n"
 EOF
-
 utils/git-sync-deps
 rm -rf builddir && mkdir builddir && pushd builddir
 cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX="$deps_prefix" \

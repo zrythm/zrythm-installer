@@ -90,10 +90,10 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-DZRYTHM_CARLA_WITH_CV32_PATCHBAY_VARIANT=ON"
 
       # build
-      system "ninja", "-v"
+      system "cmake", "--build", "."
 
       # install
-      system "meson", "install", "--skip-subprojects=libbacktrace,libcyaml,rtaudio,rtmidi,zstd"
+      system "cmake", "--install", "."
 
       #system "cp", "-r", "@BREEZE_DARK@", "#{share}/icons/breeze-dark"
       system "mkdir", "-p", "#{lib}/zrythm/carla"
