@@ -586,8 +586,8 @@ build_cmake_project "https://github.com/libarchive/libarchive/releases/download/
 fetch "https://sourceware.org/elfutils/ftp/0.191/elfutils-0.191.tar.bz2"
 tar xf "elfutils-0.191.tar.bz2"
 pushd "elfutils-0.191"
-./configure --prefix="$deps_prefix" --disable-static --enable-shared --disable-debuginfod --disable-libdebuginfod --with-bzlib --with-lzma --with-zstd --disable-nls --enable-deterministic-archives || ( >&2 cat config.log ; exit 1 )
-make -j$num_cpus libdw
+./configure --prefix="$deps_prefix" --disable-debuginfod --disable-libdebuginfod --with-bzlib --with-lzma --with-zstd --disable-nls --enable-deterministic-archives || ( >&2 cat config.log ; exit 1 )
+make libdw
 make install libdw
 popd # elfutils
 
