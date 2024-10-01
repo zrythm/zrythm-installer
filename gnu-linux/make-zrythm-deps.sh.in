@@ -596,6 +596,7 @@ build_meson_project https://download.gnome.org/sources/gtkmm/4.16/gtkmm-4.16.0.t
 } # skip_build2
 
 # libdw (for backtraces)
+build_cmake_project "https://github.com/libarchive/libarchive/releases/download/v3.7.6/libarchive-3.7.6.tar.gz" -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release
 build_autotools_project "https://sourceware.org/elfutils/ftp/0.191/elfutils-0.191.tar.bz2" --disable-static --enable-shared
 
 popd # private dir
