@@ -574,13 +574,13 @@ build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-6.0.0
 # libbacktrace
 # build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static
 
-} # skip_build2
-
 # magic_enum
 build_cmake_project "https://github.com/Neargye/magic_enum/archive/refs/tags/v0.9.6.tar.gz" -DBUILD_SHARED_LIBS=True
 
+} # skip_build2
+
 # fmt
-build_cmake_project https://github.com/fmtlib/fmt/releases/download/11.0.2/fmt-11.0.2.zip -DBUILD_SHARED_LIBS=True
+build_cmake_project "https://github.com/fmtlib/fmt/archive/refs/tags/11.0.2.tar.gz" -DBUILD_SHARED_LIBS=True
 
 # spdlog
 build_cmake_project https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.tar.gz -DBUILD_SHARED_LIBS=True -DSPDLOG_FMT_EXTERNAL=ON -DSPDLOG_BUILD_SHARED=ON
