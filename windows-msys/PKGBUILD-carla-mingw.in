@@ -85,17 +85,16 @@ package() {
     make DESTDIR=${pkgdir} PREFIX="${MINGW_PREFIX}" install
   fi
 
-  # rename the carla libs to sane names
   ls -l "${pkgdir}/${MINGW_PREFIX}"/lib
   find "${pkgdir}/${MINGW_PREFIX}"/lib -type f -name 'libcarla_*' | while read -r file; do
     # Get the base name of the file
     base=$(basename "$file")
 
     # Replace underscore with hyphen in the filename
-    new_name="${base/_/-}"
+    #new_name="${base/_/-}"
 
     # Copy the file to the new location with the modified name
-    cp "$file" "${pkgdir}/${MINGW_PREFIX}/lib/carla/$new_name"
-    cp "$file" "${pkgdir}/${MINGW_PREFIX}/lib/$new_name"
+    #cp "$file" "${pkgdir}/${MINGW_PREFIX}/lib/carla/$new_name"
+    cp "$file" "${pkgdir}/${MINGW_PREFIX}/lib/$file"
   done
 }
