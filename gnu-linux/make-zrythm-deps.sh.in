@@ -563,13 +563,13 @@ build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-6.0.0
 # magic_enum
 build_cmake_project "https://github.com/Neargye/magic_enum/archive/refs/tags/v0.9.6.tar.gz" -DBUILD_SHARED_LIBS=True
 
-} # skip_build2
-
 # fmt
 build_cmake_project "https://github.com/fmtlib/fmt/archive/refs/tags/11.0.2.tar.gz" -DBUILD_SHARED_LIBS=True
 
+} # skip_build2
+
 # spdlog
-build_cmake_project https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.tar.gz -DBUILD_SHARED_LIBS=True -DSPDLOG_FMT_EXTERNAL=ON -DSPDLOG_BUILD_SHARED=ON
+build_cmake_project https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.tar.gz -DBUILD_SHARED_LIBS=True -DSPDLOG_FMT_EXTERNAL=ON -DSPDLOG_BUILD_SHARED=ON -DSPDLOG_BUILD_EXAMPLE=OFF
 
 # gtest
 build_cmake_project https://github.com/google/googletest/releases/download/v1.15.2/googletest-1.15.2.tar.gz -DBUILD_SHARED_LIBS=True
