@@ -597,7 +597,13 @@ build_meson_project https://download.gnome.org/sources/gtkmm/4.16/gtkmm-4.16.0.t
 
 # libdw (for backtraces)
 build_cmake_project "https://github.com/libarchive/libarchive/releases/download/v3.7.6/libarchive-3.7.6.tar.gz" -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release
-build_autotools_project "https://sourceware.org/elfutils/ftp/0.191/elfutils-0.191.tar.bz2" --disable-static --enable-shared
+fetch "https://sourceware.org/elfutils/ftp/0.191/elfutils-0.191.tar.bz2"
+tar xf "elfutils-0.191.tar.bz2"
+pushd "elfutils-0.191"
+./configure --prefix="$deps_prefix" --disable-static --enable-shared --disable-debuginfod --disable-libdebuginfod --with-bzlib --with-lzma --with-zstd || ( >&2 cat config.log ; exit 1 )
+make -j$num_cpus libdw
+make install libdw
+popd # elfutils
 
 popd # private dir
 
