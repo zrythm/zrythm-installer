@@ -95,6 +95,6 @@ package() {
 
     # Copy the file to the new location with the modified name
     #cp "$file" "${pkgdir}/${MINGW_PREFIX}/lib/carla/$new_name"
-    cp "$file" "${pkgdir}/${MINGW_PREFIX}/lib/$file"
+    cp "$file" "${pkgdir}/${MINGW_PREFIX}/lib/$base"
   done
 }
