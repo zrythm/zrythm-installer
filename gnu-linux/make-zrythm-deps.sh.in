@@ -420,8 +420,6 @@ build_cmake_project https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.t
 # gtest
 build_cmake_project https://github.com/google/googletest/releases/download/v1.15.2/googletest-1.15.2.tar.gz -DBUILD_SHARED_LIBS=True
 
-} # skip_build2
-
 #build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=shared -Dlibedit=disabled -Dlibreadline=disabled
 build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=shared -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
 build_meson_project "https://download.gnome.org/sources/glib/2.82/glib-2.82.1.tar.xz" -Ddefault_library=shared -Dlibelf=disabled -Dselinux=disabled -Dtests=false
@@ -580,6 +578,11 @@ build_meson_project https://download.gnome.org/sources/glibmm/2.82/glibmm-2.82.0
 build_meson_project https://www.cairographics.org/releases/cairomm-1.18.0.tar.xz -Ddefault_library=shared -Dboost-shared=true
 build_meson_project https://download.gnome.org/sources/pangomm/2.54/pangomm-2.54.0.tar.xz -Ddefault_library=shared
 build_meson_project https://download.gnome.org/sources/gtkmm/4.16/gtkmm-4.16.0.tar.xz -Ddefault_library=shared
+
+} # skip_build2
+
+# libdw (for backtraces)
+build_autotools_project "https://sourceware.org/elfutils/ftp/0.191/elfutils-0.191.tar.bz2" --disable-static --enable-shared
 
 popd # private dir
 
