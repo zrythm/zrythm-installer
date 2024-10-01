@@ -62,16 +62,34 @@ which cargo
 
 num_cpus=16
 
+convert_url_to_filepath() {
+  local url="$1"
+  local filepath
+
+  # Remove protocol (http://, https://, ftp://, etc.)
+  filepath=$(echo "$url" | sed -e 's|^[^:]*://||')
+
+  # Replace special characters with underscores
+  filepath=$(echo "$filepath" | tr -c '[:alnum:].-' '_')
+
+  # Remove leading/trailing underscores
+  filepath=$(echo "$filepath" | sed -e 's/^_*//' -e 's/_*$//')
+
+  echo "$filepath"
+}
+
 fetch()
 {
   url="$1"
   filename="`basename "$url"`"
+  urled_filename=$(convert_url_to_filepath "$url")
   cachedir="/tmp/zrythm-installer-cache-srcs"
+  path_in_cache="$cachedir/$urled_filename"
   mkdir -p "$cachedir"
-  if ! [ -f "$cachedir/$filename" ]; then
-    wget "$url" --directory-prefix="$cachedir"
+  if ! [ -f "$path_in_cache" ]; then
+    wget "$url" --directory-prefix="$cachedir" -O "$path_in_cache"
   fi
-  cp "$cachedir/$filename" ./"$filename"
+  cp "$path_in_cache" ./"$filename"
 }
 
 build_meson_wrap_project()
@@ -205,6 +223,11 @@ export CC="$deps_prefix"/bin/gcc
 export CXX="$deps_prefix"/bin/g++
 export CFLAGS='-fPIC -g @MARCH_MTUNE@'
 export CPPFLAGS='-DPIC -g @MARCH_MTUNE@'
+
+vulkan_ver=1.3.290
+glslang_ver=14.2.0
+spirv_tools_ver=2024.2
+shaderc_ver="${spirv_tools_ver}"
 
 skip_build2() {
 
@@ -397,11 +420,6 @@ build_autotools_project http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz --disa
 build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
 build_meson_project https://www.cairographics.org/releases/pixman-0.42.2.tar.gz -Ddefault_library=shared -Dgtk=disabled
 
-} # skip_build2
-
-vulkan_ver=1.3.290
-glslang_ver=14.2.0
-spirv_tools_ver=2024.2
 build_cmake_project "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release
 build_cmake_project "https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DUPDATE_DEPS=ON -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
 build_cmake_project "https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-$vulkan_ver.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSPIRV_HEADERS_ENABLE_TESTS=OFF
@@ -444,8 +462,10 @@ build_meson_project https://download.gnome.org/sources/pango/1.50/pango-1.50.14.
 build_meson_project https://download.gnome.org/sources/gdk-pixbuf/2.42/gdk-pixbuf-2.42.9.tar.xz -Ddefault_library=shared -Djpeg=enabled -Dpng=enabled -Dbuiltin_loaders=png,jpeg -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Drelocatable=true -Dman=false -Dinstalled_tests=false
 build_autotools_project https://download.gnome.org/sources/librsvg/2.52/librsvg-2.52.4.tar.xz --disable-gtk-doc --disable-vala --disable-introspection --enable-static --enable-shared
 
-build_autotools_project https://ftp.gnu.org/gnu/nettle/nettle-3.8.tar.gz --disable-static --enable-shared
-build_autotools_project https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.19.0.tar.gz --disable-static --enable-shared
+} # skip_build2
+
+build_autotools_project http://ftp.jaist.ac.jp/pub/GNU/nettle/nettle-3.10.tar.gz --disable-static --enable-shared
+build_autotools_project http://ftp.jaist.ac.jp/pub/GNU/libtasn1/libtasn1-4.19.0.tar.gz --disable-static --enable-shared
 build_autotools_project https://github.com/p11-glue/p11-kit/releases/download/0.24.1/p11-kit-0.24.1.tar.xz --disable-static --without-bash-completion --without-systemd # cannot be used as a static library
 build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.8.tar.xz --disable-static --enable-shared --disable-bash-tests --disable-tests --with-included-libtasn1
 
@@ -462,7 +482,6 @@ build_autotools_project https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.
 
 build_meson_project https://gitlab.freedesktop.org/mesa/drm/-/archive/libdrm-2.4.123/drm-libdrm-2.4.123.tar.gz -Ddefault_library=shared -Dtests=false -Dvalgrind=disabled -Dman-pages=disabled -Dcairo-tests=disabled
 
-shaderc_ver="${spirv_tools_ver}"
 url="https://github.com/google/shaderc/archive/refs/tags/v${shaderc_ver}.tar.gz"
 shift
 fetch "$url"
