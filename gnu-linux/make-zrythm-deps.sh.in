@@ -560,10 +560,26 @@ build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-6.0.0
 # libbacktrace
 # build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static
 
-} # skip_build2
-
 # magic_enum
 build_cmake_project "https://github.com/Neargye/magic_enum/archive/refs/tags/v0.9.6.tar.gz" -DBUILD_SHARED_LIBS=True
+
+} # skip_build2
+
+# fmt
+build_cmake_project "https://github.com/fmtlib/fmt/archive/refs/tags/11.0.2.tar.gz" -DBUILD_SHARED_LIBS=True
+
+# spdlog
+build_cmake_project https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.tar.gz -DBUILD_SHARED_LIBS=True -DSPDLOG_FMT_EXTERNAL=ON -DSPDLOG_BUILD_SHARED=ON
+
+# gtest
+build_cmake_project https://github.com/google/googletest/releases/download/v1.15.2/googletest-1.15.2.tar.gz -DBUILD_SHARED_LIBS=True
+
+# gtkmm stack
+build_meson_project https://download.gnome.org/sources/libsigc++/3.6/libsigc%2B%2B-3.6.0.tar.xz -Ddefault_library=shared -Dvalidation=false -Dbuild-tests=false
+build_meson_project https://download.gnome.org/sources/glibmm/2.82/glibmm-2.82.0.tar.xz -Ddefault_library=shared
+build_meson_project https://www.cairographics.org/releases/cairomm-1.18.0.tar.xz -Ddefault_library=shared -Dboost-shared=true
+build_meson_project https://download.gnome.org/sources/pangomm/2.54/pangomm-2.54.0.tar.xz -Ddefault_library=shared
+build_meson_project https://download.gnome.org/sources/gtkmm/4.16/gtkmm-4.16.0.tar.xz -Ddefault_library=shared
 
 popd # private dir
 
