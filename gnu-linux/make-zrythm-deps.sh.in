@@ -399,8 +399,6 @@ make -j$num_cpus
 make install
 popd # project
 
-} # skip_build2
-
 #build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=shared -Dlibedit=disabled -Dlibreadline=disabled
 build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=shared -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
 build_meson_project https://download.gnome.org/sources/glib/2.78/glib-2.78.0.tar.xz -Ddefault_library=shared -Dlibelf=disabled -Dselinux=disabled -Dtests=false
@@ -560,10 +558,12 @@ build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-6.0
 build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-6.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
 
 # libbacktrace
-build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static
+# build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static
+
+} # skip_build2
 
 # magic_enum
-build_cmake_project "https://github.com/Neargye/magic_enum/releases/download/v0.9.5/magic_enum-v0.9.5.tar.gz" -DBUILD_SHARED_LIBS=True
+build_cmake_project "https://github.com/Neargye/magic_enum/archive/refs/tags/v0.9.6.tar.gz" -DBUILD_SHARED_LIBS=True
 
 popd # private dir
 
