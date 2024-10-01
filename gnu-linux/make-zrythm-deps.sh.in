@@ -247,7 +247,7 @@ build_autotools_project https://www.x.org/releases/individual/xcb/libxcb-1.15.ta
 build_autotools_project https://ftp.gnu.org/gnu/libunistring/libunistring-1.0.tar.gz --disable-static --enable-shared
 build_meson_project https://gitlab.freedesktop.org/gstreamer/meson-ports/libffi/-/archive/meson/libffi-meson.tar.gz -Ddefault_library=shared
 #build_autotools_project https://www.hboehm.info/gc/gc_source/gc-8.2.2.tar.gz --disable-static --enable-shared
-#build_autotools_project https://www.hboehm.info/gc/gc_source/libatomic_ops-7.6.14.tar.gz --disable-static --enable-shared
+build_autotools_project https://www.hboehm.info/gc/gc_source/libatomic_ops-7.6.14.tar.gz --disable-static --enable-shared
 #build_autotools_project https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz --disable-static --enable-shared
 
 # libxcrypt
@@ -413,18 +413,35 @@ make -j$num_cpus
 make install
 popd # project
 
-#build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=shared -Dlibedit=disabled -Dlibreadline=disabled
-build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=shared -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
-build_meson_project https://download.gnome.org/sources/glib/2.78/glib-2.78.0.tar.xz -Ddefault_library=shared -Dlibelf=disabled -Dselinux=disabled -Dtests=false
-build_autotools_project http://ftp.jaist.ac.jp/pub/GNU/gperf/gperf-3.1.tar.gz --disable-static --enable-shared
-build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
-build_meson_project https://www.cairographics.org/releases/pixman-0.42.2.tar.gz -Ddefault_library=shared -Dgtk=disabled
-
 build_cmake_project "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release
 build_cmake_project "https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/v$vulkan_ver.tar.gz" -DBUILD_SHARED_LIBS=True -DUPDATE_DEPS=ON -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
 build_cmake_project "https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-$vulkan_ver.0.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSPIRV_HEADERS_ENABLE_TESTS=OFF
 build_cmake_project "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v${spirv_tools_ver}.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DSKIP_SPIRV_TOOLS_INSTALL=OFF -DSPIRV-Headers_SOURCE_DIR="$deps_prefix"
 build_cmake_project "https://github.com/KhronosGroup/glslang/archive/refs/tags/${glslang_ver}.tar.gz" -DBUILD_SHARED_LIBS=True -DCMAKE_BUILD_TYPE=Release -DALLOW_EXTERNAL_SPIRV_TOOLS=ON
+
+# libbacktrace
+# build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static
+
+# magic_enum
+build_cmake_project "https://github.com/Neargye/magic_enum/archive/refs/tags/v0.9.6.tar.gz" -DBUILD_SHARED_LIBS=True
+
+# fmt
+build_cmake_project "https://github.com/fmtlib/fmt/archive/refs/tags/11.0.2.tar.gz" -DBUILD_SHARED_LIBS=True
+
+# spdlog
+build_cmake_project https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.tar.gz -DBUILD_SHARED_LIBS=True -DSPDLOG_FMT_EXTERNAL=ON -DSPDLOG_BUILD_SHARED=ON -DSPDLOG_BUILD_EXAMPLE=OFF
+
+# gtest
+build_cmake_project https://github.com/google/googletest/releases/download/v1.15.2/googletest-1.15.2.tar.gz -DBUILD_SHARED_LIBS=True
+
+} # skip_build2
+
+#build_meson_wrap_project pcre pcre-8.45 -Ddefault_library=shared -Dlibedit=disabled -Dlibreadline=disabled
+build_meson_project https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.15.0/dbus-dbus-1.15.0.tar.gz -Ddefault_library=shared -Dapparmor=disabled -Ddbus_daemondir=/tmp/dbus-tmp -Ddoxygen_docs=disabled -Dducktype_docs=disabled -Dlibaudit=disabled -Dmodular_tests=disabled -Dqt_help=disabled -Dxml_docs=disabled -Dsystemd=disabled
+build_meson_project "https://download.gnome.org/sources/glib/2.82/glib-2.82.1.tar.xz" -Ddefault_library=shared -Dlibelf=disabled -Dselinux=disabled -Dtests=false
+build_autotools_project http://ftp.jaist.ac.jp/pub/GNU/gperf/gperf-3.1.tar.gz --disable-static --enable-shared
+build_meson_project https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz -Ddefault_library=shared -Ddoc=disabled -Dtests=disabled -Dtools=disabled -Dcache-build=disabled
+build_meson_project https://www.cairographics.org/releases/pixman-0.42.2.tar.gz -Ddefault_library=shared -Dgtk=disabled
 
 # cairo
 url="https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.18.2/cairo-1.18.2.tar.gz"
@@ -570,23 +587,6 @@ mv "$deps_prefix/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so" "$deps_
 
 build_meson_project http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-6.0.1.tar.gz -Ddefault_library=shared -Djack=disabled -Dalsa=enabled -Dpulse=enabled
 build_cmake_project http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-6.0.0.tar.gz -DBUILD_SHARED_LIBS=True -DRTMIDI_API_JACK=OFF -DRTMIDI_API_ALSA=ON
-
-# libbacktrace
-# build_autotools_project "https://gitlab.zrythm.org/zrythm/libbacktrace/-/archive/20221013/libbacktrace-20221013.tar.gz" --disable-shared --enable-static
-
-# magic_enum
-build_cmake_project "https://github.com/Neargye/magic_enum/archive/refs/tags/v0.9.6.tar.gz" -DBUILD_SHARED_LIBS=True
-
-# fmt
-build_cmake_project "https://github.com/fmtlib/fmt/archive/refs/tags/11.0.2.tar.gz" -DBUILD_SHARED_LIBS=True
-
-# spdlog
-build_cmake_project https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.tar.gz -DBUILD_SHARED_LIBS=True -DSPDLOG_FMT_EXTERNAL=ON -DSPDLOG_BUILD_SHARED=ON -DSPDLOG_BUILD_EXAMPLE=OFF
-
-# gtest
-build_cmake_project https://github.com/google/googletest/releases/download/v1.15.2/googletest-1.15.2.tar.gz -DBUILD_SHARED_LIBS=True
-
-} # skip_build2
 
 # gtkmm stack
 build_meson_project "https://download.gnome.org/sources/libsigc++/3.6/libsigc++-3.6.0.tar.xz" -Ddefault_library=shared -Dvalidation=false -Dbuild-tests=false
