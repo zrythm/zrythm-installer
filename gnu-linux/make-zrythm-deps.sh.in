@@ -383,9 +383,11 @@ LIBRARY_PATH="$deps_prefix/lib/x86_64-linux-gnu:$deps_prefix/lib" CPATH="$deps_p
 find "$deps_prefix" -name '*libbsd*.pc' -type f -exec sed -i -e 's|-lmd|-L${libdir} -lmd|g' {} \;
 find "$deps_prefix" -name '*libbsd*.pc' -type f -exec sed -i -e 's|-lbsd|-lbsd -L${libdir} -lmd|g' {} \;
 
+} # skip_build2
+
 build_meson_wrap_project expat expat-2.5.0 -Ddefault_library=shared
-build_meson_project https://gitlab.freedesktop.org/wayland/wayland/-/archive/1.21.0/wayland-1.21.0.tar.gz -Ddefault_library=shared -Ddocumentation=false -Ddtd_validation=false -Dtests=false
-wayland_protocols_ver=1.31
+build_meson_project https://gitlab.freedesktop.org/wayland/wayland/-/archive/1.23.1/wayland-1.23.1.tar.gz -Ddefault_library=shared -Ddocumentation=false -Ddtd_validation=false -Dtests=false
+wayland_protocols_ver=1.37
 build_meson_project "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/archive/$wayland_protocols_ver/wayland-protocols-$wayland_protocols_ver.tar.gz" -Ddefault_library=shared
 
 # pcre 1
@@ -439,8 +441,6 @@ pushd "$prj_dir_name"
 "$meson_bin" compile -C build
 "$meson_bin" install -C build
 popd # project
-
-} # skip_build2
 
 build_meson_project https://download.gnome.org/sources/graphene/1.10/graphene-1.10.8.tar.xz -Ddefault_library=shared -Dintrospection=disabled -Dinstalled_tests=false
 build_meson_project https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz -Ddefault_library=shared
