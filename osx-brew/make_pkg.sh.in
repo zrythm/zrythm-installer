@@ -56,6 +56,10 @@ darwin_resources_dir=$darwin_dir/Resources
 darwin_scripts_dir=$darwin_dir/scripts
 installed_prefix=/Library/Zrythm/$zrythm_product_ver
 
+cellar_path="$(brew --cellar)"
+homebrew_prefix_path="$(brew --prefix)"
+homebrew_lib_path="$homebrew_prefix_path/lib"
+
 rm -rf $private_dir
 mkdir -p $lib_dir
 mkdir -p $etc_dir
@@ -64,13 +68,13 @@ mkdir -p $etc_dir
 cp -rfv $installer_builder_dir/* $inner_dir/
 
 # copy the content of each formula (already installed)
-cp -rfv /usr/local/Cellar/carla-git/$carla_bottle_ver/* \
+cp -rfv $cellar_path/carla-git/$carla_bottle_ver/* \
   $application_dir/
-cp -rfv /usr/local/Cellar/$zrythm_bottle_name/$zrythm_pkg_ver/* \
+cp -rfv $cellar_path/$zrythm_bottle_name/$zrythm_pkg_ver/* \
   $application_dir/
 
 # copy additional libs
-cp -rfv /usr/local/lib/libbrotlicommon*.dylib \
+cp -rfv $homebrew_lib_path/libbrotlicommon*.dylib \
   $lib_dir/
 
 # remove some unnecessary binaries
@@ -124,7 +128,7 @@ replace_path() {
 }
 
 # copy librsvg
-cp -rfv /usr/local/lib/librsvg-2.2.dylib $lib_dir/
+cp -rfv $homebrew_lib_path/librsvg-2.2.dylib $lib_dir/
 
 # replace paths
 for exe in `ls $bin_dir`; do
@@ -140,8 +144,8 @@ for dylib in `ls $lib_dir/libbrotlicommon*.dylib`; do
 done
 
 # copy the pixbuf loaders
-cp -rfv /usr/local/lib/gdk-pixbuf-2.0 $lib_dir/
-sed -i '' -E "s|/usr/local/lib|$installed_prefix/lib|g" $lib_dir/gdk-pixbuf-2.0/2.10.0/loaders.cache
+cp -rfv $homebrew_lib_path/gdk-pixbuf-2.0 $lib_dir/
+sed -i '' -E "s|$homebrew_lib_path|$installed_prefix/lib|g" $lib_dir/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
 # copy resources
 cp -rvf $welcome_html $darwin_resources_dir/
@@ -175,39 +179,39 @@ if [[ \$? == 0 ]]; then
 fi
 $installed_prefix/bin/zrythm "\$@"
 EOF
-sed -i '' -E "s|/usr/local/lib|$installed_prefix/lib|g" $lib_dir/gdk-pixbuf-2.0/2.10.0/loaders.cache
+sed -i '' -E "s|$homebrew_lib_path|$installed_prefix/lib|g" $lib_dir/gdk-pixbuf-2.0/2.10.0/loaders.cache
 chmod +x $bin_dir/zrythm_launch
 
 # copy fonts
-cp -rvf /usr/local/etc/fonts $etc_dir/
+cp -rvf $homebrew_prefix_path/etc/fonts $etc_dir/
 
 # copy gtksourceview files
-cp -rvf /usr/local/share/gtksourceview-5 $share_dir/
+cp -rvf $homebrew_prefix_path/share/gtksourceview-5 $share_dir/
 
 # copy locales
-cp -rvf /usr/local/share/locale $share_dir/
+cp -rvf $homebrew_prefix_path/share/locale $share_dir/
 
 # copy thumbnailers
-cp -rvf /usr/local/share/thumbnailers $share_dir/
+cp -rvf $homebrew_prefix_path/share/thumbnailers $share_dir/
 
 # copy mime database if it exists
-cp -rvf /usr/local/share/mime $share_dir/ || true
+cp -rvf $homebrew_prefix_path/share/mime $share_dir/ || true
 
 # copy demo projects
 mkdir -p "$share_dir/zrythm/templates"
 unzip "$demo_project_zip" -d "$share_dir/zrythm/templates"
 
 # copy gtk schemas
-for schema in `ls /usr/local/share/glib-2.0/schemas`; do
+for schema in `ls $homebrew_prefix_path/share/glib-2.0/schemas`; do
   if [[ "$schema" == *"org.gtk."* ]]; then
-    cp -rvf /usr/local/share/glib-2.0/schemas/$schema \
+    cp -rvf $homebrew_prefix_path/share/glib-2.0/schemas/$schema \
       $share_dir/glib-2.0/schemas/
   fi
 done
 
 # recompile schemas
 echo "Recompiling schemas..."
-/usr/local/bin/glib-compile-schemas $share_dir/glib-2.0/schemas
+$homebrew_prefix_path/bin/glib-compile-schemas $share_dir/glib-2.0/schemas
 
 # Create .app
 zrythm_app="$(pwd)/Zrythm.app"

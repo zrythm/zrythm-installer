@@ -25,7 +25,8 @@ private_dir="$3"
 src_tarball="$4"
 
 dash_trial="@DASH_TRIAL@"
-formula_dir=/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
+formula_dir="$(brew --repository homebrew/core)/Formula"
+#formula_dir=/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
 cache_dir="`brew --cache`"
 
 rm -rf $private_dir
