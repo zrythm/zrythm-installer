@@ -72,7 +72,7 @@ pushd "$private_dir/zrythm-$zrythm_version"
 #fallback_subprojects_csv=lilv,sord,serd,sratom,zix,libcyaml
 #fallback_subprojects="`echo $fallback_subprojects_csv | tr , ' '`"
 #$meson_bin subprojects download $fallback_subprojects
-cmake -B build \
+cmake -B build -G Ninja \
   -DCMAKE_INSTALL_PREFIX="$prefix" \
   -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
   -DCMAKE_C_FLAGS="@MARCH_MTUNE@" -DCMAKE_CXX_FLAGS="@MARCH_MTUNE@" \

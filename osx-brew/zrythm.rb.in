@@ -72,6 +72,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
 
       # configure
       system "cmake", "-S", "..", "-B", ".",
+        "-G", "Ninja",
         "-DCMAKE_INSTALL_PREFIX=#{prefix}",
         "-DCMAKE_INSTALL_LIBDIR=#{lib}",
         #"-Dextra_debug_info=true",
