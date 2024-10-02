@@ -47,7 +47,7 @@ pacman -S \
   filesystem bash pacman \
   --noconfirm --needed --root $chroot_dir
 for pkg in "${packages_array[@]}"; do
-  pacman -U "$pkg" --noconfirm --needed --root $chroot_dir
+  pacman -U "$pkg" --noconfirm --overwrite='*' --needed --root $chroot_dir
 done
 # verify plugins exist
 ls -l $chroot_mingw_prefix/lib/lv2/Z*.lv2
