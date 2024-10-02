@@ -52,7 +52,8 @@ debug_symbols_arg=""
 if [[ "$formula_name" == *"rythm"* ]]; then
   debug_symbols_arg="--debug-symbols"
 fi
-brew install --verbose --debug --build-from-source $debug_symbols_arg $formula_name || true
+brew install --verbose --build-from-source $debug_symbols_arg $formula_name || true
+#brew install --verbose --debug --build-from-source $debug_symbols_arg $formula_name || true
 #echo "bottling $formula_name..."
 #brew bottle $formula_name
 #echo "bottled"
