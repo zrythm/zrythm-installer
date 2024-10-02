@@ -125,6 +125,10 @@ build_meson_project()
   prj_dir_name="`basename -s .tar.gz "$url"`"
   prj_dir_name="`basename -s .tar.xz "$prj_dir_name"`"
   prj_dir_name="`basename -s .tar.bz2 "$prj_dir_name"`"
+  # Handle GitHub auto-generated tarballs
+  if [[ "$url" == *"/archive/refs/tags/"* ]]; then
+    prj_dir_name=$(tar -tzf "$filename" | head -1 | cut -f1 -d"/")
+  fi
   pushd "$prj_dir_name"
   rm -rf builddir
   "$meson_bin" setup builddir --wrap-mode=nofallback -Dprefix="$deps_prefix" "$@"
@@ -593,8 +597,6 @@ build_meson_project https://www.cairographics.org/releases/cairomm-1.18.0.tar.xz
 build_meson_project https://download.gnome.org/sources/pangomm/2.54/pangomm-2.54.0.tar.xz -Ddefault_library=shared
 build_meson_project https://download.gnome.org/sources/gtkmm/4.16/gtkmm-4.16.0.tar.xz -Ddefault_library=shared
 
-} # skip_build2
-
 # libdw (for backtraces) - note it fails when building the readelf binary, but we don't need it
 build_cmake_project "https://github.com/libarchive/libarchive/releases/download/v3.7.6/libarchive-3.7.6.tar.gz" -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release
 fetch "https://sourceware.org/elfutils/ftp/0.191/elfutils-0.191.tar.bz2"
@@ -604,6 +606,15 @@ pushd "elfutils-0.191"
 make libdw
 make install libdw || true
 popd # elfutils
+
+} # skip_build2
+
+# lv2
+build_meson_project https://github.com/drobilla/zix/archive/refs/tags/v0.4.2.tar.gz -Ddefault_library=shared -Dchecks=disabled -Ddocs=disabled -Dthreads=enabled -Dtests=disabled -Dtests_cpp=disabled -Dbenchmarks=disabled -Dc_args="-D_XOPEN_SOURCE=500 -D_POSIX_C_SOURCE=200809L"
+build_meson_project https://github.com/drobilla/serd/archive/refs/tags/v0.32.2.tar.gz -Ddefault_library=shared -Ddocs=disabled -Dtests=disabled -Dman=disabled
+build_meson_project https://github.com/drobilla/sord/archive/refs/tags/v0.16.16.tar.gz -Ddefault_library=shared -Ddocs=disabled -Dtests=disabled
+build_meson_project https://github.com/lv2/sratom/archive/refs/tags/v0.6.16.tar.gz -Ddefault_library=shared -Ddocs=disabled -Dtests=disabled
+build_meson_project https://github.com/lv2/lilv/archive/refs/tags/v0.24.24.tar.gz -Ddefault_library=shared -Ddocs=disabled -Dtests=disabled -Dbindings_py=disabled
 
 popd # private dir
 
