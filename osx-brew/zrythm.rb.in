@@ -38,6 +38,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "libyaml"
   depends_on "fftw"
   depends_on "libsamplerate"
+  depends_on "libsndfile"
   depends_on "libsass"
   depends_on "libxmlb"
   #depends_on "libxslt"
