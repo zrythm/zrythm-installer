@@ -54,7 +54,6 @@ depends=("${MINGW_PACKAGE_PREFIX}-gtk4"
          "${MINGW_PACKAGE_PREFIX}-rtaudio"
          "${MINGW_PACKAGE_PREFIX}-rtmidi"
          "${MINGW_PACKAGE_PREFIX}-spdlog"
-         "${MINGW_PACKAGE_PREFIX}-vamp-plugin-sdk"
          "${MINGW_PACKAGE_PREFIX}-xxhash")
 makedepends=("${MINGW_PACKAGE_PREFIX}-ccache"
              "${MINGW_PACKAGE_PREFIX}-gcc"
