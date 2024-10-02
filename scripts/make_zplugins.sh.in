@@ -47,7 +47,7 @@ meson_opts="--prefix=/ -Dplugins=Chordz,Chorus,EQ,LFO,LimiterSP,PhaserSP,PitchSP
 if [[ "$distro" == "osx-brew"* ]]; then
   # set lv2 core spec path
   lv2_cellar=`brew info lv2 | sed '4q;d' | awk '{print $1;}'`
-  meson_opts="$meson_opts -Dlv2_core_path=$lv2_cellar/lib"
+  meson_opts="$meson_opts -Dlv2_core_path=$lv2_cellar/lib -Dc_args=-I$(brew --prefix)/include"
 elif [[ "$distro" == "fedora"* ]]; then
   meson_opts="$meson_opts -Dlv2_core_path=/usr/lib64/lv2"
 else
