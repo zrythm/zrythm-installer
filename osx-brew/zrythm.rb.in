@@ -98,7 +98,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk"
 
       # build
-      system "cmake", "--build", "."
+      system "cmake", "--build", ".", "--verbose"
 
       # install
       system "cmake", "--install", "."
