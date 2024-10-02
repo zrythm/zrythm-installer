@@ -94,7 +94,9 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         #*std_cmake_args
         "-DCMAKE_FIND_FRAMEWORK=LAST",
         "-DCMAKE_VERBOSE_MAKEFILE=ON",
-        "-DBUILD_TESTING=OFF"
+        "-DBUILD_TESTING=OFF",
+        #"-DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk"
+        "-DCMAKE_OSX_SYSROOT=/Applications/Xcode_15.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
       # build
       system "cmake", "--build", ".", "--verbose"
