@@ -22,7 +22,7 @@ option (
 
 option (
   'zrythm-git-ver', type: 'string',
-  value: 'master',
+  value: 'v1',
   description: 'Git tag/commit')
 
 option (
