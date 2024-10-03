@@ -1,6 +1,6 @@
 #!@BASH@
 #
-# Copyright (C) 2020-2023 Alexandros Theodotou <alex at zrythm dot org>
+# Copyright (C) 2020-2024 Alexandros Theodotou <alex at zrythm dot org>
 #
 # This file is part of Zrythm
 #
@@ -61,8 +61,8 @@ function fail {
 
 function retry {
   local n=1
-  local max=5
-  local delay=1
+  local max=10
+  local delay=2
   while true; do
     "$@" && break || {
       if [[ $n -lt $max ]]; then
@@ -255,7 +255,7 @@ EOL
   "$dist_bindir/cv2pdb/cv2pdb64.exe" "$zrythm_exe" "$dist_bindir/zrythm_debug_vs.exe"
   rm -rf "$dist_bindir/cv2pdb"
 
-  # rcedited version of original (try a few times because sometimes it fails)
+  # rcedited version of original (try a few times because sometimes it fails, no idea why)
   retry $rcedit_x64_exe "$zrythm_exe" --set-icon  "$dist_dir/zrythm.ico"
   "$zrythm_exe" --version
 
