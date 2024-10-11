@@ -2,10 +2,8 @@ Thank you for @SUPPORTING_TEXT@ Zrythm!
 
 This is Zrythm v@ZRYTHM_PKG_VERSION@.
 
-To install Zrythm, open a terminal and
-navigate to this directory, then run
-the following command and follow the
-instructions:
+To install Zrythm, open a terminal and navigate to this directory, then run the
+following command and follow the instructions:
 
   ./install.sh
 
@@ -13,8 +11,6 @@ To uninstall, use:
 
   ./install.sh -u
 
-If you experience any problems, please
-email alex@EMAIL_AT_SYM@zrythm.org
+If you experience any problems, please email alex@EMAIL_AT_SYM@zrythm.org
 
-This installer is offered as-is, without
-any warranty.
+This installer is offered as-is, without any warranty.
