@@ -44,6 +44,8 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "lilv"
   depends_on "librsvg"
   depends_on "gtksourceview5"
+  depends_on "libadwaita"
+  depends_on "gtk4"
   #depends_on "graphviz"
   depends_on "rubberband"
   depends_on "sdl2"
@@ -70,7 +72,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dextra_debug_info=true",
         "-Ddebug=true", "-Doptimization=2",
         "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
-        "-Dgtk4:x11-backend=false",
+        #"-Dgtk4:x11-backend=false",
         "-Dcarla=enabled",
         "-Dx11=disabled",
         "-Drtmidi=auto", "-Drtaudio=auto",
@@ -83,7 +85,7 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
         "-Dinstaller_ver=true",
         "-Dvamp_static=true",
         "-Dcarla_use_cv32_patchbay_variant=true",
-        "-Dforce_fallback_for=gtk4,libpanel,libadwaita",
+        "-Dforce_fallback_for=libpanel",
         "-Dwrap_mode=default",
         ".."
 
