@@ -45,6 +45,7 @@ formula_cache_file="`brew --cache -s $formula_name`"
 cp $src_tarball $formula_cache_file
 
 # build bottle
+brew link libadwaita || true
 pushd $private_dir
 echo "unlinking $formula_name..."
 brew unlink $formula_name || true
