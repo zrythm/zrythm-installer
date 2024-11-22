@@ -51,8 +51,6 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "sdl2"
   depends_on "rt-audio"
   depends_on "rtmidi"
-  depends_on "pango"
-  depends_on "cairo"
   depends_on "zstd"
   depends_on "carla-git"
   depends_on "jack"
@@ -68,12 +66,9 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   def install
     mkdir "build" do
 
-      system "ls", "-lah", "/usr/local/lib/pkgconfig"
-
       # configure
       system "meson", "setup",
         "--prefix=#{prefix}", "--libdir=#{lib}",
-        "-Dpkg_config_path=/usr/local/lib/pkgconfig",
         "-Dextra_debug_info=true",
         "-Ddebug=true", "-Doptimization=2",
         "-Dtests=false", "-Dtrial_ver=@TRIAL_TRUE_FALSE@",
