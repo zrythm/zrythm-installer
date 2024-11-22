@@ -60,9 +60,18 @@ class Zrythm@TRIAL_INITIAL_UPPERCASE@ < Formula
   depends_on "libsoxr"
   depends_on "yyjson"
   depends_on "shaderc"
+  depends_on "krb5"
+  depends_on "openldap"
+  depends_on "zlib"
 
   def install
     mkdir "build" do
+
+      system "gsed", "-i", "-e", "s|url=https://gitlab.gnome.org/GNOME/libadwaita|url=https://gitlab.zrythm.org/zrythm/libadwaita|", "../subprojects/libadwaita.wrap"
+      system "gsed", "-i", "-e", "s|6eed5e87efdcb6c599caaad64cbf1b68603ee6e7|644da40057e4d37e121cae5decc4b0967d4dd3ce|", "../subprojects/libadwaita.wrap"
+      system "gsed", "-i", "-e", "s|url=https://gitlab.gnome.org/GNOME/gtk|url=https://gitlab.zrythm.org/zrythm/gtk|", "../subprojects/gtk4.wrap"
+      system "gsed", "-i", "-e", "s|adw_about_window_new_from_appdata |adw_about_window_new |", "../src/gui/widgets/dialogs/about_dialog.c"
+      system "gsed", "-i", "-e", "s|RESOURCES_PATH_TOP \"/org.zrythm.Zrythm.appdata.xml\", RELEASE_VERSION||", "../src/gui/widgets/dialogs/about_dialog.c"
 
       # configure
       system "meson", "setup",
